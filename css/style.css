@@ -84,7 +84,7 @@ html{
 /****************** Hero Section *******************/
 
 #hero {
-    background-image: url(img/herosection.jpg);
+    background-image: url(../img/herosection.jpg);
     background-size: cover;
     background-position: center;
     height: 100vh; /* Hace que el héroe ocupe el 100% de la altura de la pantalla */
