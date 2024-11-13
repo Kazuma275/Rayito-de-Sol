@@ -84,7 +84,7 @@ html{
 /****************** Hero Section *******************/
 
 #hero {
-    background-image: url(../img/herosection.jpg);
+    background-image: url(/img/herosection.jpg);
     background-size: cover;
     background-position: center;
     height: 100vh; /* Hace que el héroe ocupe el 100% de la altura de la pantalla */
@@ -117,14 +117,14 @@ html{
 /****************** Sección de Introducción *******************/
 
 .intro-section {
-    background-color: #e0f7fa; /* Azul claro */
+    background-color: #D8E4F3;
     padding: 40px 0;
     text-align: center;
 }
 
 .intro-section h2 {
-    font-size: 2.2em;
-    color: #385E7A; /* Verde agua */
+    font-size: 2.5em;
+    color: #333;
     margin-bottom: 15px;
 }
 
@@ -175,7 +175,7 @@ html{
 
 #gallery {
     padding: 5px 0 50px 0px;
-    background-color: #D8E4F3; /* Fondo suave para la galería */
+    background-color: #E2EBF6; /* Fondo suave para la galería */
     text-align: center;
 }
 
@@ -212,14 +212,14 @@ html{
 /****************** Reseñas *******************/
 
 .reviews-section {
-    background-color: #f0f8ff;
+    background-color: #ECF1F9;
     padding: 40px 0;
     text-align: center;
 }
 
 .reviews-section h2 {
-    color: #385E7A;
-    font-size: 2em;
+    color: #333;
+    font-size: 2.5em;
     margin-bottom: 20px;
 }
 
@@ -280,7 +280,7 @@ html{
 
 #reservation {
     padding: 50px 20px;
-    background-color: #E2EBF6; /* Fondo suave para la sección */
+    background-color: #F5F8FC; /* Fondo suave para la sección */
     text-align: center;
 }
 
@@ -341,7 +341,7 @@ html{
 
 #contact {
     padding: 50px 20px;
-    background-color: #ECF1F9; /* Fondo suave para la sección */
+    background-color: #fcfcfc; /* Fondo suave para la sección */
     text-align: center;
 }
 
