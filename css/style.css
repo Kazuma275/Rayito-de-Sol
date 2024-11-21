@@ -1,510 +1,658 @@
-/****************** Fonts *******************/
+    /****************** Fonts *******************/
 
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Open+Sans:wght@400;700&display=swap');
-p {
-    font-family: 'Open Sans', sans-serif; /* Fuente principal */
-}
-
-@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@400;700&display=swap');
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif; /* Fuente de títulos */
-}
-
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Source+Sans+Pro:wght@400;700&display=swap');
-.subtitulos {
-    font-family: 'Nunito', sans-serif;
-    /* Colores */
-    color:#62727A;
-    body {
-        color: #4A4A4A;
+    @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Open+Sans:wght@400;700&display=swap');
+    p {
+        font-family: 'Open Sans', sans-serif; /* Fuente principal */
     }
-}
-
-/* Interlineado */
-
-*{
-    line-height: 1.5; /* Interlineado más compacto para encabezados */
-}
-
-/****************** Navbar *******************/
-
-nav{
-    position: sticky;
-    top: 0;
-    z-index: 99;
-}
-
-
-.topnav {
-    background-color: #9EBBE0;
-    overflow: hidden;
-}
-
-.topnav a {
-    float: left;
-    display: block;
-    color: #f2f2f2;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 1.2em;
-}
-
-.topnav a:hover {
-    background-color: #ddd;
-    color: black;
-}
-
-/* Home style */
-
-.topnav a.active {
-    background-color: #385E7A;
-    color: white;
-}
-
-.topnav .icon {
-    display: none;
-}
-
-ol{
-    font-family: celtics;
-}
-
-img{
-    background-color: #008346;
-}
-
-html{
-    scroll-behavior: smooth;
-}
-
-
-
-
-/****************** Hero Section *******************/
-
-#hero {
-    background-image: url(../img/herosection.jpg);
-    background-size: cover;
-    background-position: center;
-    height: 100vh; /* Hace que el héroe ocupe el 100% de la altura de la pantalla */
-    width: 100%;
-    display: flex; /* Esto activa flexbox */
-    align-items: center; /* Centra verticalmente */
-    justify-content: center; /* Centra horizontalmente */
-    position: relative;
-}
-
-#hero a {
-    text-decoration: none;
-}
-
-#hero button {
-    padding: 10px 20px;
-    font-size: 1.2em;
-    color: #fff;
-    background-color: #9EBBE0; /* Color del botón */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-#hero button:hover {
-    background-color: #385E7A; /* Color de hover del botón */
-}
-
-/****************** Parallax Section *******************/
-
-/* Parallax Section */
-#parallax-section {
-    position: relative;
-    background-image: url("/img/herosection.jpg"); /* Cambia al URL de tu imagen */
-    background-attachment: fixed; /* Este es el truco del parallax */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100vh; /* Ajusta según lo que necesites */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff; /* Texto blanco para contraste */
-    text-align: center;
-    z-index: 1;
-}
-
-#parallax-section .parallax-content {
-    z-index: 2; /* Para asegurar que el contenido esté encima del fondo */
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.5); /* Fondo semitransparente para legibilidad */
-    border-radius: 10px;
-}
-
-#parallax-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4); /* Oscurecer un poco el fondo */
-    z-index: 1;
-}
-
-
-/****************** Sección de Introducción *******************/
-
-.intro-section {
-    background-color: #D8E4F3;
-    padding: 40px 0;
-    text-align: center;
-}
-
-.intro-section h2 {
-    font-size: 2.5em;
-    color: #333;
-    margin-bottom: 15px;
-}
-
-.intro-section p {
-    font-size: 1.1em;
-    color: #555;
-    margin-bottom: 30px;
-}
-
-/****************** Servicios en Formato de Cards *******************/
-
-.services-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-}
-
-.service-card {
-    background-color: #f2f2f2;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 280px;
-    padding: 20px;
-    text-align: left;
-    transition: transform 0.3s ease;
-    text-align: center;
-}
-
-.service-card:hover {
-    transform: scale(1.05);
-}
-
-.service-card h3 {
-    font-size: 1.4em;
-    color: #9EBBE0; /* Verde agua */
-    margin-bottom: 10px;
-}
-
-.service-card p {
-    font-size: 1em;
-    color: #333;
-}
-
-
-
-/****************** Gallery  ***********************/
-
-#gallery {
-    padding: 5px 0 50px 0px;
-    background-color: #E2EBF6; /* Fondo suave para la galería */
-    text-align: center;
-}
-
-#gallery h2 {
-    font-size: 2.5em;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.gallery-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-    padding: 0 20px;
-}
-
-.gallery-item {
-    overflow: hidden;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.gallery-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.gallery-item img:hover {
-    transform: scale(1.1); /* Efecto de zoom al pasar el cursor */
-}
-
-/****************** Reseñas *******************/
-
-.reviews-section {
-    background-color: #ECF1F9;
-    padding: 40px 0;
-    text-align: center;
-}
-
-.reviews-section h2 {
-    color: #333;
-    font-size: 2.5em;
-    margin-bottom: 20px;
-}
-
-.reviews-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-}
-
-.review-card {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 250px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: left;
-    transition: transform 0.3s ease;
-}
-
-.review-card:hover {
-    transform: scale(1.05); /* Efecto de zoom al hacer hover */
-}
-
-.review-img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin-bottom: 15px;
-    border: 2px solid #385E7A;
-}
-
-.review-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.review-text {
-    font-size: 0.9em;
-    color: #333;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-.review-author {
-    font-size: 0.9em;
-    color: #385E7A;
-    font-weight: bold;
-}
-
-
-/******************** Reservas **************************/
-
-
-#reservation {
-    padding: 50px 20px;
-    background-color: #F5F8FC; /* Fondo suave para la sección */
-    text-align: center;
-}
-
-#reservation h2 {
-    font-size: 2.5em;
-    margin-bottom: 15px;
-    color: #333;
-}
-
-#reservation p {
-    font-size: 1.2em;
-    margin-bottom: 30px;
-    color: #555;
-}
-
-.reservation-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.reservation-form label {
-    font-size: 1em;
-    color: #333;
-}
-
-.reservation-form input[type="date"],
-.reservation-form input[type="time"] {
-    padding: 10px;
-    font-size: 1em;
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-}
-
-.reservation-form button {
-    padding: 10px 20px;
-    font-size: 1.1em;
-    color: #fff;
-    background-color: #9EBBE0; /* Color del botón */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 100%;
-}
-
-.reservation-form button:hover {
-    background-color: #385E7A; /* Color de hover del botón */
-}
-
-
-/************************** Contact ******************************/
-
-#contact {
-    padding: 50px 20px;
-    background-color: #fcfcfc; /* Fondo suave para la sección */
-    text-align: center;
-}
-
-#contact h2 {
-    font-size: 2.5em;
-    margin-bottom: 15px;
-    color: #333;
-}
-
-#contact p {
-    font-size: 1.2em;
-    margin-bottom: 30px;
-    color: #555;
-}
-
-.contact-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.contact-form label {
-    font-size: 1em;
-    color: #333;
-    align-self: flex-start;
-}
-
-.contact-form input[type="text"],
-.contact-form input[type="email"],
-.contact-form textarea {
-    padding: 10px;
-    font-size: 1em;
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-    resize: vertical;
-}
-
-.contact-form button {
-    padding: 10px 20px;
-    font-size: 1.1em;
-    color: #fff;
-    background-color: #9EBBE0; /* Color del botón */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 100%;
-}
-
-.contact-form button:hover {
-    background-color: #385E7A; /* Color de hover del botón */
-}
-
-/****************** Footer *******************/
-
-.footer {
-    background-color: #9EBBE0;
-    color: #fff; /* Color de texto blanco */
-    padding: 20px 0;
-    text-align: center;
-}
-
-.footer .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-
-.footer-links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 10px;
-}
-
-.footer-links a {
-    color: #f0f8ff; /* Color azul claro */
-    text-decoration: none;
-    font-size: 1em;
-    transition: color 0.3s;
-}
-
-.footer-links a:hover {
-    color: #d1e7dd; /* Cambia a un color verde agua al hacer hover */
-}
-
-.social-media {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    margin-bottom: 10px;
-}
-
-.social-media a {
-    color: #f0f8ff;
-    font-size: 1.5em;
-    transition: color 0.3s;
-}
-
-.social-media a:hover {
-    color: #d1e7dd; /* Cambia a verde agua al hacer hover */
-}
-
-.copyright {
-    font-size: 0.9em;
-    color: #d1e7dd;
-    margin-top: 10px;
-}
-
-.copyright a:first-child{
-    cursor: pointer;
-    font-style: italic;
-    text-decoration: none;
-    color: black;
-}
-
-.copyright a:last-child{
-    cursor: pointer;
-    text-decoration: none;
-    font-weight: bolder;
-}
+
+    @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@400;700&display=swap');
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Playfair Display', serif; /* Fuente de títulos */
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Source+Sans+Pro:wght@400;700&display=swap');
+    .subtitulos {
+        font-family: 'Nunito', sans-serif;
+        /* Colores */
+        color:#62727A;
+        body {
+            color: #4A4A4A;
+        }
+    }
+
+    /* Interlineado */
+
+    *{
+        line-height: 1.5; /* Interlineado más compacto para encabezados */
+    }
+
+    /****************** Navbar *******************/
+
+    nav{
+        position: sticky;
+        top: 0;
+        z-index: 99;
+    }
+
+
+    .topnav {
+        background-color: #9EBBE0;
+        overflow: hidden;
+    }
+
+    .topnav a {
+        float: left;
+        display: block;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 1.2em;
+    }
+
+    .topnav a:hover {
+        background-color: #ddd;
+        color: black;
+    }
+
+    /* Home style */
+
+    .topnav a.active {
+        background-color: #385E7A;
+        color: white;
+    }
+
+    .topnav .icon {
+        display: none;
+    }
+
+    ol{
+        font-family: celtics;
+    }
+
+    img{
+        background-color: #008346;
+    }
+
+    html{
+        scroll-behavior: smooth;
+    }
+
+
+
+
+    /****************** Hero Section *******************/
+
+    #hero {
+        background-image: url(../img/herosection.jpg);
+        background-size: cover;
+        background-position: center;
+        height: 100vh; /* Hace que el héroe ocupe el 100% de la altura de la pantalla */
+        width: 100%;
+        display: flex; /* Esto activa flexbox */
+        align-items: center; /* Centra verticalmente */
+        justify-content: center; /* Centra horizontalmente */
+        position: relative;
+    }
+
+    #hero a {
+        text-decoration: none;
+    }
+
+    #hero button {
+        padding: 10px 20px;
+        font-size: 1.2em;
+        color: #fff;
+        background-color: #9EBBE0; /* Color del botón */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #hero button:hover {
+        background-color: #385E7A; /* Color de hover del botón */
+    }
+
+    /****************** Parallax Section *******************/
+
+    /* Parallax Section */
+    #parallax-section {
+        position: relative;
+        background-image: url("/img/herosection.jpg"); /* Cambia al URL de tu imagen */
+        background-attachment: fixed; /* Este es el truco del parallax */
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 100vh; /* Ajusta según lo que necesites */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff; /* Texto blanco para contraste */
+        text-align: center;
+        z-index: 1;
+    }
+
+    #parallax-section .parallax-content {
+        z-index: 2; /* Para asegurar que el contenido esté encima del fondo */
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.5); /* Fondo semitransparente para legibilidad */
+        border-radius: 10px;
+    }
+
+    #parallax-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4); /* Oscurecer un poco el fondo */
+        z-index: 1;
+    }
+
+
+    /****************** Sección de Introducción *******************/
+
+    .intro-section {
+        background-color: #D8E4F3;
+        padding: 40px 0;
+        text-align: center;
+    }
+
+    .intro-section h2 {
+        font-size: 2.5em;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .intro-section p {
+        font-size: 1.1em;
+        color: #555;
+        margin-bottom: 30px;
+    }
+
+    /****************** Servicios en Formato de Cards *******************/
+
+    .services-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .service-card {
+        background-color: #f2f2f2;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 280px;
+        padding: 20px;
+        text-align: left;
+        transition: transform 0.3s ease;
+        text-align: center;
+    }
+
+    .service-card:hover {
+        transform: scale(1.05);
+    }
+
+    .service-card h3 {
+        font-size: 1.4em;
+        color: #9EBBE0; /* Verde agua */
+        margin-bottom: 10px;
+    }
+    
+    .service-card p {
+        font-size: 1em;
+        color: #333;
+    }
+    
+    .nav-btn {
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .nav-btn:hover {
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+
+
+
+    /****************** Gallery  ***********************/
+
+    #gallery {
+        padding: 20px;
+        text-align: center;
+        background-color: #E2EBF6;
+    }
+    
+    #gallery h2 {
+        font-size: 2.5rem; /* Un poco más grande el título */
+        margin-bottom: 30px; /* Espacio debajo del título */
+    }
+        
+    .gallery-large {
+        display: grid; /* Cambiamos de flex a grid */
+        grid-template-columns: repeat(4, minmax(250px, 1fr)); /* Imágenes más anchas */
+        gap: 20px; /* Espaciado entre las imágenes */
+        justify-items: center; /* Centra las imágenes en su celda */
+    }
+    
+    /* Estilo para las imágenes dentro de la nueva galería */
+    .gallery-large .gallery-thumbnail {
+        width: 100%; /* Las imágenes ocupan todo el ancho de su celda */
+        height: 250px; /* Ajusta la altura a tu preferencia */
+        object-fit: cover; /* Mantén el recorte adecuado de la imagen */
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        border-radius: 10px;
+    }
+    
+    /* Efecto hover al pasar el mouse sobre las imágenes */
+    .gallery-large .gallery-thumbnail:hover {
+        transform: scale(1.05); /* Aumenta ligeramente el tamaño de la miniatura */
+    }
+
+    /* Estilos para el acordeón de imágenes */
+    #imageAccordion {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .accordion-content {
+        position: relative;
+        width: 80%;
+        max-width: 900px;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .accordion-image-container {
+        position: relative;
+    }
+
+    #expandedImg {
+        max-width: 80%; /* Máximo ancho de la imagen */
+        max-height: 80vh; /* Altura máxima de la imagen, para que no se estire demasiado */
+        object-fit: contain; /* Mantiene la proporción de la imagen */
+    }
+
+    .image-navigation {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+
+    /* Botón de cierre del acordeón */
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 30px;
+        color: #333;
+        cursor: pointer;
+        z-index: 1001;
+    }
+
+    .close:hover {
+        color: #385E7A;
+    }
+
+    /* Estilo responsive */
+    @media (max-width: 1024px) {
+        .gallery-large {
+            grid-template-columns: repeat(3, minmax(250px, 1fr)); /* 3 imágenes por fila en pantallas medianas */
+        }
+    }
+
+    @media (max-width: 768px) {
+        .gallery-large {
+            grid-template-columns: repeat(2, minmax(250px, 1fr)); /* 2 imágenes por fila en pantallas pequeñas */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .gallery-large {
+            grid-template-columns: 1fr; /* 1 imagen por fila en pantallas muy pequeñas */
+        }
+    }
+
+    /* Estilo de las flechas (izquierda y derecha) */
+    #prevBtn, #nextBtn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        font-size: 30px;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        z-index: 1001;
+    }
+
+    #prevBtn {
+        left: 10px;
+    }
+
+    #nextBtn {
+        right: 10px;
+    }
+
+    /* Estilo del botón de cierre */
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 30px;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 10px;
+        cursor: pointer;
+        border: none;
+        z-index: 1001;
+    }
+
+    /* Asegurar que las miniaturas de las imágenes sean del mismo tamaño */
+    .gallery-thumbnail {
+        width: 100%;
+        max-width: 325px; /* Ancho máximo para que todas las miniaturas tengan el mismo tamaño */
+        height: auto;
+        object-fit: cover;
+        cursor: pointer;
+        transition: transform 0.3s ease; /* Efecto de transformación */
+    }
+
+    .gallery-thumbnail:hover {
+        transform: scale(1.1); /* Efecto de hover */
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .gallery-item img:hover {
+        transform: scale(1.1); /* Efecto de zoom al pasar el cursor */
+    }
+
+    /****************** Reseñas *******************/
+
+    .reviews-section {
+        background-color: #ECF1F9;
+        padding: 40px 0;
+        text-align: center;
+    }
+
+    .reviews-section h2 {
+        color: #333;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+    }
+
+    .reviews-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .review-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 250px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: left;
+        transition: transform 0.3s ease;
+    }
+
+    .review-card:hover {
+        transform: scale(1.05); /* Efecto de zoom al hacer hover */
+    }
+
+    .review-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-bottom: 15px;
+        border: 2px solid #385E7A;
+    }
+
+    .review-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .review-text {
+        font-size: 0.9em;
+        color: #333;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .review-author {
+        font-size: 0.9em;
+        color: #385E7A;
+        font-weight: bold;
+    }
+
+
+    /******************** Reservas **************************/
+
+
+    #reservation {
+        padding: 50px 20px;
+        background-color: #F5F8FC; /* Fondo suave para la sección */
+        text-align: center;
+    }
+
+    #reservation h2 {
+        font-size: 2.5em;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    #reservation p {
+        font-size: 1.2em;
+        margin-bottom: 30px;
+        color: #555;
+    }
+
+    .reservation-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .reservation-form label {
+        font-size: 1em;
+        color: #333;
+    }
+
+    .reservation-form input[type="date"],
+    .reservation-form input[type="time"] {
+        padding: 10px;
+        font-size: 1em;
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    .reservation-form button {
+        padding: 10px 20px;
+        font-size: 1.1em;
+        color: #fff;
+        background-color: #9EBBE0; /* Color del botón */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+    }
+
+    .reservation-form button:hover {
+        background-color: #385E7A; /* Color de hover del botón */
+    }
+
+
+    /************************** Contact ******************************/
+
+    #contact {
+        padding: 50px 20px;
+        background-color: #fcfcfc; /* Fondo suave para la sección */
+        text-align: center;
+    }
+
+    #contact h2 {
+        font-size: 2.5em;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    #contact p {
+        font-size: 1.2em;
+        margin-bottom: 30px;
+        color: #555;
+    }
+
+    .contact-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .contact-form label {
+        font-size: 1em;
+        color: #333;
+        align-self: flex-start;
+    }
+
+    .contact-form input[type="text"],
+    .contact-form input[type="email"],
+    .contact-form textarea {
+        padding: 10px;
+        font-size: 1em;
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        resize: vertical;
+    }
+
+    .contact-form button {
+        padding: 10px 20px;
+        font-size: 1.1em;
+        color: #fff;
+        background-color: #9EBBE0; /* Color del botón */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+    }
+
+    .contact-form button:hover {
+        background-color: #385E7A; /* Color de hover del botón */
+    }
+
+    /****************** Footer *******************/
+
+    .footer {
+        background-color: #9EBBE0;
+        color: #fff; /* Color de texto blanco */
+        padding: 20px 0;
+        text-align: center;
+    }
+
+    .footer .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 10px;
+    }
+
+    .footer-links a {
+        color: #f0f8ff; /* Color azul claro */
+        text-decoration: none;
+        font-size: 1em;
+        transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+        color: #d1e7dd; /* Cambia a un color verde agua al hacer hover */
+    }
+
+    .social-media {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    .social-media a {
+        color: #f0f8ff;
+        font-size: 1.5em;
+        transition: color 0.3s;
+    }
+
+    .social-media a:hover {
+        color: #d1e7dd; /* Cambia a verde agua al hacer hover */
+    }
+
+    .copyright {
+        font-size: 0.9em;
+        color: #d1e7dd;
+        margin-top: 10px;
+    }
+
+    .copyright a:first-child{
+        cursor: pointer;
+        font-style: italic;
+        text-decoration: none;
+        color: black;
+    }
+
+    .copyright a:last-child{
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bolder;
+    }

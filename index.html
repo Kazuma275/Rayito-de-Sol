@@ -11,7 +11,7 @@
 
     <link rel="icon" href="img/favicon.png" type="image/x-icon">
 
-    <link rel="stylesheet" href="./js/javascript.js">
+    <script src="./js/javascript.js"></script>
 
 </head>
 <body>
@@ -110,25 +110,32 @@
         </section>
         
 
-        <!--  Sección "Gallery" -->
-
+        <!-- Gallery Section -->
         <section id="gallery">
-            <h2>Galería</h2>
-            <div class="gallery-container">
-                <div class="gallery-item"><img src="img/img-1.jpg" alt="Image 1"></div>
-                <div class="gallery-item"><img src="img/img-2.jpg" alt="Image 2"></div>
-                <div class="gallery-item"><img src="img/img-3.jpg" alt="Image 3"></div>
-                <div class="gallery-item"><img src="img/img-4.jpg" alt="Image 4"></div>
-                <div class="gallery-item"><img src="img/img-5.jpg" alt="Image 5"></div>
-                <div class="gallery-item"><img src="img/img-6.jpg" alt="Image 6"></div>
-                <div class="gallery-item"><img src="img/img-7.jpg" alt="Image 1"></div>
-                <div class="gallery-item"><img src="img/img-8.jpg" alt="Image 2"></div>
-                <div class="gallery-item"><img src="img/img-9.jpg" alt="Image 3"></div>
-                <div class="gallery-item"><img src="img/img-10.jpg" alt="Image 4"></div>
-                <div class="gallery-item"><img src="img/img-11.jpg" alt="Image 5"></div>
-                <div class="gallery-item"><img src="img/img-12.jpg" alt="Image 6"></div>
-                <!-- Agrega más elementos de imagen según sea necesario -->
+            <h2>Gallery</h2>
+            <!-- Galería de imágenes en miniatura -->
+            <div class="gallery-large">
+                <img class="gallery-thumbnail" src="img/img-1.jpg" alt="Imagen 1">
+                <img class="gallery-thumbnail" src="img/img-2.jpg" alt="Imagen 2">
+                <img class="gallery-thumbnail" src="img/img-3.jpg" alt="Imagen 3">
+                <img class="gallery-thumbnail" src="img/img-5.jpg" alt="Imagen 4">
+                <img class="gallery-thumbnail" src="img/img-6.jpg" alt="Imagen 5">
+                <img class="gallery-thumbnail" src="img/img-7.jpg" alt="Imagen 6">
+                <img class="gallery-thumbnail" src="img/img-9.jpg" alt="Imagen 7">
+                <img class="gallery-thumbnail" src="img/img-10.jpg" alt="Imagen 8">
+                <img class="gallery-thumbnail" src="img/img-12.jpg" alt="Imagen 9">
             </div>
+            
+            
+            
+            <!-- Image Modal (Accordion style) -->
+            <div id="imageAccordion" style="display: none;">
+                <span class="close">X</span>
+                <img id="expandedImg" src="" alt="Imagen ampliada">
+                <button id="prevBtn">←</button>
+                <button id="nextBtn">→</button>
+            </div>
+            
         </section>
 
         <section id="reviews" class="reviews-section">
