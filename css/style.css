@@ -34,7 +34,6 @@
         z-index: 99;
     }
 
-
     .topnav {
         background-color: #9EBBE0;
         overflow: hidden;
@@ -241,6 +240,30 @@
         gap: 20px; /* Espaciado entre las imágenes */
         justify-items: center; /* Centra las imágenes en su celda */
     }
+
+    .grid {
+        display: grid;
+        grid-template-rows: repeat(4, 1fr);
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+        padding: 1.25rem;
+        grid-auto-flow: dense;
+    }
+    
+    .img-1x1 {
+        grid-row-end: span 1;
+        grid-column-end: span 1;
+    }
+
+    .img-2x1 {
+        grid-row-end: span 1;
+        grid-column-end: span 2;
+    }
+
+    .img-2x2 {
+        grid-row-end: span 2;
+        grid-column-end: span 2;
+    }
     
     /* Estilo para las imágenes dentro de la nueva galería */
     .gallery-large .gallery-thumbnail {
@@ -315,25 +338,7 @@
         color: #385E7A;
     }
 
-    /* Estilo responsive */
-    @media (max-width: 1024px) {
-        .gallery-large {
-            grid-template-columns: repeat(3, minmax(250px, 1fr)); /* 3 imágenes por fila en pantallas medianas */
-        }
-    }
-
-    @media (max-width: 768px) {
-        .gallery-large {
-            grid-template-columns: repeat(2, minmax(250px, 1fr)); /* 2 imágenes por fila en pantallas pequeñas */
-        }
-    }
-
-    @media (max-width: 480px) {
-        .gallery-large {
-            grid-template-columns: 1fr; /* 1 imagen por fila en pantallas muy pequeñas */
-        }
-    }
-
+    
     /* Estilo de las flechas (izquierda y derecha) */
     #prevBtn, #nextBtn {
         position: absolute;
@@ -347,15 +352,15 @@
         cursor: pointer;
         z-index: 1001;
     }
-
+    
     #prevBtn {
         left: 10px;
     }
-
+    
     #nextBtn {
         right: 10px;
     }
-
+    
     /* Estilo del botón de cierre */
     .close {
         position: absolute;
@@ -369,7 +374,7 @@
         border: none;
         z-index: 1001;
     }
-
+    
     /* Asegurar que las miniaturas de las imágenes sean del mismo tamaño */
     .gallery-thumbnail {
         width: 100%;
@@ -379,43 +384,43 @@
         cursor: pointer;
         transition: transform 0.3s ease; /* Efecto de transformación */
     }
-
+    
     .gallery-thumbnail:hover {
         transform: scale(1.1); /* Efecto de hover */
     }
-
+    
     .gallery-item img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         transition: transform 0.3s ease;
     }
-
+    
     .gallery-item img:hover {
         transform: scale(1.1); /* Efecto de zoom al pasar el cursor */
     }
-
+    
     /****************** Reseñas *******************/
-
+    
     .reviews-section {
         background-color: #ECF1F9;
         padding: 40px 0;
         text-align: center;
     }
-
+    
     .reviews-section h2 {
         color: #333;
         font-size: 2.5em;
         margin-bottom: 20px;
     }
-
+    
     .reviews-container {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         gap: 20px;
     }
-
+    
     .review-card {
         background-color: #ffffff;
         border-radius: 8px;
@@ -428,11 +433,11 @@
         text-align: left;
         transition: transform 0.3s ease;
     }
-
+    
     .review-card:hover {
         transform: scale(1.05); /* Efecto de zoom al hacer hover */
     }
-
+    
     .review-img {
         width: 80px;
         height: 80px;
@@ -440,48 +445,48 @@
         margin-bottom: 15px;
         border: 2px solid #385E7A;
     }
-
+    
     .review-content {
         display: flex;
         flex-direction: column;
         align-items: center;
     }
-
+    
     .review-text {
         font-size: 0.9em;
         color: #333;
         margin-bottom: 10px;
         text-align: center;
     }
-
+    
     .review-author {
         font-size: 0.9em;
         color: #385E7A;
         font-weight: bold;
     }
-
-
+    
+    
     /******************** Reservas **************************/
-
-
+    
+    
     #reservation {
         padding: 50px 20px;
         background-color: #F5F8FC; /* Fondo suave para la sección */
         text-align: center;
     }
-
+    
     #reservation h2 {
         font-size: 2.5em;
         margin-bottom: 15px;
         color: #333;
     }
-
+    
     #reservation p {
         font-size: 1.2em;
         margin-bottom: 30px;
         color: #555;
     }
-
+    
     .reservation-form {
         display: flex;
         flex-direction: column;
@@ -490,12 +495,12 @@
         max-width: 400px;
         margin: 0 auto;
     }
-
+    
     .reservation-form label {
         font-size: 1em;
         color: #333;
     }
-
+    
     .reservation-form input[type="date"],
     .reservation-form input[type="time"] {
         padding: 10px;
@@ -505,7 +510,7 @@
         border-radius: 5px;
         box-sizing: border-box;
     }
-
+    
     .reservation-form button {
         padding: 10px 20px;
         font-size: 1.1em;
@@ -517,20 +522,20 @@
         transition: background-color 0.3s ease;
         width: 100%;
     }
-
+    
     .reservation-form button:hover {
         background-color: #385E7A; /* Color de hover del botón */
     }
-
-
+    
+    
     /************************** Contact ******************************/
-
+    
     #contact {
         padding: 50px 20px;
         background-color: #fcfcfc; /* Fondo suave para la sección */
         text-align: center;
     }
-
+    
     #contact h2 {
         font-size: 2.5em;
         margin-bottom: 15px;
@@ -542,7 +547,7 @@
         margin-bottom: 30px;
         color: #555;
     }
-
+    
     .contact-form {
         display: flex;
         flex-direction: column;
@@ -551,13 +556,13 @@
         max-width: 500px;
         margin: 0 auto;
     }
-
+    
     .contact-form label {
         font-size: 1em;
         color: #333;
         align-self: flex-start;
     }
-
+    
     .contact-form input[type="text"],
     .contact-form input[type="email"],
     .contact-form textarea {
@@ -569,7 +574,7 @@
         box-sizing: border-box;
         resize: vertical;
     }
-
+    
     .contact-form button {
         padding: 10px 20px;
         font-size: 1.1em;
@@ -581,27 +586,27 @@
         transition: background-color 0.3s ease;
         width: 100%;
     }
-
+    
     .contact-form button:hover {
         background-color: #385E7A; /* Color de hover del botón */
     }
-
+    
     /****************** Footer *******************/
-
+    
     .footer {
         background-color: #9EBBE0;
         color: #fff; /* Color de texto blanco */
         padding: 20px 0;
         text-align: center;
     }
-
+    
     .footer .container {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 15px;
     }
-
+    
     .footer-links {
         display: flex;
         flex-wrap: wrap;
@@ -609,50 +614,75 @@
         gap: 20px;
         margin-bottom: 10px;
     }
-
+    
     .footer-links a {
         color: #f0f8ff; /* Color azul claro */
         text-decoration: none;
         font-size: 1em;
         transition: color 0.3s;
     }
-
+    
     .footer-links a:hover {
         color: #d1e7dd; /* Cambia a un color verde agua al hacer hover */
     }
-
+    
     .social-media {
         display: flex;
         gap: 15px;
         justify-content: center;
         margin-bottom: 10px;
     }
-
+    
     .social-media a {
         color: #f0f8ff;
         font-size: 1.5em;
         transition: color 0.3s;
     }
-
+    
     .social-media a:hover {
         color: #d1e7dd; /* Cambia a verde agua al hacer hover */
     }
-
+    
     .copyright {
         font-size: 0.9em;
         color: #d1e7dd;
         margin-top: 10px;
     }
-
+    
     .copyright a:first-child{
         cursor: pointer;
         font-style: italic;
         text-decoration: none;
         color: black;
     }
-
+    
     .copyright a:last-child{
         cursor: pointer;
         text-decoration: none;
         font-weight: bolder;
+    }
+    
+    /* Estilo responsive */
+    @media (max-width: 1124px) {
+        .gallery-large {
+            grid-template-columns: repeat(3, minmax(250px, 1fr));
+        }
+    }
+
+    @media (max-width: 902px) {
+        .gallery-large {
+            grid-template-columns: repeat(2, minmax(250px, 1fr));
+        }
+    }
+
+    @media (max-width: 752px) {
+        .gallery-large {
+            grid-template-columns: repeat(2, minmax(250px, 1fr)); 
+        }
+    }
+
+    @media (max-width: 580px) {
+        .gallery-large {
+            grid-template-columns: 1fr; 
+        }
     }

@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 changeImage(1); // Mover a la imagen siguiente
             } else if (event.key === 'Escape') {
                 accordion.style.display = 'none'; // Cerrar el acordeón con la tecla Escape
-            }
+            } 
         }
     });
 
