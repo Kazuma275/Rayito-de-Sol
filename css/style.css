@@ -24,6 +24,7 @@
 
     *{
         line-height: 1.5; /* Interlineado más compacto para encabezados */
+        margin: 0%;
     }
 
     /****************** Navbar *******************/
@@ -37,6 +38,7 @@
     .topnav {
         background-color: #9EBBE0;
         overflow: hidden;
+        justify-content: flex-start;
     }
 
     .topnav a {
@@ -44,7 +46,7 @@
         display: block;
         color: #f2f2f2;
         text-align: center;
-        padding: 14px 16px;
+        padding: 12px 14px;
         text-decoration: none;
         font-size: 1.2em;
     }
@@ -65,20 +67,73 @@
         display: none;
     }
 
-    ol{
-        font-family: celtics;
-    }
-
-    img{
-        background-color: #008346;
-    }
 
     html{
         scroll-behavior: smooth;
     }
 
+    /****************** Dark Button ********************/
+
+        /* Estilo para el modo oscuro */
+    body.dark-mode,h2.dark-mode {
+        background-color: #121212; /* Fondo oscuro */
+        color: black; /* Texto blanco en modo oscuro */
+    }
+
+    .dark-mode-toggle {
+        background-color: transparent;
+        border: none;
+        color: #000;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 1000;
+        margin-left: 20px; /* Ajusta la distancia entre los enlaces y el botón */
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        margin-top: 5px; /* Añade algo de espacio por encima para bajarlo ligeramente */
+        float: right;
+    }
 
 
+    /* Cambiar el color del icono cuando está en modo oscuro */
+    body.dark-mode .dark-mode-toggle {
+        color: #fff;
+    }
+
+    /* Asegura que el icono de la luna se cambie al de sol cuando se active el modo claro/oscuro */
+    body.dark-mode .dark-mode-toggle .fa-moon {
+        display: none;
+    }
+
+    body:not(.dark-mode) .dark-mode-toggle .fa-sun {
+        display: none;
+    }
+
+    /* Cuando el modo oscuro está activo, cambia el icono a sol */
+    body.dark-mode .dark-mode-toggle .fa-sun {
+        display: block;
+    }
+
+    /* Asegura que el icono de la luna se cambie al de sol cuando se active el modo claro/oscuro */
+    body.dark-mode .dark-mode-toggle .fa-moon {
+        display: none;
+    }
+
+    body:not(.dark-mode) .dark-mode-toggle .fa-sun {
+        display: none;
+    }
+
+    /* Cuando el modo oscuro está activo, cambia el icono a sol */
+    body.dark-mode .dark-mode-toggle .fa-sun {
+        display: block;
+    }
+
+    /* Definir el estilo para el modo oscuro */
+    body.dark-mode {
+        background-color: #121212; /* Fondo oscuro */
+        color: #ffffff; /* Texto blanco */
+    }
 
     /****************** Hero Section *******************/
 
@@ -163,6 +218,7 @@
         font-size: 2.5em;
         color: #333;
         margin-bottom: 15px;
+        margin-top: 0;
     }
 
     .intro-section p {
@@ -218,8 +274,6 @@
     .nav-btn:hover {
         background-color: rgba(0, 0, 0, 0.9);
     }
-
-
 
     /****************** Gallery  ***********************/
 
@@ -321,7 +375,6 @@
         justify-content: space-between;
         width: 100%;
     }
-
 
     /* Botón de cierre del acordeón */
     .close {
@@ -474,7 +527,7 @@
         background-color: #F5F8FC; /* Fondo suave para la sección */
         text-align: center;
     }
-    
+
     #reservation h2 {
         font-size: 2.5em;
         margin-bottom: 15px;
@@ -485,6 +538,10 @@
         font-size: 1.2em;
         margin-bottom: 30px;
         color: #555;
+    }
+
+    #reservation h2 {
+        margin-top: 0;
     }
     
     .reservation-form {

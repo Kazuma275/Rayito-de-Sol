@@ -11,23 +11,31 @@
 
     <link rel="icon" href="img/favicon.png" type="image/x-icon">
 
-    <script src="./js/javascript.js"></script>
+    <script defer src="./js/javascript.js"></script>
+    <script defer src="./js/darkmode.js"></script>
 
 </head>
 <body>
     
     <div class="container">
+
+        <!-- Botón de Modo Oscuro/Claro en la parte superior derecha -->
         
         <!-- Navbar -->
         <nav>
             <div class="topnav" id="myTopnav">
-				<a href="#parallax-section" class="active">Home</a>
+                <a href="#parallax-section" class="active">Home</a>
 				<a href="#amenities">Amenidades</a>
 				<a href="#gallery">Galería</a>
 				<a href="#reviews">Reseñas</a>
 				<a href="#contact">Contacto</a>
 				<a href="#reservation">Reserva</a>
-			</div>
+
+                <button id="toggle-dark-mode" class="dark-mode-toggle">
+                    <i class="fa fa-moon"></i>
+                </button>
+
+            </div>
         </nav>
         
         <section id="parallax-section">
@@ -125,8 +133,6 @@
                 <img class="gallery-thumbnail" src="img/img-10.jpg" alt="Imagen 8">
                 <img class="gallery-thumbnail" src="img/img-12.jpg" alt="Imagen 9">
             </div>
-            
-            
             
             <!-- Image Modal (Accordion style) -->
             <div id="imageAccordion" style="display: none;">
