@@ -647,6 +647,69 @@
     .contact-form button:hover {
         background-color: #385E7A; /* Color de hover del botón */
     }
+
+    /****************** Form *********************/
+
+    #signup {
+        padding: 50px 20px;
+        background-color: #fcfcfc; /* Fondo suave para la sección */
+        text-align: center;
+    }
+    
+    #signup h2 {
+        font-size: 2.5em;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    #signup p {
+        font-size: 1.2em;
+        margin-bottom: 30px;
+        color: #555;
+    }
+    
+    .signup-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .signup-form label {
+        font-size: 1em;
+        color: #333;
+        align-self: flex-start;
+    }
+    
+    .signup-form input[type="text"],
+    .signup-form input[type="email"],
+    .signup-form textarea {
+        padding: 10px;
+        font-size: 1em;
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        resize: vertical;
+    }
+    
+    .signup-form button {
+        padding: 10px 20px;
+        font-size: 1.1em;
+        color: #fff;
+        background-color: #9EBBE0; /* Color del botón */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+    }
+    
+    .contact-form button:hover {
+        background-color: #385E7A; /* Color de hover del botón */
+    }
     
     /****************** Footer *******************/
     
