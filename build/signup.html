@@ -47,17 +47,14 @@
             <h2>Sign Up</h2>
             <p>For any questions or more information, please reach out to us at</p>
         
-            <form class="signup-form">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
+            <form action="signup.php" method="POST" class="signup-form">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
         
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
         
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" rows="5" required></textarea>
-        
-                <button type="submit">Send mensaje</button>
+                <input type="submit" value="Register"></input>
             </form>
         </section>
         
