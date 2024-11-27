@@ -1,6 +1,10 @@
 <?php
-require_once "../assets/classes/User.php"; // Verifica que la ruta y el nombre de la clase sean correctos
-require_once "../controllers/connection.php"; // Verifica que la ruta de conexión sea correcta
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require_once "../assets/classes/User.php";
+require_once "../controllers/connection.php";
 
 // Check if the form has been submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -16,8 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user = new User($username, $password);
 
     // Obtener los valores del objeto User
-    $usernameValue = $user->getUsername(); // Asegúrate de que tu método en la clase User se llama 
-    $passwordValue = $user->getPassword(); // El hash de la contraseña ya está en $passwordValue
+    $usernameValue = $user->getUsername();
+    $passwordValue = $user->getPassword();
 
     // Crear la consulta SQL
     $sql = "INSERT INTO users (username, password) VALUES ('$usernameValue', '$passwordValue')";
