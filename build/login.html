@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rayito de Sol</title>
+
+    <link rel="stylesheet" href="./css/style.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.css">
+
+    <link rel="icon" href="img/favicon.png" type="image/x-icon">
+
+    <script defer src="./js/javascript.js"></script>
+    <script defer src="./js/darkmode.js"></script>
+
+</head>
+<body>
+    
+    <div class="container">
+
+        <!-- Botón de Modo Oscuro/Claro en la parte superior derecha -->
+        
+        <!-- Navbar -->
+        <nav>
+            <div class="topnav" id="myTopnav">
+                <a href="#parallax-section" class="active">Home</a>
+                <a href="#amenities">Amenities</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#reviews">Reviews</a>
+                <a href="#contact">Contact</a>
+                <a href="#reservation">Booking</a>
+                <a href="#">Account</a>
+
+                <button id="toggle-dark-mode" class="dark-mode-toggle">
+                    <i class="fa fa-moon"></i>
+                </button>
+			</div>
+        </nav>
+        
+        <!--  Sección "Contact" -->
+
+        <section id="contact">
+            <h2>Contact</h2>
+            <p>For any questions or more information, please reach out to us at</p>
+        
+            <form class="contact-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+        
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+        
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="5" required></textarea>
+        
+                <button type="submit">Send mensaje</button>
+            </form>
+        </section>
+        
+        <footer class="footer">
+            <div class="container">
+                <!-- Sección de enlaces a secciones -->
+                <div class="footer-links">
+                    <a href="#" class="active">Home</a>
+                    <a href="#amenities">Amenities</a>
+                    <a href="#contact">Contact</a>
+                    <a href="#reviews">Reviews</a>
+                    <a href="#reservation">Reserve</a>
+                    <a href="#gallery">Gallery</a>
+                </div>
+                
+                <!-- Sección de redes sociales -->
+                <div class="social-media">
+                    <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.whatsapp.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-whatsapp"></i></a>
+                </div>
+                
+                <!-- Derechos de autor -->
+                <div class="copyright">
+                    &copy; 2024 <a href="https://rayitodesol.es">Rayito de Sol</a>. All the<a href="https://terminosycondiciones.es">rights reserved</a>.
+                </div>
+            </div>
+        </footer>
+        
+
+    </div>
+
+</body>
+</html>
