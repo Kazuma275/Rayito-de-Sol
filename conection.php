@@ -1,5 +1,5 @@
 <?php
-$servername = "localhost"; // O la dirección de tu servidor de base de datos
+$servername = "rayitodesol.es"; // O la dirección de tu servidor de base de datos
 $username = "sergio"; // Usuario de la base de datos
 $password = "almaysergio"; // Contraseña del usuario
 $dbname = "rayito_db"; // Nombre de la base de datos
