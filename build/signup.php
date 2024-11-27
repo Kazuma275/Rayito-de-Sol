@@ -1,42 +1,35 @@
 <?php
 require_once "../assets/classes/User.php"; // Verifica que la ruta y el nombre de la clase sean correctos
-require_once "../controllers/connection.php"; // Verifica que la ruta sea correcta
+require_once "../controllers/connection.php"; // Verifica que la ruta de conexión sea correcta
 
 // Check if the form has been submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']); // Recoge el valor del campo 'username'
-    $password = trim($_POST['password']);
+    $password = trim($_POST['password']); // Recoge el valor del campo 'password'
 
-    // Basic validation
+    // Validación básica
     if (empty($username) || empty($password)) {
         die("Username and password are required.");
     }
 
-    // Create a User object
+    // Crear un objeto de la clase User
     $user = new User($username, $password);
 
-    // Asignar valores de las propiedades del objeto a variables
-    $usernameValue = $user->getUsername();
-    $passwordValue = $user->getPassword();
+    // Obtener los valores del objeto User
+    $usernameValue = $user->getUsername(); // Asegúrate de que tu método en la clase User se llama getName()
+    $passwordValue = $user->getPassword(); // El hash de la contraseña ya está en $passwordValue
 
-    // Prepare the SQL query
-    $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-    if ($stmt === false) {
-        die("Error preparing the statement: " . $conn->error);
-    }
-    
-    // Bind parameters using variables
-    $stmt->bind_param("ss", $usernameValue, $passwordValue);
+    // Crear la consulta SQL
+    $sql = "INSERT INTO users (username, password) VALUES ('$usernameValue', '$passwordValue')";
 
-    // Execute the query
-    if ($stmt->execute()) {
+    // Ejecutar la consulta y verificar si se ejecutó correctamente
+    if ($conn->query($sql) === TRUE) {
         echo "User registered successfully!";
     } else {
-        echo "Error registering user: " . $stmt->error;
+        echo "Error registering user: " . $conn->error;
     }
 
-    // Close the statement and the connection
-    $stmt->close();
+    // Cerrar la conexión
     $conn->close();
 }
 ?>
