@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.css">
 
     <!-- Favicon -->
-    <link rel="icon" href="img/favicon.png" type="image/x-icon">
+    <link rel="icon" href="../img/favicon.png" type="image/x-icon">
 
     <!-- JS -->
     <script defer src="../js/javascript.js"></script>
@@ -52,7 +52,10 @@
                 <input type="text" id="username" name="username" required>
 
                 <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required>
+                    <i id="toggle-password" class="fa fa-eye"></i>
+                </div>
         
                 <input type="submit" value="Register"></input>
             </form>
