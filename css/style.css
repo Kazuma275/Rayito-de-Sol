@@ -168,6 +168,68 @@
         background-color: #385E7A; /* Color de hover del botón */
     }
 
+    /****************** Language Selector  *******************/
+
+    /* Contenedor de la bandera y selector de idioma */
+    .language-selector {
+        position: relative;
+        display: inline-block;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    /* Imagen de la bandera principal */
+    .language-selector .flag {
+        width: 24px;
+        height: auto;
+        border-radius: 3px;
+        display: block;
+    }
+
+    /* Menú desplegable */
+    .language-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        display: none;
+        z-index: 10;
+        list-style: none;
+        padding: 0;
+        margin: 5px 0;
+        width: 150px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Elementos del menú */
+    .language-menu li {
+        padding: 10px;
+        display: flex;
+        align-items: center;
+    }
+
+    .language-menu li a {
+        color: #333;
+        text-decoration: none;
+        font-size: 0.9em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .language-menu li img {
+        width: 20px;
+        height: auto;
+        border-radius: 3px;
+    }
+
+    /* Mostrar el menú al hacer hover */
+    .language-selector:hover .language-menu {
+        display: block;
+    }
+
     /****************** Parallax Section *******************/
 
     /* Parallax Section */

@@ -17,6 +17,7 @@
     <script defer src="../js/javascript.js"></script>
     <script defer src="../js/darkmode.js"></script>
     <script defer src="../js/eye.js"></script>
+    <script defer src="../js/languague.js"></script>
 
 </head>
 <body>
@@ -36,9 +37,35 @@
                 <a href="../index.html#reservation">Booking</a>
                 <a href="#">Account</a>
 
+
+            <!-- Contenedor para la bandera y el modo oscuro -->
+            <div class="settings-container">
+                <!-- Selector de idioma -->
+                <div class="language-selector">
+                    <img id="current-flag" src="../img/idiomas/espana.png" alt="España" class="flag">
+                    <ul class="language-menu">
+                        <li data-flag="../img/idiomas/estados-unidos.png" data-lang="en">
+                            <img src="../img/idiomas/estados-unidos.png" alt="Estados Unidos" class="flag-preview">
+                            <span href="#"></span>
+                        </li>
+                        
+                        <li data-flag="../img/idiomas/reino-unido.png" data-lang="en"><img src="../img/idiomas/reino-unido.png" alt="Reino Unidos" class="flag-preview">
+                            <span href="#"></span>
+                        </li>
+                        
+                        <li data-flag="../img/idiomas/francia.png" data-lang="fr"><img src="../img/idiomas/francia.png" alt="Francia" class="flag-preview">
+                            <span href="#"></span>
+                        </li>
+
+                    </ul>
+                </div>
+
+                <!-- Botón de Modo Oscuro/Claro -->
                 <button id="toggle-dark-mode" class="dark-mode-toggle">
                     <i class="fa fa-moon"></i>
                 </button>
+            </div>
+
 			</div>
         </nav>
         
