@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user = new User($username, $password);
 
     // Obtener los valores del objeto User
-    $usernameValue = $user->getUsername(); // Asegúrate de que tu método en la clase User se llama getName()
+    $usernameValue = $user->getUsername(); // Asegúrate de que tu método en la clase User se llama 
     $passwordValue = $user->getPassword(); // El hash de la contraseña ya está en $passwordValue
 
     // Crear la consulta SQL
