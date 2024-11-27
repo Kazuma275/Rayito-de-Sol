@@ -310,8 +310,8 @@
         align-self: flex-start;
     }
     
-    .signup-form input#text, 
-    .signup-form input#password,
+    .signup-form input[type="text"],
+    .signup-form input[type="password"],
     .signup-form textarea {
         padding: 10px;
         font-size: 1em;
@@ -321,6 +321,7 @@
         box-sizing: border-box;
         resize: vertical;
     }
+    
     
     .signup-form button {
         padding: 10px 20px;
