@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Ejecutar la consulta y verificar si se ejecutó correctamente
     if ($conn->query($sql) === TRUE) {
-        header("Location: /crud/login.php");
+        header("Location: ./login.php");
     } else {
         echo "Error registering user: " . $conn->error;
     }
