@@ -884,7 +884,7 @@
     }
     
     .signup-form input[type="text"],
-    .signup-form input[type="email"],
+    .signup-form input[type="password"],
     .signup-form textarea {
         padding: 10px;
         font-size: 1em;
