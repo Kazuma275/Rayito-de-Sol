@@ -34,13 +34,6 @@ $password = $_SESSION['passwordValue'];
 
 ?>
 
-<?php
-if (isset($_GET['session_expired'])) {
-    echo "<p style='color:red;'>Tu sesión ha expirado. Por favor, inicia sesión nuevamente.</p>";
-}
-?>
-
-
 <!DOCTYPE html>
 <html lang="<?php echo $_SESSION['lang']; ?>">
 <head>
@@ -97,9 +90,16 @@ if (isset($_GET['session_expired'])) {
         
         <!-- Sección "Sign Up" -->
         <section id="signup">
-            <h2>Cuenta creada correctamente!</h2>
-            <p>Bienvenido<?php echo htmlspecialchars($username);?>!</p>
+        <h2>Login</h2>
+            <form action="login.php" method="POST">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required><br>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required><br>
 
+                <input type="submit" value="Login">
+            </form>
         </section>
         
         <!-- Footer -->

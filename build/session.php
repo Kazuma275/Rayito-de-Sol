@@ -1,8 +1,16 @@
 <?php
-// Validar el formulario de inicio de sesión
+session_start();
+require_once "../controllers/conection.php";
+
+// Verifica si el formulario de inicio de sesión ha sido enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
+
+    // Validación básica
+    if (empty($username) || empty($password)) {
+        die("Username and password are required.");
+    }
 
     // Consultar el usuario en la base de datos
     $sql = "SELECT * FROM users WHERE username = ?";
@@ -14,23 +22,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
 
-        // Verificar la contraseña (asumiendo que está encriptada)
-        if ($password === $user['password']) { // Si usas password_hash, usa password_verify aquí
-            // Guardar datos en la sesión
+        // Verificar la contraseña (asegurándose de que esté encriptada)
+        if ($password === $user['password']) { // Cambia esto a `password_verify($password, $user['password'])` si usas `password_hash()`
+            // Guarda la información de la sesión
             $_SESSION['username'] = $user['username'];
-            $_SESSION['login_time'] = time(); // Guarda el tiempo actual
-            
-            // Redirigir a la página principal
+            $_SESSION['logged_in'] = true;
+
+            // Redirige al usuario a la página principal o a la página protegida
             header("Location: ./index.php");
             exit();
         } else {
-            echo "Contraseña incorrecta.";
+            echo "Incorrect password.";
         }
     } else {
-        echo "Usuario no encontrado.";
+        echo "User not found.";
     }
+
     $stmt->close();
     $conn->close();
 }
-
 ?>
