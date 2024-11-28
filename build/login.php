@@ -91,7 +91,7 @@ $password = $_SESSION['passwordValue'];
         <!-- Sección "Sign Up" -->
         <section id="signup">
         <h2>Login</h2>
-            <form action="login.php" method="POST">
+            <form action="session.php" method="POST">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required><br>
                 
