@@ -63,9 +63,23 @@ if (file_exists($lang_file)) {
                 <a href="#reservation"><?php echo $lang['booking']?></a>
                 <a href="./build/signup.php"><?php echo $lang['account']?></a>
 
-                <button id="toggle-dark-mode" class="dark-mode-toggle">
-                    <i class="fa fa-moon"></i>
-                </button>
+                <!-- Contenedor para la bandera y el modo oscuro -->
+                <div class="settings-container">
+                    <!-- Selector de idioma -->
+                    <div class="language-selector">
+                        <img id="current-flag" src="../img/idiomas/<?php echo $_SESSION['lang']; ?>.png" alt="<?php echo $lang['current_lang']; ?>" class="flag">
+                        <ul class="language-menu">
+                            <li><a href="?lang=en" data-lang="en"><img src="../img/idiomas/estados-unidos.png" alt="English" class="flag-preview"></a></li>
+                            <li><a href="?lang=fr" data-lang="fr"><img src="../img/idiomas/francia.png" alt="Français" class="flag-preview"></a></li>
+                            <li><a href="?lang=es" data-lang="es"><img src="../img/idiomas/espana.png" alt="Español" class="flag-preview"></a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Botón de Modo Oscuro/Claro -->
+                    <button id="toggle-dark-mode" class="dark-mode-toggle">
+                        <i class="fa fa-moon"></i>
+                    </button>
+                </div>
 			</div>
         </nav>
         
