@@ -81,7 +81,7 @@ if (file_exists($lang_file)) {
         
         <!-- Sección "Sign Up" -->
         <section id="signup">
-            <h2><?php echo $lang['signup']; ?> <?= $passwordValue ?></h2>
+            <h2><?php echo $lang['signup']; ?></h2>
             <p><?php echo $lang['signup_message']; ?></p>
             <form action="register.php" method="POST" class="signup-form">
                 <label for="username"><?php echo $lang['username']; ?>:</label>
