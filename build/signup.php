@@ -34,7 +34,7 @@ if (file_exists($lang_file)) {
     <title><?php echo $lang['title']; ?></title>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="css/signup.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.css">
 
     <!-- Favicon -->
