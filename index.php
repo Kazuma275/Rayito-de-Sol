@@ -213,13 +213,13 @@ if (file_exists($lang_file)) {
         
         <div class="reviews-container">
             <!-- Review 1 -->
-            <div class="review-card">
-                <img src="https://media.istockphoto.com/id/494711330/es/foto/hombre-joven-latina-en-un-estudio.jpg?s=612x612&w=0&k=20&c=Ye9u097upgUhpcVttIB5i39Dj8XOPheoL4HB6SHC9iA=" alt="<?php echo $lang['review_1_author']; ?>" class="review-img">
-                <div class="review-content">
-                    <p class="review-text"><?php echo $lang['review_1_text']; ?></p>
-                    <p class="review-author"><?php echo $lang['review_1_author']; ?></p>
-                </div>
-            </div>
+
+            <?php 
+            
+            require_once "./controllers/conection.php";
+            require_once "./controllers/reviews.php";
+
+            ?>
 
             <!-- Review 2 -->
             <div class="review-card">
