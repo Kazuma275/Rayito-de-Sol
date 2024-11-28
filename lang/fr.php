@@ -44,9 +44,7 @@ $lang = [
 
     'beach_title' => 'Plage à vos Pieds',
     'beach_description' => 'Profitez de la plage juste à la porte de l\'appartement, avec un accès facile pour vos moments de détente.',
-];
-
-$lang = [
+    
     'title' => 'Rayito de Sol',
     'home' => 'Accueil',
     'amenities' => 'Commodités',
@@ -62,5 +60,7 @@ $lang = [
     'register' => 'S\'enregistrer',
     'current_lang' => 'Français',
     'rights' => 'Tous les droits sont réservés.',
+
 ];
+
 ?>

@@ -45,7 +45,6 @@ $lang = [
     'beach_title' => 'Beach at Your Feet',
     'beach_description' => 'Enjoy the beach right at the doorstep of the apartment, with easy access for your moments of relaxation.',
 
-
     'title' => 'Rayito de Sol',
     'home' => 'Home',
     'amenities' => 'Amenities',
