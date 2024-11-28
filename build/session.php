@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['logged_in'] = true;
 
             // Redirige al usuario a la página principal o a la página protegida
-            header("Location: ../../../index.php");
+            header("Location: ../../login.php");
             exit();
         } else {
             echo "Incorrect password.";
