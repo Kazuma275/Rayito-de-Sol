@@ -54,7 +54,7 @@ if ($result->num_rows > 0) {
         echo '</div>';
     }
 } else {
-    echo "No se encontraron resultados para el idioma seleccionado.";
+    echo "We didn't find any information, sorry.";
 }
 
 // Cierra la declaración
