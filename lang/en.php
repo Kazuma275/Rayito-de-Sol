@@ -62,11 +62,11 @@ $lang = [
 'review_4_author' => '- Javier R.',
 
     // Reservation Section
-'reservation_title' => 'Reservation',
-'reservation_description' => 'To make a reservation, complete the form below or contact us directly via email or phone.',
-'reservation_date_label' => 'Reservation Date:',
-'reservation_time_label' => 'Reservation Time:',
-'reservation_button' => 'Reserve',
+    'reservation_title' => 'Reservation',
+    'reservation_description' => 'To make a reservation, complete the form below or contact us directly via email or phone.',
+    'reservation_date_label' => 'Reservation Date:',
+    'reservation_time_label' => 'Reservation Time:',
+    'reservation_button' => 'Reserve',
 
     // Contact Section
     'contact_title' => 'Contact',
