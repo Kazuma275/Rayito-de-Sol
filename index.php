@@ -39,28 +39,6 @@ if (file_exists($lang_file)) {
 }
 ?>
 
-<?php
-session_start();
-
-// Verifica si la sesión ha sido iniciada y si el tiempo de sesión no ha expirado
-if (isset($_SESSION['usernameValue']) && isset($_SESSION['login_time'])) {
-    $session_duration = 20; // Duración de la sesión en segundos
-    $time_elapsed = time() - $_SESSION['login_time'];
-
-    if ($time_elapsed > $session_duration) {
-        // La sesión ha expirado
-        session_unset();
-        session_destroy();
-        header("Location: ./build/login.php"); // Redirige a la página de inicio de sesión
-        exit();
-    }
-} else {
-    // Si no hay sesión activa, redirige a la página de inicio de sesión
-    header("Location: ./build//login.php");
-    exit();
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
