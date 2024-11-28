@@ -19,4 +19,15 @@ if (isset($_SESSION['last_activity'])) {
 
 // Actualiza la variable de última actividad con la hora actual
 $_SESSION['last_activity'] = time();
-?>
+
+// Verifica si la sesión está activa
+if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true) {
+    // Si la sesión es válida, muestra un mensaje de bienvenida y el contenido de la página
+    echo "Bienvenido, " . htmlspecialchars($_SESSION['username']) . "!<br>";
+    echo "La sesión es activa y caducará en 10 segundos de inactividad.<br>";
+
+    // Aquí puedes incluir el contenido de la página de inicio de sesión o de la página protegida
+    // Por ejemplo, la barra de navegación
+}
+
+    ?>
