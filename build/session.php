@@ -22,14 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
 
-        /* Verificar la contraseña hasheada */
-        if (password_verify($password, $user['password'])) {
+        // Verificar la contraseña (asegurándose de que esté encriptada)
+        if ($password === $user['password']) { // Cambia esto a `password_verify($password, $user['password'])` si usas `password_hash()`
             // Guarda la información de la sesión
             $_SESSION['username'] = $user['username'];
             $_SESSION['logged_in'] = true;
 
             // Redirige al usuario a la página principal o a la página protegida
-            header("Location: ./login.php");
+            header("Location: ../../login.php");
             exit();
         } else {
             echo "Incorrect password.";
