@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Guarda los datos en la sesión para mostrarlos en la página
         $_SESSION['usernameValue'] = $usernameValue;
         $_SESSION['passwordValue'] = $passwordValue;
-        header("Location: ./login.php");
+        header("Location: ./tests.php");
         exit();
     } else {
         echo "Error registering user: " . $conn->error;
