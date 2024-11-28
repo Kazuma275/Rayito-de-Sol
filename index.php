@@ -153,15 +153,15 @@ if (file_exists($lang_file)) {
             <h2>Gallery</h2>
             <!-- Thumbnail image gallery -->
             <div class="gallery-large">
-                <img class="gallery-thumbnail" src="img/img-1.jpg" alt="Image 1">
-                <img class="gallery-thumbnail" src="img/img-2.jpg" alt="Image 2">
-                <img class="gallery-thumbnail" src="img/img-3.jpg" alt="Image 3">
-                <img class="gallery-thumbnail" src="img/img-5.jpg" alt="Image 4">
-                <img class="gallery-thumbnail" src="img/img-6.jpg" alt="Image 5">
-                <img class="gallery-thumbnail" src="img/img-7.jpg" alt="Image 6">
-                <img class="gallery-thumbnail" src="img/img-9.jpg" alt="Image 7">
-                <img class="gallery-thumbnail" src="img/img-10.jpg" alt="Image 8">
-                <img class="gallery-thumbnail" src="img/img-12.jpg" alt="Image 9">
+                <img class="gallery-thumbnail" src="img/gallery/img-1.jpg" alt="Image 1">
+                <img class="gallery-thumbnail" src="img/gallery/img-2.jpg" alt="Image 2">
+                <img class="gallery-thumbnail" src="img/gallery/img-3.jpg" alt="Image 3">
+                <img class="gallery-thumbnail" src="img/gallery/img-5.jpg" alt="Image 4">
+                <img class="gallery-thumbnail" src="img/gallery/img-6.jpg" alt="Image 5">
+                <img class="gallery-thumbnail" src="img/gallery/img-7.jpg" alt="Image 6">
+                <img class="gallery-thumbnail" src="img/gallery/img-9.jpg" alt="Image 7">
+                <img class="gallery-thumbnail" src="img/gallery/img-10.jpg" alt="Image 8">
+                <img class="gallery-thumbnail" src="img/gallery/img-12.jpg" alt="Image 9">
             </div>
             
             <!-- Image Modal (Accordion style) -->
