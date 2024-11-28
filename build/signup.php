@@ -1,25 +1,31 @@
 <?php
-// Iniciar sesión para administrar el idioma
+
 session_start();
 
-// Establecer el idioma por defecto si no está configurado
-if (!isset($_SESSION['lang'])) {
-    $_SESSION['lang'] = 'es'; // Español por defecto
-}
+// Define un idioma predeterminado
+$default_lang = 'es';
 
-// Verificar si se selecciona un idioma en la URL
+// Obtén el idioma de la URL o de la sesión
 if (isset($_GET['lang'])) {
-    $_SESSION['lang'] = $_GET['lang'];
+    $lang = $_GET['lang'];
+    $_SESSION['lang'] = $lang; // Guarda el idioma seleccionado en la sesión
+} elseif (isset($_SESSION['lang'])) {
+    $lang = $_SESSION['lang']; // Usa el idioma almacenado en la sesión
+} else {
+    $lang = $default_lang; // Usa el idioma predeterminado
 }
 
-// Cargar el archivo de idioma correspondiente
-$lang_file = "lang/" . $_SESSION['lang'] . ".php";
+// Ruta del archivo de idioma
+$lang_file = __DIR__ . "/lang/{$lang}.php";
+
+// Verifica si el archivo existe
 if (file_exists($lang_file)) {
     include $lang_file;
 } else {
     die("Error: Archivo de idioma no encontrado.");
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="<?php echo $_SESSION['lang']; ?>">
 <head>
