@@ -270,13 +270,10 @@
         display: none; /* Oculto por defecto */
         position: fixed; /* Se posiciona respecto a la ventana del navegador */
         top: 50px; /* Ajusta esto según la distancia deseada */
-        left: 0; /* Ajusta esto para alinear correctamente */
-        background-color: #fff;
-        border: 1px solid #ccc;
+        background-color: #9EBBE0;
         border-radius: 5px;
-        width: 100px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        z-index: 10000; /* Asegúrate de que esté por encima de otros elementos */
+        padding: 0;
     }
     
     .language-menu li {
