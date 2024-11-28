@@ -29,6 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Guarda los datos en la sesión para mostrarlos en la página
         $_SESSION['usernameValue'] = $usernameValue;
         $_SESSION['passwordValue'] = $passwordValue;
+        $_SESSION['login_time'] = time(); // Marca el tiempo de inicio de sesión
+
+        // Redirige a la página de prueba o al inicio
         header("Location: ./tests.php");
         exit();
     } else {

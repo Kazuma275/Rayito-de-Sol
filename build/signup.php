@@ -58,6 +58,7 @@ if (file_exists($lang_file)) {
                 <a href="../index.php#contact"><?php echo $lang['contact']; ?></a>
                 <a href="../index.php#reservation"><?php echo $lang['booking']; ?></a>
                 <a href="#"><?php echo $lang['account']; ?></a>
+                <a href="">Mis reservas</a>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
                 <div class="settings-container">
