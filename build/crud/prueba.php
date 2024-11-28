@@ -58,8 +58,6 @@ if (file_exists($lang_file)) {
                 <a href="../index.php#contact"><?php echo $lang['contact']; ?></a>
                 <a href="../index.php#reservation"><?php echo $lang['booking']; ?></a>
                 <a href="#"><?php echo $lang['account']; ?></a>
-                <a href="#"><?php echo $lang['']; ?>Mis reservas</a>
-                <a href="#"><?php echo $lang['']; ?>Cerrar Sesión</a>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
                 <div class="settings-container">
@@ -83,7 +81,7 @@ if (file_exists($lang_file)) {
         
         <!-- Sección "Sign Up" -->
         <section id="signup">
-            <h2><?php echo $lang['signup']; ?></h2>
+            <h2><?php echo $lang['signup']; ?>TU CONTRASEÑA ES <?= "echo $passwordValue" ?> </h2>
             <p><?php echo $lang['signup_message']; ?></p>
             <form action="register.php" method="POST" class="signup-form">
                 <label for="username"><?php echo $lang['username']; ?>:</label>
