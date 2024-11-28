@@ -1,13 +1,30 @@
 <?php
 require_once "./controllers/conection.php"; // Asegúrate de que la conexión esté configurada correctamente
 
-$sql = "SELECT author_name, review_text, author_image, review_date FROM reviews"; // Usa los nombres de columna correctos
-$result = $conn->query($sql);
+// Obtén el idioma actual desde la sesión (usa 'en' como predeterminado si no está definido)
+$currentLang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'en';
 
-if ($result === false) {
-    die("Error en la consulta: " . $conn->error);
+// Modifica la consulta para incluir el filtro por idioma
+$sql = "SELECT author_name, review_text, author_image, review_date 
+        FROM reviews 
+        WHERE language = ?"; // Usa un marcador para evitar inyección SQL
+
+// Prepara la consulta
+$stmt = $conn->prepare($sql);
+if ($stmt === false) {
+    die("Error al preparar la consulta: " . $conn->error);
 }
 
+// Vincula el idioma a la consulta
+$stmt->bind_param("s", $currentLang); // "s" indica que el parámetro es una cadena (string)
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result === false) {
+    die("Error en la consulta: " . $stmt->error);
+}
+
+// Muestra los resultados
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         echo '<div class="review-card">';
@@ -23,6 +40,9 @@ if ($result->num_rows > 0) {
         echo '</div>';
     }
 } else {
-    echo "No se encontraron resultados.";
+    echo "No se encontraron resultados para el idioma seleccionado.";
 }
+
+// Cierra la declaración
+$stmt->close();
 ?>

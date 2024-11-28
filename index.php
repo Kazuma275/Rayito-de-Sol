@@ -212,11 +212,9 @@ if (file_exists($lang_file)) {
         <h2><?php echo $lang['reviews_title']; ?></h2>
         
         <div class="reviews-container">
-
             <?php require_once "./controllers/reviews.php";?>
-
-
         </div>
+        
     </section>
 
         
