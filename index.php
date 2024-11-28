@@ -2,33 +2,6 @@
 
 session_start();
 
-
-// Tiempo máximo de sesión en segundos
-$max_session_time = 300;
-
-// Verifica si el usuario está autenticado
-if (isset($_SESSION['username'])) {
-    $time_elapsed = time() - $_SESSION['login_time'];
-
-    if ($time_elapsed <= $max_session_time) {
-        // Actualiza el tiempo de inicio de sesión
-        $_SESSION['login_time'] = time();
-        
-        // Mostrar el enlace si el usuario está autenticado
-        echo '<a href="./crud/create.php">Haz una reserva</a>';
-    } else {
-        // La sesión ha expirado, destruirla y redirigir
-        session_unset();
-        session_destroy();
-        header("Location: ./login.php?session_expired=1");
-        exit();
-    }
-} else {
-    // Si no está autenticado, redirige al login
-    header("Location: ./login.php");
-    exit();
-}
-
 // Define un idioma predeterminado
 $default_lang = 'es';
 
