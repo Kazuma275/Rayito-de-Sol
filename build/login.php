@@ -27,7 +27,7 @@ if (file_exists($lang_file)) {
 
 $username = $_SESSION['usernameValue'];
 $password = $_SESSION['passwordValue'];
-
+var_dump($_SESSION); // Muestra todas las variables de la sesión
 
 ?>
 

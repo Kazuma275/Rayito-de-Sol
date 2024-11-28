@@ -2,6 +2,8 @@
 require_once "../assets/classes/User.php";
 require_once "../controllers/conection.php";
 
+session_start();
+
 // Check if the form has been submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']); // Recoge el valor del campo 'username'
@@ -27,8 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Guarda los datos en la sesión para mostrarlos en la página
         $_SESSION['usernameValue'] = $usernameValue;
         $_SESSION['passwordValue'] = $passwordValue;
-        
         header("Location: ./login.php");
+        exit();
     } else {
         echo "Error registering user: " . $conn->error;
     }
