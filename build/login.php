@@ -81,19 +81,9 @@ if (file_exists($lang_file)) {
         
         <!-- Sección "Sign Up" -->
         <section id="signup">
-            <h2><?php echo $lang['signup']; ?></h2>
-            <p><?php echo $lang['signup_message']; ?></p>
-            <form action="register.php" method="POST" class="signup-form">
-                <label for="username"><?php echo $lang['username']; ?>:</label>
-                <input type="text" id="username" name="username" required>
+            <h2>Cuenta creada correctamente!</h2>
+            <p>Tus datos subnormal: <?= $usernameValue . $passwordValue?></p>
 
-                <label for="password"><?php echo $lang['password']; ?>:</label>
-                <div class="password-container">
-                    <input type="password" id="password" name="password" required>
-                    <i id="toggle-password" class="fa fa-eye"></i>
-                </div>
-                <input type="submit" value="<?php echo $lang['register']; ?>"></input>
-            </form>
         </section>
         
         <!-- Footer -->
