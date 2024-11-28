@@ -5,6 +5,8 @@ session_start();
 require_once "../controllers/conection.php";
 require_once "./session.php";
 require_once "./caducity.php";
+require_once "./activity.php.php";
+
 
 // Define un idioma predeterminado
 $default_lang = 'es';
@@ -66,7 +68,10 @@ $password = $_SESSION['passwordValue'];
                 <a href="../index.php#contact"><?php echo $lang['contact']; ?></a>
                 <a href="../index.php#reservation"><?php echo $lang['booking']; ?></a>
                 <a href="#"><?php echo $lang['account']; ?></a>
-                <a href="./crud/create.php">Haz una reserva</a>
+                <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
+                <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
+                    <a href="./crud/create.php">Haz una reserva</a>
+                <?php endif; ?>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
                 <div class="settings-container">
