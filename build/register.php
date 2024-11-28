@@ -24,6 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Ejecutar la consulta y verificar si se ejecutó correctamente
     if ($conn->query($sql) === TRUE) {
+        // Guarda los datos en la sesión para mostrarlos en la página
+        $_SESSION['usernameValue'] = $usernameValue;
+        $_SESSION['passwordValue'] = $passwordValue;
+        
         header("Location: ./login.php");
     } else {
         echo "Error registering user: " . $conn->error;
