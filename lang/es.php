@@ -61,6 +61,21 @@ $lang = [
 
     'beach_title' => 'Playa a tus Pies',
     'beach_description' => 'Disfruta de la playa justo en la puerta del apartamento, con fácil acceso para tus momentos de relajación.',
+
+    // Reviews Section
+    'reviews_title' => 'Opiniones de los Clientes',
+
+    'review_1_text' => '"El apartamento es acogedor y tiene todo lo que necesitas. Disfrutamos mucho de las vistas al mar. ¡Definitivamente volveremos!"',
+    'review_1_author' => '- Laura G.',
+
+    'review_2_text' => '"Excelente ubicación, a solo unos pasos de la playa. El apartamento estaba impecable y decorado con muy buen gusto. Lo recomiendo ampliamente."',
+    'review_2_author' => '- Carlos M.',
+
+    'review_3_text' => '"Perfecto para unas vacaciones relajantes. La terraza tiene vistas espectaculares al atardecer y el lugar es muy tranquilo. Muy recomendable."',
+    'review_3_author' => '- Ana P.',
+
+    'review_4_text' => '"El apartamento estaba en perfectas condiciones y muy bien equipado. La cercanía a la playa y las tiendas es ideal. Sin duda volvería."',
+    'review_4_author' => '- Javier R.',
 ];
 
 ?>

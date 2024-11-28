@@ -148,74 +148,74 @@ if (file_exists($lang_file)) {
         </div>
     </section>
 
-        <!-- Gallery Section -->
-        <section id="gallery">
-            <h2>Gallery</h2>
+    <!-- Gallery Section -->
+    <section id="gallery">
+        <h2><?php echo $lang['gallery']?></h2>
             <!-- Thumbnail image gallery -->
             <div class="gallery-large">
-                <img class="gallery-thumbnail" src="img/gallery/img-1.jpg" alt="Image 1">
-                <img class="gallery-thumbnail" src="img/gallery/img-2.jpg" alt="Image 2">
-                <img class="gallery-thumbnail" src="img/gallery/img-3.jpg" alt="Image 3">
-                <img class="gallery-thumbnail" src="img/gallery/img-5.jpg" alt="Image 4">
-                <img class="gallery-thumbnail" src="img/gallery/img-6.jpg" alt="Image 5">
-                <img class="gallery-thumbnail" src="img/gallery/img-7.jpg" alt="Image 6">
-                <img class="gallery-thumbnail" src="img/gallery/img-9.jpg" alt="Image 7">
-                <img class="gallery-thumbnail" src="img/gallery/img-10.jpg" alt="Image 8">
-                <img class="gallery-thumbnail" src="img/gallery/img-12.jpg" alt="Image 9">
-            </div>
-            
-            <!-- Image Modal (Accordion style) -->
-            <div id="imageAccordion" style="display: none;">
-                <span class="close">X</span>
-                <img id="expandedImg" src="" alt="Enlarged image">
-                <button id="prevBtn">←</button>
-                <button id="nextBtn">→</button>
-            </div>
-            
-        </section>
+                    <img class="gallery-thumbnail" src="img/gallery/img-1.jpg" alt="Image 1">
+                    <img class="gallery-thumbnail" src="img/gallery/img-2.jpg" alt="Image 2">
+                    <img class="gallery-thumbnail" src="img/gallery/img-3.jpg" alt="Image 3">
+                    <img class="gallery-thumbnail" src="img/gallery/img-5.jpg" alt="Image 4">
+                    <img class="gallery-thumbnail" src="img/gallery/img-6.jpg" alt="Image 5">
+                    <img class="gallery-thumbnail" src="img/gallery/img-7.jpg" alt="Image 6">
+                    <img class="gallery-thumbnail" src="img/gallery/img-9.jpg" alt="Image 7">
+                    <img class="gallery-thumbnail" src="img/gallery/img-10.jpg" alt="Image 8">
+                    <img class="gallery-thumbnail" src="img/gallery/img-12.jpg" alt="Image 9">
+                </div>
+                
+                <!-- Image Modal (Accordion style) -->
+                <div id="imageAccordion" style="display: none;">
+                    <span class="close">X</span>
+                    <img id="expandedImg" src="" alt="Enlarged image">
+                    <button id="prevBtn">←</button>
+                    <button id="nextBtn">→</button>
+                </div>
+                
+            </section>
 
-        <section id="reviews" class="reviews-section">
-            <h2>Customer Reviews</h2>
-            
-            <div class="reviews-container">
-                <!-- Review 1 -->
-                <div class="review-card">
-                    <img src="https://media.istockphoto.com/id/494711330/es/foto/hombre-joven-latina-en-un-estudio.jpg?s=612x612&w=0&k=20&c=Ye9u097upgUhpcVttIB5i39Dj8XOPheoL4HB6SHC9iA=" alt="Photo of Laura" class="review-img">
-                    <div class="review-content">
-                        <p class="review-text">"The apartment is cozy and has everything you need. We enjoyed the sea views so much. We will definitely come back!"</p>
-                        <p class="review-author">- Laura G.</p>
-                    </div>
+            <section id="reviews" class="reviews-section">
+        <h2><?php echo $lang['reviews_title']; ?></h2>
+        
+        <div class="reviews-container">
+            <!-- Review 1 -->
+            <div class="review-card">
+                <img src="https://media.istockphoto.com/id/494711330/es/foto/hombre-joven-latina-en-un-estudio.jpg?s=612x612&w=0&k=20&c=Ye9u097upgUhpcVttIB5i39Dj8XOPheoL4HB6SHC9iA=" alt="<?php echo $lang['review_1_author']; ?>" class="review-img">
+                <div class="review-content">
+                    <p class="review-text"><?php echo $lang['review_1_text']; ?></p>
+                    <p class="review-author"><?php echo $lang['review_1_author']; ?></p>
                 </div>
-    
-                <!-- Review 2 -->
-                <div class="review-card">
-                    <img src="https://media.istockphoto.com/id/1311957094/es/foto/guapo-joven-sonriente-con-retrato-de-brazos-cruzados.jpg?s=612x612&w=0&k=20&c=x5LVA3-Y4WCfJmz6FzGTjXYv4tB1HPVkLuhLqcj8g6Q=" alt="Photo of Carlos" class="review-img">
-                    <div class="review-content">
-                        <p class="review-text">"Excellent location, just steps from the beach. The apartment was spotless and decorated with great taste. I highly recommend it."</p>
-                        <p class="review-author">- Carlos M.</p>
-                    </div>
+            </div>
+
+            <!-- Review 2 -->
+            <div class="review-card">
+                <img src="https://media.istockphoto.com/id/1311957094/es/foto/guapo-joven-sonriente-con-retrato-de-brazos-cruzados.jpg?s=612x612&w=0&k=20&c=x5LVA3-Y4WCfJmz6FzGTjXYv4tB1HPVkLuhLqcj8g6Q=" alt="<?php echo $lang['review_2_author']; ?>" class="review-img">
+                <div class="review-content">
+                    <p class="review-text"><?php echo $lang['review_2_text']; ?></p>
+                    <p class="review-author"><?php echo $lang['review_2_author']; ?></p>
                 </div>
-    
-                <!-- Review 3 -->
-                <div class="review-card">
-                    <img src="https://img.freepik.com/fotos-premium/joven-alegre-brasil-camiseta-casual-vaqueros_941493-3125.jpg?w=360" alt="Photo of Ana" class="review-img">
-                    <div class="review-content">
-                        <p class="review-text">"Perfect for a relaxing vacation. The terrace has spectacular sunset views, and the place is very quiet. Highly recommended."</p>
-                        <p class="review-author">- Ana P.</p>
-                    </div>
+            </div>
+
+            <!-- Review 3 -->
+            <div class="review-card">
+                <img src="https://img.freepik.com/fotos-premium/joven-alegre-brasil-camiseta-casual-vaqueros_941493-3125.jpg?w=360" alt="<?php echo $lang['review_3_author']; ?>" class="review-img">
+                <div class="review-content">
+                    <p class="review-text"><?php echo $lang['review_3_text']; ?></p>
+                    <p class="review-author"><?php echo $lang['review_3_author']; ?></p>
                 </div>
-    
-                <!-- Review 4 -->
-                <div class="review-card">
-                    <img src="https://media.gettyimages.com/id/1404193313/es/foto/man-walking.jpg?s=612x612&w=gi&k=20&c=3sSFQgcAb6wAtAGwI8SEG786gEP4ZSaMuJ-3H_J9rKQ=" alt="Photo of Javier" class="review-img">
-                    <div class="review-content">
-                        <p class="review-text">"The apartment was in perfect condition and very well equipped. The proximity to the beach and shops is ideal. I would definitely come back."</p>
-                        <p class="review-author">- Javier R.</p>
-                    </div>
+            </div>
+
+            <!-- Review 4 -->
+            <div class="review-card">
+                <img src="https://media.gettyimages.com/id/1404193313/es/foto/man-walking.jpg?s=612x612&w=gi&k=20&c=3sSFQgcAb6wAtAGwI8SEG786gEP4ZSaMuJ-3H_J9rKQ=" alt="<?php echo $lang['review_4_author']; ?>" class="review-img">
+                <div class="review-content">
+                    <p class="review-text"><?php echo $lang['review_4_text']; ?></p>
+                    <p class="review-author"><?php echo $lang['review_4_author']; ?></p>
                 </div>
             </div>
         </div>
-        </section>
+    </section>
+
         
 
         <!--  Sección "Reservation" -->
