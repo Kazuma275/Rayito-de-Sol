@@ -2,7 +2,7 @@
 session_start();
 
 // Configura la caducidad de la sesión (10 segundos)
-$sessionTimeout = 10; // tiempo en segundos
+$sessionTimeout = 300; // tiempo en segundos
 
 // Verifica si la variable de sesión de la última actividad está definida
 if (isset($_SESSION['last_activity'])) {
