@@ -5,7 +5,7 @@ require_once "../controllers/conection.php";
 // Verifica si el formulario de inicio de sesión ha sido enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
-    $password = trim($_POST['password']);
+    $password = trim($passwordValue);
 
     // Validación básica
     if (empty($username) || empty($password)) {
