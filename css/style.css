@@ -177,6 +177,7 @@
 
     /* Contenedor de ajustes (bandera e ícono de la luna) */
     .settings-container {
+        position: relative; /* Asegura que los elementos hijos se posicionen respecto a este contenedor */
         display: flex;
         align-items: center;
         gap: 10px; /* Espacio entre la bandera y la luna */
@@ -201,17 +202,17 @@
 
     .language-menu {
         display: none; /* Por defecto, el menú está oculto */
-        position: fixed; /* Permite que el menú se posicione respecto a su contenedor */
+        position: absolute; /* Permite que el menú se posicione relativo a su contenedor */
         top: 100%; /* Posiciona el menú justo debajo de la bandera */
-        left: 0; /* Alinea el menú con la izquierda de la bandera */
-        background-color: #fff; /* Fondo blanco para el menú */
-        border: 1px solid #ccc; /* Borde del menú */
-        border-radius: 5px; /* Bordes redondeados */
-        width: 100px; /* Ajusta el tamaño según tus necesidades */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para un efecto de profundidad */
-        z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
+        left: 0; /* Ajusta esto si es necesario para alinear correctamente */
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 100px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 9999; /* Asegúrate de que esté por encima de otros elementos */
     }
-
+    
     /* Elementos del menú */
     .language-menu li {
         padding: 8px 10px;

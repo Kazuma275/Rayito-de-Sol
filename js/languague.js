@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
     languageSelector.addEventListener("click", function (event) {
         event.stopPropagation(); // Evita que el clic se propague y cierre inmediatamente el menú
         languageMenu.classList.toggle("active"); // Alterna la clase "active" para mostrar/ocultar
+        console.log("Menú activado", languageMenu.classList.contains("active"));
     });
 
     // Manejar la selección de un idioma
