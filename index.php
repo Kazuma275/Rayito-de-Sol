@@ -65,7 +65,7 @@ if (file_exists($lang_file)) {
                 <a href="./build/signup.php"><?php echo $lang['account']?></a>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
-                <div class="settings-container">
+                <div class="settings-container" style="position: relative;">
                     <!-- Selector de idioma -->
                     <div class="language-selector">
                         <img id="current-flag" src="../img/idiomas/<?php echo $_SESSION['lang']; ?>.png" alt="<?php echo $lang['current_lang']; ?>" class="flag">

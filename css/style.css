@@ -201,17 +201,18 @@
     }
 
     .language-menu {
-        display: none; /* Por defecto, el menú está oculto */
-        position: absolute; /* Permite que el menú se posicione relativo a su contenedor */
-        top: 100%; /* Posiciona el menú justo debajo de la bandera */
-        left: 0; /* Ajusta esto si es necesario para alinear correctamente */
+        display: none; /* Oculto por defecto */
+        position: fixed; /* Se posiciona respecto a la ventana del navegador */
+        top: 50px; /* Ajusta esto según la distancia deseada */
+        left: 0; /* Ajusta esto para alinear correctamente */
         background-color: #fff;
         border: 1px solid #ccc;
         border-radius: 5px;
         width: 100px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        z-index: 9999; /* Asegúrate de que esté por encima de otros elementos */
+        z-index: 10000; /* Asegúrate de que esté por encima de otros elementos */
     }
+    
     
     /* Elementos del menú */
     .language-menu li {
