@@ -31,13 +31,13 @@
 
         /* Estilo predeterminado (modo claro) */
     body {
-        color:  black !important; /* Texto negro */
+        color:  black; /* Texto negro */
         background-color: white; /* Fondo blanco */
     }
 
     /* Estilo para el modo oscuro */
     body.dark-mode {
-        color: white !important; /* Texto blanco */
+        color: white; /* Texto blanco */
         background-color: black; /* Fondo negro */
     }
 
@@ -49,6 +49,18 @@
         top: 0;
         z-index: 99;
     }
+
+    body.dark-mode .topnav button {
+        background-color: #555; /* Botones con fondo oscuro */
+        color: white; /* Botones con texto blanco */
+        border: 1px solid #777; /* Borde de los botones */
+    }
+    
+    body.dark-mode .topnav button:hover {
+        background-color: #444; /* Fondo más oscuro al pasar el cursor */
+        border-color: #888; /* Borde más claro al pasar el cursor */
+    }
+    
 
     .topnav {
         background-color: #9EBBE0;
