@@ -5,7 +5,7 @@ require_once "../controllers/conection.php";
 // Verifica si el formulario de inicio de sesión ha sido enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
-    $password = trim($passwordValue);
+    $password = trim($_POST['password']);
 
     // Validación básica
     if (empty($username) || empty($password)) {
@@ -22,14 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
 
-        // Verificar la contraseña (asegurándose de que esté encriptada)
-        if ($password === $user['password']) { // Cambia esto a `password_verify($password, $user['password'])` si usas `password_hash()`
+        /* Verificar la contraseña hasheada */
+        if (password_verify($password, $user['password'])) {
             // Guarda la información de la sesión
             $_SESSION['username'] = $user['username'];
             $_SESSION['logged_in'] = true;
 
             // Redirige al usuario a la página principal o a la página protegida
-            header("Location: ../../login.php");
+            header("Location: ./index.php");
             exit();
         } else {
             echo "Incorrect password.";
