@@ -1,28 +1,12 @@
 <?php
 
 $lang = [
-    // Parallax Section
-    'title' => 'Rayito de Sol',
-    'home' => 'Inicio',
-    'amenities' => 'Servicios',
-    'gallery' => 'Galería',
-    'reviews' => 'Opiniones',
-    'contact' => 'Contacto',
-    'booking' => 'Reservación',
-    'account' => 'Cuenta',
-    'signup' => 'Regístrate',
-    'signup_message' => 'Si tienes preguntas o necesitas más información, contáctanos en',
-    'username' => 'Usuario',
-    'password' => 'Contraseña',
-    'register' => 'Registrar',
-    'current_lang' => 'Español',
-    'rights' => 'Todos los derechos reservados.',
     
-    /*  */
+    /* Parallax Section */
     'parallax_title' => 'Bienvenido a Rayito de Sol',
     'parallax_subtitle' => 'El rayito de sol que necesitas.',
 
-    // Amenities Section
+    /* Amenities Section */
     'amenities_title' => 'Bienvenido a Nuestro Apartamento',
     'amenities_description' => 'Disfruta de una estancia inolvidable en nuestro acogedor apartamento con vistas al mar. Perfecto para unas vacaciones relajantes con todas las comodidades que necesitas.',
 
@@ -76,6 +60,44 @@ $lang = [
 
     'review_4_text' => '"El apartamento estaba en perfectas condiciones y muy bien equipado. La cercanía a la playa y las tiendas es ideal. Sin duda volvería."',
     'review_4_author' => '- Javier R.',
+
+    // Reservation Section
+    'reservation_title' => 'Reservación',
+    'reservation_description' => 'Para realizar una reservación, completa el formulario a continuación o contáctanos directamente por correo electrónico o teléfono.',
+    'reservation_date_label' => 'Fecha de Reservación:',
+    'reservation_time_label' => 'Hora de Reservación:',
+    'reservation_button' => 'Reservar',
+
+    // Contact Section
+    'contact_title' => 'Contacto',
+    'contact_description' => 'Si tienes alguna pregunta o necesitas más información, contáctanos a través del formulario.',
+    'contact_name_label' => 'Nombre:',
+    'contact_email_label' => 'Correo Electrónico:',
+    'contact_message_label' => 'Mensaje:',
+    'contact_button' => 'Enviar Mensaje',
+
+    // Footer
+    'home' => 'Inicio',
+    'amenities' => 'Servicios',
+    'contact' => 'Contacto',
+    'reviews' => 'Opiniones',
+    'reservation' => 'Reservación',
+    'gallery' => 'Galería',
+    'account' => 'Cuenta',
+    'site_name' => 'Rayito de Sol',
+    'rights' => 'Todos los derechos reservados.',
+
+
+    // General
+    'title' => 'Rayito de Sol',
+    'booking' => 'Reservación',
+    'signup' => 'Regístrate',
+    'signup_message' => 'Si tienes preguntas o necesitas más información, contáctanos en',
+    'username' => 'Usuario',
+    'password' => 'Contraseña',
+    'register' => 'Registrar',
+    'current_lang' => 'Español',
+
 ];
 
 ?>

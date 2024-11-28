@@ -221,67 +221,66 @@ if (file_exists($lang_file)) {
         <!--  Sección "Reservation" -->
 
         <section id="reservation">
-            <h2>Booking</h2>
-            <p>To make a reservation, fill out the form below or contact us directly by email or phone.</p>
-            
+        <h2><?php echo $lang['reservation_title']; ?></h2>
+        <p><?php echo $lang['reservation_description']; ?></p>
             <form class="reservation-form">
-                <label for="reservation-date">Reservation Date</label>
+                <label for="reservation-date"><?php echo $lang['reservation_date_label']; ?></label>
                 <input type="date" id="reservation-date" name="reservation-date" required>
-        
-                <label for="reservation-time">Reservation Time:</label>
+
+                <label for="reservation-time"><?php echo $lang['reservation_time_label']; ?></label>
                 <input type="time" id="reservation-time" name="reservation-time" required>
-        
-                <button type="submit">Reserve</button>
+
+                <button type="submit"><?php echo $lang['reservation_button']; ?></button>
             </form>
         </section>
         
         <!--  Sección "Contact" -->
 
         <section id="contact">
-            <h2>Contact</h2>
-            <p>For any questions or more information, please reach out to us at</p>
-        
-            <form class="contact-form">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
-        
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-        
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" rows="5" required></textarea>
-        
-                <button type="submit">Send mensaje</button>
-            </form>
+        <h2><?php echo $lang['contact_title']; ?></h2>
+        <p><?php echo $lang['contact_description']; ?></p>
+
+        <form class="contact-form">
+            <label for="name"><?php echo $lang['contact_name_label']; ?></label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email"><?php echo $lang['contact_email_label']; ?></label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="message"><?php echo $lang['contact_message_label']; ?></label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+
+            <button type="submit"><?php echo $lang['contact_button']; ?></button>
+        </form>
         </section>
         
         <footer class="footer">
-            <div class="container">
-                <!-- Sección de enlaces a secciones -->
-                <div class="footer-links">
-                    <a href="#" class="active">Home</a>
-                    <a href="#amenities">Amenities</a>
-                    <a href="#contact">Contact</a>
-                    <a href="#reviews">Reviews</a>
-                    <a href="#reservation">Reserve</a>
-                    <a href="#gallery">Gallery</a>
-                    <a href="./build/signup.html">Account</a>
-                </div>
-                
-                <!-- Sección de redes sociales -->
-                <div class="social-media">
-                    <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.whatsapp.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-whatsapp"></i></a>
-                </div>
-                
-                <!-- Derechos de autor -->
-                <div class="copyright">
-                    &copy; 2024 <a href="https://rayitodesol.es">Rayito de Sol</a>. All the<a href="https://terminosycondiciones.es">rights reserved</a>.
-                </div>
-            </div>
-        </footer>
+    <div class="container">
+        <!-- Enlaces a secciones -->
+        <div class="footer-links">
+            <a href="#" class="active"><?php echo $lang['home']; ?></a>
+            <a href="#amenities"><?php echo $lang['amenities']; ?></a>
+            <a href="#contact"><?php echo $lang['contact']; ?></a>
+            <a href="#reviews"><?php echo $lang['reviews']; ?></a>
+            <a href="#reservation"><?php echo $lang['reservation']; ?></a>
+            <a href="#gallery"><?php echo $lang['gallery']; ?></a>
+            <a href="./build/signup.html"><?php echo $lang['account']; ?></a>
+        </div>
+
+        <!-- Redes sociales -->
+        <div class="social-media">
+            <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.whatsapp.com" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+
+        <!-- Derechos de autor -->
+        <div class="copyright">
+            &copy; 2024 <a href="https://rayitodesol.es"><?php echo $lang['site_name']; ?></a>. <?php echo $lang['rights']; ?>
+        </div>
+    </div>
+</footer>
         
 
     </div>
