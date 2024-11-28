@@ -43,6 +43,7 @@ if (file_exists($lang_file)) {
     <!-- JS -->
     <script defer src="../js/javascript.js"></script>
     <script defer src="../js/darkmode.js"></script>
+    <script defer src="../js/languague.js"></script>
     <script defer src="../js/eye.js"></script>
 </head>
 <body>
