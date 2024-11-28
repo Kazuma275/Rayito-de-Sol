@@ -214,7 +214,8 @@ if (file_exists($lang_file)) {
         <div class="reviews-container">
             <!-- Review 1 -->
 
-            <?php require_once "./controllers/reviews.php";?>
+            <?php require_once "./controllers/reviews.php";
+            var_dump($result);?>
 
             <!-- Review 2 -->
             <div class="review-card">
