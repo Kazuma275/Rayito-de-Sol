@@ -55,20 +55,20 @@ $password = $_SESSION['passwordValue'];
         <!-- Navbar -->
         <nav>
             <div class="topnav" id="myTopnav">
-                <a href="../index.php#parallax-section" class="active"><?php echo $lang['home']; ?></a>
-                <a href="../index.php#amenities"><?php echo $lang['amenities']; ?></a>
-                <a href="../index.php#gallery"><?php echo $lang['gallery']; ?></a>
-                <a href="../index.php#reviews"><?php echo $lang['reviews']; ?></a>
-                <a href="../index.php#contact"><?php echo $lang['contact']; ?></a>
-                <a href="../index.php#reservation"><?php echo $lang['booking']; ?></a>
+                <a href="../../index.php#parallax-section" class="active"><?php echo $lang['home']; ?></a>
+                <a href="../../index.php#amenities"><?php echo $lang['amenities']; ?></a>
+                <a href="../../index.php#gallery"><?php echo $lang['gallery']; ?></a>
+                <a href="../../index.php#reviews"><?php echo $lang['reviews']; ?></a>
+                <a href="../../index.php#contact"><?php echo $lang['contact']; ?></a>
+                <a href="../../index.php#reservation"><?php echo $lang['booking']; ?></a>
                 <a href="#"><?php echo $lang['account']; ?></a>
-                <a href="./crud/create.php">Haz una reserva</a>
+                <a href="./../crud/create.php">Haz una reserva</a>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
                 <div class="settings-container">
                     <!-- Selector de idioma -->
                     <div class="language-selector">
-                        <img id="current-flag" src="../img/idiomas/<?php echo $_SESSION['lang']; ?>.png" alt="<?php echo $lang['current_lang']; ?>" class="flag">
+                        <img id="current-flag" src="../../img/idiomas/<?php echo $_SESSION['lang']; ?>.png" alt="<?php echo $lang['current_lang']; ?>" class="flag">
                         <ul class="language-menu">
                             <li><a href="?lang=en" data-lang="en"><img src="../img/idiomas/en.png" alt="English" class="flag-preview"></a></li>
                             <li><a href="?lang=fr" data-lang="fr"><img src="../img/idiomas/fr.png" alt="Français" class="flag-preview"></a></li>
