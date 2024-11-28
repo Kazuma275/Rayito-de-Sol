@@ -72,6 +72,73 @@
         scroll-behavior: smooth;
     }
 
+    /****************** Dark Button ********************/
+
+        /* Estilo para el modo oscuro */
+    body.dark-mode,h2.dark-mode {
+        background-color: #121212; /* Fondo oscuro */
+        color: black; /* Texto blanco en modo oscuro */
+    }
+
+    .language-menu.active {
+        display: block; /* Asegura que el menú se muestre */
+    }
+    
+
+    .dark-mode-toggle {
+        background-color: transparent;
+        border: none;
+        color: #000;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 1000;
+        margin-left: 20px; /* Ajusta la distancia entre los enlaces y el botón */
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        margin-top: 5px; /* Añade algo de espacio por encima para bajarlo ligeramente */
+        float: right;
+    }
+
+
+    /* Cambiar el color del icono cuando está en modo oscuro */
+    body.dark-mode .dark-mode-toggle {
+        color: #fff;
+    }
+
+    /* Asegura que el icono de la luna se cambie al de sol cuando se active el modo claro/oscuro */
+    body.dark-mode .dark-mode-toggle .fa-moon {
+        display: none;
+    }
+
+    body:not(.dark-mode) .dark-mode-toggle .fa-sun {
+        display: none;
+    }
+
+    /* Cuando el modo oscuro está activo, cambia el icono a sol */
+    body.dark-mode .dark-mode-toggle .fa-sun {
+        display: block;
+    }
+
+    /* Asegura que el icono de la luna se cambie al de sol cuando se active el modo claro/oscuro */
+    body.dark-mode .dark-mode-toggle .fa-moon {
+        display: none;
+    }
+
+    body:not(.dark-mode) .dark-mode-toggle .fa-sun {
+        display: none;
+    }
+
+    /* Cuando el modo oscuro está activo, cambia el icono a sol */
+    body.dark-mode .dark-mode-toggle .fa-sun {
+        display: block;
+    }
+
+    /* Definir el estilo para el modo oscuro */
+    body.dark-mode {
+        background-color: #121212; /* Fondo oscuro */
+        color: #ffffff; /* Texto blanco */
+    }
 
     /****************** Hero Section *******************/
 
