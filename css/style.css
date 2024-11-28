@@ -31,13 +31,13 @@
 
         /* Estilo predeterminado (modo claro) */
     body {
-        color: black; /* Texto negro */
+        color:  black !important; /* Texto negro */
         background-color: white; /* Fondo blanco */
     }
 
     /* Estilo para el modo oscuro */
     body.dark-mode {
-        color: white; /* Texto blanco */
+        color: white !important; /* Texto blanco */
         background-color: black; /* Fondo negro */
     }
 
