@@ -2,6 +2,10 @@
 
 session_start();
 
+require_once "../controllers/conection.php";
+require_once "./session.php";
+
+
 // Define un idioma predeterminado
 $default_lang = 'es';
 
@@ -29,6 +33,13 @@ $username = $_SESSION['usernameValue'];
 $password = $_SESSION['passwordValue'];
 
 ?>
+
+<?php
+if (isset($_GET['session_expired'])) {
+    echo "<p style='color:red;'>Tu sesión ha expirado. Por favor, inicia sesión nuevamente.</p>";
+}
+?>
+
 
 <!DOCTYPE html>
 <html lang="<?php echo $_SESSION['lang']; ?>">
