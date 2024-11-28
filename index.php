@@ -42,24 +42,29 @@ if (file_exists($lang_file)) {
 <?php
 session_start();
 
-// Verifica si la sesión ha sido iniciada y si el tiempo de sesión no ha expirado
-if (isset($_SESSION['usernameValue']) && isset($_SESSION['login_time'])) {
+// Verifica si la sesión está activa
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+    // Calcula el tiempo transcurrido desde el inicio de sesión
     $session_duration = 20; // Duración de la sesión en segundos
     $time_elapsed = time() - $_SESSION['login_time'];
 
     if ($time_elapsed > $session_duration) {
-        // La sesión ha expirado
+        // Si han pasado más de 20 segundos, destruye la sesión
         session_unset();
         session_destroy();
-        header("Location: ./build/login.php"); // Redirige a la página de inicio de sesión
+        header("Location: ./login.php"); // Redirige a la página de inicio de sesión
         exit();
     }
 } else {
     // Si no hay sesión activa, redirige a la página de inicio de sesión
-    header("Location: ./build/login.php");
+    header("Location: ./login.php");
     exit();
 }
 ?>
+
+<!-- Código HTML de la página -->
+<a href="./build/crud/create.php">Gestionar mis reservas</a>
+
 
 <!DOCTYPE html>
 <html lang="en">
