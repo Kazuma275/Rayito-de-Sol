@@ -1,0 +1,101 @@
+<?php
+
+$lang = [
+    
+    /* Parallax Section */
+    'parallax_title' => 'Welcome to Rayito de Sol',
+    'parallax_subtitle' => 'The little bit of sun you need.',
+
+    /* Amenities Section */
+    'amenities_title' => 'Welcome to Our Apartment',
+    'amenities_description' => 'Enjoy an unforgettable stay in our cozy apartment with sea views. Perfect for a relaxing vacation with all the comforts you need.',
+
+    'bedroom_title' => 'Bedroom',
+    'bedroom_description' => 'Double bed with two nightstands, sea views, and a spacious wardrobe for your comfort.',
+
+    'bathroom_title' => 'Bathroom',
+    'bathroom_description' => 'Private bathroom with shower and toilet, designed for your comfort and relaxation.',
+
+    'lounge_title' => 'Lounge and Kitchen',
+    'lounge_description' => 'Spacious lounge with sofa bed, table, and a fully equipped kitchen with countertop, refrigerator, freezer, and pantry.',
+
+    'sea_views_title' => 'Sea Views',
+    'sea_views_description' => 'Enjoy stunning sea views from the lounge and bedroom, perfect for relaxing.',
+
+    'laundry_title' => 'Washing Machine and Dryer',
+    'laundry_description' => 'Equipped with a washing machine and dryer to keep your clothes fresh and clean during your stay.',
+
+    'kitchen_extras_title' => 'Kitchen Extras',
+    'kitchen_extras_description' => 'Coffee maker with free coffee and chocolate, drawers with utensils, and a pantry for your shopping.',
+
+    'lock_title' => 'Electronic Lock',
+    'lock_description' => 'Door with an electronic lock for secure and hassle-free entry.',
+
+    'other_amenities_title' => 'Other Amenities',
+    'other_amenities_description' => 'Vacuum cleaner for quick and easy cleaning, and other essential accessories.',
+
+    'pool_title' => 'Public Pool',
+    'pool_description' => 'Access to a nearby public pool, perfect for a refreshing swim on sunny days.',
+
+    'wifi_title' => 'Free Wi-Fi',
+    'wifi_description' => 'Free Wi-Fi connection in the apartment so you can stay connected at all times.',
+
+    'restaurant_title' => 'Restaurant',
+    'restaurant_description' => 'Just 50 meters from the apartment, you\'ll find an excellent seafood restaurant, perfect for tasting local delights.',
+
+    'beach_title' => 'Beach at Your Feet',
+    'beach_description' => 'Enjoy the beach right at the doorstep of the apartment, with easy access for your moments of relaxation.',
+
+    // Reviews Section
+'reviews_title' => 'Customer Reviews',
+
+'review_1_text' => '"The apartment is cozy and has everything you need. We really enjoyed the sea views. We will definitely return!"',
+'review_1_author' => '- Laura G.',
+
+'review_2_text' => '"Excellent location, just steps from the beach. The apartment was spotless and beautifully decorated. Highly recommend it."',
+'review_2_author' => '- Carlos M.',
+
+'review_3_text' => '"Perfect for a relaxing vacation. The terrace has spectacular sunset views, and the place is very quiet. Highly recommended."',
+'review_3_author' => '- Ana P.',
+
+'review_4_text' => '"The apartment was in perfect condition and very well equipped. The proximity to the beach and shops is ideal. I would definitely come back."',
+'review_4_author' => '- Javier R.',
+
+    // Reservation Section
+'reservation_title' => 'Reservation',
+'reservation_description' => 'To make a reservation, complete the form below or contact us directly via email or phone.',
+'reservation_date_label' => 'Reservation Date:',
+'reservation_time_label' => 'Reservation Time:',
+'reservation_button' => 'Reserve',
+
+    // Contact Section
+    'contact_title' => 'Contact',
+    'contact_description' => 'If you have any questions or need more information, contact us through the form.',
+    'contact_name_label' => 'Name:',
+    'contact_email_label' => 'Email:',
+    'contact_message_label' => 'Message:',
+    'contact_button' => 'Send Message',
+
+    // Footer
+    'home' => 'Home',
+    'amenities' => 'Amenities',
+    'contact' => 'Contact',
+    'reviews' => 'Reviews',
+    'reservation' => 'Reservation',
+    'gallery' => 'Gallery',
+    'account' => 'Account',
+    'site_name' => 'Rayito de Sol',
+    'rights' => 'All rights reserved.',
+
+    // General
+    'title' => 'Rayito de Sol',
+    'booking' => 'Booking',
+    'signup' => 'Sign Up',
+    'signup_message' => 'If you have questions or need more information, contact us at',
+    'username' => 'Username',
+    'password' => 'Password',
+    'register' => 'Register',
+    'current_lang' => 'English',
+];
+
+?>
