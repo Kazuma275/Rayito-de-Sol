@@ -3,9 +3,7 @@
 session_start();
 
 require_once "../controllers/conection.php";
-require_once "./session.php";
-require_once "./caducity.php";
-require_once "./activity.php.php";
+require_once "./controllers/language.php";
 
 
 // Define un idioma predeterminado
