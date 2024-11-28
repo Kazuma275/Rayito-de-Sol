@@ -81,7 +81,7 @@ if (file_exists($lang_file)) {
                 <div class="settings-container" style="position: relative;">
                     <!-- Selector de idioma -->
                     <div class="language-selector">
-                        <img id="current-flag" src="../img/<?php echo $lang;?>.png" alt="<?php echo $lang['current_lang']; ?>" class="flag">
+                        <img id="current-flag" src="." alt="<?php echo $lang['current_lang']; ?>" class="flag">
 
                         <ul class="language-menu">
                             <li><a href="?lang=en" data-lang="en"><img src="../img/idiomas/en.png" alt="English" class="flag-preview"></a></li>
