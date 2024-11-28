@@ -56,12 +56,12 @@ if (file_exists($lang_file)) {
         <nav>
             <div class="topnav" id="myTopnav">
                 <a href="#parallax-section" class="active">Home</a>
-                <a href="#amenities">Amenities</a>
-                <a href="#gallery">Gallery</a>
-                <a href="#reviews">Reviews</a>
-                <a href="#contact">Contact</a>
-                <a href="#reservation">Booking</a>
-                <a href="./build/signup.php">Account</a>
+                <a href="#amenities"><?php echo $lang['amenities']?></a>
+                <a href="#gallery"><?php echo $lang['gallery']?></a>
+                <a href="#reviews"><?php echo $lang['reviews']?></a>
+                <a href="#contact"><?php echo $lang['contact']?></a>
+                <a href="#reservation"><?php echo $lang['booking']?></a>
+                <a href="./build/signup.php"><?php echo $lang['account']?></a>
 
                 <button id="toggle-dark-mode" class="dark-mode-toggle">
                     <i class="fa fa-moon"></i>
