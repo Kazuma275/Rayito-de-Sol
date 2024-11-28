@@ -23,7 +23,6 @@ $_SESSION['last_activity'] = time();
 
 // Verifica si la sesión está activa
 if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true) {
-    header('login.php'); // Redirige si la sesión está activa
     echo "Bienvenido, " . htmlspecialchars($_SESSION['username']) . "!<br>";
     echo "La sesión es activa y caducará en 10 segundos de inactividad.";
 } else {
