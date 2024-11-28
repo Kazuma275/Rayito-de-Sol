@@ -188,7 +188,7 @@
     /* Estilo de la bandera */
     .language-selector {
         position: relative; /* Permite posicionar el menú desplegable relativo a la bandera */
-        display: inline-flex;
+        display: inline-block;
         align-items: center; /* Centra la bandera verticalmente */
         cursor: pointer;
         z-index: 10; /* Asegura que este elemento esté por encima de otros */
@@ -202,19 +202,16 @@
     }
 
     .language-menu {
-        position: absolute;
-        top: 100%; /* Justo debajo de la bandera */
-        left: -50px; /* Ajusta el valor según tu diseño */
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        display: none; /* Por defecto está oculto */
-        z-index: 9999;
-        list-style: none;
-        padding: 0;
-        margin: 5px 0;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        width: 100px;
+        display: none; /* Por defecto, el menú está oculto */
+        position: absolute; /* Permite que el menú se posicione respecto a su contenedor */
+        top: 100%; /* Posiciona el menú justo debajo de la bandera */
+        left: 0; /* Alinea el menú con la izquierda de la bandera */
+        background-color: #fff; /* Fondo blanco para el menú */
+        border: 1px solid #ccc; /* Borde del menú */
+        border-radius: 5px; /* Bordes redondeados */
+        width: 100px; /* Ajusta el tamaño según tus necesidades */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para un efecto de profundidad */
+        z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
     }
 
     /* Elementos del menú */
