@@ -13,7 +13,7 @@ if (isset($_SESSION['last_activity'])) {
     if ($inactiveTime > $sessionTimeout) {
         session_unset(); // Elimina todas las variables de sesión
         session_destroy(); // Destruye la sesión
-        header("Location: login.php"); // Redirige al login
+        header("Location: ../../index.php"); // Redirige al login
         exit();
     }
 }
@@ -23,6 +23,7 @@ $_SESSION['last_activity'] = time();
 
 // Verifica si la sesión está activa
 if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true) {
+    header('login.php'); // Redirige si la sesión está activa
     echo "Bienvenido, " . htmlspecialchars($_SESSION['username']) . "!<br>";
     echo "La sesión es activa y caducará en 10 segundos de inactividad.";
 } else {
