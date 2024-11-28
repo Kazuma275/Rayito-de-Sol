@@ -24,6 +24,11 @@ if (file_exists($lang_file)) {
 } else {
     die("Error: Archivo de idioma no encontrado.");
 }
+
+$username = $_SESSION['usernameValue'];
+$password = $_SESSION['passwordValue'];
+
+
 ?>
 
 <!DOCTYPE html>
@@ -82,7 +87,7 @@ if (file_exists($lang_file)) {
         <!-- Sección "Sign Up" -->
         <section id="signup">
             <h2>Cuenta creada correctamente!</h2>
-            <p>Tus datos subnormal: <? echo $_SESSION['passwordValue'] ?></p>
+            <p>Tus datos subnormal: <?php echo htmlspecialchars($username); ?></p>
 
         </section>
         
