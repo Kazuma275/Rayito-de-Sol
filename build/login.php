@@ -3,8 +3,6 @@
 session_start();
 
 require_once "../controllers/conection.php";
-require_once "./controllers/language.php";
-
 
 // Define un idioma predeterminado
 $default_lang = 'es';
