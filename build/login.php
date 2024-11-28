@@ -4,7 +4,7 @@ session_start();
 
 require_once "../controllers/conection.php";
 require_once "./session.php";
-
+require_once "./caducity.php";
 
 // Define un idioma predeterminado
 $default_lang = 'es';
