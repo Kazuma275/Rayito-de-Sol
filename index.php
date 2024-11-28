@@ -190,43 +190,47 @@ if (file_exists($lang_file)) {
             </section>
 
             <!-- Reviews -->
-<section id="reviews" class="reviews-section">
-    <h2><?php echo $lang['reviews_title']; ?></h2>
-    <div class="reviews-container">
-        <!-- Review 1 -->
-        <div class="review-card">
-            <img src="path/to/image1.jpg" alt="<?php echo $lang['review_1_author']; ?>" class="review-img">
-            <div class="review-content">
-                <p class="review-text"><?php echo $lang['review_1_text']; ?></p>
-                <p class="review-author"><?php echo $lang['review_1_author']; ?></p>
+            <section id="reviews" class="reviews-section">
+        <h2><?php echo $lang['reviews_title']; ?></h2>
+        
+        <div class="reviews-container">
+            <!-- Review 1 -->
+            <div class="review-card">
+                <img src="https://media.istockphoto.com/id/494711330/es/foto/hombre-joven-latina-en-un-estudio.jpg?s=612x612&w=0&k=20&c=Ye9u097upgUhpcVttIB5i39Dj8XOPheoL4HB6SHC9iA=" alt="<?php echo $lang['review_1_author']; ?>" class="review-img">
+                <div class="review-content">
+                    <p class="review-text"><?php echo $lang['review_1_text']; ?></p>
+                    <p class="review-author"><?php echo $lang['review_1_author']; ?></p>
+                </div>
+            </div>
+
+            <!-- Review 2 -->
+            <div class="review-card">
+                <img src="https://media.istockphoto.com/id/1311957094/es/foto/guapo-joven-sonriente-con-retrato-de-brazos-cruzados.jpg?s=612x612&w=0&k=20&c=x5LVA3-Y4WCfJmz6FzGTjXYv4tB1HPVkLuhLqcj8g6Q=" alt="<?php echo $lang['review_2_author']; ?>" class="review-img">
+                <div class="review-content">
+                    <p class="review-text"><?php echo $lang['review_2_text']; ?></p>
+                    <p class="review-author"><?php echo $lang['review_2_author']; ?></p>
+                </div>
+            </div>
+
+            <!-- Review 3 -->
+            <div class="review-card">
+                <img src="https://img.freepik.com/fotos-premium/joven-alegre-brasil-camiseta-casual-vaqueros_941493-3125.jpg?w=360" alt="<?php echo $lang['review_3_author']; ?>" class="review-img">
+                <div class="review-content">
+                    <p class="review-text"><?php echo $lang['review_3_text']; ?></p>
+                    <p class="review-author"><?php echo $lang['review_3_author']; ?></p>
+                </div>
+            </div>
+
+            <!-- Review 4 -->
+            <div class="review-card">
+                <img src="https://media.gettyimages.com/id/1404193313/es/foto/man-walking.jpg?s=612x612&w=gi&k=20&c=3sSFQgcAb6wAtAGwI8SEG786gEP4ZSaMuJ-3H_J9rKQ=" alt="<?php echo $lang['review_4_author']; ?>" class="review-img">
+                <div class="review-content">
+                    <p class="review-text"><?php echo $lang['review_4_text']; ?></p>
+                    <p class="review-author"><?php echo $lang['review_4_author']; ?></p>
+                </div>
             </div>
         </div>
-        <!-- Review 2 -->
-        <div class="review-card">
-            <img src="path/to/image2.jpg" alt="<?php echo $lang['review_2_author']; ?>" class="review-img">
-            <div class="review-content">
-                <p class="review-text"><?php echo $lang['review_2_text']; ?></p>
-                <p class="review-author"><?php echo $lang['review_2_author']; ?></p>
-            </div>
-        </div>
-        <!-- Review 3 -->
-        <div class="review-card">
-            <img src="path/to/image3.jpg" alt="<?php echo $lang['review_3_author']; ?>" class="review-img">
-            <div class="review-content">
-                <p class="review-text"><?php echo $lang['review_3_text']; ?></p>
-                <p class="review-author"><?php echo $lang['review_3_author']; ?></p>
-            </div>
-        </div>
-        <!-- Review 4 -->
-        <div class="review-card">
-            <img src="path/to/image4.jpg" alt="<?php echo $lang['review_4_author']; ?>" class="review-img">
-            <div class="review-content">
-                <p class="review-text"><?php echo $lang['review_4_text']; ?></p>
-                <p class="review-author"><?php echo $lang['review_4_author']; ?></p>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
 
         
 
