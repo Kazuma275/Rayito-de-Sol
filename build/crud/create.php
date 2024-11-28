@@ -84,11 +84,20 @@ $password = $_SESSION['passwordValue'];
             </div>
         </nav>
         
-        <!-- Sección "Sign Up" -->
-        <section id="signup">
-            <h2>Cuenta creada correctamente!</h2>
-            <p>Bienvenido<?php echo htmlspecialchars($username);?>!</p>
+        <!--  Sección "Reservation" -->
 
+        <section id="reservation">
+        <h2><?php echo $lang['reservation_title']; ?></h2>
+        <p><?php echo $lang['reservation_description']; ?></p>
+            <form class="reservation-form">
+                <label for="reservation-date"><?php echo $lang['reservation_date_label']; ?></label>
+                <input type="date" id="reservation-date" name="reservation-date" required>
+
+                <label for="reservation-time"><?php echo $lang['reservation_time_label']; ?></label>
+                <input type="time" id="reservation-time" name="reservation-time" required>
+
+                <button type="submit"><?php echo $lang['reservation_button']; ?></button>
+            </form>
         </section>
         
         <!-- Footer -->
