@@ -1,13 +1,7 @@
-
 <?php
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 require_once "./controllers/conection.php"; // Asegúrate de que la conexión esté configurada correctamente
 
-$sql = "SELECT author, review_text FROM reviews_table"; // Cambia el nombre de la tabla y las columnas si es necesario
+$sql = "SELECT author, review_text FROM reviews"; // Cambié "reviews_table" por "reviews"
 $result = $conn->query($sql);
 
 if ($result === false) {
@@ -24,8 +18,3 @@ if ($result->num_rows > 0) {
     echo "No se encontraron resultados.";
 }
 ?>
-
-<?php
-echo "El archivo reviews.php se está cargando correctamente.";
-?>
-
