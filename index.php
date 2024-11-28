@@ -15,6 +15,19 @@ if (isset($_GET['lang'])) {
     $lang = $default_lang; // Usa el idioma predeterminado
 }
 
+// Verifica si la variable de sesión para el modo oscuro está establecida
+if (isset($_SESSION['dark_mode'])) {
+    $dark_mode = $_SESSION['dark_mode'];
+} else {
+    $dark_mode = false; // Estado predeterminado, sin modo oscuro
+}
+
+// Si el usuario ha cambiado el modo, guarda la preferencia en la sesión
+if (isset($_GET['toggle_dark_mode'])) {
+    $dark_mode = !$dark_mode; // Alterna el estado
+    $_SESSION['dark_mode'] = $dark_mode; // Guarda en la sesión
+}
+
 // Ruta del archivo de idioma
 $lang_file = __DIR__ . "/lang/{$lang}.php";
 
