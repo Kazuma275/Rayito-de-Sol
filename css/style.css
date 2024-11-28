@@ -175,8 +175,6 @@
 
     /****************** Language Selector  *******************/
 
-    /****************** Language Selector *******************/
-
     /* Contenedor de ajustes (bandera e ícono de la luna) */
     .settings-container {
         display: flex;
@@ -203,7 +201,7 @@
 
     .language-menu {
         display: none; /* Por defecto, el menú está oculto */
-        position: absolute; /* Permite que el menú se posicione respecto a su contenedor */
+        position: fixed; /* Permite que el menú se posicione respecto a su contenedor */
         top: 100%; /* Posiciona el menú justo debajo de la bandera */
         left: 0; /* Alinea el menú con la izquierda de la bandera */
         background-color: #fff; /* Fondo blanco para el menú */
