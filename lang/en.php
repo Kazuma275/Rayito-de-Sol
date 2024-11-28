@@ -1,11 +1,12 @@
 <?php
 
 $lang = [
-    // Parallax Section
+    
+    /* Parallax Section */
     'parallax_title' => 'Welcome to Rayito de Sol',
-    'parallax_subtitle' => 'The little bit of Sun you need.',
+    'parallax_subtitle' => 'The little bit of sun you need.',
 
-    // Amenities Section
+    /* Amenities Section */
     'amenities_title' => 'Welcome to Our Apartment',
     'amenities_description' => 'Enjoy an unforgettable stay in our cozy apartment with sea views. Perfect for a relaxing vacation with all the comforts you need.',
 
@@ -45,23 +46,56 @@ $lang = [
     'beach_title' => 'Beach at Your Feet',
     'beach_description' => 'Enjoy the beach right at the doorstep of the apartment, with easy access for your moments of relaxation.',
 
-    'title' => 'Rayito de Sol',
+    // Reviews Section
+    'reviews_title' => 'Customer Reviews',
+
+    'review_1_text' => '"The apartment is cozy and has everything you need. We really enjoyed the sea views. We will definitely come back!"',
+    'review_1_author' => '- Laura G.',
+
+    'review_2_text' => '"Excellent location, just steps from the beach. The apartment was spotless and decorated with great taste. Highly recommend it."',
+    'review_2_author' => '- Carlos M.',
+
+    'review_3_text' => '"Perfect for a relaxing vacation. The terrace has spectacular sunset views and the place is very quiet. Highly recommended."',
+    'review_3_author' => '- Ana P.',
+
+    'review_4_text' => '"The apartment was in perfect condition and very well equipped. The proximity to the beach and shops is ideal. I would definitely come back."',
+    'review_4_author' => '- Javier R.',
+
+    // Reservation Section
+    'reservation_title' => 'Reservation',
+    'reservation_description' => 'To make a reservation, fill out the form below or contact us directly by email or phone.',
+    'reservation_date_label' => 'Reservation Date:',
+    'reservation_time_label' => 'Reservation Time:',
+    'reservation_button' => 'Book',
+
+    // Contact Section
+    'contact_title' => 'Contact',
+    'contact_description' => 'If you have any questions or need more information, contact us through the form.',
+    'contact_name_label' => 'Name:',
+    'contact_email_label' => 'Email:',
+    'contact_message_label' => 'Message:',
+    'contact_button' => 'Send Message',
+
+    // Footer
     'home' => 'Home',
     'amenities' => 'Amenities',
-    'gallery' => 'Gallery',
-    'reviews' => 'Reviews',
     'contact' => 'Contact',
-    'booking' => 'Booking',
+    'reviews' => 'Reviews',
+    'reservation' => 'Reservation',
+    'gallery' => 'Gallery',
     'account' => 'Account',
+    'site_name' => 'Rayito de Sol',
+    'rights' => 'All rights reserved.',
+
+    // General
+    'title' => 'Rayito de Sol',
+    'booking' => 'Booking',
     'signup' => 'Sign Up',
-    'signup_message' => 'For any questions or more information, please reach out to us at',
+    'signup_message' => 'If you have questions or need more information, contact us at',
     'username' => 'Username',
     'password' => 'Password',
     'register' => 'Register',
     'current_lang' => 'English',
-    'rights' => 'All rights reserved.',
-
 ];
-
 
 ?>
