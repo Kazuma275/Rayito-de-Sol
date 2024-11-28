@@ -72,82 +72,81 @@ if (file_exists($lang_file)) {
         <section id="parallax-section">
             <div class="parallax-content">
                 <h1><?php echo $lang['parallax_title']?></h1>
-                <p>The little bit of Sun you need.</p>
+                <p><?php echo $lang['parallax_subtitle']?></p>
             </div>
         </section>
         
 
         <section id="amenities" class="intro-section">
-            <div class="container">
-                <h2>Welcome to Our Apartment</h2>
-                <p>Enjoy an unforgettable stay in our cozy apartment with sea views. Perfect for a relaxing vacation with all the comforts you need.</p>
-                
-                <div class="services-container">
-                    <!-- Main services of the apartment -->
-                    <div class="service-card">
-                        <h3>Bedroom</h3>
-                        <p>Double bed with two nightstands, sea views, and a spacious wardrobe for your comfort.</p>
-                    </div>
-        
-                    <div class="service-card">
-                        <h3>Bathroom</h3>
-                        <p>Private bathroom with shower and toilet, designed for your comfort and relaxation.</p>
-                    </div>
-        
-                    <div class="service-card">
-                        <h3>Lounge and Kitchen</h3>
-                        <p>Spacious lounge with sofa bed, table, and a fully equipped kitchen with countertop, refrigerator, freezer, and pantry.</p>
-                    </div>
-        
-                    <div class="service-card">
-                        <h3>Sea Views</h3>
-                        <p>Enjoy stunning sea views from the lounge and bedroom, perfect for relaxing.</p>
-                    </div>
-        
-                    <div class="service-card">
-                        <h3>Washing Machine and Dryer</h3>
-                        <p>Equipped with a washing machine and dryer to keep your clothes fresh and clean during your stay.</p>
-                    </div>
-        
-                    <div class="service-card">
-                        <h3>Kitchen Extras</h3>
-                        <p>Coffee maker with free coffee and chocolate, drawers with utensils, and a pantry for your shopping.</p>
-                    </div>
-        
-                    <div class="service-card">
-                        <h3>Electronic Lock</h3>
-                        <p>Door with an electronic lock for secure and hassle-free entry.</p>
-                    </div>
-        
-                    <div class="service-card">
-                        <h3>Other Amenities</h3>
-                        <p>Vacuum cleaner for quick and easy cleaning, and other essential accessories.</p>
-                    </div>
-
-                    <div class="service-card">
-                        <h3>Public Pool</h3>
-                        <p>Access to a nearby public pool, perfect for a refreshing swim on sunny days.</p>
-                    </div>
-                    
-                    <div class="service-card">
-                        <h3>Free Wi-Fi</h3>
-                        <p>Free Wi-Fi connection in the apartment so you can stay connected at all times.</p>
-                    </div>
-                    
-                    <div class="service-card">
-                        <h3>Restaurant</h3>
-                        <p>Just 50 meters from the apartment, you'll find an excellent seafood restaurant, perfect for tasting local delights.</p>
-                    </div>
-                    
-                    <div class="service-card">
-                        <h3>Beach at Your Feet</h3>
-                        <p>Enjoy the beach right at the doorstep of the apartment, with easy access for your moments of relaxation.</p>
-                    </div>
-                    
+        <div class="container">
+            <h2><?php echo $lang['amenities_title']; ?></h2>
+            <p><?php echo $lang['amenities_description']; ?></p>
+            
+            <div class="services-container">
+                <!-- Main services of the apartment -->
+                <div class="service-card">
+                    <h3><?php echo $lang['bedroom_title']; ?></h3>
+                    <p><?php echo $lang['bedroom_description']; ?></p>
                 </div>
+
+                <div class="service-card">
+                    <h3><?php echo $lang['bathroom_title']; ?></h3>
+                    <p><?php echo $lang['bathroom_description']; ?></p>
+                </div>
+
+                <div class="service-card">
+                    <h3><?php echo $lang['lounge_title']; ?></h3>
+                    <p><?php echo $lang['lounge_description']; ?></p>
+                </div>
+
+                <div class="service-card">
+                    <h3><?php echo $lang['sea_views_title']; ?></h3>
+                    <p><?php echo $lang['sea_views_description']; ?></p>
+                </div>
+
+                <div class="service-card">
+                    <h3><?php echo $lang['laundry_title']; ?></h3>
+                    <p><?php echo $lang['laundry_description']; ?></p>
+                </div>
+
+                <div class="service-card">
+                    <h3><?php echo $lang['kitchen_extras_title']; ?></h3>
+                    <p><?php echo $lang['kitchen_extras_description']; ?></p>
+                </div>
+
+                <div class="service-card">
+                    <h3><?php echo $lang['lock_title']; ?></h3>
+                    <p><?php echo $lang['lock_description']; ?></p>
+                </div>
+
+                <div class="service-card">
+                    <h3><?php echo $lang['other_amenities_title']; ?></h3>
+                    <p><?php echo $lang['other_amenities_description']; ?></p>
+                </div>
+
+                <div class="service-card">
+                    <h3><?php echo $lang['pool_title']; ?></h3>
+                    <p><?php echo $lang['pool_description']; ?></p>
+                </div>
+                
+                <div class="service-card">
+                    <h3><?php echo $lang['wifi_title']; ?></h3>
+                    <p><?php echo $lang['wifi_description']; ?></p>
+                </div>
+                
+                <div class="service-card">
+                    <h3><?php echo $lang['restaurant_title']; ?></h3>
+                    <p><?php echo $lang['restaurant_description']; ?></p>
+                </div>
+                
+                <div class="service-card">
+                    <h3><?php echo $lang['beach_title']; ?></h3>
+                    <p><?php echo $lang['beach_description']; ?></p>
+                </div>
+                
             </div>
-        </section>
-        
+        </div>
+    </section>
 
         <!-- Gallery Section -->
         <section id="gallery">
