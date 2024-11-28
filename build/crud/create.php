@@ -85,7 +85,6 @@ $password = $_SESSION['passwordValue'];
         </nav>
         
         <!--  Sección "Reservation" -->
-
         <section id="reservation">
         <h2><?php echo $lang['reservation_title']; ?></h2>
         <p><?php echo $lang['reservation_description']; ?></p>
