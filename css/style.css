@@ -80,6 +80,11 @@
         color: black; /* Texto blanco en modo oscuro */
     }
 
+    .language-menu.active {
+        display: block; /* Asegura que el menú se muestre */
+    }
+    
+
     .dark-mode-toggle {
         background-color: transparent;
         border: none;
