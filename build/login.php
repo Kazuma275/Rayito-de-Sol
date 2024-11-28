@@ -55,9 +55,9 @@ if (file_exists($lang_file)) {
     <link rel="icon" href="img/favicon.png" type="image/x-icon">
 
     <!-- JS -->
-    <script defer src="../../js/javascript.js"></script>
-    <script defer src="../../js/darkmode.js"></script>
-    <script defer src="../../js/languague.js"></script>
+    <script defer src="./js/javascript.js"></script>
+    <script defer src="./js/darkmode.js"></script>
+    <script defer src="./js/languague.js"></script>
 
 </head>
 <body>
