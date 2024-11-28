@@ -82,7 +82,7 @@ if (file_exists($lang_file)) {
         <!-- Sección "Sign Up" -->
         <section id="signup">
             <h2>Cuenta creada correctamente!</h2>
-            <p>Tus datos subnormal: <? echo $password . $username ?></p>
+            <p>Tus datos subnormal: <? echo $_SESSION['passwordValue'] ?></p>
 
         </section>
         
