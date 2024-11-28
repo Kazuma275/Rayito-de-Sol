@@ -71,7 +71,7 @@ if (file_exists($lang_file)) {
         
         <section id="parallax-section">
             <div class="parallax-content">
-                <h1>Welcome to Rayito de Sol</h1>
+                <h1><?php echo $lang['parallax_title']?></h1>
                 <p>The little bit of Sun you need.</p>
             </div>
         </section>
