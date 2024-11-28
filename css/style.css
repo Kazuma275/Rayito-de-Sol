@@ -170,15 +170,24 @@
 
     /****************** Language Selector  *******************/
 
-    /* Contenedor de la bandera y selector de idioma */
-    .language-selector {
-        position: relative;
-        display: inline-block;
-        margin-right: 10px;
-        cursor: pointer;
+    /****************** Language Selector *******************/
+
+    /* Contenedor de ajustes (bandera e ícono de la luna) */
+    .settings-container {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Espacio entre la bandera y la luna */
+        float: right;
     }
 
-    /* Imagen de la bandera principal */
+    /* Estilo de la bandera */
+    .language-selector {
+        position: absolute; /* Permite posicionar el menú desplegable relativo a la bandera */
+        display: inline-block;
+        cursor: pointer;
+        z-index: 10; /* Asegura que este elemento esté por encima de otros */
+    }
+
     .language-selector .flag {
         width: 24px;
         height: auto;
@@ -186,26 +195,25 @@
         display: block;
     }
 
-    /* Menú desplegable */
     .language-menu {
         position: absolute;
-        top: 100%;
-        left: 0;
+        top: 100%; /* Justo debajo de la bandera */
+        left: -50px; /* Ajusta el valor según tu diseño */
         background-color: #fff;
         border: 1px solid #ccc;
         border-radius: 5px;
-        display: none;
-        z-index: 10;
+        display: none; /* Por defecto está oculto */
+        z-index: 9999;
         list-style: none;
         padding: 0;
         margin: 5px 0;
-        width: 150px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100px;
     }
 
     /* Elementos del menú */
     .language-menu li {
-        padding: 10px;
+        padding: 8px 10px;
         display: flex;
         align-items: center;
     }
@@ -225,10 +233,73 @@
         border-radius: 3px;
     }
 
-    /* Mostrar el menú al hacer hover */
-    .language-selector:hover .language-menu {
-        display: block;
+    .language-menu.active {
+        display: block; /* Mostrar el menú cuando se agrega la clase `active` */
     }
+
+    .language-selector, .dark-mode-icon {
+        display: flex;
+        align-items: center; /* Centra verticalmente */
+        justify-content: center; /* Centra horizontalmente */
+        cursor: pointer; /* Asegura que el cursor cambie cuando se pasa sobre ellos */
+    }
+    
+    .language-selector img.flag,
+    .dark-mode-icon img {
+        width: 24px; /* Ajusta el tamaño de la bandera y la luna */
+        height: auto;
+    }
+    
+
+    .language-menu li {
+        display: flex;
+        align-items: center;
+        cursor: pointer; /* Indica que es un elemento clicable */
+        padding: 8px 10px; /* Espacio interno */
+        transition: background-color 0.2s; /* Efecto visual al pasar el ratón */
+    }
+    
+    .language-menu li:hover {
+        background-color: #f0f0f0; /* Cambia el color de fondo al pasar el ratón */
+    }
+
+    
+    .language-menu li img.flag-preview {
+        width: 24px; /* Ajusta el tamaño de la bandera */
+        height: auto;
+        margin-right: 8px; /* Espacio entre la bandera y el texto */
+    }
+    
+    .language-menu li a {
+        color: #333;
+        text-decoration: none;
+        display: flex;
+        align-items: center; /* Alinea el texto verticalmente con la imagen */
+    }
+
+    #current-flag {
+        width: 24px; /* Ajusta el tamaño de la bandera actual */
+        height: auto;
+        display: inline-block;
+        cursor: pointer; /* Indica que es un elemento clicable */
+    }
+
+    
+    .language-menu li {
+        display: flex;
+        align-items: center; /* Centra verticalmente la imagen y el texto */
+        justify-content: center; /* Centra horizontalmente los elementos */
+        cursor: pointer;
+        padding: 8px 10px;
+        transition: background-color 0.2s;
+    }
+    
+    .language-menu li img.flag-preview {
+        width: 24px; /* Ajusta el tamaño de la bandera */
+        height: auto;
+        margin-right: 8px; /* Espacio entre la bandera y el texto */
+    }
+
 
     /****************** Parallax Section *******************/
 
