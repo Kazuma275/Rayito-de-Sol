@@ -9,8 +9,7 @@ $sql = "
     SELECT 
         s.service_id,
         st.service_name,
-        st.service_description,
-        s.icon_path
+        st.service_description
     FROM 
         services s
     JOIN 
@@ -42,11 +41,6 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         echo '<div class="service-card">';
         
-        // Mostrar ícono si existe
-        if (!empty($row['icon_path'])) {
-            echo '<img src="' . htmlspecialchars($row['icon_path']) . '" alt="' . htmlspecialchars($row['service_name']) . '" class="service-icon">';
-        }
-
         // Mostrar nombre y descripción del servicio
         echo '<h3>' . htmlspecialchars($row['service_name']) . '</h3>';
         echo '<p>' . nl2br(htmlspecialchars($row['service_description'])) . '</p>';
