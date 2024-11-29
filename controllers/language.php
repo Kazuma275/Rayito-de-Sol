@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 // Define un idioma predeterminado
@@ -20,6 +19,13 @@ $lang_file = __DIR__ . "/lang/{$lang}.php";
 if (file_exists($lang_file)) {
     include $lang_file;
 } else {
-    $lang = $default_lang; 
+    // Si el archivo de idioma no existe, se usa el idioma por defecto
+    include __DIR__ . "/lang/{$default_lang}.php";
+    $lang = $default_lang;
+}
+
+// Verifica el tipo de la variable $lang para depuración
+if (!is_string($lang)) {
+    die('Error: $lang no es un string.');
 }
 ?>

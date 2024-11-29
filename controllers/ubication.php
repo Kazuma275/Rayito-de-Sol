@@ -1,9 +1,9 @@
-<?php 
+<?php
 session_start();
 include './language.php';
 
-echo "Idioma detectado: " . $lang;
-
+// Debugging: Mostrar el tipo y el valor de $lang
+var_dump($lang);
 ?>
 
 <div id="iframe">
@@ -17,6 +17,7 @@ echo "Idioma detectado: " . $lang;
         referrerpolicy="no-referrer-when-downgrade">
     </iframe>
 </div>
+
 
 
 <!-- Cargar la API de Google Maps con la clave de API -->
