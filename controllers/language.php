@@ -5,11 +5,6 @@ session_start();
 // Define un idioma predeterminado
 $default_lang = 'es';
 
-if ($_SESSION['lang'] === 'cn') {
-    $_SESSION['lang'] = 'zh-CN'; // Ajusta el valor de la sesión a un formato válido
-}
-
-
 // Obtén el idioma de la URL o de la sesión
 if (isset($_GET['lang'])) {
     $lang = $_GET['lang'];
