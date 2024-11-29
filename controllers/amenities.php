@@ -4,18 +4,23 @@ require_once "./controllers/conection.php";
 // Idioma actual (predeterminado: 'es')
 $currentLang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'es';
 
-// Consulta las amenities (comodidades) con soporte para idiomas
+// Consulta los servicios con sus traducciones
 $sql = "
     SELECT 
-        service_id,
-        service_name,
-        service_description
+        s.service_id,
+        st.service_name,
+        st.service_description,
+        s.icon_path
     FROM 
-        amenities
+        services s
+    JOIN 
+        services_translations st 
+    ON 
+        s.service_id = st.service_id
     WHERE 
-        language_code = ?
+        st.language_code = ?
     ORDER BY 
-        service_id ASC
+        s.service_id ASC
 ";
 
 $stmt = $conn->prepare($sql);
@@ -36,12 +41,19 @@ if ($result === false) {
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         echo '<div class="service-card">';
+        
+        // Mostrar ícono si existe
+        if (!empty($row['icon_path'])) {
+            echo '<img src="' . htmlspecialchars($row['icon_path']) . '" alt="' . htmlspecialchars($row['service_name']) . '" class="service-icon">';
+        }
+
+        // Mostrar nombre y descripción del servicio
         echo '<h3>' . htmlspecialchars($row['service_name']) . '</h3>';
         echo '<p>' . nl2br(htmlspecialchars($row['service_description'])) . '</p>';
         echo '</div>';
     }
 } else {
-    echo "We didn't find any information, sorry.";
+    echo "<p>No encontramos servicios disponibles en este idioma.</p>";
 }
 
 // Cierra la declaración

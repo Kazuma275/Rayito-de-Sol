@@ -116,70 +116,9 @@ if (file_exists($lang_file)) {
             <p><?php echo $lang['amenities_description']; ?></p>
             
             <div class="services-container">
-                <!-- Main services of the apartment -->
-
                 <?php require_once "./controllers/amenities.php";?>
-                <div class="service-card">
-                    <h3><?php echo $lang['bedroom_title']; ?></h3>
-                    <p><?php echo $lang['bedroom_description']; ?></p>
-                </div>
-
-                <div class="service-card">
-                    <h3><?php echo $lang['bathroom_title']; ?></h3>
-                    <p><?php echo $lang['bathroom_description']; ?></p>
-                </div>
-
-                <div class="service-card">
-                    <h3><?php echo $lang['lounge_title']; ?></h3>
-                    <p><?php echo $lang['lounge_description']; ?></p>
-                </div>
-
-                <div class="service-card">
-                    <h3><?php echo $lang['sea_views_title']; ?></h3>
-                    <p><?php echo $lang['sea_views_description']; ?></p>
-                </div>
-
-                <div class="service-card">
-                    <h3><?php echo $lang['laundry_title']; ?></h3>
-                    <p><?php echo $lang['laundry_description']; ?></p>
-                </div>
-
-                <div class="service-card">
-                    <h3><?php echo $lang['kitchen_extras_title']; ?></h3>
-                    <p><?php echo $lang['kitchen_extras_description']; ?></p>
-                </div>
-
-                <div class="service-card">
-                    <h3><?php echo $lang['lock_title']; ?></h3>
-                    <p><?php echo $lang['lock_description']; ?></p>
-                </div>
-
-                <div class="service-card">
-                    <h3><?php echo $lang['other_amenities_title']; ?></h3>
-                    <p><?php echo $lang['other_amenities_description']; ?></p>
-                </div>
-
-                <div class="service-card">
-                    <h3><?php echo $lang['pool_title']; ?></h3>
-                    <p><?php echo $lang['pool_description']; ?></p>
-                </div>
-                
-                <div class="service-card">
-                    <h3><?php echo $lang['wifi_title']; ?></h3>
-                    <p><?php echo $lang['wifi_description']; ?></p>
-                </div>
-                
-                <div class="service-card">
-                    <h3><?php echo $lang['restaurant_title']; ?></h3>
-                    <p><?php echo $lang['restaurant_description']; ?></p>
-                </div>
-                
-                <div class="service-card">
-                    <h3><?php echo $lang['beach_title']; ?></h3>
-                    <p><?php echo $lang['beach_description']; ?></p>
-                </div>
-                
             </div>
+            
         </div>
     </section>
 
