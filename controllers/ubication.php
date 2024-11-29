@@ -1,6 +1,8 @@
 <?php
 session_start();
 include './language.php';
+// Después de que se define el idioma
+var_dump($_SESSION['lang']); // Esto debería mostrar solo un string como "es" o "en"
 
 ?>
 
