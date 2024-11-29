@@ -4,23 +4,18 @@ require_once "./controllers/conection.php";
 // Idioma actual (predeterminado: 'es')
 $currentLang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'es';
 
-// Consulta las amenities (comodidades) con sus traducciones
+// Consulta las amenities (comodidades) con soporte para idiomas
 $sql = "
     SELECT 
-        a.amenity_id,
-        a.icon_path,
-        at.title,
-        at.description
+        service_id,
+        service_name,
+        service_description
     FROM 
-        amenities a
-    JOIN 
-        amenity_translations at
-    ON 
-        a.amenity_id = at.amenity_id
+        amenities
     WHERE 
-        at.language_code = ?
+        language_code = ?
     ORDER BY 
-        a.amenity_id ASC
+        service_id ASC
 ";
 
 $stmt = $conn->prepare($sql);
@@ -41,14 +36,8 @@ if ($result === false) {
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         echo '<div class="service-card">';
-
-        // Mostrar icono si existe
-        if (!empty($row['icon_path'])) {
-            echo '<img src="' . htmlspecialchars($row['icon_path']) . '" alt="Icono de la comodidad" class="service-icon">';
-        }
-
-        echo '<h3>' . htmlspecialchars($row['title']) . '</h3>';
-        echo '<p>' . nl2br(htmlspecialchars($row['description'])) . '</p>';
+        echo '<h3>' . htmlspecialchars($row['service_name']) . '</h3>';
+        echo '<p>' . nl2br(htmlspecialchars($row['service_description'])) . '</p>';
         echo '</div>';
     }
 } else {
