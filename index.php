@@ -75,6 +75,7 @@ if (file_exists($lang_file)) {
                 <a href="#reviews"><?php echo $lang['reviews']?></a>
                 <a href="#contact"><?php echo $lang['contact']?></a>
                 <a href="#reservation"><?php echo $lang['booking']?></a>
+                <a href="#ubication"><?php echo $lang['']?>Ubicación</a>
                 <a href="./build/signup.php"><?php echo $lang['account']?></a>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
@@ -195,6 +196,10 @@ if (file_exists($lang_file)) {
         </form>
         </section>
         
+        <section id="ubication" >
+            <?php include 'ubication.php'; ?>
+        </section>
+
         <footer class="footer">
     <div class="container">
         <!-- Enlaces a secciones -->
