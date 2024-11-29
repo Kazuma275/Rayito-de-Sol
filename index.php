@@ -197,7 +197,7 @@ if (file_exists($lang_file)) {
         </section>
         
         <section id="ubication">
-            <?php include 'ubication.php'; ?>
+            <?php require_once './controllers/ubication.php'; ?>
         </section>
 
         <footer class="footer">
