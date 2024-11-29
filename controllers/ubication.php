@@ -11,8 +11,8 @@
 <iframe src="https://maps.google.com/maps?q=6NA3vup2ELqQ5umDA&output=embed" 
         width="100%" 
         height="400px" 
+        width="device-width" 
         style="border:0;" 
-        allowfullscreen="" 
         loading="lazy"></iframe>
 
 <!-- Cargar la API de Google Maps con la clave de API -->
