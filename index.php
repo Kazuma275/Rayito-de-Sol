@@ -196,7 +196,7 @@ if (file_exists($lang_file)) {
         </form>
         </section>
         
-        <section id="ubication" >
+        <section id="ubication">
             <?php include 'ubication.php'; ?>
         </section>
 
