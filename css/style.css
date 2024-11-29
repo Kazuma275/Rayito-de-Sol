@@ -890,6 +890,20 @@
         max-width: 800px; /* Limita el ancho */
     }
 
+    #iframe {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%; /* Ajusta el contenedor al 100% del ancho de su contenedor padre */
+        height: 100%; /* Ajusta el contenedor al 100% de la altura de su contenedor padre */
+    }
+    
+    #iframe iframe {
+        display: block;
+        width: 100%; /* Ocupa el 100% del ancho del contenedor */
+        height: 100%; /* Ocupa el 100% de la altura del contenedor */
+    }
+    
 
     /****************** Form *********************/
 
