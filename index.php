@@ -117,6 +117,8 @@ if (file_exists($lang_file)) {
             
             <div class="services-container">
                 <!-- Main services of the apartment -->
+
+                <?php require_once "./controllers/amenities.php.php";?>
                 <div class="service-card">
                     <h3><?php echo $lang['bedroom_title']; ?></h3>
                     <p><?php echo $lang['bedroom_description']; ?></p>
