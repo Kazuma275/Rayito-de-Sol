@@ -848,6 +848,49 @@
         background-color: #385E7A; /* Color de hover del botón */
     }
 
+    /***************** Ubication ******************/
+
+        /* Estilos para la sección de ubicación */
+    .ubication-title {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        text-align: center;
+        color: #333;
+    }
+
+    .ubication-description {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        color: #555;
+    }
+
+    .ubication-details {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        color: #777;
+    }
+
+    .ubication-map {
+        display: block;
+        margin: 0 auto;
+        border-radius: 8px; /* Bordes redondeados */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    }
+
+    /* Puedes ajustar el tamaño y el diseño de la sección */
+    #ubication {
+        padding: 2rem 1rem;
+        background-color: #f9f9f9; /* Fondo claro */
+        border: 1px solid #ddd;
+        border-radius: 10px; /* Bordes redondeados */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 2rem auto;
+        max-width: 800px; /* Limita el ancho */
+    }
+
+
     /****************** Form *********************/
 
     #signup {
