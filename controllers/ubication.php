@@ -15,6 +15,7 @@ var_dump($_SESSION['lang']); // Verifica que la variable contiene el valor esper
 </div>
 
 
+
 <!-- Cargar la API de Google Maps con la clave de API -->
 <script src="https://maps.googleapis.com/maps/api/js?key=TU_CLAVE_API&callback=initMap" async defer></script>
 
