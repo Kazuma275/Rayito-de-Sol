@@ -1,7 +1,7 @@
 <?php include './language.php'; // Incluye el archivo para definir $lang ?>
 <?php
 // Prueba con un valor de idioma estático
-$lang = 'cn';
+$lang = 'it';
 ?>
 <div id="iframe">
     <iframe 
