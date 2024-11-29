@@ -98,6 +98,9 @@ $lang = [
     'register' => 'Registrar',
     'current_lang' => 'Español',
 
+    'ubication_title' => 'Ubicación',
+    'ubication_description' => 'Estamos ubicados en la zona de Alhamar, Calahonda.',
+
 ];
 
 ?>

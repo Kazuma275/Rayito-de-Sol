@@ -882,21 +882,21 @@
     /* Puedes ajustar el tamaño y el diseño de la sección */
     #ubication {
         padding: 2rem 1rem;
-        background-color: #f9f9f9; /* Fondo claro */
+        background-color: #f9f9f9;
         border: 1px solid #ddd;
-        border-radius: 10px; /* Bordes redondeados */
+        border-radius: 10px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         margin: 2rem auto;
-        max-width: 800px; /* Limita el ancho */
-        height: 800px;
+        max-width: 800px;
+        height: 600px;
     }
 
     #iframe {
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 100%; /* Ajusta el contenedor al 100% del ancho de su contenedor padre */
-        height: 100%; /* Ajusta el contenedor al 100% de la altura de su contenedor padre */
+        width: 100%; 
+        height: 100%; 
     }
     
     #iframe iframe {
