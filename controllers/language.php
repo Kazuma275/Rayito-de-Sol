@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 // Define un idioma predeterminado
@@ -14,11 +15,11 @@ if (isset($_GET['lang'])) {
     $lang = $default_lang; // Usa el idioma predeterminado
 }
 
-// Imprime la variable para ver qué valor tiene
-var_dump($lang);
-
-// Verifica si $lang es una cadena y no un array
-if (!is_string($lang)) {
-    $lang = $default_lang; // Asegúrate de que sea una cadena válida
+// Verifica si el archivo de idioma existe y se incluye
+$lang_file = __DIR__ . "/lang/{$lang}.php";
+if (file_exists($lang_file)) {
+    include $lang_file;
+} else {
+    $lang = $default_lang; 
 }
 ?>
