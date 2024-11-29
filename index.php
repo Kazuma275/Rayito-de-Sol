@@ -70,7 +70,7 @@ if (file_exists($lang_file)) {
         <nav>
             <div class="topnav" id="myTopnav">
                 <a href="#parallax-section" class="active">Home</a>
-                <a href="#amenities"><?php echo $lang['services']?></a>
+                <a href="#amenities"><?php echo $lang['amenities']?></a>
                 <a href="#gallery"><?php echo $lang['gallery']?></a>
                 <a href="#reviews"><?php echo $lang['reviews']?></a>
                 <a href="#contact"><?php echo $lang['contact']?></a>
@@ -110,15 +110,14 @@ if (file_exists($lang_file)) {
         </section>
         
 
-        <section id="services" class="intro-section">
+        <section id="amenities" class="intro-section">
         <div class="container">
-            <h2><?php echo $lang['services_title']; ?></h2>
-            <p><?php echo $lang['services_description']; ?></p>
+            <h2><?php echo $lang['amenities_title']; ?></h2>
+            <p><?php echo $lang['amenities_description']; ?></p>
             
             <div class="services-container">
-                <?php require_once "./controllers/services.php";?>
+                <?php require_once "./controllers/amenities.php";?>
             </div>
-
         </div>
     </section>
 
@@ -201,7 +200,7 @@ if (file_exists($lang_file)) {
         <!-- Enlaces a secciones -->
         <div class="footer-links">
             <a href="#" class="active"><?php echo $lang['home']; ?></a>
-            <a href="#services"><?php echo $lang['services']; ?></a>
+            <a href="#amenities"><?php echo $lang['amenities']; ?></a>
             <a href="#contact"><?php echo $lang['contact']; ?></a>
             <a href="#reviews"><?php echo $lang['reviews']; ?></a>
             <a href="#reservation"><?php echo $lang['reservation']; ?></a>
