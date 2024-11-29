@@ -1,3 +1,15 @@
+<?php
+session_start();
+include './language.php';
+// Depuración: Verifica el valor de $lang
+if (is_array($lang)) {
+    echo 'Idioma cargado correctamente.<br>';
+} else {
+    echo 'Error: La variable $lang no es un array.<br>';
+}
+?>
+
+
 <?php include './language.php'; // Incluye el archivo de idioma ?>
 <div id="iframe">
     <iframe 
