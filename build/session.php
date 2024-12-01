@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once "../controllers/conection.php";
+require_once "./register.php";
 
 // Verifica si el formulario de inicio de sesión ha sido enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -23,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $result->fetch_assoc();
 
         // Verificar la contraseña (asegurándose de que esté encriptada)
-        if ($password === $_SESSION['password']) { // Cambia esto a `password_verify($password, $user['password'])` si usas `password_hash()`
+        if ($password === $passwordValue) { // Cambia esto a `password_verify($password, $user['password'])` si usas `password_hash()`
             // Guarda la información de la sesión
             $_SESSION['username'] = $user['username'];
             $_SESSION['logged_in'] = true;
