@@ -54,6 +54,7 @@ if ($result->num_rows > 0) {
         echo '</div>';
     }
 } else {
+    /* TODO */
     echo "We didn't find any information, sorry.";
 }
 

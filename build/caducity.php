@@ -1,32 +1,25 @@
 <?php
-session_start();
 
-// Configura la caducidad de la sesión (10 segundos)
-$sessionTimeout = 300; // tiempo en segundos
+    /**
+     * Desarrollo web en Entorno Servidor
+     * curso 2024|25
+     * 
+     * @author Antonio J. Sánchez    
+     */
 
-// Verifica si la variable de sesión de la última actividad está definida
-if (isset($_SESSION['last_activity'])) {
-    // Calcula el tiempo de inactividad
-    $inactiveTime = time() - $_SESSION['last_activity'];
+    session_start() ;    
+    
+    if ((empty($_SESSION)) || 
+        (time() >= $_SESSION["time"])):            
+            $_SESSION = [] ;
+            die(header("location: login.php")) ;    # mejor redirigir al login
+    endif ;
 
-    // Si la inactividad supera el tiempo de caducidad, cierra la sesión
-    if ($inactiveTime > $sessionTimeout) {
-        session_unset(); // Elimina todas las variables de sesión
-        session_destroy(); // Destruye la sesión
-        header("Location: ../../index.php"); // Redirige al login
-        exit();
-    }
-}
+    
+    # actualizamos el tiempo de sesion
+    $_SESSION["time"] = time() + 300;
+    
+    # definimos el token (evita ataques csrf)
+    $_SESSION["token"] = md5(time()) ;
 
-// Actualiza la variable de última actividad con la hora actual
-$_SESSION['last_activity'] = time();
-
-// Verifica si la sesión está activa
-if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true) {
-    echo "Bienvenido, " . htmlspecialchars($_SESSION['username']) . "!<br>";
-    echo "La sesión es activa y caducará en 10 segundos de inactividad.";
-} else {
-    header("Location: login.php"); // Redirige si no está autenticado
-    exit();
-}
 ?>
