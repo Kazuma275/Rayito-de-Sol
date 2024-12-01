@@ -102,6 +102,13 @@ if (file_exists($lang_file)) {
                 </div>
 			</div>
         </nav>
+
+        <?php if (isset($_GET['session_expired']) && $_GET['session_expired'] == 'true'): ?>
+    <div class="alert">
+        La sesión ha expirado. Por favor, inicia sesión nuevamente.
+    </div>
+<?php endif; ?>
+
         
         <section id="parallax-section">
             <div class="parallax-content">

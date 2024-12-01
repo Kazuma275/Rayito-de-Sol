@@ -1,25 +1,11 @@
 <?php
 
-    /**
-     * Desarrollo web en Entorno Servidor
-     * curso 2024|25
-     * 
-     * @author Antonio J. Sánchez    
-     */
+session_start();
 
-    session_start() ;    
-    
-    if ((empty($_SESSION)) || 
-        (time() >= $_SESSION["time"])):            
-            $_SESSION = [] ;
-            die(header("location: login.php")) ;    # mejor redirigir al login
-    endif ;
+// Configurar la duración de la sesión a 5 minutos (300 segundos)
+$session_lifetime = 300; // 5 minutos
+ini_set('session.gc_maxlifetime', $session_lifetime);
+session_set_cookie_params($session_lifetime);
 
-    
-    # actualizamos el tiempo de sesion
-    $_SESSION["time"] = time() + 300;
-    
-    # definimos el token (evita ataques csrf)
-    $_SESSION["token"] = md5(time()) ;
 
 ?>
