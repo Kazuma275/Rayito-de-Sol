@@ -1,5 +1,8 @@
 <?php
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 
 // Verifica si la sesión tiene un tiempo de expiración configurado
@@ -16,24 +19,34 @@ $_SESSION['LAST_ACTIVITY'] = time(); // Actualiza el tiempo de la última activi
 require_once "../controllers/conection.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    echo "Formulario enviado.<br>"; // Depuración
+
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 
     if (!empty($username) && !empty($password)) {
+        echo "Campos recibidos: $username<br>"; // Depuración
+
         // Consulta para verificar las credenciales
         $sql = "SELECT id, username, password FROM users WHERE username = ?";
         $stmt = $conn->prepare($sql);
 
         if ($stmt) {
+            echo "Consulta preparada correctamente.<br>"; // Depuración
+
             $stmt->bind_param("s", $username);
             $stmt->execute();
             $result = $stmt->get_result();
 
             if ($result->num_rows === 1) {
+                echo "Usuario encontrado.<br>"; // Depuración
+
                 $user = $result->fetch_assoc();
 
                 // Verifica la contraseña
                 if (password_verify($password, $user['password'])) {
+                    echo "Contraseña válida.<br>"; // Depuración
+
                     // Credenciales válidas, establece variables de sesión
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
@@ -43,17 +56,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header("Location: ../main.php");
                     exit();
                 } else {
-                    $error = "Contraseña incorrecta.";
+                    echo "Contraseña incorrecta.<br>"; // Depuración
                 }
             } else {
-                $error = "Usuario no encontrado.";
+                echo "Usuario no encontrado.<br>"; // Depuración
             }
             $stmt->close();
         } else {
-            $error = "Error en la consulta: " . $conn->error;
+            echo "Error en la consulta: " . $conn->error . "<br>"; // Depuración
         }
     } else {
-        $error = "Por favor, completa todos los campos.";
+        echo "Campos vacíos.<br>"; // Depuración
     }
 }
 
@@ -171,7 +184,7 @@ $password = $_SESSION['passwordValue'];
         </form>
         
         <p>¿No tienes una cuenta? <a href="register.php">Regístrate aquí</a>.</p>
-        
+
         </section>
 
         <!-- Footer -->
