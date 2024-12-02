@@ -49,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     // Redirige al index
                     header("Location: /index.php");
+
                     exit();
                 } else {
                     echo "Contraseña incorrecta.";
