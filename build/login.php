@@ -1,7 +1,8 @@
 <?php
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+/* DEPURACIÓN */
+/* ini_set('display_errors', 1);
+error_reporting(E_ALL); */
 
 session_start();
 
@@ -177,7 +178,7 @@ $conn->close(); // Cierra la conexión a la base de datos
             <input type="submit" value="Iniciar Sesión">
         </form>
         
-        <p>¿No tienes una cuenta? <a href="register.php">Regístrate aquí</a>.</p>
+        <p>¿No tienes una cuenta? <a href="signup.php">Regístrate aquí</a>.</p>
 
         </section>
 
