@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['logged_in'] = true;
 
                     // Redirige al index
-                    header("Location: https://rayitodesol.es");
+                    header("Location: main.php");
                     exit();
                 } else {
                     echo "Contraseña incorrecta.";
