@@ -93,9 +93,6 @@ if (file_exists($lang_file)) {
     die("Error: Archivo de idioma no encontrado.");
 }
 
-$username = $_SESSION['usernameValue'];
-$password = $_SESSION['passwordValue'];
-
 ?>
 
 <!DOCTYPE html>
