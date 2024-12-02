@@ -48,8 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['logged_in'] = true;
 
                     // Redirige al index
-                    echo realpath($_SERVER['DOCUMENT_ROOT'] . '/index.php');
-
+                    echo "Antes de la redirección";
                     header("Location: ../index.php");
 
                     exit();
