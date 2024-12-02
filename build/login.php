@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($username) && !empty($password)) {
         // Consulta para verificar las credenciales
-        $sql = "SELECT id, username, password FROM users WHERE username = ?";
+        $sql = "SELECT user_id, username, password FROM users WHERE username = ?";
         $stmt = $conn->prepare($sql);
 
         if ($stmt) {
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Verifica la contraseña
                 if (password_verify($password, $user['password'])) {
                     // Credenciales válidas, establece variables de sesión
-                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['logged_in'] = true;
 
