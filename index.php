@@ -37,7 +37,17 @@ if (file_exists($lang_file)) {
 } else {
     die("Error: Archivo de idioma no encontrado.");
 }
+
+if ((empty($_SESSION)) || 
+        (time() >= $_SESSION["time"])):            
+            $_SESSION = [] ;
+            die(header("location: https://rayitodesol.es/build/logout.php")) ;    # redirigir al logout
+endif ;
+
+$_SESSION["time"] = time() + 300;
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

@@ -2,6 +2,8 @@
 
 session_start();
 
+$_SESSION["token"] = md5(time()) ;
+
 // Define un idioma predeterminado
 $default_lang = 'es';
 

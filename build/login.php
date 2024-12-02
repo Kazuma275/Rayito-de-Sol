@@ -4,6 +4,45 @@ session_start();
 
 require_once "../controllers/conection.php";
 
+// Verifica si el formulario de inicio de sesión fue enviado
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
+
+    if (!empty($username) && !empty($password)) {
+        try {
+            // Conexión a la base de datos
+            $conn = new PDO("mysql:host=" . "localhost" . ";dbname=" . "rayito_db", username: "sergio", password: "almaysergio");
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Consulta para verificar las credenciales del usuario
+            $sql = "SELECT id, username, password FROM users WHERE username = :username LIMIT 1";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+            $stmt->execute();
+
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user && password_verify($password, $user['password'])) {
+                // Credenciales válidas, establece las variables de sesión
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['logged_in'] = true;
+
+                // Redirige al main
+                header("Location: ../main.php");
+                exit();
+            } else {
+                $error = "Credenciales incorrectas. Por favor, intenta de nuevo.";
+            }
+        } catch (PDOException $e) {
+            $error = "Error en la conexión a la base de datos: " . $e->getMessage();
+        }
+    } else {
+        $error = "Por favor, completa todos los campos.";
+    }
+}
+
 // Define un idioma predeterminado
 $default_lang = 'es';
 
@@ -91,7 +130,7 @@ $password = $_SESSION['passwordValue'];
         
         <!-- Sección "Sign Up" -->
         <section id="signup">
-        <h2>Login</h2>
+<!--         <h2>Login</h2>
             <form action="session.php" method="POST">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required><br>
@@ -100,7 +139,24 @@ $password = $_SESSION['passwordValue'];
                 <input type="password" id="password" name="password" required><br>
 
                 <input type="submit" value="Login">
-            </form>
+            </form> -->
+            <h2>Inicio de sesión</h2>
+
+<?php if (isset($error)): ?>
+    <p class="error"><?php echo htmlspecialchars($error); ?></p>
+<?php endif; ?>
+
+<form action="login.php" method="POST">
+    <label for="username">Usuario:</label>
+    <input type="text" id="username" name="username" required><br>
+
+    <label for="password">Contraseña:</label>
+    <input type="password" id="password" name="password" required><br>
+
+    <input type="submit" value="Iniciar sesión">
+</form>
+
+<p>¿No tienes cuenta? <a href="register.php">Regístrate aquí</a>.</p>
         </section>
 
         <!-- Footer -->
