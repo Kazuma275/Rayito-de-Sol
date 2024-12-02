@@ -1,3 +1,45 @@
+<?php
+
+session_start();
+
+// Define un idioma predeterminado
+$default_lang = 'es';
+
+// Obtén el idioma de la URL o de la sesión
+if (isset($_GET['lang'])) {
+    $lang = $_GET['lang'];
+    $_SESSION['lang'] = $lang; // Guarda el idioma seleccionado en la sesión
+} elseif (isset($_SESSION['lang'])) {
+    $lang = $_SESSION['lang']; // Usa el idioma almacenado en la sesión
+} else {
+    $lang = $default_lang; // Usa el idioma predeterminado
+}
+
+// Verifica si la variable de sesión para el modo oscuro está establecida
+if (isset($_SESSION['dark_mode'])) {
+    $dark_mode = $_SESSION['dark_mode'];
+} else {
+    $dark_mode = false; // Estado predeterminado, sin modo oscuro
+}
+
+// Si el usuario ha cambiado el modo, guarda la preferencia en la sesión
+if (isset($_GET['toggle_dark_mode'])) {
+    $dark_mode = !$dark_mode; // Alterna el estado
+    $_SESSION['dark_mode'] = $dark_mode; // Guarda en la sesión
+}
+
+// Ruta del archivo de idioma
+$lang_file = __DIR__ . "/lang/{$lang}.php";
+
+// Verifica si el archivo existe
+if (file_exists($lang_file)) {
+    include $lang_file;
+} else {
+    die("Error: Archivo de idioma no encontrado.");
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
