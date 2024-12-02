@@ -83,6 +83,12 @@ if (isset($_GET['lang'])) {
     $lang = $default_lang; // Usa el idioma predeterminado
 }
 
+
+if (!file_exists($lang_file)) {
+    echo "Error: Archivo de idioma no encontrado en: $lang_file";
+    exit;
+}
+
 // Ruta del archivo de idioma
 $lang_file = __DIR__ . "/lang/{$lang}.php";
 
