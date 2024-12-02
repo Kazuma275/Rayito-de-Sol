@@ -168,7 +168,7 @@ $password = $_SESSION['passwordValue'];
     <input type="submit" value="Iniciar sesión">
 </form>
 
-<p>¿No tienes cuenta? <a href="register.php">Regístrate aquí</a>.</p>
+<p>¿No tienes cuenta? <a href="signup.php">Regístrate aquí</a>.</p>
         </section>
 
         <!-- Footer -->
