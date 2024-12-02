@@ -5,6 +5,9 @@ error_reporting(E_ALL);
 
 session_start();
 
+$session_lifetime = 1800; // Tiempo de vida de la sesión en segundos
+
+
 // Verifica si la sesión tiene un tiempo de expiración configurado
 if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > $session_lifetime)) {
     // La sesión ha expirado
@@ -18,35 +21,26 @@ $_SESSION['LAST_ACTIVITY'] = time(); // Actualiza el tiempo de la última activi
 
 require_once "../controllers/conection.php";
 
+// Manejo de autenticación
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    echo "Formulario enviado.<br>"; // Depuración
-
-    $username = trim($_POST['username']);
-    $password = trim($_POST['password']);
+    $username = trim($_POST['username'] ?? '');
+    $password = trim($_POST['password'] ?? '');
 
     if (!empty($username) && !empty($password)) {
-        echo "Campos recibidos: $username<br>"; // Depuración
-
         // Consulta para verificar las credenciales
         $sql = "SELECT id, username, password FROM users WHERE username = ?";
         $stmt = $conn->prepare($sql);
 
         if ($stmt) {
-            echo "Consulta preparada correctamente.<br>"; // Depuración
-
             $stmt->bind_param("s", $username);
             $stmt->execute();
             $result = $stmt->get_result();
 
             if ($result->num_rows === 1) {
-                echo "Usuario encontrado.<br>"; // Depuración
-
                 $user = $result->fetch_assoc();
 
                 // Verifica la contraseña
                 if (password_verify($password, $user['password'])) {
-                    echo "Contraseña válida.<br>"; // Depuración
-
                     // Credenciales válidas, establece variables de sesión
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
@@ -56,48 +50,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header("Location: ../main.php");
                     exit();
                 } else {
-                    echo "Contraseña incorrecta.<br>"; // Depuración
+                    echo "Contraseña incorrecta.";
                 }
             } else {
-                echo "Usuario no encontrado.<br>"; // Depuración
+                echo "Usuario no encontrado.";
             }
             $stmt->close();
         } else {
-            echo "Error en la consulta: " . $conn->error . "<br>"; // Depuración
+            echo "Error en la consulta: " . $conn->error;
         }
     } else {
-        echo "Campos vacíos.<br>"; // Depuración
+        echo "Por favor, rellena todos los campos.";
     }
 }
 
-// Define un idioma predeterminado
+// Configuración de idioma
 $default_lang = 'es';
-
-// Obtén el idioma de la URL o de la sesión
 if (isset($_GET['lang'])) {
     $lang = $_GET['lang'];
-    $_SESSION['lang'] = $lang; // Guarda el idioma seleccionado en la sesión
+    $_SESSION['lang'] = $lang; // Guarda en la sesión
 } elseif (isset($_SESSION['lang'])) {
-    $lang = $_SESSION['lang']; // Usa el idioma almacenado en la sesión
+    $lang = $_SESSION['lang'];
 } else {
-    $lang = $default_lang; // Usa el idioma predeterminado
+    $lang = $default_lang; // Usa idioma predeterminado
 }
 
-
-if (!file_exists($lang_file)) {
-    echo "Error: Archivo de idioma no encontrado en: $lang_file";
-    exit;
-}
+// Limpia el idioma para evitar caracteres no válidos
+$lang = preg_replace('/[^a-z]/', '', $lang);
 
 // Ruta del archivo de idioma
 $lang_file = __DIR__ . "/lang/{$lang}.php";
 
-// Verifica si el archivo existe
+// Verifica si el archivo de idioma existe
 if (file_exists($lang_file)) {
     include $lang_file;
 } else {
-    die("Error: Archivo de idioma no encontrado.");
+    die("Error: Archivo de idioma no encontrado en: $lang_file");
 }
+
+$conn->close(); // Cierra la conexión a la base de datos
 
 ?>
 
