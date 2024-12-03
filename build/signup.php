@@ -94,9 +94,10 @@ if (file_exists($lang_file)) {
                     <input type="password" id="password" name="password" required>
                     <i id="toggle-password" class="fa fa-eye"></i>
                 </div>
-                <input type="submit" value="<?php echo $lang['register']; ?>"></input>
+                <input type="submit" value="<?php echo $lang['register']; ?>">
             </form>
         </section>
+
         
         <!-- Footer -->
         <footer class="footer">
