@@ -125,13 +125,13 @@ $conn->close(); // Cierra la conexión a la base de datos
                 <a href="#gallery"><?php echo $lang['gallery']?></a>
                 <a href="#reviews"><?php echo $lang['reviews']?></a>
                 <a href="#ubication"><?php echo $lang['ubication']; ?></a>
-                <a href="./build/signup.php"><?php echo $lang['account']?></a>
+                <a href="/build/signup.php"><?php echo $lang['account']?></a>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
-                    <a href="./build/create.php"><?php echo $lang['make_reservation']?></a>
+                    <a href="/build/create.php"><?php echo $lang['make_reservation']?></a>
                 <?php endif; ?>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
-                    <a href="./build/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
+                    <a href="/build/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
                 <?php endif; ?>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
