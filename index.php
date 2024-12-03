@@ -119,11 +119,6 @@ if (file_exists($lang_file)) {
         
         <section id="parallax-section">
             <div class="parallax-content">
-                
-                <?php if (isset($_SESSION['username']) && $_SESSION['not_logged_in'] === true): ?>
-                    <a class="login-message"><?php echo "Necesitas crear una cuenta para borrarla, cateto," . $_SESSION['username']?></a>
-                <?php endif; ?>
-
                 <h1><?php echo $lang['parallax_title']; ?></h1>
                 <p><?php echo $lang['parallax_subtitle']; ?></p>
             </div>
