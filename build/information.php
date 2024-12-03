@@ -101,7 +101,7 @@ $conn->close();
                 <a href="/index.php#gallery"><?php echo $lang['gallery']?></a>
                 <a href="/index.php#reviews"><?php echo $lang['reviews']?></a>
                 <a href="/index.php#ubication"><?php echo $lang['ubication']; ?></a>
-                <a href="/signup.php"><?php echo $lang['account']?></a>
+                <a href="/build/signup.php"><?php echo $lang['account']?></a>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
                     <a href="/create.php"><?php echo $lang['make_reservation']?></a>
