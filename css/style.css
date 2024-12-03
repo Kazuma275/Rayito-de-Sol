@@ -923,6 +923,18 @@
         color: #555;
     }
 
+    #signup a {
+        color: #2a9df4; /* Un color azul marino claro */
+        text-decoration: none; /* Elimina el subrayado */
+        font-size: 1em; /* Ajusta el tamaño de la fuente */
+        transition: color 0.3s ease; /* Transición suave al pasar el ratón */
+    }
+    
+    #signup a:hover {
+        color: #1b7bbd; /* Un tono más oscuro de azul para el efecto hover */
+        text-decoration: underline; /* Subrayado opcional al pasar el ratón */
+    }
+
     .signup-form {
         display: flex;
         flex-direction: column;
