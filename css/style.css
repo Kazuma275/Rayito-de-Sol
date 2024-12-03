@@ -124,7 +124,7 @@
         background-color: #444; /* Fondo de botones */
         color: #ffffff; /* Texto de botones */
     }
-    
+
     /* Estilo para .parallax-content en modo oscuro */
     body.dark-mode .parallax-content {
         background-color: #1e1e1e; /* Fondo oscuro */
@@ -142,6 +142,29 @@
         color: inherit;
         cursor: pointer;
     }
+
+        /* Estilo para la sección de amenities en modo oscuro */
+    body.dark-mode #amenities {
+        background-color: #2c2c2c; /* Fondo oscuro */
+        color: #ffffff; /* Texto claro */
+    }
+
+    /* Cambia los estilos de los elementos dentro de la sección de amenities */
+    body.dark-mode #amenities h2,
+    body.dark-mode #amenities p {
+        color: #dddddd; /* Texto claro en encabezados y párrafos */
+    }
+
+    body.dark-mode #amenities .services-container {
+        background-color: #3e3e3e; /* Fondo oscuro de la caja de servicios */
+        color: #ffffff; /* Texto claro */
+    }
+    
+    body.dark-mode #amenities .services-container h3, 
+    body.dark-mode #amenities .services-container p {
+        color: #dddddd; /* Texto claro */
+    }
+    
 
 
     /****************** Dark Button ********************/
