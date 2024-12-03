@@ -83,12 +83,10 @@ if (file_exists($lang_file)) {
         <section id="signup">
             <h2><?php echo $lang['signup']; ?></h2>
             <p><?php echo $lang['signup_message']; ?></p>
-            <a href="./login.php">Ya tienes una cuenta?</a> 
-            <a href="./delete.php">Quieres borrar tu cuenta?</a> 
             <form action="register.php" method="POST" class="signup-form">
                 <label for="username"><?php echo $lang['username']; ?>:</label>
                 <input type="text" id="username" name="username" required>
-
+                
                 <label for="password"><?php echo $lang['password']; ?>:</label>
                 <div class="password-container">
                     <input type="password" id="password" name="password" required>
@@ -96,6 +94,10 @@ if (file_exists($lang_file)) {
                 </div>
                 <input type="submit" value="<?php echo $lang['register']; ?>">
             </form>
+            <div class="links">
+            <a href="./login.php">Ya tienes una cuenta?</a> 
+            <a href="./delete.php">Quieres borrar tu cuenta?</a> 
+            </div>
         </section>
         
         <!-- Footer -->
