@@ -952,9 +952,9 @@
 
     .signup-form input[type="text"],
     .signup-form input[type="password"],
-    .signup-form textarea, 
     .login-form input[type="text"], 
     .login-form input[type="password"], 
+    .signup-form textarea, 
     .login-form textarea {
         padding: 10px;
         font-size: 1em;
