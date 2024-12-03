@@ -87,7 +87,7 @@ if (file_exists($lang_file)) {
             <p><?php echo $lang['signup_message']; ?></p>
             <a href="./login.php">Ya tienes una cuenta?</a> 
             <a href="./delete.php">Quieres borrar tu cuenta?</a> 
-            <form action="register.php" method="POST" class="signup-form">
+            <form action="./controllers/register.php" method="POST" class="signup-form">
                 <label for="username"><?php echo $lang['username']; ?>:</label>
                 <input type="text" id="username" name="username" required>
 
