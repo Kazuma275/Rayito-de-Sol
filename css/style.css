@@ -935,7 +935,6 @@
         text-decoration: underline; /* Subrayado al pasar el ratón */
     }
     
-
     .signup-form {
         display: flex;
         flex-direction: column;
