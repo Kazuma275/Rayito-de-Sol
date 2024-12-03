@@ -107,6 +107,8 @@ $lang = [
     'register_prompt' => 'Não tem uma conta?',
     'register_link' => 'Cadastre-se aqui',
 
+    'make_reservation' => 'Faça uma reserva',
+
 ];
 
 ?>

@@ -107,6 +107,8 @@ $lang = [
     'register_prompt' => '还没有账户？',
     'register_link' => '在这里注册',
 
+    'make_reservation' => '预订',
+
 ];
 
 ?>

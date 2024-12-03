@@ -98,16 +98,16 @@ $lang = [
     'current_lang' => 'Français',
 
     /* Log in */
-'login' => 'Connexion',
-'login_message' => 'Connectez-vous si vous avez déjà un compte',
-'login_account' => 'Vous possédez déjà un compte ?',
-'delete_account' => 'Voulez-vous supprimer votre compte ?',
-'login_username' => 'Nom d\'utilisateur :',
-'login_password' => 'Mot de passe :',
-'register_prompt' => 'Vous n\'avez pas de compte ?',
-'register_link' => 'Inscrivez-vous ici',
+    'login' => 'Connexion',
+    'login_message' => 'Connectez-vous si vous avez déjà un compte',
+    'login_account' => 'Vous possédez déjà un compte ?',
+    'delete_account' => 'Voulez-vous supprimer votre compte ?',
+    'login_username' => 'Nom d\'utilisateur :',
+    'login_password' => 'Mot de passe :',
+    'register_prompt' => 'Vous n\'avez pas de compte ?',
+    'register_link' => 'Inscrivez-vous ici',
 
-
+    'make_reservation' => 'Faire une réservation',
 
 ];
 
