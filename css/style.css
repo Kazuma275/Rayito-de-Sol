@@ -952,6 +952,16 @@
         box-sizing: border-box;
         resize: vertical;
     }
+
+    #toggle-password {
+        position: absolute;
+        top: 50%;
+        right: 10px; /* Ajusta para posicionar el ícono correctamente */
+        transform: translateY(-50%);
+        cursor: pointer;
+        font-size: 1.2em; /* Ajusta el tamaño del ícono */
+        color: #333; /* Color del ícono */
+    }
     
     .signup-form button {
         padding: 10px 20px;
