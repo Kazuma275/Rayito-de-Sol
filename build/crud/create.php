@@ -61,7 +61,7 @@ $password = $_SESSION['passwordValue'];
                 <a href="/index.php#reviews"><?php echo $lang['reviews']; ?></a>
                 <a href="/index.php#contact"><?php echo $lang['contact']; ?></a>
                 <a href="#"><?php echo $lang['account']; ?></a>
-                <a href="/crud/create.php">Haz una reserva</a>
+                <a href="#">Haz una reserva</a>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
                 <!-- Contenedor para la bandera y el modo oscuro -->
