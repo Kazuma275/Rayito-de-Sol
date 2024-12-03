@@ -46,6 +46,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_delete'])) {
 }
 
 $conn->close();
+
+// Ruta del archivo de idioma
+$lang_file = __DIR__ . "/lang/{$lang}.php";
+
+// Verifica si el archivo existe
+if (file_exists($lang_file)) {
+    include $lang_file;
+} else {
+    die("Error: Archivo de idioma no encontrado.");
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -107,29 +119,19 @@ $conn->close();
         
         <!-- Sección "Sign Up" -->
         <section id="signup">
-<!--         <h2>Login</h2>
-            <form action="session.php" method="POST">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required><br>
-                
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required><br>
-
-                <input type="submit" value="Login">
-            </form> -->
             <h2>Eliminar Cuenta</h2>
 
-    <?php if (isset($error)): ?>
-        <p class="error"><?php echo htmlspecialchars($error); ?></p>
-    <?php endif; ?>
+        <?php if (isset($error)): ?>
+            <p class="error"><?php echo htmlspecialchars($error); ?></p>
+        <?php endif; ?>
 
-    <p>¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.</p>
+        <p>¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.</p>
 
-    <form method="POST" action="">
-        <input type="hidden" name="confirm_delete" value="1">
-        <button type="submit">Eliminar Cuenta</button>
-        <a href="../index.php">Cancelar</a>
-    </form>
+        <form method="POST" action="">
+            <input type="hidden" name="confirm_delete" value="1">
+            <button type="submit">Eliminar Cuenta</button>
+            <a href="../index.php">Cancelar</a>
+        </form>
 
         </section>
 
