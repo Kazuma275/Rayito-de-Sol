@@ -57,7 +57,7 @@ if (file_exists($lang_file)) {
                 <a href="../index.php#amenities"><?php echo $lang['amenities']; ?></a>
                 <a href="../index.php#gallery"><?php echo $lang['gallery']; ?></a>
                 <a href="../index.php#reviews"><?php echo $lang['reviews']; ?></a>
-                <a href="#"><?php echo $lang['account']; ?></a>
+                <a href="#"><?php echo $lang['account'];?></a>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
                 <div class="settings-container" style="position: relative;">
@@ -103,8 +103,8 @@ if (file_exists($lang_file)) {
                 <input type="submit" value="<?php echo $lang['register']; ?>">
             </form>
             <div class="links">
-            <a href="./login.php">Ya tienes una cuenta?</a>
-            <a href="./delete.php">Quieres borrar tu cuenta?</a>
+                <a href="./login.php"><?php echo $lang['login_account']; ?></a>
+                <a href="./delete.php"><?php echo $lang['delete_account']; ?></a>
             </div>
         </section>
         

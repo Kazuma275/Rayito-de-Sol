@@ -163,11 +163,11 @@ $conn->close(); // Cierra la conexión a la base de datos
             <?php endif; ?>
         <form action="login.php" method="POST" class="login-form">
             <!-- Usuario -->
-            <label for="username">Usuario:</label>
+            <label for="username"><?php echo $lang['login_username']; ?></label>
             <input type="text" id="username" name="username" required>
 
             <!-- Contraseña -->
-            <label for="password">Contraseña:</label>
+            <label for="password"><?php echo $lang['login_password']; ?></label>
             <div class="password-container">
                 <input type="password" id="password" name="password" required>
                 <i id="toggle-password" class="fa fa-eye"></i>
@@ -177,7 +177,7 @@ $conn->close(); // Cierra la conexión a la base de datos
         </form>
         
         <div class="links">
-            ¿No tienes una cuenta? <a href="signup.php">Regístrate aquí</a>
+            <?php echo $lang['register_prompt']; ?> <a href="signup.php"><?php echo $lang['register_link']; ?></a>
         </div>
 
         </section>
