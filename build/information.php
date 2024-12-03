@@ -111,7 +111,7 @@ $conn->close();
             <p>Administra la información de tu cuenta y ajusta tus preferencias aquí.</p>
 
             <!-- Formulario para actualizar datos -->
-            <form id="reservation" method="POST" action="" class="manage-form login-form">
+            <form id="reservation" method="POST" action="update_password.php" class="manage-form login-form">
                 <label for="password">Actualizar contraseña:</label>
                 <input type="text" id="password" name="password" required>
                 <input type="submit" value="Guardar Cambios">
