@@ -923,20 +923,20 @@
         color: #555;
     }
 
-    .signup-form .links {
+    #signup .links {
         display: flex;
-        justify-content: space-between; /* Distribuye los enlaces a los extremos dentro del formulario */
+        align-items: center; /* Alinea los enlaces verticalmente */
         margin-top: 20px; /* Espacio entre el formulario y los enlaces */
     }
     
-    .signup-form .links a {
+    #signup .links a {
         color: #2a9df4; /* Color azul marino claro */
         text-decoration: none; /* Elimina el subrayado */
         font-size: 1em; /* Tamaño de fuente normal */
         transition: color 0.3s ease; /* Transición suave para el cambio de color */
     }
     
-    .signup-form .links a:hover {
+    #signup .links a:hover {
         color: #1b7bbd; /* Tono más oscuro de azul al pasar el ratón */
         text-decoration: underline; /* Subrayado al pasar el ratón */
     }
