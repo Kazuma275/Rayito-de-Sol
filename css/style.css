@@ -722,20 +722,20 @@
     /******************** Reservas **************************/
     
     
-    #reservation {
+    #reservation, #informacion{
         padding: 50px 20px;
         background-color: #F5F8FC; /* Fondo suave para la sección */
         text-align: center;
     }
 
-    #reservation h2 {
+    #reservation h2, #informacion h2 {
         font-size: 2.5em;
         margin-bottom: 15px;
         color: #333;
         margin-top: 0;
     }
     
-    #reservation p {
+    #reservation p, #informacion p {
         font-size: 1.2em;
         margin-bottom: 30px;
         color: #555;

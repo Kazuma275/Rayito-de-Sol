@@ -70,15 +70,12 @@ $username = htmlspecialchars($_SESSION['username']);
         </nav>
         
             <!-- Sección de gestión de cuenta -->
-            <section id="manage-account">
+            <section id="information">
             <h2>Gestión de Cuenta</h2>
             <p>Administra la información de tu cuenta y ajusta tus preferencias aquí.</p>
 
             <!-- Formulario para actualizar datos -->
             <form id="reservation" method="POST" class="manage-form login-form">
-                <label for="username">Actualizar Nombre de Usuario:</label>
-                <input type="text" id="username" name="username" value="<?php echo $_SESSION['username']; ?>" required>
-                
                 <input type="submit" value="Guardar Cambios">
             </form>
 
