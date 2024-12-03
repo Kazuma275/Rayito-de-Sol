@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 // Asegúrate de iniciar la sesión para obtener los datos del usuario
 session_start();
 
