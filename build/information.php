@@ -123,9 +123,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                 <label for="username">Actualizar Nombre de Usuario:</label>
                 <input type="text" id="username" name="username" value="<?php echo $_SESSION['username']; ?>" required>
                 
-                <label for="email">Actualizar Correo Electrónico:</label>
-                <input type="email" id="email" name="email" value="<?php echo $_SESSION['email']; ?>" required>
-
                 <input type="submit" value="Guardar Cambios">
             </form>
 
