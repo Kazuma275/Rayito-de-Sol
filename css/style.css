@@ -350,10 +350,12 @@
     /* Contenedor de ajustes (bandera e ícono de la luna) */
     .settings-container {
         display: flex;
-        align-items: center; /* Centra los elementos verticalmente */
-        justify-content: center; /* Centra los elementos horizontalmente */
+        align-items: center; /* Alinea los elementos verticalmente al centro */
+        justify-content: flex-end; /* Alinea los elementos al final (derecha) */
+        margin-top: 8px; /* Ajusta la distancia hacia abajo */
         gap: 15px; /* Espacio entre los elementos */
     }
+    
 
     /* Estilo de la bandera */
     .language-selector {
