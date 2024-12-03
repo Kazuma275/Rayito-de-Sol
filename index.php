@@ -126,7 +126,7 @@ if (file_exists($lang_file)) {
         
 
         <section id="amenities" class="intro-section">
-        <div class="container dark-mode">
+        <div class="container">
             <h2><?php echo $lang['amenities_title']; ?></h2>
             <p><?php echo $lang['amenities_description']; ?></p>
             
