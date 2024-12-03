@@ -4,6 +4,7 @@ body.day {
 
 .dayNight {
     cursor: pointer;
+    display: inline-block; /* Asegura que el botón tenga un tamaño específico */
 }
 
 .dayNight input {
@@ -12,8 +13,8 @@ body.day {
 
 .dayNight input+div {
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    width: 28px; /* Reduce el tamaño del botón */
+    height: 28px; /* Reduce el tamaño del botón */
     position: relative;
     box-shadow: inset 16px -16px 0 0 #fff;
     transform: scale(1) rotate(-2deg);
@@ -33,14 +34,14 @@ body.day {
 
 .dayNight input+div:after {
     content: "";
-    width: 8px;
-    height: 8px;
+    width: 6px; /* Reduce el tamaño del círculo interno */
+    height: 6px; /* Reduce el tamaño del círculo interno */
     border-radius: 50%;
-    margin: -4px 0 0 -4px;
+    margin: -3px 0 0 -3px; /* Ajusta el margen para centrarlo */
     position: absolute;
     top: 50%;
     left: 50%;
-    box-shadow: 0 -23px 0 #000, 0 23px 0 #000, 23px 0 0 #000, -23px 0 0 #000, 15px 15px 0 #000, -15px 15px 0 #000, 15px -15px 0 #000, -15px -15px 0 #000;
+    box-shadow: 0 -18px 0 #000, 0 18px 0 #000, 18px 0 0 #000, -18px 0 0 #000, 12px 12px 0 #000, -12px 12px 0 #000, 12px -12px 0 #000, -12px -12px 0 #000;
     transform: scale(0);
     transition: all 0.3s ease;
 }
