@@ -120,14 +120,14 @@ if (file_exists($lang_file)) {
         
 
         <section id="amenities" class="intro-section">
-        <div class="container">
-            <h2><?php echo $lang['amenities_title']; ?></h2>
-            <p><?php echo $lang['amenities_description']; ?></p>
-            
-            <div class="services-container">
-                <?php require_once "../controllers/amenities.php";?>
+            <div class="container">
+                <h2><?php echo $lang['amenities_title']; ?></h2>
+                <p><?php echo $lang['amenities_description']; ?></p>
+                
+                <div class="services-container">
+                    <?php require_once "../controllers/amenities.php";?>
+                </div>
             </div>
-        </div>
     </section>
 
     <!-- Gallery Section -->
@@ -144,17 +144,17 @@ if (file_exists($lang_file)) {
                     <img class="gallery-thumbnail" src="img/gallery/img-9.jpg" alt="Image 7">
                     <img class="gallery-thumbnail" src="img/gallery/img-10.jpg" alt="Image 8">
                     <img class="gallery-thumbnail" src="img/gallery/img-12.jpg" alt="Image 9">
-                </div>
-                
-                <!-- Image Modal (Accordion style) -->
-                <div id="imageAccordion" style="display: none;">
-                    <span class="close">X</span>
-                    <img id="expandedImg" src="" alt="Enlarged image">
-                    <button id="prevBtn">←</button>
-                    <button id="nextBtn">→</button>
-                </div>
-                
-            </section>
+            </div>
+            
+            <!-- Image Modal (Accordion style) -->
+            <div id="imageAccordion" style="display: none;">
+                <span class="close">X</span>
+                <img id="expandedImg" src="" alt="Enlarged image">
+                <button id="prevBtn">←</button>
+                <button id="nextBtn">→</button>
+            </div>
+            
+    </section>
 
             <!-- Reviews -->
             <section id="reviews" class="reviews-section">
@@ -165,8 +165,6 @@ if (file_exists($lang_file)) {
         </div>
         
     </section>
-
-        
 
         <!--  Sección "Reservation" -->
 
