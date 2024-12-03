@@ -1,3 +1,3 @@
 # Rayito de Sol - Alpha
  
-te quiero rafa
+BETA IS OUT!!
