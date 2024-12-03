@@ -108,6 +108,7 @@ $lang = [
     'register_link' => 'Зареєструйтесь тут',
 
     'make_reservation' => 'Забронювати',
+    'ubication' => 'Розташування',
 
 
 ];

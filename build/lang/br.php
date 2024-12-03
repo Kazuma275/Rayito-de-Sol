@@ -108,6 +108,7 @@ $lang = [
     'register_link' => 'Cadastre-se aqui',
 
     'make_reservation' => 'Faça uma reserva',
+    'ubication' => 'Localização',
 
 ];
 

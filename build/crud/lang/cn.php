@@ -108,6 +108,7 @@ $lang = [
     'register_link' => '在这里注册',
 
     'make_reservation' => '预订',
+    'ubication' => '位置',
 
 ];
 

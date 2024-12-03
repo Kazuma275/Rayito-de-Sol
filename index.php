@@ -75,7 +75,7 @@ if (file_exists($lang_file)) {
                 <a href="#amenities"><?php echo $lang['amenities']?></a>
                 <a href="#gallery"><?php echo $lang['gallery']?></a>
                 <a href="#reviews"><?php echo $lang['reviews']?></a>
-                <a href="#ubication"><?php echo $lang['']?>Ubicación</a>
+                <a href="#ubication"><?php echo $lang['ubication']; ?></a>
                 <a href="./build/signup.php"><?php echo $lang['account']?></a>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->

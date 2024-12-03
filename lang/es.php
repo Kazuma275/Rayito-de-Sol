@@ -114,7 +114,7 @@ $lang = [
 
 
     'make_reservation' => 'Haz una reserva',
-
+    'ubication' => 'Ubicación',
 
 
 ];
