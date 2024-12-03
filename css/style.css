@@ -944,7 +944,7 @@
         margin: 0 auto;
     }
 
-    .signup-form label {
+    .signup-form label, .login-form label {
         font-size: 1em;
         color: #333;
         align-self: flex-start;
@@ -952,7 +952,10 @@
 
     .signup-form input[type="text"],
     .signup-form input[type="password"],
-    .signup-form textarea {
+    .signup-form textarea, 
+    .login-form input[type="text"], 
+    .login-form input[type="password"], 
+    .login-form textarea {
         padding: 10px;
         font-size: 1em;
         width: 100%; /* Asegura que los campos ocupen el mismo ancho */
@@ -985,7 +988,7 @@
     }
 
     /* Botón de envío */
-    .signup-form input[type="submit"] {
+    .signup-form input[type="submit"], .login-form input[type="submit"] {
         padding: 10px 20px;
         font-size: 1.1em;
         color: #fff;
@@ -997,7 +1000,7 @@
         width: 100%; /* Asegura que el botón ocupe el ancho completo */
     }
 
-    .signup-form input[type="submit"]:hover {
+    .signup-form input[type="submit"]:hover, .login-form input[type="submit"]:hover {
         background-color: #385E7A; /* Color de hover del botón */
     }
 
