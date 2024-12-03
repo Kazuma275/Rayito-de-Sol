@@ -7,12 +7,18 @@ if (toggleButton) {
     const enableDarkMode = () => {
         document.body.classList.add('dark-mode');
         localStorage.setItem('darkMode', 'enabled');
+
+        // Cambiar el ícono a sol
+        toggleButton.innerHTML = '<i class="fa fa-sun"></i>';
     };
 
     // Función para deshabilitar el modo oscuro
     const disableDarkMode = () => {
         document.body.classList.remove('dark-mode');
         localStorage.setItem('darkMode', 'disabled');
+
+        // Cambiar el ícono a luna
+        toggleButton.innerHTML = '<i class="fa fa-moon"></i>';
     };
 
     // Verificar el estado inicial desde localStorage
