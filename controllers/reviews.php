@@ -21,7 +21,7 @@ $sql = "
     WHERE 
         rt.language_code = ?
     ORDER BY 
-        r.review_date DESC
+        r.review_date ASC
 ";
 
 $stmt = $conn->prepare($sql);
