@@ -1,31 +1,51 @@
 <?php
-
 session_start();
 
-$_SESSION["token"] = md5(time()) ;
+$session_lifetime = 1800; // Tiempo de vida de la sesión en segundos
 
-// Define un idioma predeterminado
-$default_lang = 'es';
+// Verifica si la sesión ha expirado
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > $session_lifetime)) {
+    session_unset();
+    session_destroy();
+    header("Location: ../index.php?session_expired=true");
+    exit();
+}
+$_SESSION['LAST_ACTIVITY'] = time(); // Actualiza el tiempo de la última actividad
 
-// Obtén el idioma de la URL o de la sesión
-if (isset($_GET['lang'])) {
-    $lang = $_GET['lang'];
-    $_SESSION['lang'] = $lang; // Guarda el idioma seleccionado en la sesión
-} elseif (isset($_SESSION['lang'])) {
-    $lang = $_SESSION['lang']; // Usa el idioma almacenado en la sesión
-} else {
-    $lang = $default_lang; // Usa el idioma predeterminado
+require_once "../controllers/conection.php";
+
+// Verifica que el usuario esté autenticado
+if (!isset($_SESSION['user_id']) || !$_SESSION['logged_in']) {
+    header("Location: ../index.php?not_logged_in=true");
+    exit();
 }
 
-// Ruta del archivo de idioma
-$lang_file = __DIR__ . "/lang/{$lang}.php";
+// Manejo de la solicitud de eliminación
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_delete'])) {
+    $user_id = $_SESSION['user_id'];
 
-// Verifica si el archivo existe
-if (file_exists($lang_file)) {
-    include $lang_file;
-} else {
-    die("Error: Archivo de idioma no encontrado.");
+    // Eliminar al usuario de la base de datos
+    $sql = "DELETE FROM users WHERE user_id = ?";
+    $stmt = $conn->prepare($sql);
+
+    if ($stmt) {
+        $stmt->bind_param("i", $user_id);
+        if ($stmt->execute()) {
+            // Cierra la sesión y redirige
+            session_unset();
+            session_destroy();
+            header("Location: ../index.php?account_deleted=true");
+            exit();
+        } else {
+            $error = "Error al eliminar la cuenta: " . $stmt->error;
+        }
+        $stmt->close();
+    } else {
+        $error = "Error en la consulta: " . $conn->error;
+    }
 }
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -60,6 +80,10 @@ if (file_exists($lang_file)) {
                 <a href="../index.php#contact"><?php echo $lang['contact']; ?></a>
                 <a href="../index.php#reservation"><?php echo $lang['booking']; ?></a>
                 <a href="#"><?php echo $lang['account']; ?></a>
+                <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
+                <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
+                    <a href="./crud/create.php">Haz una reserva</a>
+                <?php endif; ?>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
                 <div class="settings-container">
@@ -83,23 +107,32 @@ if (file_exists($lang_file)) {
         
         <!-- Sección "Sign Up" -->
         <section id="signup">
-            <h2><?php echo $lang['signup']; ?></h2>
-            <p><?php echo $lang['signup_message']; ?></p>
-            <a href="./login.php">Ya tienes una cuenta?</a> 
-            <a href="./delete.php">Quieres borrar tu cuenta?</a> 
-            <form action="register.php" method="POST" class="signup-form">
-                <label for="username"><?php echo $lang['username']; ?>:</label>
-                <input type="text" id="username" name="username" required>
+<!--         <h2>Login</h2>
+            <form action="session.php" method="POST">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required><br>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required><br>
 
-                <label for="password"><?php echo $lang['password']; ?>:</label>
-                <div class="password-container">
-                    <input type="password" id="password" name="password" required>
-                    <i id="toggle-password" class="fa fa-eye"></i>
-                </div>
-                <input type="submit" value="<?php echo $lang['register']; ?>"></input>
-            </form>
+                <input type="submit" value="Login">
+            </form> -->
+            <h2>Eliminar Cuenta</h2>
+
+    <?php if (isset($error)): ?>
+        <p class="error"><?php echo htmlspecialchars($error); ?></p>
+    <?php endif; ?>
+
+    <p>¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.</p>
+
+    <form method="POST" action="">
+        <input type="hidden" name="confirm_delete" value="1">
+        <button type="submit">Eliminar Cuenta</button>
+        <a href="../index.php">Cancelar</a>
+    </form>
+
         </section>
-        
+
         <!-- Footer -->
         <footer class="footer">
             <div class="container">
