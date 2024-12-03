@@ -161,12 +161,12 @@ $conn->close(); // Cierra la conexión a la base de datos
         <form action="login.php" method="POST" class="login-form">
             <!-- Usuario -->
             <label for="username">Usuario:</label>
-            <input type="text" id="username" name="username" required><br>
+            <input type="text" id="username" name="username" required>
 
             <!-- Contraseña -->
             <label for="password">Contraseña:</label>
             <div class="password-container">
-                <input type="password" id="password" name="password" required><br>
+                <input type="password" id="password" name="password" required>
                 <i id="toggle-password" class="fa fa-eye"></i>
             </div>
 
