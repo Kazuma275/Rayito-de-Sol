@@ -35,6 +35,44 @@ if (!isset($_SESSION['username']) || $_SESSION['logged_in'] !== true) {
 
 $username = htmlspecialchars($_SESSION['username']);
 
+// Asegúrate de que la sesión esté iniciada
+session_start();
+
+// Incluye tu archivo de conexión a la base de datos
+include './controllers/conection.php'; // Asegúrate de que este archivo define la variable $conn con tu conexión
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Obtener el user_id desde la sesión y la nueva contraseña desde el formulario
+    $user_id = $_SESSION['user_id']; // Ajusta el nombre del índice si es necesario
+    $new_password = $_POST['password'];
+
+    // Validar la nueva contraseña
+    if (empty($new_password)) {
+        echo "La contraseña no puede estar vacía.";
+        exit;
+    }
+
+    // Cifrar la contraseña antes de almacenarla
+    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+
+    // Actualizar la contraseña en la base de datos
+    $sql = "UPDATE users SET password = ? WHERE user_id = ?";
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param('si', $hashed_password, $user_id);
+        if ($stmt->execute()) {
+            echo "Contraseña actualizada correctamente.";
+        } else {
+            echo "Error al actualizar la contraseña: " . $stmt->error;
+        }
+        $stmt->close();
+    } else {
+        echo "Error en la preparación de la consulta: " . $conn->error;
+    }
+}
+
+$conn->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -75,11 +113,10 @@ $username = htmlspecialchars($_SESSION['username']);
             <p>Administra la información de tu cuenta y ajusta tus preferencias aquí.</p>
 
             <!-- Formulario para actualizar datos -->
-            <form id="reservation" method="POST" class="manage-form login-form">
-                <label for="username">Actualizar Nombre de Usuario:</label>
-                <input type="text" id="username" name="username" value="<?php echo $_SESSION['username']; ?>" required>
+            <form id="reservation" method="POST" action="update_password.php" class="manage-form login-form">
+                <label for="password">Actualizar contraseña:</label>
+                <input type="text" id="password" name="password" required>
                 <input type="submit" value="Guardar Cambios">
-                <!-- Enlace para cerrar sesión -->
                 <a href="logout.php" class="logout-button">Cerrar Sesión</a>
             </form>
 
