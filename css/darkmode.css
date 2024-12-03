@@ -1,75 +1,77 @@
-body {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}
-
-body {
-    transition: background 0.4s ease;
-    background: #171C28;
-}
-
+/* Estilos generales para el modo día */
 body.day {
     background: #fff;
+    color: #333;
+    transition: background-color 0.5s, color 0.5s; /* Transición suave */
 }
 
+/* Estilos para el botón de luna/sol */
 .dayNight {
     cursor: pointer;
+    display: inline-block;
+    position: relative;
 }
 
 .dayNight input {
     display: none;
 }
 
-.dayNight input+div {
+.dayNight div {
     border-radius: 50%;
     width: 36px;
     height: 36px;
+    background-color: #000; /* Color del fondo de la luna */
     position: relative;
-    box-shadow: inset 16px -16px 0 0 #fff;
-    transform: scale(1) rotate(-2deg);
-    transition: box-shadow 0.5s ease 0s, transform 0.4s ease 0.1s;
-}
-
-.dayNight input+div:before {
-    content: "";
-    width: inherit;
-    height: inherit;
-    border-radius: inherit;
-    position: absolute;
-    left: 0;
-    top: 0;
     transition: background 0.3s ease;
 }
 
-.dayNight input+div:after {
+.dayNight div:before {
     content: "";
+    position: absolute;
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    margin: -4px 0 0 -4px;
-    position: absolute;
     top: 50%;
     left: 50%;
-    box-shadow: 0 -23px 0 #000, 0 23px 0 #000, 23px 0 0 #000, -23px 0 0 #000, 15px 15px 0 #000, -15px 15px 0 #000, 15px -15px 0 #000, -15px -15px 0 #000;
-    transform: scale(0);
-    transition: all 0.3s ease;
+    transform: translate(-50%, -50%);
+    background-color: #fff; /* Punto en el centro de la luna */
+    box-shadow: 0 0 2px 2px #fff;
 }
 
-.dayNight input:checked+div {
-    box-shadow: inset 32px -32px 0 0 #fff;
-    transform: scale(0.5) rotate(0deg);
-    transition: transform 0.3s ease 0.1s, box-shadow 0.2s ease 0s;
+/* Cuando el checkbox está marcado (modo oscuro) */
+.dayNight input:checked + div {
+    background-color: #ffdd00; /* Cambia el color para reflejar el modo oscuro */
 }
 
-.dayNight input:checked+div:before {
-    background: #000;
-    transition: background 0.3s ease 0.1s;
+/* Cambio en la barra de navegación en modo oscuro */
+body.day .topnav {
+    background-color: #ffffff; /* Fondo claro */
+    color: #333;
 }
 
-.dayNight input:checked+div:after {
-    transform: scale(1.5);
-    transition: transform 0.5s ease 0.15s;
+body.day .topnav a {
+    color: #333; /* Color de los enlaces */
+}
+
+body.day .topnav a:hover {
+    background-color: #f0f0f0; /* Fondo al pasar el mouse */
+}
+
+/* En modo oscuro */
+body.dark-mode .topnav {
+    background-color: #1e1e1e; /* Fondo oscuro */
+    color: #ffffff; /* Texto claro */
+}
+
+body.dark-mode .topnav a {
+    color: #ffffff; /* Color de los enlaces en modo oscuro */
+}
+
+body.dark-mode .topnav a:hover {
+    background-color: #333333; /* Fondo al pasar el mouse */
+}
+
+/* Ajustes para la transición */
+body {
+    transition: background-color 0.5s, color 0.5s; /* Transición general */
 }

@@ -110,7 +110,7 @@ if (file_exists($lang_file)) {
                     </div>
 
                     <label class="dayNight">
-                        <input type="checkbox">
+                        <input type="checkbox" id="darkmode-toggle">
                         <div></div>
                     </label>
 
