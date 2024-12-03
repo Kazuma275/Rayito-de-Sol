@@ -60,6 +60,12 @@ if (file_exists($lang_file)) {
     <script defer src="./js/javascript.js"></script>
     <script defer src="./js/darkmode.js"></script>
     <script defer src="./js/languague.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $('.dayNight input').change(function () {
+            $('body').toggleClass('day', $(this).is(':checked'))
+        });
+    </script>
 
 </head>
 <body>
@@ -102,10 +108,10 @@ if (file_exists($lang_file)) {
                         </ul>
                     </div>
 
-                    <!-- Botón de Modo Oscuro/Claro -->
-                    <button id="darkmode-toggle" class="dark-mode-toggle">
-                        <i class="fa fa-moon"></i>
-                    </button>
+                    <label class="dayNight">
+                        <input type="checkbox">
+                        <div></div>
+                    </label>
 
                 </div>
 			</div>
@@ -135,7 +141,7 @@ if (file_exists($lang_file)) {
                 <?php require_once "./controllers/amenities.php";?>
             </div>
         </div>
-    </section>
+        </section>
 
     <!-- Gallery Section -->
     <section id="gallery">
