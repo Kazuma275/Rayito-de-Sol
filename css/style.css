@@ -156,15 +156,15 @@
     }
 
     body.dark-mode #amenities .services-container {
-        background-color: #3e3e3e; /* Fondo oscuro de la caja de servicios */
-        color: #ffffff; /* Texto claro */
+    background-color: #3e3e3e; /* Fondo oscuro de la caja de servicios */
+    color: #ffffff; /* Texto claro */
     }
-    
+
     body.dark-mode #amenities .services-container h3, 
     body.dark-mode #amenities .services-container p {
         color: #dddddd; /* Texto claro */
     }
-    
+
 
 
     /****************** Dark Button ********************/
