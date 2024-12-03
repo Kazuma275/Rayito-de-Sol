@@ -61,7 +61,7 @@
             <!-- Navbar -->
             <nav>
             <div class="topnav" id="myTopnav">
-                <a href=".../index.php#parallax-section" class="active">Home</a>
+                <a href="../index.php#parallax-section" class="active">Home</a>
                 <a href="../index.php#amenities"><?php echo $lang['amenities']?></a>
                 <a href="../index.php#gallery"><?php echo $lang['gallery']?></a>
                 <a href="../index.php#reviews"><?php echo $lang['reviews']?></a>
