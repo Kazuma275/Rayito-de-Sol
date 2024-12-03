@@ -115,7 +115,7 @@ $password = $_SESSION['passwordValue'];
                     <a href="../index.php#reviews"><?php echo $lang['reviews']; ?></a>
                     <a href="../index.php#reservation"><?php echo $lang['booking']; ?></a>
                     <a href="../index.php#gallery"><?php echo $lang['gallery']; ?></a>
-                    <a href="#"><?php echo $lang['account']; ?></a>
+                    <a href="../account.php"><?php echo $lang['account']; ?></a>
                 </div>
 
                 <!-- Redes Sociales -->

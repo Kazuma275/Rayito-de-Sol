@@ -60,7 +60,7 @@ if (file_exists($lang_file)) {
                 <a href="#"><?php echo $lang['account'];?></a>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
-                    <a href="./crud/create.php"><?php echo $lang['make_reservation']?></a>
+                    <a href="./build/create.php"><?php echo $lang['make_reservation']?></a>
                 <?php endif; ?>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                     <a class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
