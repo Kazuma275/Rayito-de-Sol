@@ -33,6 +33,52 @@ if (!isset($_SESSION['username']) || $_SESSION['logged_in'] !== true) {
     exit();
 }
 
+// Procesar cambio de contraseña
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
+    require_once './controllers/conection.php'; // Asegúrate de que exista este archivo para la conexión a la BD
+
+    $current_password = $_POST['current_password'];
+    $new_password = $_POST['new_password'];
+    $confirm_password = $_POST['confirm_password'];
+
+    // Validar que los campos no estén vacíos
+    if (empty($current_password) || empty($new_password) || empty($confirm_password)) {
+        $error_message = "Todos los campos son obligatorios.";
+    } elseif ($new_password !== $confirm_password) {
+        $error_message = "La nueva contraseña y la confirmación no coinciden.";
+    } else {
+        // Obtener el hash de la contraseña actual
+        $username = $_SESSION['username'];
+        $stmt = $conn->prepare("SELECT password FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $stmt->bind_result($hashed_password);
+        $stmt->fetch();
+        $stmt->close();
+
+        // Validar la contraseña actual
+        if (!password_verify($current_password, $hashed_password)) {
+            $error_message = "La contraseña actual es incorrecta.";
+        } else {
+            // Hashear la nueva contraseña
+            $new_hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+
+            // Actualizar la contraseña en la base de datos
+            $stmt = $conn->prepare("UPDATE users SET password = ? WHERE username = ?");
+            $stmt->bind_param("ss", $new_hashed_password, $username);
+
+            if ($stmt->execute()) {
+                $success_message = "Contraseña actualizada correctamente.";
+            } else {
+                $error_message = "Error al actualizar la contraseña. Por favor, intenta nuevamente.";
+            }
+
+            $stmt->close();
+            $conn->close();
+        }
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -67,38 +113,41 @@ if (!isset($_SESSION['username']) || $_SESSION['logged_in'] !== true) {
             </div>
         </nav>
         
-        <!-- Sección de gestión de cuenta -->
-        <section id="manage-account">
-            <h2><?php echo $lang['manage_account']; ?></h2>
-            <p><?php echo $lang['manage_message']; ?></p>
+            <!-- Sección de gestión de cuenta -->
+            <section id="manage-account">
+            <h2>Gestión de Cuenta</h2>
+            <p>Administra la información de tu cuenta y ajusta tus preferencias aquí.</p>
 
             <!-- Formulario para actualizar datos -->
             <form action="update_user.php" method="POST" class="manage-form">
-                <label for="username"><?php echo $lang['update_username']; ?>:</label>
+                <label for="username">Actualizar Nombre de Usuario:</label>
                 <input type="text" id="username" name="username" value="<?php echo $_SESSION['username']; ?>" required>
                 
-                <label for="email"><?php echo $lang['update_email']; ?>:</label>
+                <label for="email">Actualizar Correo Electrónico:</label>
                 <input type="email" id="email" name="email" value="<?php echo $_SESSION['email']; ?>" required>
 
-                <input type="submit" value="<?php echo $lang['update_info']; ?>">
+                <input type="submit" value="Guardar Cambios">
             </form>
 
             <!-- Formulario para cambiar contraseña -->
-            <form action="change_password.php" method="POST" class="password-form">
-                <label for="current_password"><?php echo $lang['current_password']; ?>:</label>
+            <?php if (isset($error_message)) echo "<p class='error'>$error_message</p>"; ?>
+            <?php if (isset($success_message)) echo "<p class='success'>$success_message</p>"; ?>
+            <form method="POST" class="password-form">
+                <input type="hidden" name="change_password" value="1">
+                <label for="current_password">Contraseña Actual:</label>
                 <input type="password" id="current_password" name="current_password" required>
 
-                <label for="new_password"><?php echo $lang['new_password']; ?>:</label>
+                <label for="new_password">Nueva Contraseña:</label>
                 <input type="password" id="new_password" name="new_password" required>
 
-                <label for="confirm_password"><?php echo $lang['confirm_password']; ?>:</label>
+                <label for="confirm_password">Confirmar Nueva Contraseña:</label>
                 <input type="password" id="confirm_password" name="confirm_password" required>
 
-                <input type="submit" value="<?php echo $lang['update_password']; ?>">
+                <input type="submit" value="Actualizar Contraseña">
             </form>
 
             <!-- Enlace para cerrar sesión -->
-            <a href="logout.php" class="logout-button"><?php echo $lang['logout']; ?></a>
+            <a href="logout.php" class="logout-button">Cerrar Sesión</a>
         </section>
 
         <!-- Footer -->
