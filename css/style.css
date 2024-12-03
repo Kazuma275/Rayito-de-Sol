@@ -935,6 +935,10 @@
         text-decoration: underline; /* Subrayado al pasar el ratón */
     }
     
+    .login-message {
+        float: right;;
+    }
+
     .signup-form, .login-form {
         display: flex;
         flex-direction: column;
