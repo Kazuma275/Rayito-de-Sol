@@ -97,7 +97,6 @@ if (file_exists($lang_file)) {
                 <input type="submit" value="<?php echo $lang['register']; ?>">
             </form>
         </section>
-
         
         <!-- Footer -->
         <footer class="footer">

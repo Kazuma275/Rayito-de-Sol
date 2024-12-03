@@ -953,6 +953,21 @@
         resize: vertical;
     }
 
+    .password-container {
+        position: relative; /* Para posicionar el ícono sobre el campo */
+        width: 100%; /* Asegura que el contenedor ocupe el ancho completo */
+    }
+    
+    .password-container input[type="password"] {
+        width: 100%; /* El campo de contraseña ocupa todo el ancho disponible */
+    }
+
+    .signup-form input[type="text"], 
+    .signup-form input[type="password"] {
+        flex: 1; /* Hace que los campos ocupen el mismo espacio */
+    }
+
+
     #toggle-password {
         position: absolute;
         top: 50%;
