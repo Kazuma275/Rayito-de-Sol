@@ -923,6 +923,13 @@
         color: #555;
     }
 
+    #signup .links {
+        display: flex;
+        justify-content: space-between; /* Distribuye los enlaces a los extremos */
+        align-items: center; /* Alinea los enlaces verticalmente */
+        margin-top: 20px; /* Espacio entre el formulario y los enlaces */
+    }
+    
     #signup .links a {
         color: #2a9df4; /* Color azul marino claro */
         text-decoration: none; /* Elimina el subrayado */
