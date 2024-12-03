@@ -96,6 +96,17 @@ $lang = [
     'password' => '密码',
     'register' => '注册',
     'current_lang' => '中文',
+
+    /* Log in */
+    'login' => '登录',
+    'login_message' => '如果您已经有账户，请登录',
+    'login_account' => '您已有账户吗？',
+    'delete_account' => '您想要删除您的账户吗？',
+    'login_username' => '用户名：',
+    'login_password' => '密码：',
+    'register_prompt' => '还没有账户？',
+    'register_link' => '在这里注册',
+
 ];
 
 ?>

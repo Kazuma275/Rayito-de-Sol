@@ -96,6 +96,17 @@ $lang = [
     'password' => 'Senha',
     'register' => 'Registrar',
     'current_lang' => 'Português',
+
+    /* Log in */
+    'login' => 'Login',
+    'login_message' => 'Faça login se já tiver uma conta',
+    'login_account' => 'Já tem uma conta?',
+    'delete_account' => 'Deseja excluir sua conta?',
+    'login_username' => 'Usuário:',
+    'login_password' => 'Senha:',
+    'register_prompt' => 'Não tem uma conta?',
+    'register_link' => 'Cadastre-se aqui',
+
 ];
 
 ?>

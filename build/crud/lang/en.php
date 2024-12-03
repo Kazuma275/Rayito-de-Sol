@@ -96,6 +96,19 @@ $lang = [
     'password' => 'Password',
     'register' => 'Register',
     'current_lang' => 'English',
+
+    /* Log in */
+
+    'login' => 'Login',
+    'login_message' => 'Log in if you already have an account',
+    'login_account' => 'Do you already have an account?',
+    'delete_account' => 'Do you want to delete your account?',
+    'login_username' => 'Username:',
+    'login_password' => 'Password:',
+    'register_prompt' => 'Don’t have an account?',
+    'register_link' => 'Sign up here',
+
+
 ];
 
 ?>

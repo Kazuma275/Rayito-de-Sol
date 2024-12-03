@@ -96,6 +96,17 @@ $lang = [
     'password' => 'Пароль',
     'register' => 'Зарегистрироваться',
     'current_lang' => 'Русский',
+
+    /* Log in */
+    'login' => 'Вход',
+    'login_message' => 'Войдите, если у вас уже есть аккаунт',
+    'login_account' => 'У вас уже есть аккаунт?',
+    'delete_account' => 'Вы хотите удалить свою учетную запись?',
+    'login_username' => 'Пользователь:',
+    'login_password' => 'Пароль:',
+    'register_prompt' => 'У вас нет аккаунта?',
+    'register_link' => 'Зарегистрируйтесь здесь',
+
 ];
 
 ?>

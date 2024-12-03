@@ -62,11 +62,11 @@ $lang = [
 'review_4_author' => '- Javier R.',
 
     // Reservation Section
-'reservation_title' => 'Reservation',
-'reservation_description' => 'To make a reservation, complete the form below or contact us directly via email or phone.',
-'reservation_date_label' => 'Reservation Date:',
-'reservation_time_label' => 'Reservation Time:',
-'reservation_button' => 'Reserve',
+    'reservation_title' => 'Reservation',
+    'reservation_description' => 'To make a reservation, complete the form below or contact us directly via email or phone.',
+    'reservation_date_label' => 'Reservation Date:',
+    'reservation_time_label' => 'Reservation Time:',
+    'reservation_button' => 'Reserve',
 
     // Contact Section
     'contact_title' => 'Contact',
@@ -96,6 +96,19 @@ $lang = [
     'password' => 'Password',
     'register' => 'Register',
     'current_lang' => 'English',
+
+    /* Log in */
+
+    'login' => 'Login',
+    'login_message' => 'Log in if you already have an account',
+    'login_account' => 'Do you already have an account?',
+    'delete_account' => 'Do you want to delete your account?',
+    'login_username' => 'Username:',
+    'login_password' => 'Password:',
+    'register_prompt' => 'Don’t have an account?',
+    'register_link' => 'Sign up here',
+
+
 ];
 
 ?>

@@ -92,11 +92,25 @@ $lang = [
     'title' => 'Rayito de Sol',
     'booking' => 'Reservación',
     'signup' => 'Regístrate',
-    'signup_message' => 'Registrate para poder hacer reservas y contactar con nosotros!',
+    'signup_message' => 'Si tienes preguntas o necesitas más información, contáctanos en',
     'username' => 'Usuario',
     'password' => 'Contraseña',
     'register' => 'Registrar',
     'current_lang' => 'Español',
+
+    'ubication_title' => 'Ubicación',
+    'ubication_description' => 'Estamos ubicados en la zona de Alhamar, Calahonda.',
+
+    /* Log in */
+    'login' => 'Inicio de sesión',
+    'login_message' => 'Inicia sesión si ya tienes una cuenta',
+    'login_account' => '¿Ya tienes una cuenta?',
+    'delete_account' => '¿Quieres borrar tu cuenta?',
+    'login_username' => 'Usuario:',
+    'login_password' => 'Contraseña:',
+    'register_prompt' => '¿No tienes una cuenta?',
+    'register_link' => 'Regístrate aquí',
+
 
 ];
 
