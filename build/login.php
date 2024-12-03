@@ -153,33 +153,29 @@ $conn->close(); // Cierra la conexión a la base de datos
         
         <!-- Sección "Sign Up" -->
         <section id="signup">
-<!--         <h2>Login</h2>
-            <form action="session.php" method="POST">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required><br>
-                
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required><br>
-
-                <input type="submit" value="Login">
-            </form> -->
             <h2>Inicio de sesión</h2>
-
+            <h2>Inicia sesión con tu cuenta</h2>
             <?php if (isset($error)): ?>
             <p class="error"><?php echo htmlspecialchars($error); ?></p>
-        <?php endif; ?>
-
-        <form action="login.php" method="POST">
+            <?php endif; ?>
+        <form action="login.php" method="POST" class="login-form">
+            <!-- Usuario -->
             <label for="username">Usuario:</label>
             <input type="text" id="username" name="username" required><br>
 
+            <!-- Contraseña -->
             <label for="password">Contraseña:</label>
-            <input type="password" id="password" name="password" required><br>
+            <div class="password-container">
+                <input type="password" id="password" name="password" required><br>
+                <i id="toggle-password" class="fa fa-eye"></i>
+            </div>
 
             <input type="submit" value="Iniciar Sesión">
         </form>
         
-        <p>¿No tienes una cuenta? <a href="signup.php">Regístrate aquí</a>.</p>
+        <div class="links">
+            <p>¿No tienes una cuenta? <a href="signup.php">Regístrate aquí</a>.</p>
+        </div>
 
         </section>
 

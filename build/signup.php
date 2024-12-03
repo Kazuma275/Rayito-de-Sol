@@ -84,9 +84,12 @@ if (file_exists($lang_file)) {
             <h2><?php echo $lang['signup']; ?></h2>
             <p><?php echo $lang['signup_message']; ?></p>
             <form action="register.php" method="POST" class="signup-form">
+                
+                <!-- Usuario -->
                 <label for="username"><?php echo $lang['username']; ?>:</label>
                 <input type="text" id="username" name="username" required>
                 
+                <!-- Contraseña -->
                 <label for="password"><?php echo $lang['password']; ?>:</label>
                 <div class="password-container">
                     <input type="password" id="password" name="password" required>
