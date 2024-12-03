@@ -6,8 +6,6 @@ error_reporting(E_ALL); */
 
 session_start();
 
-var_dump($_SESSION);
-
 $session_lifetime = 1800; // Tiempo de vida de la sesión en segundos
 
 
