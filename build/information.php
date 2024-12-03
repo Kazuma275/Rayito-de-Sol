@@ -70,17 +70,19 @@ $username = htmlspecialchars($_SESSION['username']);
         </nav>
         
             <!-- Sección de gestión de cuenta -->
-            <section id="information">
+            <section id="informacion">
             <h2>Gestión de Cuenta</h2>
             <p>Administra la información de tu cuenta y ajusta tus preferencias aquí.</p>
 
             <!-- Formulario para actualizar datos -->
             <form id="reservation" method="POST" class="manage-form login-form">
+                <label for="username">Actualizar Nombre de Usuario:</label>
+                <input type="text" id="username" name="username" value="<?php echo $_SESSION['username']; ?>" required>
                 <input type="submit" value="Guardar Cambios">
+                <!-- Enlace para cerrar sesión -->
+                <a href="logout.php" class="logout-button">Cerrar Sesión</a>
             </form>
 
-            <!-- Enlace para cerrar sesión -->
-            <a href="logout.php" class="logout-button">Cerrar Sesión</a>
         </section>
 
         <!-- Footer -->
