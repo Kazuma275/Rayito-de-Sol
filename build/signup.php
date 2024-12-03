@@ -37,6 +37,7 @@
 
         <!-- CSS -->
         <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="../css/darkmode.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.css">
 
         <!-- Favicon -->
@@ -47,6 +48,13 @@
         <script defer src="../js/darkmode.js"></script>
         <script defer src="../js/languague.js"></script>
         <script defer src="../js/eye.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script>
+            $('.dayNight input').change(function () {
+                $('body').toggleClass('day', $(this).is(':checked'))
+            });
+        </script>
     </head>
     <body>
         <div class="container">
