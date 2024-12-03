@@ -67,6 +67,12 @@
         display: none;
     }
 
+    /* Botón de luna */
+.dayNight {
+    display: flex;
+    align-items: center; /* Alinea verticalmente */
+    justify-content: center; /* Centra el contenido horizontalmente */
+}
 
     html{
         scroll-behavior: smooth;
