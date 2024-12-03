@@ -72,6 +72,72 @@
         scroll-behavior: smooth;
     }
 
+    /* TODO MODO OSCURO */
+
+    .dark-mode img {
+        filter: invert(1);
+    }
+
+        /* Ejemplo para tablas */
+    .dark-mode table {
+        background-color: #1e1e1e;
+        color: #ffffff;
+    }
+
+    .dark-mode th, .dark-mode td {
+        border: 1px solid #444;
+    }
+
+    /* Ejemplo para formularios */
+    .dark-mode input, .dark-mode textarea, .dark-mode select {
+        background-color: #2c2c2c;
+        color: #ffffff;
+        border: 1px solid #444;
+    }
+
+    /* Estilo general de la página */
+    body {
+        background-color: #ffffff; /* Fondo claro */
+        color: #000000; /* Texto oscuro */
+        transition: background-color 0.3s, color 0.3s; /* Transición suave */
+    }
+
+    /* Estilos específicos para el modo oscuro */
+    body.dark-mode {
+        background-color: #121212; /* Fondo oscuro */
+        color: #ffffff; /* Texto claro */
+    }
+
+    /* Cambia los estilos de otros elementos específicos */
+    .dark-mode header, .dark-mode footer {
+        background-color: #1e1e1e; /* Fondo de encabezado y pie de página oscuro */
+        color: #ffffff; /* Texto claro */
+    }
+
+    .dark-mode .card {
+        background-color: #2c2c2c; /* Fondo de tarjetas */
+        border: 1px solid #444; /* Borde oscuro */
+        color: #ffffff; /* Texto claro */
+    }
+
+    .dark-mode button {
+        background-color: #444; /* Fondo de botones */
+        color: #ffffff; /* Texto de botones */
+    }
+
+    .dark-mode a {
+        color: #1e90ff; /* Enlaces de color brillante */
+    }
+
+    /* Estilo para un botón de modo oscuro/normal */
+    button.dark-mode-toggle {
+        background-color: transparent;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+    }
+
+
     /****************** Dark Button ********************/
     
         /* Estilo para el modo oscuro */
