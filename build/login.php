@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['logged_in'] = true;
 
                     // Redirige al index
-                    header("Location: ./index.php");
+                    header("Location: ../index.php");
 
                     exit();
                 } else {
