@@ -352,16 +352,17 @@
         position: relative; /* Asegura que los elementos hijos se posicionen respecto a este contenedor */
         display: flex;
         align-items: center;
-        gap: 10px; /* Espacio entre la bandera y la luna */
+        gap: 15px; /* Espacio entre la bandera y la luna */
         float: right;
     }
 
     /* Estilo de la bandera */
     .language-selector {
         position: relative; /* Permite posicionar el menú desplegable relativo a la bandera */
-        display: inline-block;
+        display: flex;
         align-items: center; /* Centra la bandera verticalmente */
         cursor: pointer;
+        gap: 10px;
         z-index: 10; /* Asegura que este elemento esté por encima de otros */
     }
 
