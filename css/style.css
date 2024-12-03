@@ -354,6 +354,7 @@
         justify-content: flex-end; /* Alinea los elementos al final (derecha) */
         margin-top: 8px; /* Ajusta la distancia hacia abajo */
         gap: 15px; /* Espacio entre los elementos */
+        margin-right: 8px;
     }
     
 
