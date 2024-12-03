@@ -123,8 +123,6 @@ $conn->close(); // Cierra la conexión a la base de datos
                 <a href="../index.php#amenities"><?php echo $lang['amenities']; ?></a>
                 <a href="../index.php#gallery"><?php echo $lang['gallery']; ?></a>
                 <a href="../index.php#reviews"><?php echo $lang['reviews']; ?></a>
-                <a href="../index.php#contact"><?php echo $lang['contact']; ?></a>
-                <a href="../index.php#reservation"><?php echo $lang['booking']; ?></a>
                 <a href="#"><?php echo $lang['account']; ?></a>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
