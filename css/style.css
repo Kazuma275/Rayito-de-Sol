@@ -124,6 +124,12 @@
         background-color: #444; /* Fondo de botones */
         color: #ffffff; /* Texto de botones */
     }
+    
+    /* Estilo para .parallax-content en modo oscuro */
+    body.dark-mode .parallax-content {
+        background-color: #1e1e1e; /* Fondo oscuro */
+        color: #ffffff; /* Texto claro */
+    }
 
     .dark-mode a {
         color: #1e90ff; /* Enlaces de color brillante */
