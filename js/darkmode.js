@@ -1,45 +1,33 @@
-// Obtener el botón de alternar modo oscuro
-const toggleButton = document.getElementById('darkmode-toggle');
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleButton = document.getElementById('darkmode-toggle');
 
-// Verificar si el botón existe en el DOM
-if (toggleButton) {
-    // Función para habilitar el modo oscuro
-    const enableDarkMode = () => {
-        document.body.classList.add('dark-mode');
-        localStorage.setItem('darkMode', 'enabled');
+    if (toggleButton) {
+        const enableDarkMode = () => {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('darkMode', 'enabled');
+            toggleButton.innerHTML = '<i class="fa fa-sun"></i>'; // Cambia el ícono a sol
+        };
 
-        // Cambiar el ícono a sol
-        toggleButton.innerHTML = '<i class="fa fa-sun"></i>';
-    };
+        const disableDarkMode = () => {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('darkMode', 'disabled');
+            toggleButton.innerHTML = '<i class="fa fa-moon"></i>'; // Cambia el ícono a luna
+        };
 
-    // Función para deshabilitar el modo oscuro
-    const disableDarkMode = () => {
-        document.body.classList.remove('dark-mode');
-        localStorage.setItem('darkMode', 'disabled');
-
-        // Cambiar el ícono a luna
-        toggleButton.innerHTML = '<i class="fa fa-moon"></i>';
-    };
-
-    // Verificar el estado inicial desde localStorage
-    const darkMode = localStorage.getItem('darkMode');
-    if (darkMode === 'enabled') {
-        enableDarkMode();
-    }
-
-    // Agregar evento al botón
-    document.addEventListener('DOMContentLoaded', () => {
-        const toggleButton = document.getElementById('darkmode-toggle');
-    
-        if (toggleButton) {
-            toggleButton.addEventListener('click', () => {
-                console.log('Botón clicado'); // Verifica que el clic se detecta
-            });
-        } else {
-            console.error('No se encontró el botón con ID "darkmode-toggle".');
+        const darkMode = localStorage.getItem('darkMode');
+        if (darkMode === 'enabled') {
+            enableDarkMode();
         }
-    });
-    
-} else {
-    console.error('No se encontró el botón con ID "darkmode-toggle".');
-}
+
+        toggleButton.addEventListener('click', () => {
+            const darkMode = localStorage.getItem('darkMode');
+            if (darkMode !== 'enabled') {
+                enableDarkMode();
+            } else {
+                disableDarkMode();
+            }
+        });
+    } else {
+        console.error('No se encontró el botón con ID "darkmode-toggle".');
+    }
+});
