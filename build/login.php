@@ -117,19 +117,21 @@ $conn->close(); // Cierra la conexión a la base de datos
 <body>
     <div class="container">
         <!-- Navbar -->
-        <nav>
+<!-- Navbar -->
+<nav>
             <div class="topnav" id="myTopnav">
-                <a href="../index.php#parallax-section" class="active"><?php echo $lang['home']; ?></a>
-                <a href="../index.php#amenities"><?php echo $lang['amenities']; ?></a>
-                <a href="../index.php#gallery"><?php echo $lang['gallery']; ?></a>
-                <a href="../index.php#reviews"><?php echo $lang['reviews']; ?></a>
-                <a href="#"><?php echo $lang['account']; ?></a>
+                <a href="#parallax-section" class="active">Home</a>
+                <a href="#amenities"><?php echo $lang['amenities']?></a>
+                <a href="#gallery"><?php echo $lang['gallery']?></a>
+                <a href="#reviews"><?php echo $lang['reviews']?></a>
+                <a href="#ubication"><?php echo $lang['ubication']; ?></a>
+                <a href="./build/signup.php"><?php echo $lang['account']?></a>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
-                    <a href="./crud/create.php"><?php echo $lang['make_reservation']?></a>
+                    <a href="./build/create.php"><?php echo $lang['make_reservation']?></a>
                 <?php endif; ?>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
-                    <a class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
+                    <a href="./build/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
                 <?php endif; ?>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
@@ -154,7 +156,7 @@ $conn->close(); // Cierra la conexión a la base de datos
                         <i class="fa fa-moon"></i>
                     </button>
                 </div>
-            </div>
+			</div>
         </nav>
         
         <!-- Sección "Sign Up" -->
