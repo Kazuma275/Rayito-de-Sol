@@ -25,7 +25,6 @@
     *{
         line-height: 1.5; /* Interlineado más compacto para encabezados */
         margin: 0%;
-        box-sizing: border-box;
     }
 
     /****************** Navbar *******************/
@@ -733,6 +732,7 @@
         font-size: 2.5em;
         margin-bottom: 15px;
         color: #333;
+        margin-top: 0;
     }
     
     #reservation p {
@@ -741,10 +741,6 @@
         color: #555;
     }
 
-    #reservation h2 {
-        margin-top: 0;
-    }
-    
     .reservation-form {
         display: flex;
         flex-direction: column;
@@ -914,7 +910,7 @@
         background-color: #fcfcfc; /* Fondo suave para la sección */
         text-align: center;
     }
-    
+
     #signup h2 {
         font-size: 2.5em;
         margin-bottom: 15px;
@@ -926,7 +922,7 @@
         margin-bottom: 30px;
         color: #555;
     }
-    
+
     .signup-form {
         display: flex;
         flex-direction: column;
@@ -935,51 +931,49 @@
         max-width: 500px;
         margin: 0 auto;
     }
-    
+
     .signup-form label {
         font-size: 1em;
         color: #333;
         align-self: flex-start;
     }
-    
+
     .signup-form input[type="text"],
     .signup-form input[type="password"],
     .signup-form textarea {
         padding: 10px;
         font-size: 1em;
-        width: 100%;
+        width: 100%; /* Asegura que los campos ocupen el mismo ancho */
         border: 1px solid #ccc;
         border-radius: 5px;
         box-sizing: border-box;
         resize: vertical;
     }
 
+    /* Contenedor para la contraseña */
     .password-container {
-        position: relative; /* Para posicionar el ícono sobre el campo */
-        width: 100%; /* Asegura que el contenedor ocupe el ancho completo */
+        position: relative;
+        width: 100%; /* Hace que el contenedor ocupe el ancho completo */
     }
-    
+
     .password-container input[type="password"] {
-        width: 100%; /* El campo de contraseña ocupa todo el ancho disponible */
+        width: 100%; /* Asegura que el campo de contraseña ocupe todo el espacio disponible */
+        padding-right: 30px; /* Deja espacio para el ícono */
     }
 
-    .signup-form input[type="text"], 
-    .signup-form input[type="password"] {
-        flex: 1; /* Hace que los campos ocupen el mismo espacio */
-    }
-
-
+    /* Posicionamiento del ícono */
     #toggle-password {
         position: absolute;
         top: 50%;
-        right: 10px; /* Ajusta para posicionar el ícono correctamente */
-        transform: translateY(-50%);
+        right: 10px; /* Ajusta la posición horizontal */
+        transform: translateY(-50%); /* Centra el ícono verticalmente */
         cursor: pointer;
-        font-size: 1.2em; /* Ajusta el tamaño del ícono */
+        font-size: 1.2em; /* Tamaño del ícono */
         color: #333; /* Color del ícono */
     }
-    
-    .signup-form button {
+
+    /* Botón de envío */
+    .signup-form input[type="submit"] {
         padding: 10px 20px;
         font-size: 1.1em;
         color: #fff;
@@ -988,12 +982,13 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease;
-        width: 100%;
+        width: 100%; /* Asegura que el botón ocupe el ancho completo */
     }
-    
-    .signup-form button:hover {
+
+    .signup-form input[type="submit"]:hover {
         background-color: #385E7A; /* Color de hover del botón */
     }
+
     
     /****************** Footer *******************/
     
