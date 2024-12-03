@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleButton = document.getElementById('darkmode-toggle');
 
     if (toggleButton) {
+        console.log('Botón encontrado');
+
         const enableDarkMode = () => {
             document.body.classList.add('dark-mode');
             localStorage.setItem('darkMode', 'enabled');
@@ -20,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         toggleButton.addEventListener('click', () => {
+            console.log('Botón clicado');
             const darkMode = localStorage.getItem('darkMode');
             if (darkMode !== 'enabled') {
                 enableDarkMode();
