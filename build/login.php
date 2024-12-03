@@ -128,6 +128,9 @@ $conn->close(); // Cierra la conexión a la base de datos
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
                     <a href="./crud/create.php"><?php echo $lang['make_reservation']?></a>
                 <?php endif; ?>
+                <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
+                    <a href="./crud/create.php"><?php echo "Hey," . $_SESSION['username']?></a>
+                <?php endif; ?>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
                 <div class="settings-container" style="position: relative;">
