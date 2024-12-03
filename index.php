@@ -75,8 +75,6 @@ if (file_exists($lang_file)) {
                 <a href="#amenities"><?php echo $lang['amenities']?></a>
                 <a href="#gallery"><?php echo $lang['gallery']?></a>
                 <a href="#reviews"><?php echo $lang['reviews']?></a>
-                <a href="#contact"><?php echo $lang['contact']?></a>
-                <a href="#reservation"><?php echo $lang['booking']?></a>
                 <a href="#ubication"><?php echo $lang['']?>Ubicación</a>
                 <a href="./build/signup.php"><?php echo $lang['account']?></a>
 
@@ -167,44 +165,7 @@ if (file_exists($lang_file)) {
         
     </section>
 
-        
-
-        <!--  Sección "Reservation" -->
-
-        <section id="reservation">
-        <h2><?php echo $lang['reservation_title']; ?></h2>
-        <p><?php echo $lang['reservation_description']; ?></p>
-            <form class="reservation-form">
-                <label for="reservation-date"><?php echo $lang['reservation_date_label']; ?></label>
-                <input type="date" id="reservation-date" name="reservation-date" required>
-
-                <label for="reservation-time"><?php echo $lang['reservation_time_label']; ?></label>
-                <input type="time" id="reservation-time" name="reservation-time" required>
-
-                <button type="submit"><?php echo $lang['reservation_button']; ?></button>
-            </form>
-        </section>
-        
-        <!--  Sección "Contact" -->
-
-        <section id="contact">
-        <h2><?php echo $lang['contact_title']; ?></h2>
-        <p><?php echo $lang['contact_description']; ?></p>
-
-        <form class="contact-form">
-            <label for="name"><?php echo $lang['contact_name_label']; ?></label>
-            <input type="text" id="name" name="name" required>
-
-            <label for="email"><?php echo $lang['contact_email_label']; ?></label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="message"><?php echo $lang['contact_message_label']; ?></label>
-            <textarea id="message" name="message" rows="5" required></textarea>
-
-            <button type="submit"><?php echo $lang['contact_button']; ?></button>
-        </form>
-        </section>
-        
+    <!-- Ubicación -->
         <section id="ubication">
             <h2><?php echo $lang['ubication_title']; ?></h2>
             <p><?php echo $lang['ubication_description']; ?></p>
