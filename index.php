@@ -106,6 +106,7 @@ if (file_exists($lang_file)) {
                     <button id="darkmode-toggle" class="dark-mode-toggle">
                         <i class="fa fa-moon"></i>
                     </button>
+
                 </div>
 			</div>
         </nav>

@@ -28,14 +28,18 @@ if (toggleButton) {
     }
 
     // Agregar evento al botón
-    toggleButton.addEventListener('click', () => {
-        const darkMode = localStorage.getItem('darkMode');
-        if (darkMode !== 'enabled') {
-            enableDarkMode();
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('darkmode-toggle');
+    
+        if (toggleButton) {
+            toggleButton.addEventListener('click', () => {
+                console.log('Botón clicado'); // Verifica que el clic se detecta
+            });
         } else {
-            disableDarkMode();
+            console.error('No se encontró el botón con ID "darkmode-toggle".');
         }
     });
+    
 } else {
     console.error('No se encontró el botón con ID "darkmode-toggle".');
 }
