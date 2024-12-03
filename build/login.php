@@ -174,7 +174,7 @@ $conn->close(); // Cierra la conexión a la base de datos
         </form>
         
         <div class="links">
-            <p>¿No tienes una cuenta? <a href="signup.php">Regístrate aquí</a>.</p>
+            ¿No tienes una cuenta? <a href="signup.php">Regístrate aquí</a>
         </div>
 
         </section>
