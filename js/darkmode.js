@@ -1,26 +1,33 @@
-// Selecciona el botón de cambio de modo oscuro
-const toggleDarkMode = document.getElementById("toggle-dark-mode");
+const toggleButton = document.getElementById('darkmode-toggle');
 
-// Verifica si el modo oscuro está activo a través de la clase en el body
-document.addEventListener("DOMContentLoaded", () => {
-    if (document.body.classList.contains("dark-mode")) {
-        toggleDarkMode.querySelector("i").classList.remove("fa-moon");
-        toggleDarkMode.querySelector("i").classList.add("fa-sun");
-    }
-});
+// Función para activar el modo oscuro
+function enableDarkMode() {
+    document.body.classList.add('dark-mode');
+    localStorage.setItem('darkMode', 'enabled');
+}
 
-// Evento para alternar el modo oscuro
-toggleDarkMode.addEventListener("click", () => {
-    // Alterna la clase dark-mode en el body
-    document.body.classList.toggle("dark-mode");
-    
-    // Cambia el icono de la luna a sol y viceversa
-    const icon = toggleDarkMode.querySelector("i");
-    if (document.body.classList.contains("dark-mode")) {
-        icon.classList.remove("fa-moon");
-        icon.classList.add("fa-sun");
-    } else {
-        icon.classList.remove("fa-sun");
-        icon.classList.add("fa-moon");
-    }
-});
+// Función para desactivar el modo oscuro
+function disableDarkMode() {
+    document.body.classList.remove('dark-mode');
+    localStorage.setItem('darkMode', 'disabled');
+}
+
+// Verificar el estado inicial desde localStorage
+const darkMode = localStorage.getItem('darkMode');
+
+if (darkMode === 'enabled') {
+    enableDarkMode();
+}
+
+// Agregar evento al botón para alternar entre modos
+if (toggleButton) {
+    toggleButton.addEventListener('click', () => {
+        const darkMode = localStorage.getItem('darkMode');
+
+        if (darkMode !== 'enabled') {
+            enableDarkMode();
+        } else {
+            disableDarkMode();
+        }
+    });
+}

@@ -79,6 +79,11 @@
             background-color: #121212; /* Fondo oscuro */
             color: black; /* Texto blanco en modo oscuro */
         }
+
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
     
         .language-menu.active {
             display: block; /* Asegura que el menú se muestre */

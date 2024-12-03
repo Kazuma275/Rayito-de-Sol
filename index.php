@@ -103,7 +103,7 @@ if (file_exists($lang_file)) {
                     </div>
 
                     <!-- Botón de Modo Oscuro/Claro -->
-                    <button id="toggle-dark-mode" class="dark-mode-toggle">
+                    <button id="darkmode-toggle" class="dark-mode-toggle">
                         <i class="fa fa-moon"></i>
                     </button>
                 </div>
@@ -126,7 +126,7 @@ if (file_exists($lang_file)) {
         
 
         <section id="amenities" class="intro-section">
-        <div class="container">
+        <div class="container dark-mode">
             <h2><?php echo $lang['amenities_title']; ?></h2>
             <p><?php echo $lang['amenities_description']; ?></p>
             
