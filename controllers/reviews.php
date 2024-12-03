@@ -10,7 +10,7 @@ $sql = "
         r.review_id,
         r.author_name,
         r.author_image,
-        r.review_date,
+        DATE_FORMAT(r.review_date, '%m-%Y') AS review_date,  -- Formato MM-YYYY
         rt.review_text
     FROM 
         reviews r
