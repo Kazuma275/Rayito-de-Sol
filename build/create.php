@@ -60,7 +60,7 @@ $password = $_SESSION['passwordValue'];
                 <a href="/index.php#gallery"><?php echo $lang['gallery']; ?></a>
                 <a href="/index.php#reviews"><?php echo $lang['reviews']; ?></a>
                 <a href="/index.php#contact"><?php echo $lang['contact']; ?></a>
-                <a href="#"><?php echo $lang['account']; ?></a>
+                <a href="./account.php"><?php echo $lang['account']; ?></a>
                 <a href="#">Haz una reserva</a>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
@@ -111,9 +111,7 @@ $password = $_SESSION['passwordValue'];
                 <div class="footer-links">
                     <a href="#" class="active"><?php echo $lang['home']; ?></a>
                     <a href="../index.php#amenities"><?php echo $lang['amenities']; ?></a>
-                    <a href="../index.php#contact"><?php echo $lang['contact']; ?></a>
                     <a href="../index.php#reviews"><?php echo $lang['reviews']; ?></a>
-                    <a href="../index.php#reservation"><?php echo $lang['booking']; ?></a>
                     <a href="../index.php#gallery"><?php echo $lang['gallery']; ?></a>
                     <a href="./account.php"><?php echo $lang['account']; ?></a>
                 </div>
