@@ -41,7 +41,7 @@
         justify-content: flex-start;
     }
 
-    .topnav a {
+    .topnav > a:not(.login-message){
         float: left;
         display: block;
         color: #f2f2f2;
