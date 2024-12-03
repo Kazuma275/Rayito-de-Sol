@@ -95,8 +95,8 @@ if (file_exists($lang_file)) {
                 <input type="submit" value="<?php echo $lang['register']; ?>">
             </form>
             <div class="links">
-            <a href="./login.php" style="float: left;">Ya tienes una cuenta?</a> 
-            <a href="./delete.php" style="float: right">Quieres borrar tu cuenta?</a> 
+            <a href="./login.php">Ya tienes una cuenta?</a> 
+            <a href="./delete.php">Quieres borrar tu cuenta?</a> 
             </div>
         </section>
         
