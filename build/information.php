@@ -1,9 +1,4 @@
 <?php
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
 
 $_SESSION["token"] = md5(time());
@@ -78,7 +73,7 @@ $conn->close();
 ?>
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?php echo $_SESSION['lang']; ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

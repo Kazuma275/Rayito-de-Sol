@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Ejecuta la consulta
         if ($stmt->execute()) {
+            header("Location:../build/information.php?password_updated=true");
             echo "Contraseña actualizada correctamente.";
         } else {
             echo "Error al actualizar la contraseña: " . $stmt->error;
