@@ -99,7 +99,7 @@
                 </div>
 			</div>
             </nav>
-            
+
             <!-- Sección "Sign Up" -->
             <section id="signup">
                 <h2><?php echo $lang['signup']; ?></h2>
