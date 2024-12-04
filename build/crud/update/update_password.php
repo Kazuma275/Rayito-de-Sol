@@ -39,10 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Ejecuta la consulta
         if ($stmt->execute()) {
-            header("Location:../build/information.php?password_updated=true");
+            // Redirige al usuario a la página de información con un mensaje de éxito
+            header("Location: /build/information.php?password_updated=true");
+            exit(); // Detener la ejecución para asegurar que no se ejecute más código
         } else {
             echo "Error al actualizar la contraseña: " . $stmt->error;
         }
+        
 
         // Cierra el statement
         $stmt->close();
