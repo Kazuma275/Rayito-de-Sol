@@ -65,7 +65,7 @@
                 <a href="#"><?php echo $lang['account']?></a>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
-                    <a href="/build/config/data/create.php"><?php echo $lang['make_reservation']?></a>
+                    <a href="/build/crud/data/create.php"><?php echo $lang['make_reservation']?></a>
                     <a href="/build/functions/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
                     <a href="/build/functions/contact.php"><?php echo $lang['contact_title']?></a>
                 <?php endif;?>
