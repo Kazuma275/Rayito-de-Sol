@@ -64,7 +64,7 @@ if (file_exists($lang_file)) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
         $('.dayNight input').change(function () {
-            $('body').toggleClass('day', $(this).is(':checked'))
+            $('body').toggleClass('day', $(this).is(':checked'));
         });
     </script>
 
@@ -73,8 +73,6 @@ if (file_exists($lang_file)) {
     
     <div class="container">
 
-        <!-- Botón de Modo Oscuro/Claro en la parte superior derecha -->
-        
         <!-- Navbar -->
         <nav>
             <div class="topnav" id="myTopnav">

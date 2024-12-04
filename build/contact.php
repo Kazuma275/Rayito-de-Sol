@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<?php echo $_SESSION['lang']; ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <h2><?php echo $lang['contact_header']; ?></h2>
             <p><?php echo $lang['contact_description']; ?></p>
 
-            <form method="POST" action="">
+            <form class="reservation-form" method="POST" action="">
                 <label for="name">Nombre:</label>
                 <input type="text" id="name" name="customer_name" required>
 
