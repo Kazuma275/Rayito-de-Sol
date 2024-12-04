@@ -139,9 +139,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <!--  Sección "Reservation" -->
         <section id="reservation">
+        <?php if (!empty($success_message)): ?>
+            <div class="success-message">
+                <?php echo $success_message; ?>
+            </div>
+        <?php elseif (!empty($error_message)): ?>
+            <div class="error-message">
+                <?php echo $error_message; ?>
+            </div>
+        <?php endif; ?>
+
         <h2><?php echo $lang['reservation_title']; ?></h2>
         <p><?php echo $lang['reservation_description']; ?></p>
-        <form class="reservation-form" method="POST">
+        <form class="reservation-form" method="POST" action="">
             <label for="reservation-date"><?php echo $lang['reservation_date_label']; ?></label>
             <input type="date" id="reservation-date" name="reservation-date" required>
 
@@ -150,8 +160,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <button type="submit"><?php echo $lang['reservation_button']; ?></button>
         </form>
+    </section>
 
-        </section>
         
         <!-- Footer -->
         <footer class="footer">

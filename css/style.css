@@ -477,6 +477,25 @@
     
     /****************** Parallax Section *******************/
 
+    .success-message {
+        color: green;
+        background-color: #e6ffe6;
+        border: 1px solid #b3ffb3;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+    }
+    
+    .error-message {
+        color: red;
+        background-color: #ffe6e6;
+        border: 1px solid #ffb3b3;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+    }
+    
+
     /* Parallax Section */
     #parallax-section {
         position: relative;
