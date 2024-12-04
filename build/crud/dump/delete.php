@@ -7,7 +7,7 @@ $session_lifetime = 1800; // Tiempo de vida de la sesión en segundos
 if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > $session_lifetime)) {
     session_unset();
     session_destroy();
-    header("Location: /index.php?session_expired=true");
+    header("Location: ./index.php?session_expired=true");
     exit();
 }
 $_SESSION['LAST_ACTIVITY'] = time(); // Actualiza el tiempo de la última actividad
@@ -16,7 +16,7 @@ require_once "./controllers/conection.php";
 
 // Verifica que el usuario esté autenticado
 if (!isset($_SESSION['user_id']) || !$_SESSION['logged_in']) {
-    header("Location: /index.php?not_logged_in=true");
+    header("Location: ./index.php?not_logged_in=true");
     exit();
 }
 
@@ -69,8 +69,6 @@ if (file_exists($lang_file)) {
 } else {
     die("Error: Archivo de idioma no encontrado.");
 }
-
-
 ?>
 
 <!DOCTYPE html>
@@ -81,17 +79,17 @@ if (file_exists($lang_file)) {
     <title><?php echo $lang['title']; ?></title>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.css">
 
     <!-- Favicon -->
-    <link rel="icon" href="/img/favicon.png" type="image/x-icon">
+    <link rel="icon" href="./img/favicon.png" type="image/x-icon">
 
     <!-- JS -->
-    <script defer src="/js/javascript.js"></script>
-    <script defer src="/js/darkmode.js"></script>
-    <script defer src="/js/languague.js"></script>
-    <script defer src="/js/eye.js"></script>
+    <script defer src="./js/javascript.js"></script>
+    <script defer src="./js/darkmode.js"></script>
+    <script defer src="./js/languague.js"></script>
+    <script defer src="./js/eye.js"></script>
 </head>
 <body>
     <div class="container">
@@ -99,33 +97,33 @@ if (file_exists($lang_file)) {
         <nav>
             <div class="topnav" id="myTopnav">
                 <a href="#parallax-section" class="active">Home</a>
-                <a href="/index.php#amenities"><?php echo $lang['amenities']?></a>
-                <a href="/index.php#gallery"><?php echo $lang['gallery']?></a>
-                <a href="/index.php#reviews"><?php echo $lang['reviews']?></a>
-                <a href="/index.php#ubication"><?php echo $lang['ubication']; ?></a>
+                <a href="./index.php#amenities"><?php echo $lang['amenities']?></a>
+                <a href="./index.php#gallery"><?php echo $lang['gallery']?></a>
+                <a href="./index.php#reviews"><?php echo $lang['reviews']?></a>
+                <a href="./index.php#ubication"><?php echo $lang['ubication']; ?></a>
                 <a href="./signup.php"><?php echo $lang['account']?></a>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
                     <a href="./create.php"><?php echo $lang['make_reservation']?></a>
                 <?php endif; ?>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
-                    <a href="/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
+                    <a href="./information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
                 <?php endif; ?>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
                 <div class="settings-container" style="position: relative;">
                     <!-- Selector de idioma -->
                     <div class="language-selector">
-                        <img id="current-flag" src="/img/idiomas/<?php echo isset($_SESSION['lang']) ? $_SESSION['lang'] : 'es'; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
+                        <img id="current-flag" src="./img/idiomas/<?php echo isset($_SESSION['lang']) ? $_SESSION['lang'] : 'es'; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
                         <ul class="language-menu">
-                            <li><a href="?lang=en" data-lang="en"><img src="/img/idiomas/en.png" alt="English" class="flag-preview"></a></li>
-                            <li><a href="?lang=fr" data-lang="fr"><img src="/img/idiomas/fr.png" alt="Français" class="flag-preview"></a></li>
-                            <li><a href="?lang=es" data-lang="es"><img src="/img/idiomas/es.png" alt="Español" class="flag-preview"></a></li>
-                            <li><a href="?lang=cn" data-lang="cn"><img src="/img/idiomas/cn.png" alt="中国人" class="flag-preview"></a></li>
-                            <li><a href="?lang=it" data-lang="it"><img src="/img/idiomas/it.png" alt="Italiano" class="flag-preview"></a></li>
-                            <li><a href="?lang=br" data-lang="br"><img src="/img/idiomas/br.png" alt="Brasileiro" class="flag-preview"></a></li>
-                            <li><a href="?lang=ua" data-lang="ua"><img src="/img/idiomas/ua.png" alt="українська" class="flag-preview"></a></li>
-                            <li><a href="?lang=ru" data-lang="ru"><img src="/img/idiomas/ru.png" alt="Русский" class="flag-preview"></a></li>
+                            <li><a href="?lang=en" data-lang="en"><img src="./img/idiomas/en.png" alt="English" class="flag-preview"></a></li>
+                            <li><a href="?lang=fr" data-lang="fr"><img src="./img/idiomas/fr.png" alt="Français" class="flag-preview"></a></li>
+                            <li><a href="?lang=es" data-lang="es"><img src="./img/idiomas/es.png" alt="Español" class="flag-preview"></a></li>
+                            <li><a href="?lang=cn" data-lang="cn"><img src="./img/idiomas/cn.png" alt="中国人" class="flag-preview"></a></li>
+                            <li><a href="?lang=it" data-lang="it"><img src="./img/idiomas/it.png" alt="Italiano" class="flag-preview"></a></li>
+                            <li><a href="?lang=br" data-lang="br"><img src="./img/idiomas/br.png" alt="Brasileiro" class="flag-preview"></a></li>
+                            <li><a href="?lang=ua" data-lang="ua"><img src="./img/idiomas/ua.png" alt="українська" class="flag-preview"></a></li>
+                            <li><a href="?lang=ru" data-lang="ru"><img src="./img/idiomas/ru.png" alt="Русский" class="flag-preview"></a></li>
                         </ul>
                     </div>
 
@@ -134,7 +132,7 @@ if (file_exists($lang_file)) {
                         <i class="fa fa-moon"></i>
                     </button>
                 </div>
-			</div>
+            </div>
         </nav>
         
         <!-- Sección "Sign Up" -->
@@ -150,7 +148,7 @@ if (file_exists($lang_file)) {
         <form method="POST" action="">
             <input type="hidden" name="confirm_delete" value="1">
             <button type="submit">Eliminar Cuenta</button>
-            <a href="/index.php">Cancelar</a>
+            <a href="./index.php">Cancelar</a>
         </form>
 
         </section>
@@ -161,11 +159,11 @@ if (file_exists($lang_file)) {
                 <!-- Sección de enlaces -->
                 <div class="footer-links">
                     <a href="#" class="active"><?php echo $lang['home']; ?></a>
-                    <a href="../index.php#amenities"><?php echo $lang['amenities']; ?></a>
-                    <a href="../index.php#contact"><?php echo $lang['contact']; ?></a>
-                    <a href="../index.php#reviews"><?php echo $lang['reviews']; ?></a>
-                    <a href="../index.php#reservation"><?php echo $lang['booking']; ?></a>
-                    <a href="../index.php#gallery"><?php echo $lang['gallery']; ?></a>
+                    <a href="./index.php#amenities"><?php echo $lang['amenities']; ?></a>
+                    <a href="./index.php#contact"><?php echo $lang['contact']; ?></a>
+                    <a href="./index.php#reviews"><?php echo $lang['reviews']; ?></a>
+                    <a href="./index.php#reservation"><?php echo $lang['booking']; ?></a>
+                    <a href="./index.php#gallery"><?php echo $lang['gallery']; ?></a>
                     <a href="#"><?php echo $lang['account']; ?></a>
                 </div>
 
