@@ -155,7 +155,15 @@ $conn->close(); // Cierra la conexión a la base de datos
             </div>
         </nav>
         
-        <!-- Sección "Login" -->
+
+        <?php if (isset($_GET['registration_success']) && $_GET['registration_success'] === 'true'): ?>
+        <div class="success-message">
+            ¡Registro realizado con éxito! Ahora puedes iniciar sesión.
+        </div>
+        <?php endif; ?>
+
+
+
         <section id="signup">
             <h2><?php echo $lang['login']; ?></h2>
             <p><?php echo $lang['login_message']; ?></p>
