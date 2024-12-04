@@ -41,7 +41,7 @@ $username = htmlspecialchars($_SESSION['username']);
 
 
 // Incluye tu archivo de conexión a la base de datos
-include './controllers/conection.php'; // Asegúrate de que este archivo define la variable $conn con tu conexión
+include(__DIR__ . '/../../controllers/conection.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Obtener el user_id desde la sesión y la nueva contraseña desde el formulario
