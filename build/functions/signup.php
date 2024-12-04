@@ -116,7 +116,7 @@
                 </form>
                 <div class="links">
                     <a href="login.php"><?php echo $lang['login_account']; ?></a>
-                    <a href="/build/config/bin/delete.php"><?php echo $lang['delete_account']; ?></a>
+                    <a href="/build/crud/dump/delete.php"><?php echo $lang['delete_account']; ?></a>
                 </div>
             </section>
             
