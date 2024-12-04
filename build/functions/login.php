@@ -14,7 +14,7 @@ if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 
 }
 $_SESSION['LAST_ACTIVITY'] = time(); // Actualiza el tiempo de la última actividad
 
-require_once __DIR__ . "/../../controllers/conection.php";  
+require_once "./controllers/conection.php";  
 
 // Manejo de autenticación
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
