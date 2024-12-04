@@ -13,12 +13,12 @@ if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 
     // La sesión ha expirado
     session_unset();     // Borra todas las variables de sesión
     session_destroy();   // Destruye la sesión
-    header("Location: ./index.php?session_expired=true"); // Redirige a una página o muestra un mensaje
+    header("Location: /index.php?session_expired=true"); // Redirige a una página o muestra un mensaje
     exit();
 }
 $_SESSION['LAST_ACTIVITY'] = time(); // Actualiza el tiempo de la última actividad
 
-require_once "./controllers/conection.php";
+require_once "/controllers/conection.php";
 
 // Manejo de autenticación
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['logged_in'] = true;
 
                     // Redirige al index
-                    header("Location: ./index.php");
+                    header("Location: /index.php");
 
                     exit();
                 } else {
@@ -100,18 +100,18 @@ $conn->close(); // Cierra la conexión a la base de datos
     <title><?php echo $lang['title']; ?></title>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/darkmode.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/darkmode.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.css">
 
     <!-- Favicon -->
-    <link rel="icon" href="./img/favicon.png" type="image/x-icon">
+    <link rel="icon" href="/img/favicon.png" type="image/x-icon">
 
     <!-- JS -->
-    <script defer src="./js/javascript.js"></script>
-    <script defer src="./js/darkmode.js"></script>
-    <script defer src="./js/languague.js"></script>
-    <script defer src="./js/eye.js"></script>
+    <script defer src="/js/javascript.js"></script>
+    <script defer src="/js/darkmode.js"></script>
+    <script defer src="/js/languague.js"></script>
+    <script defer src="/js/eye.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
@@ -120,33 +120,33 @@ $conn->close(); // Cierra la conexión a la base de datos
         <!-- Navbar -->
         <nav>
             <div class="topnav" id="myTopnav">
-                <a href="./index.php#parallax-section" class="active">Home</a>
-                <a href="./index.php#amenities"><?php echo $lang['amenities']?></a>
-                <a href="./index.php#gallery"><?php echo $lang['gallery']?></a>
-                <a href="./index.php#reviews"><?php echo $lang['reviews']?></a>
-                <a href="./index.php#ubication"><?php echo $lang['ubication']; ?></a>
-                <a href="./build/functions/signup.php"><?php echo $lang['account']?></a>
+                <a href="/index.php#parallax-section" class="active">Home</a>
+                <a href="/index.php#amenities"><?php echo $lang['amenities']?></a>
+                <a href="/index.php#gallery"><?php echo $lang['gallery']?></a>
+                <a href="/index.php#reviews"><?php echo $lang['reviews']?></a>
+                <a href="/index.php#ubication"><?php echo $lang['ubication']; ?></a>
+                <a href="/build/functions/signup.php"><?php echo $lang['account']?></a>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
-                    <a href="./build/config/data/create.php"><?php echo $lang['make_reservation']?></a>
-                    <a href="./build/functions/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
-                    <a href="./build/functions/contact.php"><?php echo $lang['contact_title']?></a>
+                    <a href="/build/config/data/create.php"><?php echo $lang['make_reservation']?></a>
+                    <a href="/build/functions/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
+                    <a href="/build/functions/contact.php"><?php echo $lang['contact_title']?></a>
                 <?php endif; ?>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
                 <div class="settings-container" style="position: relative;">
                     <!-- Selector de idioma -->
                     <div class="language-selector">
-                        <img id="current-flag" src="./img/idiomas/<?php echo isset($_SESSION['lang']) ? $_SESSION['lang'] : 'es'; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
+                        <img id="current-flag" src="/img/idiomas/<?php echo isset($_SESSION['lang']) ? $_SESSION['lang'] : 'es'; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
                         <ul class="language-menu">
-                            <li><a href="?lang=en" data-lang="en"><img src="./img/idiomas/en.png" alt="English" class="flag-preview"></a></li>
-                            <li><a href="?lang=fr" data-lang="fr"><img src="./img/idiomas/fr.png" alt="Français" class="flag-preview"></a></li>
-                            <li><a href="?lang=es" data-lang="es"><img src="./img/idiomas/es.png" alt="Español" class="flag-preview"></a></li>
-                            <li><a href="?lang=cn" data-lang="cn"><img src="./img/idiomas/cn.png" alt="中国人" class="flag-preview"></a></li>
-                            <li><a href="?lang=it" data-lang="it"><img src="./img/idiomas/it.png" alt="Italiano" class="flag-preview"></a></li>
-                            <li><a href="?lang=br" data-lang="br"><img src="./img/idiomas/br.png" alt="Brasileiro" class="flag-preview"></a></li>
-                            <li><a href="?lang=ua" data-lang="ua"><img src="./img/idiomas/ua.png" alt="українська" class="flag-preview"></a></li>
-                            <li><a href="?lang=ru" data-lang="ru"><img src="./img/idiomas/ru.png" alt="Русский" class="flag-preview"></a></li>
+                            <li><a href="?lang=en" data-lang="en"><img src="/img/idiomas/en.png" alt="English" class="flag-preview"></a></li>
+                            <li><a href="?lang=fr" data-lang="fr"><img src="/img/idiomas/fr.png" alt="Français" class="flag-preview"></a></li>
+                            <li><a href="?lang=es" data-lang="es"><img src="/img/idiomas/es.png" alt="Español" class="flag-preview"></a></li>
+                            <li><a href="?lang=cn" data-lang="cn"><img src="/img/idiomas/cn.png" alt="中国人" class="flag-preview"></a></li>
+                            <li><a href="?lang=it" data-lang="it"><img src="/img/idiomas/it.png" alt="Italiano" class="flag-preview"></a></li>
+                            <li><a href="?lang=br" data-lang="br"><img src="/img/idiomas/br.png" alt="Brasileiro" class="flag-preview"></a></li>
+                            <li><a href="?lang=ua" data-lang="ua"><img src="/img/idiomas/ua.png" alt="українська" class="flag-preview"></a></li>
+                            <li><a href="?lang=ru" data-lang="ru"><img src="/img/idiomas/ru.png" alt="Русский" class="flag-preview"></a></li>
                         </ul>
                     </div>
 
@@ -182,7 +182,7 @@ $conn->close(); // Cierra la conexión a la base de datos
             </form>
             
             <div class="links">
-                <?php echo $lang['register_prompt']; ?> <a href="./build/functions/signup.php"><?php echo $lang['register_link']; ?></a>
+                <?php echo $lang['register_prompt']; ?> <a href="/build/functions/signup.php"><?php echo $lang['register_link']; ?></a>
             </div>
         </section>
 
@@ -192,11 +192,11 @@ $conn->close(); // Cierra la conexión a la base de datos
                 <!-- Sección de enlaces -->
                 <div class="footer-links">
                     <a href="#" class="active"><?php echo $lang['home']; ?></a>
-                    <a href="./index.php#amenities"><?php echo $lang['amenities']; ?></a>
-                    <a href="./index.php#contact"><?php echo $lang['contact']; ?></a>
-                    <a href="./index.php#reviews"><?php echo $lang['reviews']; ?></a>
-                    <a href="./index.php#reservation"><?php echo $lang['booking']; ?></a>
-                    <a href="./index.php#gallery"><?php echo $lang['gallery']; ?></a>
+                    <a href="/index.php#amenities"><?php echo $lang['amenities']; ?></a>
+                    <a href="/index.php#contact"><?php echo $lang['contact']; ?></a>
+                    <a href="/index.php#reviews"><?php echo $lang['reviews']; ?></a>
+                    <a href="/index.php#reservation"><?php echo $lang['booking']; ?></a>
+                    <a href="/index.php#gallery"><?php echo $lang['gallery']; ?></a>
                     <a href="#"><?php echo $lang['account']; ?></a>
                 </div>
 
@@ -214,7 +214,6 @@ $conn->close(); // Cierra la conexión a la base de datos
                 </div>
             </div>
         </footer>
-        
     </div>
 </body>
 </html>
