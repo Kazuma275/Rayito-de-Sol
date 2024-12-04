@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 session_start();
 
@@ -100,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php endif; ?>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
-                    <a href="/build/contact.php">Contacta</a>
+                    <a href="/build/contact.php">contact_messages</a>
                 <?php endif; ?>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                     <a href="/build/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
