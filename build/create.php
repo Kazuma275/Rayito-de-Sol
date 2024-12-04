@@ -53,9 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bind_param("sss", $username, $reservation_date, $reservation_time);
 
     if ($stmt->execute()) {
-        echo "<p>Reserva realizada con éxito.</p>";
+        $success_message = "Reserva realizada con éxito."; // Mensaje de éxito
     } else {
-        echo "<p>Error al realizar la reserva: " . $stmt->error . "</p>";
+        $error_message = "Error al realizar la reserva. Intenta nuevamente.";
     }
 
     $stmt->close();
