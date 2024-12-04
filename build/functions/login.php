@@ -101,8 +101,8 @@ $conn->close(); // Cierra la conexión a la base de datos
     <title><?php echo $lang['title']; ?></title>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="../../css/style.css">
-<link rel="stylesheet" href="../../css/darkmode.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/darkmode.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.css">
 
     <!-- Favicon -->
