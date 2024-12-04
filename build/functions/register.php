@@ -1,7 +1,7 @@
 <?php
 // Asegúrate de que estas rutas sean correctas según la estructura de tu proyecto.
-require_once __DIR__ . "/assets/classes/User.php";
-require_once __DIR__ . "/controllers/conection.php";
+require_once "./assets/classes/User.php";
+require_once "./controllers/conection.php";
 
 // Check if the form has been submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
