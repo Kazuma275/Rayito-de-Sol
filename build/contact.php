@@ -27,34 +27,40 @@ if (file_exists($lang_file)) {
     die("Error: Archivo de idioma no encontrado.");
 }
 
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Captura y valida los datos del formulario
+    // Captura los datos del formulario
     $customer_name = trim($_POST['customer_name'] ?? '');
     $customer_email = trim($_POST['customer_email'] ?? '');
     $message = trim($_POST['message'] ?? '');
 
     // Verifica que los campos no estén vacíos
     if (empty($customer_name) || empty($customer_email) || empty($message)) {
-        die("Todos los campos son obligatorios.");
-    }
-
-    // Escapa los datos para evitar inyecciones SQL
-    $customer_name = $conn->real_escape_string($customer_name);
-    $customer_email = $conn->real_escape_string($customer_email);
-    $message = $conn->real_escape_string($message);
-
-    // Inserta los datos en la tabla "contact"
-    $sql = "INSERT INTO contact (customer_name, customer_email, message) VALUES (?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sss", $customer_name, $customer_email, $message);
-
-    if ($stmt->execute()) {
-        echo "Mensaje enviado con éxito.";
+        $error_message = "Todos los campos son obligatorios.";
     } else {
-        echo "Error al enviar el mensaje.";
-    }
+        // Escapa los datos para evitar inyecciones SQL
+        $customer_name = $conn->real_escape_string($customer_name);
+        $customer_email = $conn->real_escape_string($customer_email);
+        $message = $conn->real_escape_string($message);
 
-    $stmt->close();
+        // Inserta los datos en la tabla "contact"
+        $sql = "INSERT INTO contact (customer_name, customer_email, message) VALUES (?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+
+        if ($stmt === false) {
+            $error_message = "Error en la preparación de la consulta: " . $conn->error;
+        } else {
+            $stmt->bind_param("sss", $customer_name, $customer_email, $message);
+
+            if ($stmt->execute()) {
+                $success_message = "Mensaje enviado con éxito.";
+            } else {
+                $error_message = "Error al enviar el mensaje: " . $stmt->error;
+            }
+
+            $stmt->close();
+        }
+    }
     $conn->close();
 }
 
@@ -129,18 +135,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			</div>
         </nav>
 
-                <!--  Sección "Reservation" -->
-                <section id="reservation">
-        <?php if (!empty($success_message)): ?>
-            <div class="success-message">
-                <?php echo $success_message; ?>
-            </div>
-        <?php elseif (!empty($error_message)): ?>
-            <div class="error-message">
-                <?php echo $error_message; ?>
-            </div>
-        <?php endif; ?>
-
         <!-- Sección "Contact" -->
         <section id="contact">
             <?php if (!empty($success_message)): ?>
@@ -153,24 +147,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             <?php endif; ?>
 
-            <h2><?php echo $lang['contact_header']; ?></h2>
-            <p><?php echo $lang['contact_description']; ?></p>
+            <h2>Contacto</h2>
+            <p>Ponte en contacto con nosotros utilizando el formulario a continuación:</p>
+            <form method="POST" action="">
+                <label for="customer_name">Nombre:</label>
+                <input type="text" id="customer_name" name="customer_name" required>
 
-            <form class="reservation-form" method="POST" action="">
-                <label for="name">Nombre:</label>
-                <input type="text" id="name" name="customer_name" required>
-
-                <label for="email">Correo electrónico:</label>
-                <input type="email" id="email" name="customer_email" required>
+                <label for="customer_email">Correo Electrónico:</label>
+                <input type="email" id="customer_email" name="customer_email" required>
 
                 <label for="message">Mensaje:</label>
                 <textarea id="message" name="message" required></textarea>
 
                 <button type="submit">Enviar</button>
             </form>
-
         </section>
-
+        
         <!-- Footer -->
         <footer class="footer">
             <div class="container">

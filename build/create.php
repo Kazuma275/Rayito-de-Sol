@@ -28,43 +28,37 @@ if (file_exists($lang_file)) {
 }
 
 
-
-$success_message = '';
-$error_message = '';
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Captura los datos del formulario
-    $customer_name = trim($_POST['customer_name'] ?? '');
-    $customer_email = trim($_POST['customer_email'] ?? '');
-    $message = trim($_POST['message'] ?? '');
+    // Recibe los datos del formulario
+    $reservation_date = $_POST['reservation-date'];
+    $reservation_time = $_POST['reservation-time'];
 
     // Verifica que los campos no estén vacíos
-    if (empty($customer_name) || empty($customer_email) || empty($message)) {
-        $error_message = "Todos los campos son obligatorios.";
-    } else {
-        // Escapa los datos para evitar inyecciones SQL
-        $customer_name = $conn->real_escape_string($customer_name);
-        $customer_email = $conn->real_escape_string($customer_email);
-        $message = $conn->real_escape_string($message);
-
-        // Inserta los datos en la tabla "contact"
-        $sql = "INSERT INTO contact (customer_name, customer_email, message) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-
-        if ($stmt === false) {
-            $error_message = "Error en la preparación de la consulta: " . $conn->error;
-        } else {
-            $stmt->bind_param("sss", $customer_name, $customer_email, $message);
-
-            if ($stmt->execute()) {
-                $success_message = "Mensaje enviado con éxito.";
-            } else {
-                $error_message = "Error al enviar el mensaje: " . $stmt->error;
-            }
-
-            $stmt->close();
-        }
+    if (empty($reservation_date) || empty($reservation_time)) {
+        die("Por favor, complete todos los campos de la reserva.");
     }
+
+    // Escapa los datos para evitar inyecciones SQL
+    $reservation_date = $conn->real_escape_string($reservation_date);
+    $reservation_time = $conn->real_escape_string($reservation_time);
+
+    // Captura el nombre de usuario de la sesión
+    $username = $_SESSION['username'] ?? 'Invitado'; // Valor por defecto en caso de que no esté en sesión
+
+    // Inserta los datos en la tabla "reservations"
+    $sql = "INSERT INTO reservations (username, reservation_date, reservation_time) VALUES (?, ?, ?)";
+
+    // Usa una declaración preparada para mayor seguridad
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sss", $username, $reservation_date, $reservation_time);
+
+    if ($stmt->execute()) {
+        $success_message = "Reserva realizada con éxito."; // Mensaje de éxito
+    } else {
+        $error_message = "Error al realizar la reserva. Intenta nuevamente.";
+    }
+
+    $stmt->close();
     $conn->close();
 }
 
@@ -144,32 +138,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </nav>
         
         <!--  Sección "Reservation" -->
-        <section id="contact">
-            <?php if (!empty($success_message)): ?>
-                <div class="success-message">
-                    <?php echo $success_message; ?>
-                </div>
-            <?php elseif (!empty($error_message)): ?>
-                <div class="error-message">
-                    <?php echo $error_message; ?>
-                </div>
-            <?php endif; ?>
+        <section id="reservation">
+        <?php if (!empty($success_message)): ?>
+            <div class="success-message">
+                <?php echo $success_message; ?>
+            </div>
+        <?php elseif (!empty($error_message)): ?>
+            <div class="error-message">
+                <?php echo $error_message; ?>
+            </div>
+        <?php endif; ?>
 
-            <h2>Contacto</h2>
-            <p>Ponte en contacto con nosotros utilizando el formulario a continuación:</p>
-            <form class="reservation-form" method="POST" action="">
-                <label for="customer_name">Nombre:</label>
-                <input type="text" id="customer_name" name="customer_name" required>
+        <h2><?php echo $lang['reservation_title']; ?></h2>
+        <p><?php echo $lang['reservation_description']; ?></p>
+        <form class="reservation-form" method="POST" action="">
+            <label for="reservation-date"><?php echo $lang['reservation_date_label']; ?></label>
+            <input type="date" id="reservation-date" name="reservation-date" required>
 
-                <label for="customer_email">Correo Electrónico:</label>
-                <input type="email" id="customer_email" name="customer_email" required>
+            <label for="reservation-time"><?php echo $lang['reservation_time_label']; ?></label>
+            <input type="time" id="reservation-time" name="reservation-time" required>
 
-                <label for="message">Mensaje:</label>
-                <textarea id="message" name="message" required></textarea>
+            <button type="submit"><?php echo $lang['reservation_button']; ?></button>
+        </form>
+    </section>
 
-                <button type="submit">Enviar</button>
-            </form>
-        </section>
         
         <!-- Footer -->
         <footer class="footer">
