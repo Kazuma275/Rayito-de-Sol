@@ -129,6 +129,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			</div>
         </nav>
 
+                <!--  Sección "Reservation" -->
+                <section id="reservation">
+        <?php if (!empty($success_message)): ?>
+            <div class="success-message">
+                <?php echo $success_message; ?>
+            </div>
+        <?php elseif (!empty($error_message)): ?>
+            <div class="error-message">
+                <?php echo $error_message; ?>
+            </div>
+        <?php endif; ?>
+
         <!-- Sección "Contact" -->
         <section id="contact">
             <?php if (!empty($success_message)): ?>
