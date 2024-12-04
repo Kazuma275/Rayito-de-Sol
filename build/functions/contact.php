@@ -168,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <a href="/index.php#amenities"><?php echo $lang['amenities']; ?></a>
                     <a href="/index.php#gallery"><?php echo $lang['gallery']; ?></a>
                     <a href="/index.php#reviews"><?php echo $lang['reviews']; ?></a>
-                    <a href="/build/account.php"><?php echo $lang['account']; ?></a>
+                    <a href="/build/functions/signup.php"><?php echo $lang['account']; ?></a>
                 </div>
 
                 <!-- Redes Sociales -->
