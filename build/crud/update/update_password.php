@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Incluye el archivo de conexión a la base de datos
-include '../controllers/conection.php'; // Asegúrate de definir $conn correctamente
+include(__DIR__ . '/../../controllers/conection.php');
 
 // Comprueba si el formulario ha sido enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
