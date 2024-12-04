@@ -1,35 +1,150 @@
 <?php
-require_once "../assets/classes/User.php";
+
+session_start();
+
 require_once "../controllers/conection.php";
 
-// Check if the form has been submitted
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = trim($_POST['username']); 
-    $password = trim($_POST['password']);
+// Define un idioma predeterminado
+$default_lang = 'es';
 
-    // Validación básica
-    if (empty($username) || empty($password)) {
-        die("Username and password are required.");
-    }
-
-    // Crear un objeto de la clase User
-    $user = new User($username, $password);
-
-    // Obtener los valores del objeto User
-    $usernameValue = $user->getUsername();
-    $passwordValue = $user->getPassword();
-
-    // Crear la consulta SQL
-    $sql = "INSERT INTO users (username, password) VALUES ('$usernameValue', '$passwordValue')";
-
-    // Ejecutar la consulta y verificar si se ejecutó correctamente
-    if ($conn->query($sql) === TRUE) {
-        echo "User registered successfully!";
-    } else {
-        echo "Error registering user: " . $conn->error;
-    }
-
-    // Cerrar la conexión
-    $conn->close();
+// Obtén el idioma de la URL o de la sesión
+if (isset($_GET['lang'])) {
+    $lang = $_GET['lang'];
+    $_SESSION['lang'] = $lang; // Guarda el idioma seleccionado en la sesión
+} elseif (isset($_SESSION['lang'])) {
+    $lang = $_SESSION['lang']; // Usa el idioma almacenado en la sesión
+} else {
+    $lang = $default_lang; // Usa el idioma predeterminado
 }
+
+// Ruta del archivo de idioma
+$lang_file = __DIR__ . "/lang/{$lang}.php";
+
+// Verifica si el archivo existe
+if (file_exists($lang_file)) {
+    include $lang_file;
+} else {
+    die("Error: Archivo de idioma no encontrado.");
+}
+
+// Procesa el formulario de contacto
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = $_POST['name'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $message = $_POST['message'] ?? '';
+
+    // Verifica que los campos no estén vacíos
+    if (empty($name) || empty($email) || empty($message)) {
+        $error_message = $lang['contact_error_fields'];
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error_message = $lang['contact_error_email'];
+    } else {
+        // Escapa los datos para evitar inyecciones SQL
+        $name = $conn->real_escape_string($name);
+        $email = $conn->real_escape_string($email);
+        $message = $conn->real_escape_string($message);
+
+        // Inserta los datos en la tabla "contact_messages"
+        $sql = "INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sss", $name, $email, $message);
+
+        if ($stmt->execute()) {
+            $success_message = $lang['contact_success'];
+        } else {
+            $error_message = $lang['contact_error_general'];
+        }
+
+        $stmt->close();
+        $conn->close();
+    }
+}
+
 ?>
+
+<!DOCTYPE html>
+<html lang="<?php echo $_SESSION['lang']; ?>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $lang['contact_title']; ?></title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="../css/darkmode.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.css">
+
+    <!-- Favicon -->
+    <link rel="icon" href="./img/favicon.png" type="image/x-icon">
+
+    <!-- JS -->
+    <script defer src="/js/javascript.js"></script>
+    <script defer src="/js/darkmode.js"></script>
+    <script defer src="/js/languague.js"></script>
+    <script defer src="/js/eye.js"></script>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <!-- Aquí puedes reutilizar el mismo menú que en reservation.php -->
+        </nav>
+
+        <!-- Sección "Contact" -->
+        <section id="contact">
+            <?php if (!empty($success_message)): ?>
+                <div class="success-message">
+                    <?php echo $success_message; ?>
+                </div>
+            <?php elseif (!empty($error_message)): ?>
+                <div class="error-message">
+                    <?php echo $error_message; ?>
+                </div>
+            <?php endif; ?>
+
+            <h2><?php echo $lang['contact_header']; ?></h2>
+            <p><?php echo $lang['contact_description']; ?></p>
+
+            <form class="contact-form" method="POST" action="">
+                <label for="name"><?php echo $lang['contact_name_label']; ?></label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email"><?php echo $lang['contact_email_label']; ?></label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="message"><?php echo $lang['contact_message_label']; ?></label>
+                <textarea id="message" name="message" rows="5" required></textarea>
+
+                <button type="submit"><?php echo $lang['contact_button']; ?></button>
+            </form>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <!-- Sección de enlaces -->
+                <div class="footer-links">
+                    <a href="#" class="active"><?php echo $lang['home']; ?></a>
+                    <a href="../index.php#amenities"><?php echo $lang['amenities']; ?></a>
+                    <a href="../index.php#reviews"><?php echo $lang['reviews']; ?></a>
+                    <a href="../index.php#gallery"><?php echo $lang['gallery']; ?></a>
+                    <a href="/build/account.php"><?php echo $lang['account']; ?></a>
+                </div>
+
+                <!-- Redes Sociales -->
+                <div class="social-media">
+                    <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.whatsapp.com" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+
+                <!-- Derechos de autor -->
+                <div class="copyright">
+                    &copy; 2024 <a href="https://rayitodesol.es">Rayito de Sol</a>. <?php echo $lang['rights']; ?>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
