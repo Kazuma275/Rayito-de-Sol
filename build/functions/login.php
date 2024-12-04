@@ -156,7 +156,7 @@ $conn->close(); // Cierra la conexión a la base de datos
         </nav>
         
         <!-- Sección "Login" -->
-        <section id="login">
+        <section id="signup">
             <h2><?php echo $lang['login']; ?></h2>
             <p><?php echo $lang['login_message']; ?></p>
             <?php if (isset($error)): ?>
