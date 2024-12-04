@@ -16,7 +16,7 @@ require_once "./controllers/conection.php";
 
 // Verifica que el usuario esté autenticado
 if (!isset($_SESSION['user_id']) || !$_SESSION['logged_in']) {
-    header("Location: ../index.php?not_logged_in=true");
+    header("Location: ./index.php?not_logged_in=true");
     exit();
 }
 
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_delete'])) {
             // Cierra la sesión y redirige
             session_unset();
             session_destroy();
-            header("Location: ../index.php?account_deleted=true");
+            header("Location: ./index.php?account_deleted=true");
             exit();
         } else {
             $error = "Error al eliminar la cuenta: " . $stmt->error;
