@@ -144,30 +144,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </nav>
         
         <!--  Sección "Reservation" -->
-        <section id="reservation">
-        <?php if (!empty($success_message)): ?>
-            <div class="success-message">
-                <?php echo $success_message; ?>
-            </div>
-        <?php elseif (!empty($error_message)): ?>
-            <div class="error-message">
-                <?php echo $error_message; ?>
-            </div>
-        <?php endif; ?>
+        <section id="contact">
+            <?php if (!empty($success_message)): ?>
+                <div class="success-message">
+                    <?php echo $success_message; ?>
+                </div>
+            <?php elseif (!empty($error_message)): ?>
+                <div class="error-message">
+                    <?php echo $error_message; ?>
+                </div>
+            <?php endif; ?>
 
-        <h2><?php echo $lang['reservation_title']; ?></h2>
-        <p><?php echo $lang['reservation_description']; ?></p>
-        <form class="reservation-form" method="POST" action="">
-            <label for="reservation-date"><?php echo $lang['reservation_date_label']; ?></label>
-            <input type="date" id="reservation-date" name="reservation-date" required>
+            <h2>Contacto</h2>
+            <p>Ponte en contacto con nosotros utilizando el formulario a continuación:</p>
+            <form class="reservation-form" method="POST" action="">
+                <label for="customer_name">Nombre:</label>
+                <input type="text" id="customer_name" name="customer_name" required>
 
-            <label for="reservation-time"><?php echo $lang['reservation_time_label']; ?></label>
-            <input type="time" id="reservation-time" name="reservation-time" required>
+                <label for="customer_email">Correo Electrónico:</label>
+                <input type="email" id="customer_email" name="customer_email" required>
 
-            <button type="submit"><?php echo $lang['reservation_button']; ?></button>
-        </form>
-    </section>
+                <label for="message">Mensaje:</label>
+                <textarea id="message" name="message" required></textarea>
 
+                <button type="submit">Enviar</button>
+            </form>
+        </section>
         
         <!-- Footer -->
         <footer class="footer">
