@@ -150,7 +150,7 @@ $conn->close();
                 <label for="password">Actualizar contraseña:</label>
                 <input type="password" id="password" name="password" required>
                 <input type="submit" value="Guardar Cambios">
-                <a href="/build/crud/dump/logout.php" class="logout-button">Cerrar Sesión</a>
+                <a href="./build/crud/dump/logout.php" class="logout-button">Cerrar Sesión</a>
             </form>
 
         </section>
