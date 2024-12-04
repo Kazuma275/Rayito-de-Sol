@@ -193,10 +193,7 @@ $conn->close(); // Cierra la conexión a la base de datos
                     <a href="/index.php#reviews"><?php echo $lang['reviews']?></a>
                     <a href="/index.php#ubication"><?php echo $lang['ubication']?></a>
                 </div>
-                <div class="footer-company">
-                    <a href="mailto:your-email@example.com">Contact</a>
-                    <a href="/build/functions/contact.php">About</a>
-                </div>
+
             </div>
         </footer>
     </div>
