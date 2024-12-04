@@ -1,10 +1,5 @@
 <?php
 
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
 
 // Define un idioma predeterminado
@@ -30,8 +25,6 @@ if (file_exists($lang_file)) {
     die("Error: Archivo de idioma no encontrado.");
 }
 
-$username = $_SESSION['usernameValue'];
-$password = $_SESSION['passwordValue'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Recibe los datos del formulario
