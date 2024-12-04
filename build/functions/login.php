@@ -14,7 +14,7 @@ if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 
     // La sesión ha expirado
     session_unset();     // Borra todas las variables de sesión
     session_destroy();   // Destruye la sesión
-    header("Location: /index.php?session_expired=true"); // Redirige a una página o muestra un mensaje
+    header("Location: __DIR__/index.php?session_expired=true"); // Redirige a una página o muestra un mensaje
     exit();
 }
 $_SESSION['LAST_ACTIVITY'] = time(); // Actualiza el tiempo de la última actividad
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['logged_in'] = true;
 
                     // Redirige al index
-                    header("Location: /index.php");
+                    header("Location: __DIR__/index.php");
 
                     exit();
                 } else {
@@ -80,7 +80,7 @@ if (isset($_GET['lang'])) {
 $lang = preg_replace('/[^a-z]/', '', $lang);
 
 // Ruta del archivo de idioma
-$lang_file = __DIR__ . "/../lang/{$lang}.php";
+$lang_file = __DIR__ . "__DIR__/lang/{$lang}.php";
 
 // Verifica si el archivo de idioma existe
 if (file_exists($lang_file)) {
