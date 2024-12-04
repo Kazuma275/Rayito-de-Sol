@@ -7,7 +7,7 @@ $session_lifetime = 1800; // Tiempo de vida de la sesión en segundos
 if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > $session_lifetime)) {
     session_unset();
     session_destroy();
-    header("Location: ./index.php?session_expired=true");
+    header("Location: /index.php?session_expired=true");
     exit();
 }
 $_SESSION['LAST_ACTIVITY'] = time(); // Actualiza el tiempo de la última actividad
@@ -16,7 +16,7 @@ require_once "./controllers/conection.php";
 
 // Verifica que el usuario esté autenticado
 if (!isset($_SESSION['user_id']) || !$_SESSION['logged_in']) {
-    header("Location: ./index.php?not_logged_in=true");
+    header("Location: /index.php?not_logged_in=true");
     exit();
 }
 
@@ -116,16 +116,16 @@ if (file_exists($lang_file)) {
                 <div class="settings-container" style="position: relative;">
                     <!-- Selector de idioma -->
                     <div class="language-selector">
-                        <img id="current-flag" src="../img/idiomas/<?php echo isset($_SESSION['lang']) ? $_SESSION['lang'] : 'es'; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
+                        <img id="current-flag" src="/img/idiomas/<?php echo isset($_SESSION['lang']) ? $_SESSION['lang'] : 'es'; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
                         <ul class="language-menu">
-                            <li><a href="?lang=en" data-lang="en"><img src="../img/idiomas/en.png" alt="English" class="flag-preview"></a></li>
-                            <li><a href="?lang=fr" data-lang="fr"><img src="../img/idiomas/fr.png" alt="Français" class="flag-preview"></a></li>
-                            <li><a href="?lang=es" data-lang="es"><img src="../img/idiomas/es.png" alt="Español" class="flag-preview"></a></li>
-                            <li><a href="?lang=cn" data-lang="cn"><img src="../img/idiomas/cn.png" alt="中国人" class="flag-preview"></a></li>
-                            <li><a href="?lang=it" data-lang="it"><img src="../img/idiomas/it.png" alt="Italiano" class="flag-preview"></a></li>
-                            <li><a href="?lang=br" data-lang="br"><img src="../img/idiomas/br.png" alt="Brasileiro" class="flag-preview"></a></li>
-                            <li><a href="?lang=ua" data-lang="ua"><img src="../img/idiomas/ua.png" alt="українська" class="flag-preview"></a></li>
-                            <li><a href="?lang=ru" data-lang="ru"><img src="../img/idiomas/ru.png" alt="Русский" class="flag-preview"></a></li>
+                            <li><a href="?lang=en" data-lang="en"><img src="/img/idiomas/en.png" alt="English" class="flag-preview"></a></li>
+                            <li><a href="?lang=fr" data-lang="fr"><img src="/img/idiomas/fr.png" alt="Français" class="flag-preview"></a></li>
+                            <li><a href="?lang=es" data-lang="es"><img src="/img/idiomas/es.png" alt="Español" class="flag-preview"></a></li>
+                            <li><a href="?lang=cn" data-lang="cn"><img src="/img/idiomas/cn.png" alt="中国人" class="flag-preview"></a></li>
+                            <li><a href="?lang=it" data-lang="it"><img src="/img/idiomas/it.png" alt="Italiano" class="flag-preview"></a></li>
+                            <li><a href="?lang=br" data-lang="br"><img src="/img/idiomas/br.png" alt="Brasileiro" class="flag-preview"></a></li>
+                            <li><a href="?lang=ua" data-lang="ua"><img src="/img/idiomas/ua.png" alt="українська" class="flag-preview"></a></li>
+                            <li><a href="?lang=ru" data-lang="ru"><img src="/img/idiomas/ru.png" alt="Русский" class="flag-preview"></a></li>
                         </ul>
                     </div>
 
@@ -150,7 +150,7 @@ if (file_exists($lang_file)) {
         <form method="POST" action="">
             <input type="hidden" name="confirm_delete" value="1">
             <button type="submit">Eliminar Cuenta</button>
-            <a href="../index.php">Cancelar</a>
+            <a href="/index.php">Cancelar</a>
         </form>
 
         </section>
