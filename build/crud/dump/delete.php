@@ -16,7 +16,7 @@ if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 
 }
 $_SESSION['LAST_ACTIVITY'] = time(); // Actualiza el tiempo de la última actividad
 
-require_once "../controllers/conection.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/controllers/conection.php";
 
 // Verifica que el usuario esté autenticado
 if (!isset($_SESSION['user_id']) || !$_SESSION['logged_in']) {
