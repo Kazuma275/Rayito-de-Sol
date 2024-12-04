@@ -81,6 +81,7 @@ $conn->close();
 
     <!-- CSS -->
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/darkmode.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.css">
 
     <!-- Favicon -->
@@ -90,24 +91,33 @@ $conn->close();
     <script defer src="../js/javascript.js"></script>
     <script defer src="../js/darkmode.js"></script>
     <script defer src="../js/languague.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $('.dayNight input').change(function () {
+            $('body').toggleClass('day', $(this).is(':checked'))
+        });
+    </script>
+
 </head>
 <body>
     <div class="container">
         <!-- Navbar -->
+        <!-- Navbar -->
         <nav>
             <div class="topnav" id="myTopnav">
                 <a href="#parallax-section" class="active">Home</a>
-                <a href="/index.php#amenities"><?php echo $lang['amenities']?></a>
-                <a href="/index.php#gallery"><?php echo $lang['gallery']?></a>
-                <a href="/index.php#reviews"><?php echo $lang['reviews']?></a>
-                <a href="/index.php#ubication"><?php echo $lang['ubication']; ?></a>
-                <a href="/build/signup.php"><?php echo $lang['account']?></a>
+                <a href="#amenities"><?php echo $lang['amenities']?></a>
+                <a href="#gallery"><?php echo $lang['gallery']?></a>
+                <a href="#reviews"><?php echo $lang['reviews']?></a>
+                <a href="#ubication"><?php echo $lang['ubication']; ?></a>
+                <a href="./build/signup.php"><?php echo $lang['account']?></a>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
-                    <a href="/build/create.php"><?php echo $lang['make_reservation']?></a>
+                    <a href="./build/create.php"><?php echo $lang['make_reservation']?></a>
                 <?php endif; ?>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
-                    <a href="/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
+                    <a href="./build/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
                 <?php endif; ?>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
@@ -127,10 +137,11 @@ $conn->close();
                         </ul>
                     </div>
 
-                    <!-- Botón de Modo Oscuro/Claro -->
-                    <button id="toggle-dark-mode" class="dark-mode-toggle">
-                        <i class="fa fa-moon"></i>
-                    </button>
+                    <label class="dayNight">
+                        <input type="checkbox" id="darkmode-toggle">
+                        <div></div>
+                    </label>
+
                 </div>
 			</div>
         </nav>
