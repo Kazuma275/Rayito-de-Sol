@@ -79,7 +79,7 @@ if (isset($_GET['lang'])) {
 $lang = preg_replace('/[^a-z]/', '', $lang);
 
 // Ruta del archivo de idioma
-$lang_file = __DIR__ . "/lang/{$lang}.php";
+$lang_file = __DIR__ . "/../lang/{$lang}.php";
 
 // Verifica si el archivo de idioma existe
 if (file_exists($lang_file)) {
@@ -128,8 +128,8 @@ $conn->close(); // Cierra la conexión a la base de datos
                 <a href="/build/functions/signup.php"><?php echo $lang['account']?></a>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
-                    <a href="/build/config/data/create.php"><?php echo $lang['make_reservation']?></a>
-                    <a href="/build/functions/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
+                    <a href="/build/crud/data/create.php"><?php echo $lang['make_reservation']?></a>
+                    <a href="/build/functions/information.php" class="login-message"><?php echo "Hey," . htmlspecialchars($_SESSION['username']); ?></a>
                     <a href="/build/functions/contact.php"><?php echo $lang['contact_title']?></a>
                 <?php endif; ?>
 
@@ -166,7 +166,7 @@ $conn->close(); // Cierra la conexión a la base de datos
             <?php if (isset($error)): ?>
             <p class="error"><?php echo htmlspecialchars($error); ?></p>
             <?php endif; ?>
-            <form action="login.php" method="POST" class="login-form">
+            <form action="/build/functions/login.php" method="POST" class="login-form">
                 <!-- Usuario -->
                 <label for="username"><?php echo $lang['login_username']; ?></label>
                 <input type="text" id="username" name="username" required>
@@ -192,25 +192,14 @@ $conn->close(); // Cierra la conexión a la base de datos
                 <!-- Sección de enlaces -->
                 <div class="footer-links">
                     <a href="#" class="active"><?php echo $lang['home']; ?></a>
-                    <a href="/index.php#amenities"><?php echo $lang['amenities']; ?></a>
-                    <a href="/index.php#contact"><?php echo $lang['contact']; ?></a>
-                    <a href="/index.php#reviews"><?php echo $lang['reviews']; ?></a>
-                    <a href="/index.php#reservation"><?php echo $lang['booking']; ?></a>
-                    <a href="/index.php#gallery"><?php echo $lang['gallery']; ?></a>
-                    <a href="#"><?php echo $lang['account']; ?></a>
+                    <a href="/index.php#amenities"><?php echo $lang['amenities']?></a>
+                    <a href="/index.php#gallery"><?php echo $lang['gallery']?></a>
+                    <a href="/index.php#reviews"><?php echo $lang['reviews']?></a>
+                    <a href="/index.php#ubication"><?php echo $lang['ubication']?></a>
                 </div>
-
-                <!-- Redes Sociales -->
-                <div class="social-media">
-                    <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.whatsapp.com" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                </div>
-
-                <!-- Derechos de autor -->
-                <div class="copyright">
-                    &copy; 2024 <a href="https://rayitodesol.es">Rayito de Sol</a>. <?php echo $lang['rights']; ?>
+                <div class="footer-company">
+                    <a href="mailto:your-email@example.com">Contact</a>
+                    <a href="/build/functions/contact.php">About</a>
                 </div>
             </div>
         </footer>
