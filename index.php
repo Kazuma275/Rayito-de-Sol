@@ -189,8 +189,8 @@ if (file_exists($lang_file)) {
         <div class="footer-links">
             <a href="#" class="active"><?php echo $lang['home']; ?></a>
             <a href="#amenities"><?php echo $lang['amenities']; ?></a>
-            <a href="#reviews"><?php echo $lang['reviews']; ?></a>
             <a href="#gallery"><?php echo $lang['gallery']; ?></a>
+            <a href="#reviews"><?php echo $lang['reviews']; ?></a>
             <a href="/build/functions/signup.php"><?php echo $lang['account']; ?></a>
         </div>
 
