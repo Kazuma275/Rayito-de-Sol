@@ -165,9 +165,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <!-- Sección de enlaces -->
                 <div class="footer-links">
                     <a href="#" class="active"><?php echo $lang['home']; ?></a>
-                    <a href="../index.php#amenities"><?php echo $lang['amenities']; ?></a>
-                    <a href="../index.php#reviews"><?php echo $lang['reviews']; ?></a>
-                    <a href="../index.php#gallery"><?php echo $lang['gallery']; ?></a>
+                    <a href="/index.php#amenities"><?php echo $lang['amenities']; ?></a>
+                    <a href="/index.php#reviews"><?php echo $lang['reviews']; ?></a>
+                    <a href="/index.php#gallery"><?php echo $lang['gallery']; ?></a>
                     <a href="/build/account.php"><?php echo $lang['account']; ?></a>
                 </div>
 
