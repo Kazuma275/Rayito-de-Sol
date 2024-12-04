@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Asegúrate de que estas rutas sean correctas según la estructura de tu proyecto.
 require_once "./assets/classes/User.php";
 require_once "./controllers/conection.php";
@@ -25,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Ejecutar la consulta y verificar si se ejecutó correctamente
     if ($conn->query($sql) === TRUE) {
+        header("Location: login.php");
         exit(); // Asegúrate de usar exit() después de header para evitar que el script siga ejecutándose
     } else {
         echo "Error registering user: " . $conn->error;
