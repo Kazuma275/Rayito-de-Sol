@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php endif; ?>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
-                    <a href="/build/contact.php">contact_messages</a>
+                    <a href="/build/contact.php"><?php echo $lang['contact_title']?><a/>
                 <?php endif; ?>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                     <a href="/build/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
