@@ -890,7 +890,7 @@
         border-radius: 5px;
         box-sizing: border-box;
     }
-    
+
     .reservation-form button {
         padding: 10px 20px;
         font-size: 1.1em;
@@ -912,7 +912,7 @@
     
     #contact {
         padding: 50px 20px;
-        background-color: #fcfcfc; /* Fondo suave para la sección */
+        background-color: #F5F8FC; /* Fondo suave para la sección */
         text-align: center;
     }
     
@@ -920,8 +920,9 @@
         font-size: 2.5em;
         margin-bottom: 15px;
         color: #333;
+        margin-top: 0;
     }
-
+    
     #contact p {
         font-size: 1.2em;
         margin-bottom: 30px;
@@ -933,14 +934,15 @@
         flex-direction: column;
         align-items: center;
         gap: 15px;
-        max-width: 500px;
+        max-width: 400px;
         margin: 0 auto;
     }
     
     .contact-form label {
         font-size: 1em;
         color: #333;
-        align-self: flex-start;
+        text-align: left;
+        width: 100%;
     }
     
     .contact-form input[type="text"],
@@ -952,7 +954,11 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         box-sizing: border-box;
+    }
+    
+    .contact-form textarea {
         resize: vertical;
+        height: 120px;
     }
     
     .contact-form button {
@@ -969,6 +975,29 @@
     
     .contact-form button:hover {
         background-color: #385E7A; /* Color de hover del botón */
+    }
+    
+    .success-message, .error-message {
+        font-size: 1.2em;
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 5px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+    
+    .success-message {
+        color: #2d6a2d;
+        background-color: #e6ffe6; /* Fondo para el éxito */
+        border: 1px solid #2d6a2d;
+    }
+    
+    .error-message {
+        color: #9e1a1a;
+        background-color: #ffe6e6; /* Fondo para el error */
+        border: 1px solid #9e1a1a;
     }
 
     /***************** Ubication ******************/
