@@ -7,12 +7,12 @@ $session_lifetime = 1800; // Tiempo de vida de la sesión en segundos
 if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > $session_lifetime)) {
     session_unset();
     session_destroy();
-    header("Location: ../index.php?session_expired=true");
+    header("Location: ./index.php?session_expired=true");
     exit();
 }
 $_SESSION['LAST_ACTIVITY'] = time(); // Actualiza el tiempo de la última actividad
 
-require_once "../controllers/conection.php";
+require_once "./controllers/conection.php";
 
 // Verifica que el usuario esté autenticado
 if (!isset($_SESSION['user_id']) || !$_SESSION['logged_in']) {
