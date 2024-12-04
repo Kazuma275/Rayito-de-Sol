@@ -47,11 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email = $conn->real_escape_string($email);
         $message = $conn->real_escape_string($message);
 
-        // Inserta los datos en la tabla "contact_messages"
-        $sql = "INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)";
-
+        $sql = "INSERT INTO contact_messages (customer_name, customer_email, message) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sss", $name, $email, $message);
+        $stmt->bind_param("sss", $customer_name, $customer_email, $message);
+        
 
         if ($stmt->execute()) {
             $success_message = $lang['contact_success'];
