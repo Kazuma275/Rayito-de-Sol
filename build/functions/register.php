@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Ejecutar la consulta y verificar si se ejecutó correctamente
     if ($conn->query($sql) === TRUE) {
-        header("Location: /build/functions/login.php");
+        header("Location: /build/functions/login.php?registration_success=true");
         exit(); // Asegúrate de usar exit() después de header para evitar que el script siga ejecutándose
     } else {
         echo "Error registering user: " . $conn->error;
