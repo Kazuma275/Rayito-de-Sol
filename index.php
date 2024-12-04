@@ -191,7 +191,7 @@ if (file_exists($lang_file)) {
             <a href="#amenities"><?php echo $lang['amenities']; ?></a>
             <a href="#reviews"><?php echo $lang['reviews']; ?></a>
             <a href="#gallery"><?php echo $lang['gallery']; ?></a>
-            <a href="./build/signup.php"><?php echo $lang['account']; ?></a>
+            <a href="/build/functions/signup.php"><?php echo $lang['account']; ?></a>
         </div>
 
         <!-- Redes sociales -->
