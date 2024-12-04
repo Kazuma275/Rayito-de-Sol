@@ -184,18 +184,30 @@ $conn->close(); // Cierra la conexión a la base de datos
 
         <!-- Footer -->
         <footer class="footer">
-            <div class="container">
-                <!-- Sección de enlaces -->
-                <div class="footer-links">
-                    <a href="#" class="active"><?php echo $lang['home']; ?></a>
-                    <a href="/index.php#amenities"><?php echo $lang['amenities']?></a>
-                    <a href="/index.php#gallery"><?php echo $lang['gallery']?></a>
-                    <a href="/index.php#reviews"><?php echo $lang['reviews']?></a>
-                    <a href="/index.php#ubication"><?php echo $lang['ubication']?></a>
-                </div>
+    <div class="container">
+        <!-- Enlaces a secciones -->
+        <div class="footer-links">
+            <a href="#" class="active"><?php echo $lang['home']; ?></a>
+            <a href="#amenities"><?php echo $lang['amenities']; ?></a>
+            <a href="#reviews"><?php echo $lang['reviews']; ?></a>
+            <a href="#gallery"><?php echo $lang['gallery']; ?></a>
+            <a href="/build/functions/signup.php"><?php echo $lang['account']; ?></a>
+        </div>
 
-            </div>
-        </footer>
+        <!-- Redes sociales -->
+        <div class="social-media">
+            <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.whatsapp.com" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+
+        <!-- Derechos de autor -->
+        <div class="copyright">
+            &copy; 2024 <a href="https://rayitodesol.es"><?php echo $lang['site_name']; ?></a>. <?php echo $lang['rights']; ?>
+        </div>
+    </div>
+</footer>
     </div>
 </body>
 </html>
