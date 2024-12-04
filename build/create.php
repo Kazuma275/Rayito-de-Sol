@@ -28,37 +28,43 @@ if (file_exists($lang_file)) {
 }
 
 
+
+$success_message = '';
+$error_message = '';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Recibe los datos del formulario
-    $reservation_date = $_POST['reservation-date'];
-    $reservation_time = $_POST['reservation-time'];
+    // Captura los datos del formulario
+    $customer_name = trim($_POST['customer_name'] ?? '');
+    $customer_email = trim($_POST['customer_email'] ?? '');
+    $message = trim($_POST['message'] ?? '');
 
     // Verifica que los campos no estén vacíos
-    if (empty($reservation_date) || empty($reservation_time)) {
-        die("Por favor, complete todos los campos de la reserva.");
-    }
-
-    // Escapa los datos para evitar inyecciones SQL
-    $reservation_date = $conn->real_escape_string($reservation_date);
-    $reservation_time = $conn->real_escape_string($reservation_time);
-
-    // Captura el nombre de usuario de la sesión
-    $username = $_SESSION['username'] ?? 'Invitado'; // Valor por defecto en caso de que no esté en sesión
-
-    // Inserta los datos en la tabla "reservations"
-    $sql = "INSERT INTO reservations (username, reservation_date, reservation_time) VALUES (?, ?, ?)";
-
-    // Usa una declaración preparada para mayor seguridad
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sss", $username, $reservation_date, $reservation_time);
-
-    if ($stmt->execute()) {
-        $success_message = "Reserva realizada con éxito."; // Mensaje de éxito
+    if (empty($customer_name) || empty($customer_email) || empty($message)) {
+        $error_message = "Todos los campos son obligatorios.";
     } else {
-        $error_message = "Error al realizar la reserva. Intenta nuevamente.";
-    }
+        // Escapa los datos para evitar inyecciones SQL
+        $customer_name = $conn->real_escape_string($customer_name);
+        $customer_email = $conn->real_escape_string($customer_email);
+        $message = $conn->real_escape_string($message);
 
-    $stmt->close();
+        // Inserta los datos en la tabla "contact"
+        $sql = "INSERT INTO contact (customer_name, customer_email, message) VALUES (?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+
+        if ($stmt === false) {
+            $error_message = "Error en la preparación de la consulta: " . $conn->error;
+        } else {
+            $stmt->bind_param("sss", $customer_name, $customer_email, $message);
+
+            if ($stmt->execute()) {
+                $success_message = "Mensaje enviado con éxito.";
+            } else {
+                $error_message = "Error al enviar el mensaje: " . $stmt->error;
+            }
+
+            $stmt->close();
+        }
+    }
     $conn->close();
 }
 
