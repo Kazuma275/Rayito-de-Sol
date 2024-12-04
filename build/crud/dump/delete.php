@@ -81,17 +81,17 @@ if (file_exists($lang_file)) {
     <title><?php echo $lang['title']; ?></title>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.css">
 
     <!-- Favicon -->
-    <link rel="icon" href="../img/favicon.png" type="image/x-icon">
+    <link rel="icon" href="/img/favicon.png" type="image/x-icon">
 
     <!-- JS -->
-    <script defer src="../js/javascript.js"></script>
-    <script defer src="../js/darkmode.js"></script>
-    <script defer src="../js/languague.js"></script>
-    <script defer src="../js/eye.js"></script>
+    <script defer src="/js/javascript.js"></script>
+    <script defer src="/js/darkmode.js"></script>
+    <script defer src="/js/languague.js"></script>
+    <script defer src="/js/eye.js"></script>
 </head>
 <body>
     <div class="container">
