@@ -80,7 +80,7 @@ if (isset($_GET['lang'])) {
 $lang = preg_replace('/[^a-z]/', '', $lang);
 
 // Ruta del archivo de idioma
-$lang_file = __DIR__ . "__DIR__/lang/{$lang}.php";
+$lang_file = $_SERVER['DOCUMENT_ROOT'] . "/lang/{$lang}.php";
 
 // Verifica si el archivo de idioma existe
 if (file_exists($lang_file)) {
