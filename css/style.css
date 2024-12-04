@@ -441,7 +441,6 @@
     .language-menu li img.flag-preview {
         width: 24px; /* Ajusta el tamaño de la bandera */
         height: auto;
-        margin-right: 8px; /* Espacio entre la bandera y el texto */
     }
     
     .language-menu li a {
@@ -472,7 +471,6 @@
     .language-menu li img.flag-preview {
         width: 24px; /* Ajusta el tamaño de la bandera */
         height: auto;
-        margin-right: 8px; /* Espacio entre la bandera y el texto */
     }
 
     
