@@ -103,7 +103,6 @@ $conn->close();
 <body>
     <div class="container">
         <!-- Navbar -->
-        <!-- Navbar -->
         <nav>
             <div class="topnav" id="myTopnav">
                 <a href="/index.php#parallax-section" class="active">Home</a>
