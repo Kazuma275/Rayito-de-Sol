@@ -28,6 +28,40 @@ if (file_exists($lang_file)) {
 $username = $_SESSION['usernameValue'];
 $password = $_SESSION['passwordValue'];
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Recibe los datos del formulario
+    $reservation_date = $_POST['reservation-date'];
+    $reservation_time = $_POST['reservation-time'];
+
+    // Verifica que los campos no estén vacíos
+    if (empty($reservation_date) || empty($reservation_time)) {
+        die("Por favor, complete todos los campos de la reserva.");
+    }
+
+    // Escapa los datos para evitar inyecciones SQL
+    $reservation_date = $conn->real_escape_string($reservation_date);
+    $reservation_time = $conn->real_escape_string($reservation_time);
+
+    // Captura el nombre de usuario de la sesión
+    $username = $_SESSION['username'] ?? 'Invitado'; // Valor por defecto en caso de que no esté en sesión
+
+    // Inserta los datos en la tabla "reservations"
+    $sql = "INSERT INTO reservations (username, reservation_date, reservation_time) VALUES (?, ?, ?)";
+
+    // Usa una declaración preparada para mayor seguridad
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sss", $username, $reservation_date, $reservation_time);
+
+    if ($stmt->execute()) {
+        echo "<p>Reserva realizada con éxito.</p>";
+    } else {
+        echo "<p>Error al realizar la reserva: " . $stmt->error . "</p>";
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -107,15 +141,16 @@ $password = $_SESSION['passwordValue'];
         <section id="reservation">
         <h2><?php echo $lang['reservation_title']; ?></h2>
         <p><?php echo $lang['reservation_description']; ?></p>
-            <form class="reservation-form">
-                <label for="reservation-date"><?php echo $lang['reservation_date_label']; ?></label>
-                <input type="date" id="reservation-date" name="reservation-date" required>
+        <form class="reservation-form" method="POST">
+            <label for="reservation-date"><?php echo $lang['reservation_date_label']; ?></label>
+            <input type="date" id="reservation-date" name="reservation-date" required>
 
-                <label for="reservation-time"><?php echo $lang['reservation_time_label']; ?></label>
-                <input type="time" id="reservation-time" name="reservation-time" required>
+            <label for="reservation-time"><?php echo $lang['reservation_time_label']; ?></label>
+            <input type="time" id="reservation-time" name="reservation-time" required>
 
-                <button type="submit"><?php echo $lang['reservation_button']; ?></button>
-            </form>
+            <button type="submit"><?php echo $lang['reservation_button']; ?></button>
+        </form>
+
         </section>
         
         <!-- Footer -->
