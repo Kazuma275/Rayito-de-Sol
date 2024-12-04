@@ -2,7 +2,7 @@
 
 session_start();
 
-require_once "../controllers/conection.php";
+require_once "./controllers/conection.php";
 
 // Define un idioma predeterminado
 $default_lang = 'es';
@@ -75,11 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- CSS -->
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="../css/darkmode.css">
+    <link rel="stylesheet" href="/css/darkmode.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.css">
 
     <!-- Favicon -->
-    <link rel="icon" href="./img/favicon.png" type="image/x-icon">
+    <link rel="icon" href="/img/favicon.png" type="image/x-icon">
 
     <!-- JS -->
     <script defer src="/js/javascript.js"></script>
@@ -96,19 +96,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <a href="/index.php#gallery"><?php echo $lang['gallery']?></a>
                 <a href="/index.php#reviews"><?php echo $lang['reviews']?></a>
                 <a href="/index.php#ubication"><?php echo $lang['ubication']; ?></a>
-                <a href="/build/signup.php"><?php echo $lang['account']?></a>
+                <a href="/build/functions/signup.php"><?php echo $lang['account']?></a>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
-                    <a href="/build/create.php"><?php echo $lang['make_reservation']?></a>
-                    <a href="/build/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
-                    <a href="/build/contact.php"><?php echo $lang['contact_title']?></a>
+                    <a href="/build/config/data/create.php"><?php echo $lang['make_reservation']?></a>
+                    <a href="/build/functions/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
+                    <a href="/build/functions/contact.php"><?php echo $lang['contact_title']?></a>
                 <?php endif;?>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
                 <div class="settings-container" style="position: relative;">
                     <!-- Selector de idioma -->
                     <div class="language-selector">
-                        <img id="current-flag" src="../img/idiomas/<?php echo isset($_SESSION['lang']) ? $_SESSION['lang'] : 'es'; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
+                        <img id="current-flag" src="/img/idiomas/<?php echo isset($_SESSION['lang']) ? $_SESSION['lang'] : 'es'; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
                         <ul class="language-menu">
                             <li><a href="?lang=en" data-lang="en"><img src="../img/idiomas/en.png" alt="English" class="flag-preview"></a></li>
                             <li><a href="?lang=fr" data-lang="fr"><img src="../img/idiomas/fr.png" alt="Français" class="flag-preview"></a></li>

@@ -58,21 +58,16 @@ if (file_exists($lang_file)) {
     <link rel="icon" href="img/favicon.png" type="image/x-icon">
 
     <!-- JS -->
-    <script defer src="./js/javascript.js"></script>
-    <script defer src="./js/darkmode.js"></script>
-    <script defer src="./js/languague.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script>
-        $('.dayNight input').change(function () {
-            $('body').toggleClass('day', $(this).is(':checked'));
-        });
+    <script defer src="/js/javascript.js"></script>
+    <script defer src="/js/darkmode.js"></script>
+    <script defer src="/js/languague.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     </script>
 
 </head>
 <body>
     
     <div class="container">
-
         <!-- Navbar -->
         <nav>
             <div class="topnav" id="myTopnav">
@@ -81,28 +76,28 @@ if (file_exists($lang_file)) {
                 <a href="#gallery"><?php echo $lang['gallery']?></a>
                 <a href="#reviews"><?php echo $lang['reviews']?></a>
                 <a href="#ubication"><?php echo $lang['ubication']; ?></a>
-                <a href="./build/signup.php"><?php echo $lang['account']?></a>
+                <a href="/build/functions/signup.php"><?php echo $lang['account']?></a>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                 <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
-                    <a href="./build/create.php"><?php echo $lang['make_reservation']?></a>
-                    <a href="./build/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
-                    <a href="./build/contact.php"><?php echo $lang['contact_title']?></a>
+                    <a href="/build/config/data/create.php"><?php echo $lang['make_reservation']?></a>
+                    <a href="/build/functions/information.php" class="login-message"><?php echo "Hey," . $_SESSION['username']?></a>
+                    <a href="/build/functions/contact.php"><?php echo $lang['contact_title']?></a>
                 <?php endif;?>
 
                 <!-- Contenedor para la bandera y el modo oscuro -->
                 <div class="settings-container" style="position: relative;">
                     <!-- Selector de idioma -->
                     <div class="language-selector">
-                        <img id="current-flag" src="../img/idiomas/<?php echo isset($_SESSION['lang']) ? $_SESSION['lang'] : 'es'; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
+                        <img id="current-flag" src="/img/idiomas/"<?php echo isset($_SESSION['lang']) ? $_SESSION['lang'] : 'es'; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
                         <ul class="language-menu">
-                            <li><a href="?lang=en" data-lang="en"><img src="../img/idiomas/en.png" alt="English" class="flag-preview"></a></li>
-                            <li><a href="?lang=fr" data-lang="fr"><img src="../img/idiomas/fr.png" alt="Français" class="flag-preview"></a></li>
-                            <li><a href="?lang=es" data-lang="es"><img src="../img/idiomas/es.png" alt="Español" class="flag-preview"></a></li>
-                            <li><a href="?lang=cn" data-lang="cn"><img src="../img/idiomas/cn.png" alt="中国人" class="flag-preview"></a></li>
-                            <li><a href="?lang=it" data-lang="it"><img src="../img/idiomas/it.png" alt="Italiano" class="flag-preview"></a></li>
-                            <li><a href="?lang=br" data-lang="br"><img src="../img/idiomas/br.png" alt="Brasileiro" class="flag-preview"></a></li>
-                            <li><a href="?lang=ua" data-lang="ua"><img src="../img/idiomas/ua.png" alt="українська" class="flag-preview"></a></li>
-                            <li><a href="?lang=ru" data-lang="ru"><img src="../img/idiomas/ru.png" alt="Русский" class="flag-preview"></a></li>
+                            <li><a href="?lang=en" data-lang="en"><img src="/img/idiomas/en.png" alt="English" class="flag-preview"></a></li>
+                            <li><a href="?lang=fr" data-lang="fr"><img src="/img/idiomas/fr.png" alt="Français" class="flag-preview"></a></li>
+                            <li><a href="?lang=es" data-lang="es"><img src="/img/idiomas/es.png" alt="Español" class="flag-preview"></a></li>
+                            <li><a href="?lang=cn" data-lang="cn"><img src="/img/idiomas/cn.png" alt="中国人" class="flag-preview"></a></li>
+                            <li><a href="?lang=it" data-lang="it"><img src="/img/idiomas/it.png" alt="Italiano" class="flag-preview"></a></li>
+                            <li><a href="?lang=br" data-lang="br"><img src="/img/idiomas/br.png" alt="Brasileiro" class="flag-preview"></a></li>
+                            <li><a href="?lang=ua" data-lang="ua"><img src="/img/idiomas/ua.png" alt="українська" class="flag-preview"></a></li>
+                            <li><a href="?lang=ru" data-lang="ru"><img src="/img/idiomas/ru.png" alt="Русский" class="flag-preview"></a></li>
                         </ul>
                     </div>
 
@@ -209,7 +204,6 @@ if (file_exists($lang_file)) {
         </div>
     </div>
 </footer>
-        
 
     </div>
 

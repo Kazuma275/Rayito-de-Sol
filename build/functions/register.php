@@ -1,6 +1,6 @@
 <?php
-require_once "../assets/classes/User.php";
-require_once "../controllers/conection.php";
+require_once "./assets/classes/User.php";
+require_once "./controllers/conection.php";
 
 // Check if the form has been submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
