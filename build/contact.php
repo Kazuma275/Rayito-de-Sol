@@ -30,37 +30,35 @@ if (file_exists($lang_file)) {
     die("Error: Archivo de idioma no encontrado.");
 }
 
-// Procesa el formulario de contacto
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = $_POST['name'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $message = $_POST['message'] ?? '';
+    // Captura y valida los datos del formulario
+    $customer_name = trim($_POST['customer_name'] ?? '');
+    $customer_email = trim($_POST['customer_email'] ?? '');
+    $message = trim($_POST['message'] ?? '');
 
     // Verifica que los campos no estén vacíos
-    if (empty($name) || empty($email) || empty($message)) {
-        $error_message = $lang['contact_error_fields'];
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error_message = $lang['contact_error_email'];
-    } else {
-        // Escapa los datos para evitar inyecciones SQL
-        $name = $conn->real_escape_string($name);
-        $email = $conn->real_escape_string($email);
-        $message = $conn->real_escape_string($message);
-
-        $sql = "INSERT INTO contact_messages (customer_name, customer_email, message) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sss", $customer_name, $customer_email, $message);
-        
-
-        if ($stmt->execute()) {
-            $success_message = $lang['contact_success'];
-        } else {
-            $error_message = $lang['contact_error_general'];
-        }
-
-        $stmt->close();
-        $conn->close();
+    if (empty($customer_name) || empty($customer_email) || empty($message)) {
+        die("Todos los campos son obligatorios.");
     }
+
+    // Escapa los datos para evitar inyecciones SQL
+    $customer_name = $conn->real_escape_string($customer_name);
+    $customer_email = $conn->real_escape_string($customer_email);
+    $message = $conn->real_escape_string($message);
+
+    // Inserta los datos en la tabla "contact"
+    $sql = "INSERT INTO contact (customer_name, customer_email, message) VALUES (?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sss", $customer_name, $customer_email, $message);
+
+    if ($stmt->execute()) {
+        echo "Mensaje enviado con éxito.";
+    } else {
+        echo "Error al enviar el mensaje.";
+    }
+
+    $stmt->close();
+    $conn->close();
 }
 
 ?>
@@ -149,18 +147,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <h2><?php echo $lang['contact_header']; ?></h2>
             <p><?php echo $lang['contact_description']; ?></p>
 
-            <form class="contact-form" method="POST" action="">
-                <label for="name"><?php echo $lang['contact_name_label']; ?></label>
-                <input type="text" id="name" name="name" required>
+            <form method="POST" action="">
+                <label for="name">Nombre:</label>
+                <input type="text" id="name" name="customer_name" required>
 
-                <label for="email"><?php echo $lang['contact_email_label']; ?></label>
-                <input type="email" id="email" name="email" required>
+                <label for="email">Correo electrónico:</label>
+                <input type="email" id="email" name="customer_email" required>
 
-                <label for="message"><?php echo $lang['contact_message_label']; ?></label>
-                <textarea id="message" name="message" rows="5" required></textarea>
+                <label for="message">Mensaje:</label>
+                <textarea id="message" name="message" required></textarea>
 
-                <button type="submit"><?php echo $lang['contact_button']; ?></button>
+                <button type="submit">Enviar</button>
             </form>
+
         </section>
 
         <!-- Footer -->
