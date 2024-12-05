@@ -60,7 +60,4 @@ Si tienes alguna pregunta o necesitas más información, por favor contacta con 
 
 ## Autores
 
-Este proyecto fue realizado por los siguientes autores:
-
-- [Sergio Ramos Alarcón](./AUTHORS.md)
-
+Para ver más detalles de los contribuyentes, revisa el archivo [AUTHORS.md](./AUTHORS.md).
