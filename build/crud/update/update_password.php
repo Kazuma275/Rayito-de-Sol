@@ -1,59 +1,39 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-// Asegúrate de iniciar la sesión para obtener los datos del usuario
+
 session_start();
 
-// Verifica si el usuario está autenticado
+// Verificar si el usuario está autenticado
 if (!isset($_SESSION['user_id'])) {
-    echo "Debes iniciar sesión para realizar esta acción.";
-    exit;
+    exit("Debes iniciar sesión para realizar esta acción.");
 }
 
-// Incluye el archivo de conexión a la base de datos
+// Incluir archivo de conexión a la base de datos
 include(__DIR__ . '/../../../controllers/conection.php');
 
-// Comprueba si el formulario ha sido enviado
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Obtén el user_id desde la sesión y la nueva contraseña desde el formulario
-    $user_id = $_SESSION['user_id']; // El ID del usuario en sesión
-    $new_password = $_POST['password']; // La nueva contraseña enviada por el formulario
+// Procesar el formulario si es enviado
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['password'])) {
+    $user_id = $_SESSION['user_id'];
+    $new_password = $_POST['password'];
 
-    // Valida que la nueva contraseña no esté vacía
-    if (empty($new_password)) {
-        echo "La contraseña no puede estar vacía.";
-        exit;
-    }
-
-    // Cifra la contraseña usando password_hash
+    // Cifrar la nueva contraseña
     $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
 
-    // Prepara la consulta SQL para actualizar la contraseña
-    $sql = "UPDATE users SET password = ? WHERE user_id = ?";
-    $stmt = $conn->prepare($sql);
-
+    // Preparar y ejecutar la consulta
+    $stmt = $conn->prepare("UPDATE users SET password = ? WHERE user_id = ?");
     if ($stmt) {
-        // Asocia los parámetros a la consulta
         $stmt->bind_param('si', $hashed_password, $user_id);
-
-        // Ejecuta la consulta
         if ($stmt->execute()) {
-            // Redirige al usuario a la página de información con un mensaje de éxito
             header("Location: /build/functions/information.php?password_updated=true");
-            exit(); // Detener la ejecución para asegurar que no se ejecute más código
+            exit();
         } else {
             echo "Error al actualizar la contraseña: " . $stmt->error;
         }
-        
-
-        // Cierra el statement
         $stmt->close();
     } else {
         echo "Error al preparar la consulta: " . $conn->error;
     }
 }
 
-// Cierra la conexión a la base de datos
+// Cerrar la conexión
 $conn->close();
 ?>
