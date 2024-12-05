@@ -136,9 +136,15 @@ if (file_exists($lang_file)) {
     </div>
 <?php endif; ?>
 
+
         
         <section id="parallax-section">
             <div class="parallax-content">
+            <?php if (isset($_GET['registration_success']) && $_GET['registration_success'] === 'true'): ?>
+        <div class="success-message">
+            ¡Registro realizado con éxito! Ahora puedes iniciar sesión.
+        </div>
+        <?php endif; ?>
                 <h1><?php echo $lang['parallax_title']; ?></h1>
                 <p><?php echo $lang['parallax_subtitle']; ?></p>
             </div>
