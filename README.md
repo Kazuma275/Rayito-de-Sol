@@ -1,7 +1,7 @@
 # Rayito de Sol - README - BETA
 
 ## Descripción del proyecto
-"Rayito de Sol" es una página web dedicada al alquiler del apartamento de mi madre, situado a primera línea de playa en Calahonda. Esta plataforma ha sido diseñada para ofrecer a los visitantes una experiencia completa y cómoda para alquilar el apartamento y gestionar sus reservas. Los usuarios pueden registrarse, iniciar sesión y enviar formularios de contacto al administrador. Además, se incluyen funcionalidades para la gestión de cuentas, como la modificación de contraseñas.
+"Rayito de Sol" es una página web dedicada al alquiler del apartamento de mi madre, situado a primera línea de playa en Calahonda. Esta plataforma ha sido diseñada para ofrecer a los visitantes una experiencia completa y cómoda para alquilar el apartamento y gestionar sus reservas. Los usuarios pueden registrarse, iniciar sesión y enviar formularios de contacto al administrador. Además, se incluyen funcionalidades para la gestión de cuenta o la modificación de contraseñas.
 
 ## Documentación del proyecto
 
