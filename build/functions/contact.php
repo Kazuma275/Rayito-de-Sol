@@ -110,14 +110,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="language-selector">
                         <img id="current-flag" src="/img/idiomas/<?php echo isset($_SESSION['lang']) ? $_SESSION['lang'] : 'es'; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
                         <ul class="language-menu">
-                            <li><a href="?lang=en" data-lang="en"><img src="../img/idiomas/en.png" alt="English" class="flag-preview"></a></li>
-                            <li><a href="?lang=fr" data-lang="fr"><img src="../img/idiomas/fr.png" alt="Français" class="flag-preview"></a></li>
-                            <li><a href="?lang=es" data-lang="es"><img src="../img/idiomas/es.png" alt="Español" class="flag-preview"></a></li>
-                            <li><a href="?lang=cn" data-lang="cn"><img src="../img/idiomas/cn.png" alt="中国人" class="flag-preview"></a></li>
-                            <li><a href="?lang=it" data-lang="it"><img src="../img/idiomas/it.png" alt="Italiano" class="flag-preview"></a></li>
-                            <li><a href="?lang=br" data-lang="br"><img src="../img/idiomas/br.png" alt="Brasileiro" class="flag-preview"></a></li>
-                            <li><a href="?lang=ua" data-lang="ua"><img src="../img/idiomas/ua.png" alt="українська" class="flag-preview"></a></li>
-                            <li><a href="?lang=ru" data-lang="ru"><img src="../img/idiomas/ru.png" alt="Русский" class="flag-preview"></a></li>
+                            <li><a href="?lang=en" data-lang="en"><img src="./img/idiomas/en.png" alt="English" class="flag-preview"></a></li>
+                            <li><a href="?lang=fr" data-lang="fr"><img src="./img/idiomas/fr.png" alt="Français" class="flag-preview"></a></li>
+                            <li><a href="?lang=es" data-lang="es"><img src="./img/idiomas/es.png" alt="Español" class="flag-preview"></a></li>
+                            <li><a href="?lang=cn" data-lang="cn"><img src="./img/idiomas/cn.png" alt="中国人" class="flag-preview"></a></li>
+                            <li><a href="?lang=it" data-lang="it"><img src="./img/idiomas/it.png" alt="Italiano" class="flag-preview"></a></li>
+                            <li><a href="?lang=br" data-lang="br"><img src="./img/idiomas/br.png" alt="Brasileiro" class="flag-preview"></a></li>
+                            <li><a href="?lang=ua" data-lang="ua"><img src="./img/idiomas/ua.png" alt="українська" class="flag-preview"></a></li>
+                            <li><a href="?lang=ru" data-lang="ru"><img src="./img/idiomas/ru.png" alt="Русский" class="flag-preview"></a></li>
                         </ul>
                     </div>
 
