@@ -2,6 +2,11 @@
 
 session_start();
 
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+    header("Location: /login.php"); // Redirige al login si el usuario no está autenticado
+    exit();
+}
+
 // Define un idioma predeterminado
 $default_lang = 'es';
 
@@ -142,9 +147,9 @@ if (file_exists($lang_file)) {
             <div class="parallax-content">
                 <!-- Si usuario se ha resgistrado, mostrar mensaje de bienvenida -->
                 <?php if (isset($_GET['registration_success']) && $_GET['registration_success'] === 'true'): ?>
+                    <? require_once "test.php";?>
                 <div class="success-message">
                 ¡Registro realizado con éxito!
-                <? require_once "test.php";?>
                 </div>
 
         <?php endif; ?>
