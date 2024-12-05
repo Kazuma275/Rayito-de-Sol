@@ -4,60 +4,60 @@ body.day {
 
 .dayNight {
     cursor: pointer;
-    display: inline-block; /* Asegura que el botón tenga un tamaño específico */
+    display: inline-block;
 }
 
 .dayNight input {
     display: none;
 }
 
-.dayNight input+div {
+.dayNight input + div {
     border-radius: 50%;
-    width: 28px; /* Reduce el tamaño del botón */
-    height: 28px; /* Reduce el tamaño del botón */
+    width: 28px;
+    height: 28px;
     position: relative;
     box-shadow: inset 16px -16px 0 0 #fff;
     transform: scale(1) rotate(-2deg);
-    transition: box-shadow 0.5s ease 0s, transform 0.4s ease 0.1s;
+    transition: box-shadow 0.5s, transform 0.4s;
 }
 
-.dayNight input+div:before {
+.dayNight input + div:before {
     content: "";
-    width: inherit;
-    height: inherit;
-    border-radius: inherit;
-    position: absolute;
-    left: 0;
-    top: 0;
-    transition: background 0.3s ease;
-}
-
-.dayNight input+div:after {
-    content: "";
-    width: 6px; /* Reduce el tamaño del círculo interno */
-    height: 6px; /* Reduce el tamaño del círculo interno */
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
-    margin: -3px 0 0 -3px; /* Ajusta el margen para centrarlo */
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: background 0.3s;
+}
+
+.dayNight input + div:after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
     position: absolute;
     top: 50%;
     left: 50%;
-    box-shadow: 0 -18px 0 #000, 0 18px 0 #000, 18px 0 0 #000, -18px 0 0 #000, 12px 12px 0 #000, -12px 12px 0 #000, 12px -12px 0 #000, -12px -12px 0 #000;
+    margin: -3px 0 0 -3px;
+    box-shadow: 0 -18px 0 #000, 0 18px 0 #000, 18px 0 0 #000, -18px 0 0 #000, 
+                12px 12px 0 #000, -12px 12px 0 #000, 12px -12px 0 #000, -12px -12px 0 #000;
     transform: scale(0);
-    transition: all 0.3s ease;
+    transition: transform 0.3s;
 }
 
-.dayNight input:checked+div {
+.dayNight input:checked + div {
     box-shadow: inset 32px -32px 0 0 #fff;
-    transform: scale(0.5) rotate(0deg);
-    transition: transform 0.3s ease 0.1s, box-shadow 0.2s ease 0s;
+    transform: scale(0.5);
+    transition: transform 0.3s, box-shadow 0.2s;
 }
 
-.dayNight input:checked+div:before {
+.dayNight input:checked + div:before {
     background: #000;
-    transition: background 0.3s ease 0.1s;
 }
 
-.dayNight input:checked+div:after {
+.dayNight input:checked + div:after {
     transform: scale(1.5);
-    transition: transform 0.5s ease 0.15s;
+    transition: transform 0.5s;
 }
