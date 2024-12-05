@@ -5,6 +5,7 @@ session_start();
 // Define un idioma predeterminado
 $default_lang = 'es';
 
+$session_lifetime = 360;
 
 // Verifica si la sesión tiene un tiempo de expiración configurado
 if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > $session_lifetime)) {
