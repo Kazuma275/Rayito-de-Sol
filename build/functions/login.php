@@ -2,7 +2,7 @@
 
 session_start();
 
-$session_lifetime = 180; // Tiempo de vida de la sesión en segundos
+$session_lifetime = 360; // Tiempo de vida de la sesión en segundos
 
 // Verifica si la sesión tiene un tiempo de expiración configurado
 if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > $session_lifetime)) {
@@ -41,9 +41,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['logged_in'] = true;
 
+                    // Verifica si el usuario es 'sergio' y asigna el rol de admin
+                    if ($username === 'sergio') {
+                        $_SESSION['role'] = 'admin';
+                    } else {
+                        // Asigna el rol de usuario normal si no es 'sergio'
+                        $_SESSION['role'] = 'user';
+                    }
+
                     // Redirige al index
                     header("Location: /index.php");
-
                     exit();
                 } else {
                     echo "Contraseña incorrecta.";

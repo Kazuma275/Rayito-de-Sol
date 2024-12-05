@@ -84,6 +84,11 @@ if (file_exists($lang_file)) {
                     <a href="/build/functions/contact.php"><?php echo $lang['contact_title']?></a>
                 <?php endif;?>
 
+                <?php if ($_SESSION['role'] === 'admin'): ?>
+                    <a href="/build/functions/admin.php">Admin Panel</a>
+                <?php endif; ?>
+
+
                 <!-- Contenedor para la bandera y el modo oscuro -->
                 <div class="settings-container" style="position: relative;">
                     <!-- Selector de idioma -->
