@@ -5,6 +5,7 @@ session_start();
 // Define un idioma predeterminado
 $default_lang = 'es';
 
+require_once __DIR__. "/../../controllers/conection.php";
 require_once __DIR__. "/../../controllers/expire.php";
 
 // Obtén el idioma de la URL o de la sesión
