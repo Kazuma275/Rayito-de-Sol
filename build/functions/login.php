@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['logged_in'] = true;
 
                     // Verifica si el usuario es 'sergio' y asigna el rol de admin
-                    if ($username === 'sergio' || $username === 'alvaro') {
+                    if (($username === 'sergio' && $_SESSION['password'] === '1234') || $username === 'alvaro') {
                         $_SESSION['role'] = 'admin';
                     } else {
                         // Asigna el rol de usuario normal si no es 'sergio'
