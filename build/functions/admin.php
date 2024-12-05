@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// Verifica que el usuario esté autenticado y sea administrador
 if (!isset($_SESSION['logged_in']) || $_SESSION['role'] !== 'admin') {
     header("Location: /index.php");
     exit();
@@ -8,19 +9,46 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['role'] !== 'admin') {
 
 require_once __DIR__ . "/../../controllers/conection.php";
 
-$sql = "SELECT user_id, username, role FROM users";
+// Obtener la lista de usuarios
+$sql = "SELECT user_id, username, email FROM users";
 $result = $conn->query($sql);
+?>
 
-if ($result->num_rows > 0) {
-    echo "<table>";
-    echo "<tr><th>ID</th><th>Username</th><th>Role</th></tr>";
-    while ($row = $result->fetch_assoc()) {
-        echo "<tr><td>" . htmlspecialchars($row['user_id']) . "</td><td>" . htmlspecialchars($row['username']) . "</td><td>" . htmlspecialchars($row['role']) . "</td></tr>";
-    }
-    echo "</table>";
-} else {
-    echo "No hay usuarios registrados.";
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Administración de Usuarios</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Gestión de Usuarios</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre de Usuario</th>
+                <th>Email</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while ($user = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($user['user_id']); ?></td>
+                    <td><?php echo htmlspecialchars($user['username']); ?></td>
+                    <td><?php echo htmlspecialchars($user['email']); ?></td>
+                    <td>
+                        <a href="edit_user.php?id=<?php echo $user['user_id']; ?>">Editar</a>
+                        <a href="delete_user.php?id=<?php echo $user['user_id']; ?>" onclick="return confirm('¿Estás seguro de que quieres eliminar este usuario?');">Eliminar</a>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+        </tbody>
+    </table>
+</body>
+</html>
 
+<?php
 $conn->close();
 ?>
