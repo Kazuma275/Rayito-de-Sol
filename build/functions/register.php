@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Ejecuto la consulta
     if ($conn->query($sql) === TRUE) {
-        header("Location: ./index.php?registration_success=true");
+        header("Location: /index.php?registration_success=true");
         exit();
     } else {
         echo "Error registering user: " . $conn->error;
