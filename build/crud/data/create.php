@@ -81,7 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php endif; ?>
                 <div class="settings-container">
                     <div class="language-selector">
-                        <img id="current-flag" src="/img/idiomas/<?php echo $lang; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
+                        <?php $currentLang = !empty($lang) ? $lang : 'es'; ?>
+                        <img id="current-flag" src="/img/idiomas/<?php echo $currentLang; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
                         <ul class="language-menu">
                             <?php foreach (['en', 'fr', 'es', 'cn', 'it', 'br', 'ua', 'ru'] as $lang_code): ?>
                                 <li><a href="?lang=<?php echo $lang_code; ?>" data-lang="<?php echo $lang_code; ?>"><img src="/img/idiomas/<?php echo $lang_code; ?>.png" alt="<?php echo ucfirst($lang_code); ?>" class="flag-preview"></a></li>
