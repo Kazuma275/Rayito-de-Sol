@@ -23,5 +23,4 @@ if (file_exists($lang_file)) {
     $lang = $default_lang; 
 }
 
-// Carga el archivo de controlador correspondiente al idioma
 ?>

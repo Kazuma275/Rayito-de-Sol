@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 // Asegúrate de que estas rutas sean correctas según la estructura de tu proyecto.
 require_once __DIR__ . "/../../assets/classes/User.php"; // Ajusta el número de ../ según la ubicación de tus archivos
@@ -27,10 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Crear la consulta SQL
     $sql = "INSERT INTO users (username, password) VALUES ('$usernameValue', '$passwordValue')";
 
-    // Ejecutar la consulta y verificar si se ejecutó correctamente
+    // Ejecuto la consulta
     if ($conn->query($sql) === TRUE) {
         header("Location: /build/functions/login.php?registration_success=true");
-        exit(); // Asegúrate de usar exit() después de header para evitar que el script siga ejecutándose
+        exit();
     } else {
         echo "Error registering user: " . $conn->error;
     }
