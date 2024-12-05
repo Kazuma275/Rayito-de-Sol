@@ -11,7 +11,7 @@ $_SESSION['lang'] = $lang;
 
 // Ruta del archivo de idioma
 $lang_file = realpath(__DIR__ . "/../../../lang/{$lang}.php");
-
+echo "Ruta generada: " . $lang_file . PHP_EOL;
 if (!$lang_file) {
     die("La ruta no es válida: " . $lang_file);
 }
