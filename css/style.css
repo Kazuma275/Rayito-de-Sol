@@ -499,7 +499,7 @@
     /* Parallax Section */
     #parallax-section {
         position: relative;
-        background-image: url("/img/herosection.jpg"); /* Cambia al URL de tu imagen */
+        background-image: url("/img/herosection.jpg");
         background-attachment: fixed; /* Este es el truco del parallax */
         background-position: center;
         background-repeat: no-repeat;
