@@ -33,6 +33,7 @@ if (file_exists($lang_file)) {
     die("Error: Archivo de idioma no encontrado.");
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

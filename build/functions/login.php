@@ -2,17 +2,17 @@
 
 session_start();
 
-$session_lifetime = 360; // Tiempo de vida de la sesión en segundos
+// Tiempo de vida de la sesión
+$session_lifetime = 360;
 
-// Verifica si la sesión tiene un tiempo de expiración configurado
+// Expira la sesión si ha pasado el tiempo configurado
 if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > $session_lifetime)) {
-    // La sesión ha expirado
-    session_unset();     // Borra todas las variables de sesión
-    session_destroy();   // Destruye la sesión
-    header("Location: /index.php?session_expired=true"); // Redirige a la página index.php en la raíz del proyecto
+    session_unset();
+    session_destroy();
+    header("Location: /index.php?session_expired=true");
     exit();
 }
-$_SESSION['LAST_ACTIVITY'] = time(); // Actualiza el tiempo de la última actividad
+$_SESSION['LAST_ACTIVITY'] = time(); // Actualiza la última actividad
 
 require_once __DIR__ . "/../../controllers/conection.php";  
 
@@ -21,8 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
-    if (!empty($username) && !empty($password)) {
-        // Consulta para verificar las credenciales
+    if ($username && $password) {
         $sql = "SELECT user_id, username, password FROM users WHERE username = ?";
         $stmt = $conn->prepare($sql);
 
@@ -34,22 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($result->num_rows === 1) {
                 $user = $result->fetch_assoc();
 
-                // Verifica la contraseña
                 if (password_verify($password, $user['password'])) {
-                    // Credenciales válidas, establece variables de sesión
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['logged_in'] = true;
 
-                    // Verifica si el usuario es 'sergio' y asigna el rol de admin
-                    if (($username === 'sergio' && $password === '1234') || ($username === 'alvaro') && $password === '1234') {
-                        $_SESSION['role'] = 'admin';
-                    } else {
-                        // Asigna el rol de usuario normal si no es 'sergio'
-                        $_SESSION['role'] = 'user';
-                    }
+                    // Asignar rol de admin si el usuario es 'sergio' o 'alvaro'
+                    $_SESSION['role'] = ($username === 'sergio' || $username === 'alvaro') ? 'admin' : 'user';
 
-                    // Redirige al index
                     header("Location: /index.php");
                     exit();
                 } else {
@@ -68,18 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Configuración de idioma
-$default_lang = 'es';
-if (isset($_GET['lang'])) {
-    $lang = $_GET['lang'];
-    $_SESSION['lang'] = $lang; // Guarda en la sesión
-} elseif (isset($_SESSION['lang'])) {
-    $lang = $_SESSION['lang'];
-} else {
-    $lang = $default_lang; // Usa idioma predeterminado
-}
-
-// Limpia el idioma para evitar caracteres no válidos
-$lang = preg_replace('/[^a-z]/', '', $lang);
+$lang = $_GET['lang'] ?? $_SESSION['lang'] ?? 'es';
+$_SESSION['lang'] = preg_replace('/[^a-z]/', '', $lang);
 
 // Ruta del archivo de idioma
 $lang_file = $_SERVER['DOCUMENT_ROOT'] . "/lang/{$lang}.php";
@@ -88,10 +69,10 @@ $lang_file = $_SERVER['DOCUMENT_ROOT'] . "/lang/{$lang}.php";
 if (file_exists($lang_file)) {
     include $lang_file;
 } else {
-    die("Error: Archivo de idioma no encontrado en: $lang_file");
+    die("Error: Archivo de idioma no encontrado.");
 }
 
-$conn->close(); // Cierra la conexión a la base de datos
+$conn->close(); // Cierra la conexión
 
 ?>
 
@@ -130,26 +111,19 @@ $conn->close(); // Cierra la conexión a la base de datos
                 <a href="/index.php#ubication"><?php echo $lang['ubication']; ?></a>
                 <a href="/build/functions/signup.php"><?php echo $lang['account']?></a>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
-                <!-- Mostrar el enlace de reservas solo si la sesión está activa -->
                     <a href="/build/crud/data/create.php"><?php echo $lang['make_reservation']?></a>
                     <a href="/build/functions/information.php" class="login-message"><?php echo "Hey," . htmlspecialchars($_SESSION['username']); ?></a>
                     <a href="/build/functions/contact.php"><?php echo $lang['contact_title']?></a>
                 <?php endif; ?>
 
-                <!-- Contenedor para la bandera y el modo oscuro -->
                 <div class="settings-container" style="position: relative;">
                     <!-- Selector de idioma -->
                     <div class="language-selector">
-                        <img id="current-flag" src="/img/idiomas/<?php echo isset($_SESSION['lang']) ? $_SESSION['lang'] : 'es'; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
+                        <img id="current-flag" src="/img/idiomas/<?php echo $_SESSION['lang'] ?? 'es'; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
                         <ul class="language-menu">
-                            <li><a href="?lang=en" data-lang="en"><img src="/img/idiomas/en.png" alt="English" class="flag-preview"></a></li>
-                            <li><a href="?lang=fr" data-lang="fr"><img src="/img/idiomas/fr.png" alt="Français" class="flag-preview"></a></li>
-                            <li><a href="?lang=es" data-lang="es"><img src="/img/idiomas/es.png" alt="Español" class="flag-preview"></a></li>
-                            <li><a href="?lang=cn" data-lang="cn"><img src="/img/idiomas/cn.png" alt="中国人" class="flag-preview"></a></li>
-                            <li><a href="?lang=it" data-lang="it"><img src="/img/idiomas/it.png" alt="Italiano" class="flag-preview"></a></li>
-                            <li><a href="?lang=br" data-lang="br"><img src="/img/idiomas/br.png" alt="Brasileiro" class="flag-preview"></a></li>
-                            <li><a href="?lang=ua" data-lang="ua"><img src="/img/idiomas/ua.png" alt="українська" class="flag-preview"></a></li>
-                            <li><a href="?lang=ru" data-lang="ru"><img src="/img/idiomas/ru.png" alt="Русский" class="flag-preview"></a></li>
+                            <?php foreach (['en', 'fr', 'es', 'cn', 'it', 'br', 'ua', 'ru'] as $code): ?>
+                                <li><a href="?lang=<?php echo $code; ?>"><img src="/img/idiomas/<?php echo $code; ?>.png" alt="<?php echo ucfirst($code); ?>" class="flag-preview"></a></li>
+                            <?php endforeach; ?>
                         </ul>
                     </div>
 
@@ -158,7 +132,6 @@ $conn->close(); // Cierra la conexión a la base de datos
                         <input type="checkbox" id="darkmode-toggle">
                         <div></div>
                     </label>
-
                 </div>
             </div>
         </nav>
@@ -173,17 +146,10 @@ $conn->close(); // Cierra la conexión a la base de datos
         <section id="signup">
             <h2><?php echo $lang['login']; ?></h2>
             <p><?php echo $lang['login_message']; ?></p>
-            <?php if (isset($error)): ?>
-            <p class="error"><?php echo htmlspecialchars($error); ?></p>
-            <?php endif; ?>
-
-            <!-- Formulario signup -->
             <form action="/build/functions/login.php" method="POST" class="login-form">
-                <!-- Usuario -->
                 <label for="username"><?php echo $lang['login_username']; ?></label>
                 <input type="text" id="username" name="username" required>
 
-                <!-- Contraseña -->
                 <label for="password"><?php echo $lang['login_password']; ?></label>
                 <div class="password-container">
                     <input type="password" id="password" name="password" required>
@@ -201,29 +167,26 @@ $conn->close(); // Cierra la conexión a la base de datos
         <!-- Footer -->
         <footer class="footer">
             <div class="container">
-                <!-- Enlaces a secciones -->
                 <div class="footer-links">
-                    <a href="/index.php#parallax-section" class="active"><?php echo $lang['home']; ?></a>
+                    <a href="/index.php#parallax-section"><?php echo $lang['home']; ?></a>
                     <a href="/index.php#amenities"><?php echo $lang['amenities']; ?></a>
                     <a href="/index.php#gallery"><?php echo $lang['gallery']; ?></a>
                     <a href="/index.php#reviews"><?php echo $lang['reviews']; ?></a>
                     <a href="/build/functions/signup.php"><?php echo $lang['account']; ?></a>
                 </div>
 
-                <!-- Redes sociales -->
                 <div class="social-media">
-                    <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.whatsapp.com" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.facebook.com"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.twitter.com"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.whatsapp.com"><i class="fab fa-whatsapp"></i></a>
                 </div>
 
-                <!-- Derechos de autor -->
                 <div class="copyright">
                     &copy; 2024 <a href="https://rayitodesol.es"><?php echo $lang['site_name']; ?></a>. <?php echo $lang['rights']; ?>
                 </div>
             </div>
-    </footer>
+        </footer>
     </div>
 </body>
 </html>
