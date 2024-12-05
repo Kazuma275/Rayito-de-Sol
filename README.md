@@ -57,3 +57,10 @@ Este proyecto está licenciado bajo la **RayitodeSol License**. Puedes usar, mod
 
 ## Contacto
 Si tienes alguna pregunta o necesitas más información, por favor contacta con el administrador de la página a través del formulario de contacto o por correo electrónico.
+
+## Autores
+
+Este proyecto fue realizado por los siguientes autores:
+
+- [Sergio Ramos Alarcón](./AUTHORS.md)
+
