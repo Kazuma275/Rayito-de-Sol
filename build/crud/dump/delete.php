@@ -132,6 +132,7 @@ if (file_exists($lang_file)) {
         <!-- Footer -->
         <footer class="footer">
             <div class="container">
+                <!-- Links -->
                 <div class="footer-links">
                     <a href="#" class="active"><?php echo $lang['home']; ?></a>
                     <a href="/index.php#amenities"><?php echo $lang['amenities']; ?></a>
@@ -141,6 +142,7 @@ if (file_exists($lang_file)) {
                     <a href="/index.php#gallery"><?php echo $lang['gallery']; ?></a>
                     <a href="#"><?php echo $lang['account']; ?></a>
                 </div>
+                <!-- Social Media -->
                 <div class="social-media">
                     <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                     <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>

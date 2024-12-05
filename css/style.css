@@ -1,664 +1,182 @@
-    /****************** Fonts *******************/
-
-    @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Open+Sans:wght@400;700&display=swap');
-    p {
-        font-family: 'Open Sans', sans-serif; /* Fuente principal */
+    /****************** Variables *******************/
+    :root {
+        --font-main: 'Open Sans', sans-serif;
+        --font-titles: 'Playfair Display', serif;
+        --font-subtitles: 'Nunito', sans-serif;
+        --color-light: #ffffff;
+        --color-dark: #121212;
+        --color-primary: #9EBBE0;
+        --color-secondary: #385E7A;
+        --color-text: #4A4A4A;
+        --color-muted: #62727A;
+        --color-hover: #ddd;
+        --color-success: #b3ffb3;
+        --color-error: #ffb3b3;
+        --line-height: 1.5;
+        --transition: 0.3s ease;
     }
 
-    @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@400;700&display=swap');
+    /****************** Global Styles *******************/
+    body {
+        font-family: var(--font-main);
+        background-color: var(--color-light);
+        color: var(--color-text);
+        line-height: var(--line-height);
+        margin: 0;
+        transition: background-color var(--transition), color var(--transition);
+    }
+
     h1, h2, h3, h4, h5, h6 {
-        font-family: 'Playfair Display', serif; /* Fuente de títulos */
+        font-family: var(--font-titles);
     }
 
-    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Source+Sans+Pro:wght@400;700&display=swap');
+    p {
+        font-family: var(--font-main);
+    }
+
     .subtitulos {
-        font-family: 'Nunito', sans-serif;
-        /* Colores */
-        color:#62727A;
-        body {
-            color: #4A4A4A;
-        }
+        font-family: var(--font-subtitles);
+        color: var(--color-muted);
     }
 
-    /* Interlineado */
+    * {
+        margin: 0;
+        box-sizing: border-box;
+    }
 
-    *{
-        line-height: 1.5; /* Interlineado más compacto para encabezados */
-        margin: 0%;
+    html {
+        scroll-behavior: smooth;
     }
 
     /****************** Navbar *******************/
-
-    nav{
+    nav {
         position: sticky;
         top: 0;
         z-index: 99;
     }
 
     .topnav {
-        background-color: #9EBBE0;
+        background-color: var(--color-primary);
         overflow: hidden;
+        display: flex;
         justify-content: flex-start;
     }
 
-    .topnav > a:not(.login-message){
-        float: left;
+    .topnav > a:not(.login-message) {
         display: block;
-        color: #f2f2f2;
-        text-align: center;
+        color: var(--color-light);
         padding: 12px 14px;
         text-decoration: none;
         font-size: 1.2em;
     }
 
     .topnav a:hover {
-        background-color: #ddd;
+        background-color: var(--color-hover);
         color: black;
     }
-    
-    /* Home style */
-    
+
     .topnav a.active {
-        background-color: #385E7A;
-        color: white;
+        background-color: var(--color-secondary);
+        color: var(--color-light);
     }
 
-    .topnav .icon {
-        display: none;
+    /****************** Dark Mode *******************/
+    body.dark-mode {
+        background-color: var(--color-dark);
+        color: var(--color-light);
     }
-
-    /* Botón de luna */
-.dayNight {
-    display: flex;
-    align-items: center; /* Alinea verticalmente */
-    justify-content: center; /* Centra el contenido horizontalmente */
-}
-
-    html{
-        scroll-behavior: smooth;
-    }
-
-    /* TODO MODO OSCURO */
 
     .dark-mode img {
         filter: invert(1);
     }
 
-        /* Ejemplo para tablas */
-    .dark-mode table {
-        background-color: #1e1e1e;
-        color: #ffffff;
-    }
-
-    .dark-mode th, .dark-mode td {
-        border: 1px solid #444;
-    }
-
-    /* Ejemplo para formularios */
-    .dark-mode input, .dark-mode textarea, .dark-mode select {
+    .dark-mode table, 
+    .dark-mode input, 
+    .dark-mode textarea, 
+    .dark-mode select {
         background-color: #2c2c2c;
-        color: #ffffff;
+        color: var(--color-light);
         border: 1px solid #444;
-    }
-
-    /* Estilo general de la página */
-    body {
-        background-color: #ffffff; /* Fondo claro */
-        color: #000000; /* Texto oscuro */
-        transition: background-color 0.3s, color 0.3s; /* Transición suave */
-    }
-
-    /* Estilos específicos para el modo oscuro */
-    body.dark-mode {
-        background-color: #121212; /* Fondo oscuro */
-        color: #ffffff; /* Texto claro */
-    }
-
-    /* Cambia los estilos de otros elementos específicos */
-    .dark-mode header, .dark-mode footer {
-        background-color: #1e1e1e; /* Fondo de encabezado y pie de página oscuro */
-        color: #ffffff; /* Texto claro */
-    }
-
-    .dark-mode .card {
-        background-color: #2c2c2c; /* Fondo de tarjetas */
-        border: 1px solid #444; /* Borde oscuro */
-        color: #ffffff; /* Texto claro */
-    }
-
-    .dark-mode button {
-        background-color: #444; /* Fondo de botones */
-        color: #ffffff; /* Texto de botones */
-    }
-
-    /* Estilo para .parallax-content en modo oscuro */
-    body.dark-mode .parallax-content {
-        background-color: #1e1e1e; /* Fondo oscuro */
-        color: #ffffff; /* Texto claro */
     }
 
     .dark-mode a {
-        color: #1e90ff; /* Enlaces de color brillante */
+        color: #1e90ff;
     }
 
-    /* Estilo para un botón de modo oscuro/normal */
-    button.dark-mode-toggle {
-        background-color: transparent;
-        border: none;
-        color: inherit;
-        cursor: pointer;
+    .dark-mode header,
+    .dark-mode footer {
+        background-color: #1e1e1e;
+        color: var(--color-light);
     }
 
-        /* Estilo para la sección de amenities en modo oscuro */
-    body.dark-mode #amenities {
-        background-color: #2c2c2c; /* Fondo oscuro */
-        color: #ffffff; /* Texto claro */
-    }
-
-    /* Cambia los estilos de los elementos dentro de la sección de amenities */
-    body.dark-mode #amenities h2,
-    body.dark-mode #amenities p {
-        color: #dddddd; /* Texto claro en encabezados y párrafos */
-    }
-
-    body.dark-mode #amenities .services-container {
-    background-color: #3e3e3e; /* Fondo oscuro de la caja de servicios */
-    color: #ffffff; /* Texto claro */
-    }
-
-    body.dark-mode #amenities .services-container h3, 
-    body.dark-mode #amenities .services-container p {
-        color: #dddddd; /* Texto claro */
-    }
-
-
-
-    /****************** Dark Button ********************/
-    
-        /* Estilo para el modo oscuro */
-        body.dark-mode,h2.dark-mode {
-            background-color: #121212; /* Fondo oscuro */
-            color: black; /* Texto blanco en modo oscuro */
-        }
-
-        body.dark-mode {
-            background-color: #121212;
-            color: #ffffff;
-        }
-    
-        .language-menu.active {
-            display: block; /* Asegura que el menú se muestre */
-        }
-        
-    
-        .dark-mode-toggle {
-            background-color: transparent;
-            border: none;
-            color: #000;
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 1000;
-            margin-left: 20px; /* Ajusta la distancia entre los enlaces y el botón */
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            margin-top: 5px; /* Añade algo de espacio por encima para bajarlo ligeramente */
-            float: right;
-        }
-    
-    
-        /* Cambiar el color del icono cuando está en modo oscuro */
-        body.dark-mode .dark-mode-toggle {
-            color: #fff;
-        }
-    
-        /* Asegura que el icono de la luna se cambie al de sol cuando se active el modo claro/oscuro */
-        body.dark-mode .dark-mode-toggle .fa-moon {
-            display: none;
-        }
-    
-        body:not(.dark-mode) .dark-mode-toggle .fa-sun {
-            display: none;
-        }
-    
-        /* Cuando el modo oscuro está activo, cambia el icono a sol */
-        body.dark-mode .dark-mode-toggle .fa-sun {
-            display: block;
-        }
-    
-        /* Asegura que el icono de la luna se cambie al de sol cuando se active el modo claro/oscuro */
-        body.dark-mode .dark-mode-toggle .fa-moon {
-            display: none;
-        }
-    
-        body:not(.dark-mode) .dark-mode-toggle .fa-sun {
-            display: none;
-        }
-    
-        /* Cuando el modo oscuro está activo, cambia el icono a sol */
-        body.dark-mode .dark-mode-toggle .fa-sun {
-            display: block;
-        }
-    
-        /* Definir el estilo para el modo oscuro */
-        body.dark-mode {
-            background-color: #121212; 
-            color: #ffffff;
-        }
-
-        /* Estilo para el modo oscuro */
-    body.dark-mode,h2.dark-mode {
-        background-color: #121212; 
-        color: black;
-    }
-
-    .language-menu.active {
-        display: block;
-    }
-    
-
-    .dark-mode-toggle {
-        background-color: transparent;
-        border: none;
-        color: #000;
-        font-size: 24px;
-        cursor: pointer;
-        z-index: 1000;
-        margin-left: 20px; /* Ajusta la distancia entre los enlaces y el botón */
-        padding: 10px 15px;
-        display: flex;
-        align-items: center;
-        margin-top: 5px; /* Añade algo de espacio por encima para bajarlo ligeramente */
-        float: right;
-    }
-
-
-    /* Cambiar el color del icono cuando está en modo oscuro */
-    body.dark-mode .dark-mode-toggle {
-        color: #fff;
-    }
-
-    /* Asegura que el icono de la luna se cambie al de sol cuando se active el modo claro/oscuro */
-    body.dark-mode .dark-mode-toggle .fa-moon {
-        display: none;
-    }
-
-    body:not(.dark-mode) .dark-mode-toggle .fa-sun {
-        display: none;
-    }
-
-    /* Cuando el modo oscuro está activo, cambia el icono a sol */
-    body.dark-mode .dark-mode-toggle .fa-sun {
-        display: block;
-    }
-
-    /* Asegura que el icono de la luna se cambie al de sol cuando se active el modo claro/oscuro */
-    body.dark-mode .dark-mode-toggle .fa-moon {
-        display: none;
-    }
-
-    body:not(.dark-mode) .dark-mode-toggle .fa-sun {
-        display: none;
-    }
-
-    /* Cuando el modo oscuro está activo, cambia el icono a sol */
-    body.dark-mode .dark-mode-toggle .fa-sun {
-        display: block;
-    }
-
-    /* Definir el estilo para el modo oscuro */
-    body.dark-mode {
-        background-color: #121212; /* Fondo oscuro */
-        color: #ffffff; /* Texto blanco */
+    .dark-mode button {
+        background-color: #444;
+        color: var(--color-light);
     }
 
     /****************** Hero Section *******************/
-
     #hero {
-        background-image: url(../img/herosection.jpg);
+        background-image: url('../img/herosection.jpg');
         background-size: cover;
         background-position: center;
-        height: 100vh; /* Hace que el héroe ocupe el 100% de la altura de la pantalla */
+        height: 100vh;
         width: 100%;
-        display: flex; /* Esto activa flexbox */
-        align-items: center; /* Centra verticalmente */
-        justify-content: center; /* Centra horizontalmente */
+        display: flex;
+        align-items: center;
+        justify-content: center;
         position: relative;
-    }
-
-    #hero a {
-        text-decoration: none;
     }
 
     #hero button {
         padding: 10px 20px;
         font-size: 1.2em;
-        color: #fff;
-        background-color: #9EBBE0; /* Color del botón */
+        color: var(--color-light);
+        background-color: var(--color-primary);
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        transition: background-color var(--transition);
     }
 
     #hero button:hover {
-        background-color: #385E7A; /* Color de hover del botón */
+        background-color: var(--color-secondary);
     }
 
-    /****************** Settings Container  *******************/
-
-    /* Contenedor de ajustes (bandera e ícono de la luna) */
+    /****************** Settings *******************/
     .settings-container {
         display: flex;
-        align-items: center; /* Alinea los elementos verticalmente al centro */
-        justify-content: flex-end; /* Alinea los elementos al final (derecha) */
-        margin-top: 10px; /* Ajusta la distancia hacia abajo */
-        gap: 15px; /* Espacio entre los elementos */
+        align-items: center;
+        justify-content: flex-end;
+        gap: 15px;
         margin-right: 10px;
     }
-    
 
-    /* Estilo de la bandera */
-    .language-selector {
-        position: relative; /* Permite posicionar el menú desplegable relativo a la bandera */
-        display: inline-block;
-        align-items: center; /* Centra la bandera verticalmente */
-        cursor: pointer;
-        gap: 15px;
-        z-index: 10; /* Asegura que este elemento esté por encima de otros */
-    }
-
-    .language-selector .flag {
-        width: 24px;
-        height: auto;
-        border-radius: 3px;
-        display: block;
-    }
-
-    .language-menu {
-        display: none; /* Oculto por defecto */
-        position: fixed; /* Se posiciona respecto a la ventana del navegador */
-        top: 50px; /* Ajusta esto según la distancia deseada */
-        background-color: #9EBBE0;
-        border-radius: 5px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        padding: 0;
-    }
-    
-    .language-menu li {
-        display: flex;
-        align-items: center; /* Centra verticalmente */
-        justify-content: center; /* Centra horizontalmente */
-        cursor: pointer;
-        padding: 8px 10px;
-        transition: background-color 0.2s;
-    }
-
-    .language-menu li a {
-        color: #333;
-        text-decoration: none;
-        font-size: 0.9em;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .language-menu li img {
-        width: 20px;
-        height: auto;
-        border-radius: 3px;
-    }
-
-    .language-menu.active {
-        display: block; /* Mostrar el menú cuando se agrega la clase `active` */
-    }
-
-    .language-selector, .dark-mode-icon {
-        display: flex;
-        align-items: center; /* Centra verticalmente */
-        justify-content: center; /* Centra horizontalmente */
-        cursor: pointer; /* Asegura que el cursor cambie cuando se pasa sobre ellos */
-    }
-    
-    .language-selector img.flag,
-    .dark-mode-icon img {
-        width: 24px; /* Ajusta el tamaño de la bandera y la luna */
-        height: auto;
-    }
-    
-    .language-menu li {
-        display: flex;
-        align-items: center;
-        cursor: pointer; /* Indica que es un elemento clicable */
-        padding: 8px 10px; /* Espacio interno */
-        transition: background-color 0.2s; /* Efecto visual al pasar el ratón */
-    }
-    
-    .language-menu li:hover {
-        background-color: #f0f0f0; /* Cambia el color de fondo al pasar el ratón */
-    }
-    
-    .language-menu li img.flag-preview {
-        width: 24px; /* Ajusta el tamaño de la bandera */
-        height: auto;
-    }
-    
-    .language-menu li a {
-        color: #333;
-        text-decoration: none;
-        display: flex;
-        align-items: center; /* Alinea el texto verticalmente con la imagen */
-        justify-content: center; /* Alinea horizontalmente la imagen */
-        gap: 8px; /* Espacio entre la bandera y el texto si lo deseas */
-    }
-
-    #current-flag {
-        width: 24px; /* Ajusta el tamaño de la bandera actual */
-        height: auto;
-        display: inline-block;
-        cursor: pointer; /* Indica que es un elemento clicable */
-    }
-    
-    .language-menu li {
-        display: flex;
-        align-items: center; /* Centra verticalmente la imagen y el texto */
-        justify-content: center; /* Centra horizontalmente los elementos */
-        cursor: pointer;
-        padding: 8px 10px;
-        transition: background-color 0.2s;
-    }
-    
-    .language-menu li img.flag-preview {
-        width: 24px; /* Ajusta el tamaño de la bandera */
-        height: auto;
-    }
-
-    
-    
-    /****************** Parallax Section *******************/
-
-    .success-message {
-        color: green;
-        background-color: #fcfcfc;
-        border: 1px solid #b3ffb3;
-        padding: 10px;
-        margin-bottom: 15px;
-        border-radius: 5px;
-    }
-    
-    .error-message {
-        color: red;
-        background-color: #ffe6e6;
-        border: 1px solid #ffb3b3;
-        padding: 10px;
-        margin-bottom: 15px;
-        border-radius: 5px;
-    }
-    
-
-    /* Parallax Section */
-    #parallax-section {
-        position: relative;
-        background-image: url("/img/herosection.jpg");
-        background-attachment: fixed; /* Este es el truco del parallax */
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        height: 100vh; /* Ajusta según lo que necesites */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #fff; /* Texto blanco para contraste */
-        text-align: center;
-        z-index: 1;
-    }
-
-    #parallax-section .parallax-content {
-        z-index: 2; /* Para asegurar que el contenido esté encima del fondo */
-        padding: 20px;
-        background: rgba(0, 0, 0, 0.5); /* Fondo semitransparente para legibilidad */
-        border-radius: 10px;
-    }
-
-    #parallax-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.4); /* Oscurecer un poco el fondo */
-        z-index: 1;
-    }
-
-
-    /****************** Sección de Introducción *******************/
-
-    .intro-section {
-        background-color: #D8E4F3;
-        padding: 40px 0;
-        text-align: center;
-    }
-
-    .intro-section h2 {
-        font-size: 2.5em;
-        color: #333;
-        margin-bottom: 15px;
-        margin-top: 0;
-    }
-
-    .intro-section p {
-        font-size: 1.1em;
-        color: #555;
-        margin-bottom: 30px;
-    }
-
-    /****************** Servicios en Formato de Cards *******************/
-
-    .services-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 20px;
-    }
-
-    .service-card {
-        background-color: #f2f2f2;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        width: 280px;
-        padding: 20px;
-        text-align: left;
-        transition: transform 0.3s ease;
-        text-align: center;
-    }
-
-    .service-card:hover {
-        transform: scale(1.05);
-    }
-
-    .service-card h3 {
-        font-size: 1.4em;
-        color: #9EBBE0; /* Verde agua */
-        margin-bottom: 10px;
-    }
-    
-    .service-card p {
-        font-size: 1em;
-        color: #333;
-    }
-    
-    .nav-btn {
-        background-color: rgba(0, 0, 0, 0.6);
-        color: white;
-        border: none;
-        padding: 10px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-    
-    .nav-btn:hover {
-        background-color: rgba(0, 0, 0, 0.9);
-    }
-    
-    /****************** Gallery  ***********************/
-
+    /****************** Gallery *******************/
     #gallery {
         padding: 20px;
         text-align: center;
         background-color: #E2EBF6;
     }
-    
-    #gallery h2 {
-        font-size: 2.5rem; /* Un poco más grande el título */
-        margin-bottom: 30px; /* Espacio debajo del título */
-    }
-        
+
     .gallery-large {
-        display: grid; /* Cambiamos de flex a grid */
-        grid-template-columns: repeat(4, minmax(250px, 1fr)); /* Imágenes más anchas */
-        gap: 20px; /* Espaciado entre las imágenes */
-        justify-items: center; /* Centra las imágenes en su celda */
-    }
-
-    .grid {
         display: grid;
-        grid-template-rows: repeat(4, 1fr);
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.25rem;
-        padding: 1.25rem;
-        grid-auto-flow: dense;
-    }
-    
-    .img-1x1 {
-        grid-row-end: span 1;
-        grid-column-end: span 1;
+        grid-template-columns: repeat(4, minmax(250px, 1fr));
+        gap: 20px;
+        justify-items: center;
     }
 
-    .img-2x1 {
-        grid-row-end: span 1;
-        grid-column-end: span 2;
-    }
-
-    .img-2x2 {
-        grid-row-end: span 2;
-        grid-column-end: span 2;
-    }
-    
-    /* Estilo para las imágenes dentro de la nueva galería */
     .gallery-large .gallery-thumbnail {
-        width: 100%; /* Las imágenes ocupan todo el ancho de su celda */
-        height: 250px; /* Ajusta la altura a tu preferencia */
-        object-fit: cover; /* Mantén el recorte adecuado de la imagen */
-        cursor: pointer;
-        transition: transform 0.3s ease;
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
         border-radius: 10px;
+        transition: transform var(--transition);
     }
-    
-    /* Efecto hover al pasar el mouse sobre las imágenes */
+
     .gallery-large .gallery-thumbnail:hover {
-        transform: scale(1.05); /* Aumenta ligeramente el tamaño de la miniatura */
+        transform: scale(1.05);
     }
+
 
     /* Estilos para el acordeón de imágenes */
     #imageAccordion {
