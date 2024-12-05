@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once "../controllers/conection.php";
-require_once "./register.php";
+require_once "./build/functions/register.php";
 
 // Verifica si el formulario de inicio de sesión ha sido enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
