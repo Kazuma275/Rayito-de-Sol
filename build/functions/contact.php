@@ -62,12 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container">
         <nav>
             <div class="topnav" id="myTopnav">
+                <!-- Navbar básico -->
                 <a href="/index.php#parallax-section" class="active">Home</a>
                 <a href="/index.php#amenities"><?php echo $lang['amenities']; ?></a>
                 <a href="/index.php#gallery"><?php echo $lang['gallery']; ?></a>
                 <a href="/index.php#reviews"><?php echo $lang['reviews']; ?></a>
                 <a href="/index.php#ubication"><?php echo $lang['ubication']; ?></a>
                 <a href="/build/functions/signup.php"><?php echo $lang['account']; ?></a>
+                <!-- Si el usuario ha iniciado sesión saldrán estos menus -->
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in']): ?>
                     <a href="/build/crud/data/create.php"><?php echo $lang['make_reservation']; ?></a>
                     <a href="/build/functions/information.php" class="login-message">Hey, <?php echo $_SESSION['username']; ?></a>
@@ -75,12 +77,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endif; ?>
                 <div class="settings-container" style="position: relative;">
                     <div class="language-selector">
+
+                        <!-- Bandera actual -->
                         <img id="current-flag" src="/img/idiomas/<?php echo $_SESSION['lang']; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
+                        
+                        <!-- Desplegable de idiomas -->
                         <ul class="language-menu">
                             <?php foreach (['en', 'fr', 'es', 'cn', 'it', 'br', 'ua', 'ru'] as $code): ?>
                                 <li><a href="?lang=<?php echo $code; ?>" data-lang="<?php echo $code; ?>"><img src="/img/idiomas/<?php echo $code; ?>.png" alt="<?php echo ucfirst($code); ?>" class="flag-preview"></a></li>
                             <?php endforeach; ?>
                         </ul>
+                    
                     </div>
                     <label class="dayNight">
                         <input type="checkbox" id="darkmode-toggle">
@@ -91,13 +98,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </nav>
 
         <section id="contact">
+            <!-- Contact tittle -->
             <h2><?php echo $lang['contact_title']; ?></h2>
             <p><?php echo $lang['contact_description']; ?></p>
+            
+            <!-- Mensaje de success -->
             <?php if (isset($success_message)): ?>
                 <div class="success-message"><?php echo $success_message; ?></div>
             <?php elseif (isset($error_message)): ?>
                 <div class="error-message"><?php echo $error_message; ?></div>
             <?php endif; ?>
+            <!-- Formulario de contacto -->
             <form method="POST" class="contact-form">
                 <label for="customer_name"><?php echo $lang['contact_name_label']; ?></label>
                 <input type="text" id="customer_name" name="customer_name" required>
