@@ -142,12 +142,11 @@ if (file_exists($lang_file)) {
             <div class="parallax-content">
                 <!-- Si usuario se ha resgistrado, mostrar mensaje de bienvenida -->
                 <?php if (isset($_GET['registration_success']) && $_GET['registration_success'] === 'true'): ?>
-                    <? require_once "test.php";?>
-                <div class="success-message">
-                ¡Registro realizado con éxito!
-                </div>
+                    <div class="success-message">
+                        ¡Registro realizado con éxito! Bienvenido, <?php echo htmlspecialchars($_SESSION['username']); ?>
+                    </div>
+                <?php endif; ?>
 
-        <?php endif; ?>
                 <h1><?php echo $lang['parallax_title']; ?></h1>
                 <p><?php echo $lang['parallax_subtitle']; ?></p>
             </div>

@@ -21,15 +21,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $usernameValue = $user->getUsername();
     $passwordValue = $user->getPassword();
 
-    // Crear la consulta SQL
-    $sql = "INSERT INTO users (username, password) VALUES ('$usernameValue', '$passwordValue')";
+    // Hash de la contraseña antes de guardarla en la base de datos
+    $hashedPassword = password_hash($passwordValue, PASSWORD_BCRYPT);
 
-    // Ejecuto la consulta
-    if ($conn->query($sql) === TRUE) {
-        header("Location: /index.php?registration_success=true");
-        exit();
+    // Preparar la consulta SQL para evitar inyección SQL
+    $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
+    if ($stmt) {
+        // Vincular los parámetros
+        $stmt->bind_param("ss", $usernameValue, $hashedPassword);
+
+        // Ejecutar la consulta
+        if ($stmt->execute()) {
+            // Redirigir al index con el parámetro de éxito
+            header("Location: /index.php?registration_success=true");
+            exit();
+        } else {
+            echo "Error registering user: " . $stmt->error;
+        }
+
+        // Cerrar la declaración
+        $stmt->close();
     } else {
-        echo "Error registering user: " . $conn->error;
+        echo "Error preparing statement: " . $conn->error;
     }
 
     // Cerrar la conexión
