@@ -27,7 +27,6 @@ if (file_exists($lang_file)) {
     die("Error: Archivo de idioma no encontrado.");
 }
 
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Captura los datos del formulario
     $customer_name = trim($_POST['customer_name'] ?? '');
