@@ -71,7 +71,7 @@ include $lang_file;
 
                 <div class="settings-container">
                     <div class="language-selector">
-                        <img id="current-flag" src="./img/idiomas/<?= $lang ?>.png" alt="<?= $lang ?>" class="flag">
+                    <img src="/img/idiomas/<?php echo $_SESSION['lang'] ?? 'es'; ?>.png" alt="Idioma">
                         <ul class="language-menu">
                             <?php foreach (['en', 'fr', 'es', 'cn', 'it', 'br', 'ua', 'ru'] as $code): ?>
                                 <li><a href="?lang=<?= $code ?>"><img src="/img/idiomas/<?= $code ?>.png" alt="<?= $code ?>" class="flag-preview"></a></li>
