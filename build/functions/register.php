@@ -35,4 +35,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Cerrar la conexión
     $conn->close();
 }
+    header ("Location: /index.php");
 ?>
