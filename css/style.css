@@ -1002,6 +1002,7 @@
 
     /***************** Ubication ******************/
 
+    /* Estilos para la sección de ubicación */
     .ubication-title {
         font-size: 2rem;
         margin-bottom: 1rem;
@@ -1048,11 +1049,10 @@
     .iframe-container {
         position: relative;
         width: 100%;
-        height: 0;
-        padding-bottom: 56.25%; /* Relación 16:9, esto genera una altura proporcional */
-        overflow: hidden; /* Previene que el iframe se salga */
-        background-color: #f0f0f0; /* Color de fondo, opcional */
-        border: 2px solid red;
+        /* Forzamos una altura visible para probar */
+        height: 500px; /* Ajusta la altura aquí según lo que necesites */
+        border: 2px solid red; /* Color de borde para debug */
+        overflow: hidden;
     }
 
     /* Estilo del iframe */
@@ -1064,6 +1064,7 @@
         height: 100%; /* El iframe ocupa toda la altura del contenedor */
         border: 0; /* Elimina bordes */
     }
+
 
     /****************** Form *********************/
 
