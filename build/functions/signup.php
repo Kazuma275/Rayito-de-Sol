@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            $errors[] = $lang['error_username_taken'];
+            $errors[] = $lang['error_username_taken'];  // Mensaje de error si el usuario ya existe
         }
 
         $stmt->close();
@@ -77,17 +77,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: /build/functions/login.php?registration_success=true");
             exit();
         } else {
-            $errors[] = $lang['error_database'];
+            $errors[] = $lang['error_database'];  // Error de base de datos
         }
 
         $stmt->close();
-    }
-
-    // Mostrar errores de validación
-    if (!empty($errors)) {
-        foreach ($errors as $error) {
-            echo "<p class='error'>{$error}</p>";
-        }
     }
 }
 
@@ -151,12 +144,22 @@ $conn->close(); // Cierra la conexión
         <section id="signup">
             <h2><?php echo htmlspecialchars($lang['signup']); ?></h2>
             <p><?php echo htmlspecialchars($lang['signup_message']); ?></p>
+
+            <!-- Mostrar errores si existen -->
+            <?php if (!empty($errors)): ?>
+                <div class="error-messages">
+                    <?php foreach ($errors as $error): ?>
+                        <p class="error"><?php echo htmlspecialchars($error); ?></p>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
             <form action="signup.php" method="POST" class="signup-form">
                 <!-- Token CSRF -->
                 <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
 
                 <label for="username"><?php echo htmlspecialchars($lang['username']); ?>:</label>
-                <input type="text" id="username" name="username" required>
+                <input type="text" id="username" name="username" required value="<?php echo htmlspecialchars($username ?? ''); ?>">
 
                 <label for="password"><?php echo htmlspecialchars($lang['password']); ?>:</label>
                 <div class="password-container">
