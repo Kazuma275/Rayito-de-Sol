@@ -8,5 +8,6 @@ A continuación, se enumeran las personas que han contribuido al proyecto **Rayi
 - **Gonzalo Lázaro Zambrano**
 - **Antonio Jesús Heredia Leiva**
 - **Juan Francisco Chacón Macías**
+- **José Manuel Gamarro García**
 
 Gracias a todos por su colaboración y esfuerzo en hacer de **Rayito de Sol** un proyecto exitoso.
