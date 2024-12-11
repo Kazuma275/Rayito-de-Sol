@@ -17,7 +17,7 @@ $_SESSION['LAST_ACTIVITY'] = time(); // Actualiza la última actividad
 require_once __DIR__ . "/../../controllers/conection.php";  
 
 // Manejo de autenticación (Login)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'login') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 }
 
 // Manejo del registro (Signup)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'register') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
     $confirm_password = trim($_POST['confirm_password'] ?? '');
@@ -117,7 +117,6 @@ if (file_exists($lang_file)) {
 $conn->close(); // Cierra la conexión
 
 ?>
-
 
 <!DOCTYPE html>
 <html lang="<?php echo $_SESSION['lang']; ?>">
