@@ -58,7 +58,7 @@ if (file_exists($lang_file)) {
                 <a href="#gallery"><?php echo $lang['gallery']?></a>
                 <a href="#reviews"><?php echo $lang['reviews']?></a>
                 <a href="#ubication"><?php echo $lang['ubication']; ?></a>
-                <a href="/build/functions/signup.php"><?php echo $lang['account']?></a>
+                <a href="/build/functions/login.php"><?php echo $lang['account']?></a>
                 <?php if (!empty($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                     <a href="/build/crud/data/create.php"><?php echo $lang['make_reservation']?></a>
                     <a href="/build/functions/information.php" class="login-message">Hey, <?php echo $_SESSION['username']?></a>
@@ -151,7 +151,7 @@ if (file_exists($lang_file)) {
                     <a href="#amenities"><?php echo $lang['amenities']; ?></a>
                     <a href="#gallery"><?php echo $lang['gallery']; ?></a>
                     <a href="#reviews"><?php echo $lang['reviews']; ?></a>
-                    <a href="/build/functions/login.phps"><?php echo $lang['account']; ?></a>
+                    <a href="/build/functions/login.php"><?php echo $lang['account']; ?></a>
                 </div>
                 <div class="social-media">
                     <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
