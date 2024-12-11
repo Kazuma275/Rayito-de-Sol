@@ -146,6 +146,7 @@ if (file_exists($lang_file)) {
             </div>
         </section>
 
+
         <footer class="footer">
             <div class="container">
                 <div class="footer-links">
