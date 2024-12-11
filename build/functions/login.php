@@ -189,16 +189,14 @@ $conn->close(); // Cierra la conexión
             <h2><?php echo $lang['login']; ?></h2>
             <p><?php echo $lang['login_message']; ?></p>
             <form action="/build/functions/login.php" method="POST" class="login-form">
-                <label for="username"><?php echo $lang['login_username']; ?></label>
+                <label for="username">Nombre de usuario</label>
                 <input type="text" id="username" name="username" required>
 
-                <label for="password"><?php echo $lang['login_password']; ?></label>
-                <div class="password-container">
-                    <input type="password" id="password" name="password" required>
-                    <i id="toggle-password" class="fa fa-eye"></i>
-                </div>
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" required>
 
                 <input type="submit" value="Iniciar Sesión">
+                <input type="hidden" name="action" value="login">
             </form>
             
             <div class="links">
