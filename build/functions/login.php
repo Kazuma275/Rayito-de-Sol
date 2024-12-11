@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 // Tiempo de vida de la sesión
@@ -20,47 +19,56 @@ require_once __DIR__ . "/../../controllers/conection.php";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
+    $error_message = '';
 
     if ($username && $password) {
-        $sql = "SELECT user_id, username, password FROM users WHERE username = ?";
-        $stmt = $conn->prepare($sql);
-
-        if ($stmt) {
-            $stmt->bind_param("s", $username);
-            $stmt->execute();
-            $result = $stmt->get_result();
-
-            if ($result->num_rows === 1) {
-                $user = $result->fetch_assoc();
-
-                if (password_verify($password, $user['password'])) {
-                    $_SESSION['user_id'] = $user['user_id'];
-                    $_SESSION['username'] = $user['username'];
-                    $_SESSION['logged_in'] = true;
-
-                    // Asignar rol de admin si el usuario es 'sergio' o 'alvaro'
-                    $_SESSION['role'] = ($username === 'sergio' || $username === 'alvaro') ? 'admin' : 'user';
-
-                    header("Location: /index.php");
-                    exit();
-                } else {
-                    echo "Contraseña incorrecta.";
-                }
-            } else {
-                echo "Usuario no encontrado.";
-            }
-            $stmt->close();
+        // Validación básica del nombre de usuario
+        if (!preg_match("/^[a-zA-Z0-9_]+$/", $username)) {
+            $error_message = "El nombre de usuario solo puede contener letras, números y guiones bajos.";
         } else {
-            echo "Error en la consulta: " . $conn->error;
+            $sql = "SELECT user_id, username, password FROM users WHERE username = ?";
+            $stmt = $conn->prepare($sql);
+
+            if ($stmt) {
+                $stmt->bind_param("s", $username);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                if ($result->num_rows === 1) {
+                    $user = $result->fetch_assoc();
+
+                    if (password_verify($password, $user['password'])) {
+                        // Regenerar ID de sesión para evitar ataques de fijación de sesión
+                        session_regenerate_id(true);
+
+                        $_SESSION['user_id'] = $user['user_id'];
+                        $_SESSION['username'] = $user['username'];
+                        $_SESSION['logged_in'] = true;
+
+                        // Asignar rol de admin si el usuario es 'sergio' o 'alvaro'
+                        $_SESSION['role'] = ($username === 'sergio' || $username === 'alvaro') ? 'admin' : 'user';
+
+                        header("Location: /index.php");
+                        exit();
+                    } else {
+                        $error_message = "Contraseña incorrecta.";
+                    }
+                } else {
+                    $error_message = "Usuario no encontrado.";
+                }
+                $stmt->close();
+            } else {
+                $error_message = "Error en la consulta: " . $conn->error;
+            }
         }
     } else {
-        echo "Por favor, rellena todos los campos.";
+        $error_message = "Por favor, rellena todos los campos.";
     }
 }
 
 // Configuración de idioma
-$lang = $_GET['lang'] ?? $_SESSION['lang'] ?? 'es';
-$_SESSION['lang'] = preg_replace('/[^a-z]/', '', $lang);
+$lang = in_array($_GET['lang'] ?? $_SESSION['lang'] ?? 'es', ['en', 'fr', 'es', 'cn', 'it', 'br', 'ua', 'ru']) ? $_GET['lang'] : 'es';
+$_SESSION['lang'] = $lang;
 
 // Ruta del archivo de idioma
 $lang_file = $_SERVER['DOCUMENT_ROOT'] . "/lang/{$lang}.php";
@@ -73,7 +81,6 @@ if (file_exists($lang_file)) {
 }
 
 $conn->close(); // Cierra la conexión
-
 ?>
 
 <!DOCTYPE html>
@@ -135,7 +142,7 @@ $conn->close(); // Cierra la conexión
                 </div>
             </div>
         </nav>
-        
+
         <?php if (isset($_GET['registration_success']) && $_GET['registration_success'] === 'true'): ?>
         <div class="success-message">
             ¡Registro realizado con éxito! Ahora puedes iniciar sesión.
@@ -158,7 +165,11 @@ $conn->close(); // Cierra la conexión
 
                 <input type="submit" value="Iniciar Sesión">
             </form>
-            
+
+            <?php if (!empty($error_message)): ?>
+                <div class="error-message"><?php echo $error_message; ?></div>
+            <?php endif; ?>
+
             <div class="links">
                 <?php echo $lang['register_prompt']; ?> <a href="/build/functions/signup.php"><?php echo $lang['register_link']; ?></a>
             </div>
