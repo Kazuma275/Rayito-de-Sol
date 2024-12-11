@@ -58,6 +58,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// Manejo del registro
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+    $confirm_password = trim($_POST['confirm_password'] ?? '');
+
+    // Validaciones
+    if (strlen($username) < 4) {
+        echo "El nombre de usuario debe tener al menos 4 caracteres.";
+    } elseif (strlen($password) < 4) {
+        echo "La contraseña debe tener al menos 4 caracteres.";
+    } elseif ($password !== $confirm_password) {
+        echo "Las contraseñas no coinciden.";
+    } else {
+        // Verificar si el usuario ya existe
+        $sql = "SELECT username FROM users WHERE username = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            echo "El nombre de usuario ya está en uso.";
+        } else {
+            // Insertar el nuevo usuario
+            $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+            $sql_insert = "INSERT INTO users (username, password) VALUES (?, ?)";
+            $stmt_insert = $conn->prepare($sql_insert);
+            $stmt_insert->bind_param("ss", $username, $hashed_password);
+            if ($stmt_insert->execute()) {
+                echo "¡Registro exitoso! Ahora puedes iniciar sesión.";
+            } else {
+                echo "Error al registrar el usuario.";
+            }
+            $stmt_insert->close();
+        }
+        $stmt->close();
+    }
+}
+
+$conn->close(); // Cierra la conexión
+
 // Configuración de idioma
 $lang = $_GET['lang'] ?? $_SESSION['lang'] ?? 'es';
 $_SESSION['lang'] = preg_replace('/[^a-z]/', '', $lang);
