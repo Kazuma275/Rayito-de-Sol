@@ -1033,22 +1033,34 @@
 
     /* Puedes ajustar el tamaño y el diseño de la sección */
     #ubication {
-        padding: 2rem 1rem;
-        background-color: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        margin: 2rem auto;
-        max-width: 100%;
-        height: 850px;
-        overflow: hidden;
-        box-sizing: border-box;
+        max-width: 100%; /* El ancho máximo no excede su contenedor */
+        padding: 20px; /* Espaciado interno */
+        box-sizing: border-box; /* Incluye paddings y borders en el tamaño */
+        overflow: hidden; /* Previene desbordamientos */
     }
 
     #ubication h2,
     #ubication p {
         margin: 0 0 15px; /* Margen inferior para separación */
         text-align: center; /* Opcional: Centrar texto */
+    }
+
+    .iframe-container {
+        position: relative; /* Necesario para crear un marco adaptable */
+        width: 100%; /* El contenedor ocupa el 100% del ancho disponible */
+        padding-bottom: 56.25%; /* Mantiene una relación de aspecto 16:9 (puedes ajustarlo según necesidad) */
+        height: 0; /* Altura inicial */
+        overflow: hidden; /* Previene que el iframe se salga */
+    }
+
+    /* Estilo del iframe */
+    .iframe-container iframe {
+        position: absolute; /* Posiciona el iframe dentro del contenedor */
+        top: 0;
+        left: 0;
+        width: 100%; /* El iframe ocupa todo el ancho del contenedor */
+        height: 100%; /* El iframe ocupa toda la altura del contenedor */
+        border: 0; /* Elimina bordes */
     }
 
     #iframe {

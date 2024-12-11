@@ -141,7 +141,9 @@ if (file_exists($lang_file)) {
         <section id="ubication">
             <h2><?php echo $lang['ubication_title']; ?></h2>
             <p><?php echo $lang['ubication_description']; ?></p>
-            <?php require_once './controllers/ubication.php'; ?>
+            <div class="iframe-container">
+                <?php require_once './controllers/ubication.php'; ?>
+            </div>
         </section>
 
         <footer class="footer">
