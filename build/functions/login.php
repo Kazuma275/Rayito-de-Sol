@@ -1,5 +1,6 @@
 <?php
-
+error_reporting(E_ALL);  // Habilita todos los errores
+ini_set('display_errors', 1);  // Muestra los errores en la pantalla
 session_start();
 
 // Tiempo de vida de la sesión
@@ -32,10 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
             if ($result->num_rows === 1) {
                 $user = $result->fetch_assoc();
-
-                    // Debugging: Verificar la contraseña hasheada y la ingresada
-                    var_dump($user['password']); // Muestra el hash guardado en la base de datos
-                    var_dump($password); // Muestra la contraseña ingresada por el usuario
 
                 if (password_verify($password, $user['password'])) {
                     $_SESSION['user_id'] = $user['user_id'];
