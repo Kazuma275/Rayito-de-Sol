@@ -75,7 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("ss", $username, $hashed_password);
 
         if ($stmt->execute()) {
-            header("Location: /build/functions/login.php?registration_success=true");
+            $_SESSION['success_message'] = $lang['registration_success'];
+            header("Location: /build/functions/login.php");
             exit();
         } else {
             $errors[] = $lang['error_database'];  // Error de base de datos
@@ -160,7 +161,7 @@ $conn->close(); // Cierra la conexión
                 <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
 
                 <label for="username"><?php echo htmlspecialchars($lang['username']); ?>:</label>
-                <input type="text" id="username" name="username" required>
+                <input type="text" id="username" name="username" value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>" required>
 
                 <label for="password"><?php echo htmlspecialchars($lang['password']); ?>:</label>
                 <div class="password-container">
