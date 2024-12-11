@@ -24,6 +24,9 @@ if (file_exists($lang_file)) {
 
 require_once __DIR__ . "/../../controllers/conection.php";  
 
+// Variables de mensaje de error
+$errors = [];
+
 // Validación de registro
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
@@ -36,8 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Validaciones del formulario
-    $errors = [];
-
     // Validación de nombre de usuario
     if (empty($username)) {
         $errors[] = $lang['error_username_required'];
@@ -159,7 +160,7 @@ $conn->close(); // Cierra la conexión
                 <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
 
                 <label for="username"><?php echo htmlspecialchars($lang['username']); ?>:</label>
-                <input type="text" id="username" name="username" required value="<?php echo htmlspecialchars($username ?? ''); ?>">
+                <input type="text" id="username" name="username" required>
 
                 <label for="password"><?php echo htmlspecialchars($lang['password']); ?>:</label>
                 <div class="password-container">
