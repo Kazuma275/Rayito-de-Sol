@@ -5,6 +5,57 @@ session_start();
 // Generar un token de sesión único
 $_SESSION["token"] = md5(time());
 
+// Manejo de autenticación
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+    $error_message = '';
+
+    if ($username && $password) {
+        // Validación básica del nombre de usuario
+        if (!preg_match("/^[a-zA-Z0-9_]+$/", $username)) {
+            $error_message = "El nombre de usuario solo puede contener letras, números y guiones bajos.";
+        } else {
+            $sql = "SELECT user_id, username, password FROM users WHERE username = ?";
+            $stmt = $conn->prepare($sql);
+
+            if ($stmt) {
+                $stmt->bind_param("s", $username);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                if ($result->num_rows === 1) {
+                    $user = $result->fetch_assoc();
+
+                    if (password_verify($password, $user['password'])) {
+                        // Regenerar ID de sesión para evitar ataques de fijación de sesión
+                        session_regenerate_id(true);
+
+                        $_SESSION['user_id'] = $user['user_id'];
+                        $_SESSION['username'] = $user['username'];
+                        $_SESSION['logged_in'] = true;
+
+                        // Asignar rol de admin si el usuario es 'sergio' o 'alvaro'
+                        $_SESSION['role'] = ($username === 'sergio' || $username === 'alvaro') ? 'admin' : 'user';
+
+                        header("Location: /index.php");
+                        exit();
+                    } else {
+                        $error_message = "Contraseña incorrecta.";
+                    }
+                } else {
+                    $error_message = "Usuario no encontrado.";
+                }
+                $stmt->close();
+            } else {
+                $error_message = "Error en la consulta: " . $conn->error;
+            }
+        }
+    } else {
+        $error_message = "Por favor, rellena todos los campos.";
+    }
+}
+
 // Configuración de idioma predeterminado
 $default_lang = 'es';
 $lang = $_GET['lang'] ?? $_SESSION['lang'] ?? $default_lang;
