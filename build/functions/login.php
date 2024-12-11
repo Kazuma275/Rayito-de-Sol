@@ -67,8 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Configuración de idioma
-$lang = in_array($_GET['lang'] ?? $_SESSION['lang'] ?? 'es', ['en', 'fr', 'es', 'cn', 'it', 'br', 'ua', 'ru']) ? $_GET['lang'] : 'es';
-$_SESSION['lang'] = $lang;
+$lang = $_GET['lang'] ?? $_SESSION['lang'] ?? 'es';
+$_SESSION['lang'] = preg_replace('/[^a-z]/', '', $lang);
 
 // Ruta del archivo de idioma
 $lang_file = $_SERVER['DOCUMENT_ROOT'] . "/lang/{$lang}.php";
