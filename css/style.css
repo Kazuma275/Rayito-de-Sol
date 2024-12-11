@@ -1002,7 +1002,7 @@
 
     /***************** Ubication ******************/
 
-        /* Estilos para la sección de ubicación */
+    /* Estilos para la sección de ubicación */
     .ubication-title {
         font-size: 2rem;
         margin-bottom: 1rem;
@@ -1031,7 +1031,7 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
     }
 
-    /* Puedes ajustar el tamaño y el diseño de la sección */
+    /* Contenedor principal */
     #ubication {
         max-width: 100%; /* El ancho máximo no excede su contenedor */
         padding: 20px; /* Espaciado interno */
@@ -1045,12 +1045,13 @@
         text-align: center; /* Opcional: Centrar texto */
     }
 
+    /* Contenedor del iframe */
     .iframe-container {
-        position: relative; /* Necesario para crear un marco adaptable */
-        width: 100%; /* El contenedor ocupa el 100% del ancho disponible */
-        padding-bottom: 56.25%; /* Mantiene una relación de aspecto 16:9 (puedes ajustarlo según necesidad) */
-        height: 0; /* Altura inicial */
-        overflow: hidden; /* Previene que el iframe se salga */
+        position: relative;
+        width: 100%;
+        padding-bottom: 56.25%; /* Relación 16:9 */
+        height: 0; /* Elimina la altura fija */
+        overflow: hidden;
     }
 
     /* Estilo del iframe */
@@ -1063,18 +1064,6 @@
         border: 0; /* Elimina bordes */
     }
 
-    #iframe {
-        max-width: 100%;
-        height: auto;
-        display: block;
-        margin: 0 auto;
-    }
-    
-    #iframe iframe {
-        display: block;
-        width: 100%; /* Ocupa el 100% del ancho del contenedor */
-        height: 100%; /* Ocupa el 100% de la altura del contenedor */
-    }
     
 
     /****************** Form *********************/
