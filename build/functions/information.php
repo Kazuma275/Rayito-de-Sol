@@ -78,29 +78,28 @@ $conn->close();
 </head>
 <body>
     <div class="container">
-        <nav>
+    <nav>
             <div class="topnav" id="myTopnav">
                 <a href="/index.php#parallax-section" class="active">Home</a>
-                <a href="/index.php#amenities"><?php echo $lang['amenities']; ?></a>
-                <a href="/index.php#gallery"><?php echo $lang['gallery']; ?></a>
-                <a href="/index.php#reviews"><?php echo $lang['reviews']; ?></a>
-                <a href="/index.php#ubication"><?php echo $lang['ubication']; ?></a>
-                <a href="/build/functions/signup.php"><?php echo $lang['account']; ?></a>
-                <?php if ($_SESSION['logged_in'] ?? false): ?>
-                    <a href="/build/crud/data/create.php"><?php echo $lang['make_reservation']; ?></a>
-                    <a href="contact.php"><?php echo $lang['contact_title']; ?></a>
-                    <a href="/build/functions/information.php" class="login-message">Hey, <?php echo $username; ?></a>
+                <a href="/index.php#amenities"><?php echo htmlspecialchars($lang['amenities']); ?></a>
+                <a href="/index.php#gallery"><?php echo htmlspecialchars($lang['gallery']); ?></a>
+                <a href="/index.php#reviews"><?php echo htmlspecialchars($lang['reviews']); ?></a>
+                <a href="/index.php#ubication"><?php echo htmlspecialchars($lang['ubication']); ?></a>
+                <a href="#"><?php echo htmlspecialchars($lang['account']); ?></a>
+                <?php if (isset($_SESSION['username']) && $_SESSION['logged_in']): ?>
+                    <a href="/build/crud/data/create.php"><?php echo htmlspecialchars($lang['make_reservation']); ?></a>
+                    <a href="/build/functions/information.php" class="login-message"><?php echo "Hey, " . htmlspecialchars($_SESSION['username']); ?></a>
+                    <a href="/build/functions/contact.php"><?php echo htmlspecialchars($lang['contact_title']); ?></a>
                 <?php endif; ?>
-                <div class="settings-container" style="position: relative;">
+
+                <!-- Selector de idioma y modo oscuro -->
+                <div class="settings-container">
                     <div class="language-selector">
-                        <img id="current-flag" src="/img/idiomas/<?php echo $lang; ?>.png" alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" class="flag">
+                        <img id="current-flag" src="/img/idiomas/<?php echo htmlspecialchars($_SESSION['lang']); ?>.png" alt="<?php echo htmlspecialchars($lang['current_lang'] ?? 'Español'); ?>" class="flag">
                         <ul class="language-menu">
-                            <?php
-                            $languages = ['en', 'fr', 'es', 'cn', 'it', 'br', 'ua', 'ru'];
-                            foreach ($languages as $lang_option) {
-                                echo "<li><a href=\"?lang={$lang_option}\" data-lang=\"{$lang_option}\"><img src=\"/img/idiomas/{$lang_option}.png\" alt=\"{$lang_option}\" class=\"flag-preview\"></a></li>";
-                            }
-                            ?>
+                            <?php foreach (['en', 'fr', 'es', 'cn', 'it', 'br', 'ua', 'ru'] as $code): ?>
+                                <li><a href="?lang=<?php echo $code; ?>" data-lang="<?php echo $code; ?>"><img src="/img/idiomas/<?php echo $code; ?>.png" alt="<?php echo ucfirst($code); ?>" class="flag-preview"></a></li>
+                            <?php endforeach; ?>
                         </ul>
                     </div>
                     <label class="dayNight">
