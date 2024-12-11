@@ -16,8 +16,8 @@ $_SESSION['LAST_ACTIVITY'] = time(); // Actualiza la última actividad
 
 require_once __DIR__ . "/../../controllers/conection.php";  
 
-// Manejo de autenticación (Login)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'login') {
+// Manejo de autenticación
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
@@ -57,48 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         echo "Por favor, rellena todos los campos.";
     }
 }
-
-// Manejo del registro (Signup)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'register') {
-    $username = trim($_POST['username'] ?? '');
-    $password = trim($_POST['password'] ?? '');
-    $confirm_password = trim($_POST['confirm_password'] ?? '');
-
-    // Validaciones
-    if (strlen($username) < 4) {
-        echo "El nombre de usuario debe tener al menos 4 caracteres.";
-    } elseif (strlen($password) < 4) {
-        echo "La contraseña debe tener al menos 4 caracteres.";
-    } elseif ($password !== $confirm_password) {
-        echo "Las contraseñas no coinciden.";
-    } else {
-        // Verificar si el usuario ya existe
-        $sql = "SELECT username FROM users WHERE username = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            echo "El nombre de usuario ya está en uso.";
-        } else {
-            // Insertar el nuevo usuario
-            $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-            $sql_insert = "INSERT INTO users (username, password) VALUES (?, ?)";
-            $stmt_insert = $conn->prepare($sql_insert);
-            $stmt_insert->bind_param("ss", $username, $hashed_password);
-            if ($stmt_insert->execute()) {
-                echo "¡Registro exitoso! Ahora puedes iniciar sesión.";
-            } else {
-                echo "Error al registrar el usuario.";
-            }
-            $stmt_insert->close();
-        }
-        $stmt->close();
-    }
-}
-
-$conn->close(); // Cierra la conexión
 
 // Configuración de idioma
 $lang = $_GET['lang'] ?? $_SESSION['lang'] ?? 'es';
@@ -189,14 +147,16 @@ $conn->close(); // Cierra la conexión
             <h2><?php echo $lang['login']; ?></h2>
             <p><?php echo $lang['login_message']; ?></p>
             <form action="/build/functions/login.php" method="POST" class="login-form">
-                <label for="username">Nombre de usuario</label>
+                <label for="username"><?php echo $lang['login_username']; ?></label>
                 <input type="text" id="username" name="username" required>
 
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" required>
+                <label for="password"><?php echo $lang['login_password']; ?></label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required>
+                    <i id="toggle-password" class="fa fa-eye"></i>
+                </div>
 
                 <input type="submit" value="Iniciar Sesión">
-                <input type="hidden" name="action" value="login">
             </form>
             
             <div class="links">
