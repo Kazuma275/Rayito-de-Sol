@@ -1052,6 +1052,7 @@
         padding-bottom: 56.25%; /* Relación 16:9, esto genera una altura proporcional */
         overflow: hidden; /* Previene que el iframe se salga */
         background-color: #f0f0f0; /* Color de fondo, opcional */
+        border: 2px solid red;
     }
 
     /* Estilo del iframe */
