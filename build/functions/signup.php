@@ -3,7 +3,9 @@
 session_start();
 
 // Generar un token de sesión único
-$_SESSION["token"] = md5(time());
+if (!isset($_SESSION["token"])) {
+    $_SESSION["token"] = md5(time());
+}
 
 // Configuración de idioma predeterminado
 $default_lang = 'es';
@@ -19,6 +21,78 @@ if (file_exists($lang_file)) {
 } else {
     die("Error: Archivo de idioma no encontrado.");
 }
+
+require_once __DIR__ . "/../../controllers/conection.php";  
+
+// Validación de registro
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $token = $_POST['token'] ?? '';
+
+    // Verificar que el token de la sesión coincida con el del formulario (prevención CSRF)
+    if ($token !== $_SESSION['token']) {
+        die("Error: Token de sesión no válido.");
+    }
+
+    // Validaciones del formulario
+    $errors = [];
+
+    // Validación de nombre de usuario
+    if (empty($username)) {
+        $errors[] = $lang['error_username_required'];
+    } else {
+        // Verificar si el nombre de usuario ya existe
+        $sql = "SELECT user_id FROM users WHERE username = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $errors[] = $lang['error_username_taken'];
+        }
+
+        $stmt->close();
+    }
+
+    // Validación de contraseña
+    if (empty($password)) {
+        $errors[] = $lang['error_password_required'];
+    } elseif (strlen($password) < 8) {
+        $errors[] = $lang['error_password_length'];
+    }
+
+    // Si no hay errores, proceder con el registro
+    if (empty($errors)) {
+        // Hashear la contraseña antes de almacenarla
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        // Insertar el usuario en la base de datos
+        $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ss", $username, $hashed_password);
+
+        if ($stmt->execute()) {
+            header("Location: /build/functions/login.php?registration_success=true");
+            exit();
+        } else {
+            $errors[] = $lang['error_database'];
+        }
+
+        $stmt->close();
+    }
+
+    // Mostrar errores de validación
+    if (!empty($errors)) {
+        foreach ($errors as $error) {
+            echo "<p class='error'>{$error}</p>";
+        }
+    }
+}
+
+$conn->close(); // Cierra la conexión
+
 ?>
 
 <!DOCTYPE html>
@@ -77,14 +151,19 @@ if (file_exists($lang_file)) {
         <section id="signup">
             <h2><?php echo htmlspecialchars($lang['signup']); ?></h2>
             <p><?php echo htmlspecialchars($lang['signup_message']); ?></p>
-            <form action="register.php" method="POST" class="signup-form">
+            <form action="signup.php" method="POST" class="signup-form">
+                <!-- Token CSRF -->
+                <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
+
                 <label for="username"><?php echo htmlspecialchars($lang['username']); ?>:</label>
                 <input type="text" id="username" name="username" required>
+
                 <label for="password"><?php echo htmlspecialchars($lang['password']); ?>:</label>
                 <div class="password-container">
                     <input type="password" id="password" name="password" required>
                     <i id="toggle-password" class="fa fa-eye"></i>
                 </div>
+
                 <input type="submit" value="<?php echo htmlspecialchars($lang['register']); ?>">
             </form>
             <div class="links">
