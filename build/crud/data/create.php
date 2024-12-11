@@ -137,17 +137,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <footer class="footer">
             <div class="container">
                 <div class="footer-links">
-                    <a href="/index.php#parallax-section" class="active"><?php echo htmlspecialchars($lang['home'], ENT_QUOTES, 'UTF-8'); ?></a>
-                    <a href="/index.php#amenities"><?php echo htmlspecialchars($lang['amenities'], ENT_QUOTES, 'UTF-8'); ?></a>
-                    <a href="/index.php#gallery"><?php echo htmlspecialchars($lang['gallery'], ENT_QUOTES, 'UTF-8'); ?></a>
-                    <a href="/index.php#reviews"><?php echo htmlspecialchars($lang['reviews'], ENT_QUOTES, 'UTF-8'); ?></a>
-                    <a href="/build/functions/signup.php"><?php echo htmlspecialchars($lang['account'], ENT_QUOTES, 'UTF-8'); ?></a>
+                    <a href="/index.php#parallax-section"><?php echo $lang['home']; ?></a>
+                    <a href="/index.php#amenities"><?php echo $lang['amenities']; ?></a>
+                    <a href="/index.php#reviews"><?php echo $lang['reviews']; ?></a>
+                    <a href="/index.php#gallery"><?php echo $lang['gallery']; ?></a>
+                    <a href="#"><?php echo $lang['account']; ?></a>
                 </div>
                 <div class="social-media">
                     <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                     <a href="https://www.instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="https://www.twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://www.whatsapp.com" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+                <div class="copyright">
+                    &copy; 2024 <a href="https://rayitodesol.es">Rayito de Sol</a>. <?php echo $lang['rights']; ?>
                 </div>
             </div>
         </footer>
