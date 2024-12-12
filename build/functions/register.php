@@ -1,11 +1,6 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-// Asegúrate de que estas rutas sean correctas según la estructura de tu proyecto.
-require_once __DIR__ . "/../../assets/classes/User.php"; // Ajusta el número de ../ según la ubicación de tus archivos
-require_once __DIR__ . "/../../controllers/conection.php";
+session_start();
+require_once __DIR__ . "/../../controllers/conection.php";  // Ajusta la ruta de tu archivo de conexión
 
 // Inicialización de las variables
 $username = $password = $confirm_password = $error_message = '';
@@ -28,10 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error_message = "Las contraseñas no coinciden.";
     }
 
-    // Si hay un error, mostramos el mensaje de error y detenemos el flujo
+    // Si hay un error, redirigir de vuelta a signup.php con el mensaje
     if ($error_message) {
-        echo $error_message;
-        exit;
+        $_SESSION['error_message'] = $error_message;
+        $_SESSION['username_value'] = $username;
+        header("Location: signup.php");
+        exit();
     }
 
     // Crear un objeto de la clase User
@@ -51,8 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($stmt_check->num_rows > 0) {
             // Si el nombre de usuario ya está registrado, mostrar un error
-            $error_message = "El nombre de usuario ya está en uso.";
+            $_SESSION['error_message'] = "El nombre de usuario ya está en uso.";
+            $_SESSION['username_value'] = $username;
             $stmt_check->close();
+            header("Location: signup.php");
+            exit();
         } else {
             $stmt_check->close();
 
@@ -67,22 +67,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header("Location: /build/functions/login.php?registration_success=true");
                     exit();
                 } else {
-                    $error_message = "Error al registrar el usuario: " . $conn->error;
+                    $_SESSION['error_message'] = "Error al registrar el usuario: " . $conn->error;
                 }
 
                 $stmt_insert->close();
             } else {
-                $error_message = "Error en la consulta de inserción: " . $conn->error;
+                $_SESSION['error_message'] = "Error en la consulta de inserción: " . $conn->error;
             }
         }
     } else {
-        $error_message = "Error en la consulta de verificación: " . $conn->error;
-    }
-
-    // Mostrar el mensaje de error si hay alguno
-    if ($error_message) {
-        echo $error_message;
-        exit; // Detenemos la ejecución si hay error
+        $_SESSION['error_message'] = "Error en la consulta de verificación: " . $conn->error;
     }
 
     // Cerrar la conexión

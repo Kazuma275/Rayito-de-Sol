@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 // Generar un token de sesión único
@@ -78,9 +77,18 @@ if (file_exists($lang_file)) {
         <section id="signup">
             <h2><?php echo htmlspecialchars($lang['signup']); ?></h2>
             <p><?php echo htmlspecialchars($lang['signup_message']); ?></p>
+
+            <!-- Mostrar mensaje de error si hay -->
+            <?php if (isset($_SESSION['error_message'])): ?>
+                <div class="alert alert-danger">
+                    <?php echo $_SESSION['error_message']; ?>
+                </div>
+                <?php unset($_SESSION['error_message']); ?>
+            <?php endif; ?>
+
             <form action="register.php" method="POST" class="signup-form">
                 <label for="username"><?php echo htmlspecialchars($lang['username']); ?>:</label>
-                <input type="text" id="username" name="username" required>
+                <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($_SESSION['username_value'] ?? ''); ?>" required>
                 <label for="password"><?php echo htmlspecialchars($lang['password']); ?>:</label>
                 <div class="password-container">
                     <input type="password" id="password" name="password" required>
