@@ -997,7 +997,7 @@
     .alert {
         background-color: #9EBBE0;
         color: white;
-        border:#fff solid transparent;
+        border: #777 solid transparent;
     }
     
     .error-message {
