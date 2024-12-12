@@ -32,7 +32,7 @@ if (!isset($_SESSION['username']) || $_SESSION['logged_in'] !== true) {
 $username = htmlspecialchars($_SESSION['username']);
 
 // Incluye la conexión a la base de datos
-require_once __DIR__ . "/../../controllers/conection.php";  
+require_once dirname(dirname(__DIR__)) . "/../../controllers/conection.php";  
 
 // Procesa la actualización de la contraseña
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
