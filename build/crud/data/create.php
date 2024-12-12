@@ -14,7 +14,7 @@ if (isset($_GET['lang'])) {
 }
 
 // Ruta del archivo de idioma y carga con manejo de errores
-$lang_file = __DIR__ . "/lang/{$lang}.php";
+$lang_file = dirname(dirname(dirname(__DIR__))) . "/lang/{$lang}.php";
 if (file_exists($lang_file)) {
     include $lang_file;
 } else {
