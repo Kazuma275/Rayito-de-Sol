@@ -16,7 +16,7 @@ if (isset($_GET['lang'])) {
 }
 
 // Verifica si el archivo de idioma existe y se incluye
-$lang_file = __DIR__ . "/lang/{$lang}.php";
+$lang_file = dirname(dirname(__DIR__)) . "/lang/{$lang}.php";
 if (file_exists($lang_file)) {
     include $lang_file;
 } else {

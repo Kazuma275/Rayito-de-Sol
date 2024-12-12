@@ -107,6 +107,10 @@ $lang = [
     'register_prompt' => '还没有账户？',
     'register_link' => '在这里注册',
 
+    'ubication_title' => '位置',
+    'ubication_description' => '我们位于阿尔哈马尔地区，卡拉翁达。',
+
+
     'make_reservation' => '预订',
     'ubication' => '位置',
 

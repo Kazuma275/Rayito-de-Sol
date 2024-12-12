@@ -81,7 +81,7 @@ $lang = [
     'amenities' => 'Servicios',
     'contact' => 'Contacto',
     'reviews' => 'Opiniones',
-    'reservation' => 'Reservación',
+    'reservation' => 'Reservar',
     'gallery' => 'Galería',
     'account' => 'Cuenta',
     'site_name' => 'Rayito de Sol',
@@ -90,7 +90,7 @@ $lang = [
 
     // General
     'title' => 'Rayito de Sol',
-    'booking' => 'Reservación',
+    'booking' => 'Reservar',
     'signup' => 'Regístrate',
     'signup_message' => 'Si tienes preguntas o necesitas más información, contáctanos en',
     'username' => 'Usuario',

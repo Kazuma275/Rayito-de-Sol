@@ -107,6 +107,10 @@ $lang = [
     'register_prompt' => 'Não tem uma conta?',
     'register_link' => 'Cadastre-se aqui',
 
+    'ubication_title' => 'Localização',
+    'ubication_description' => 'Estamos localizados na região de Alhamar, Calahonda.',
+
+
     'make_reservation' => 'Faça uma reserva',
     'ubication' => 'Localização',
 

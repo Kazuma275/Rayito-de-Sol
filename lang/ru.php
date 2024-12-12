@@ -107,6 +107,10 @@ $lang = [
     'register_prompt' => 'У вас нет аккаунта?',
     'register_link' => 'Зарегистрируйтесь здесь',
 
+    'ubication_title' => 'Расположение',
+    'ubication_description' => 'Мы находимся в районе Альхамар, Калахонда.',
+
+
     'make_reservation' => 'Забронировать',
     'ubication' => 'Местоположение',
 ];

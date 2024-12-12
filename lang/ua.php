@@ -107,6 +107,10 @@ $lang = [
     'register_prompt' => 'У вас немає облікового запису?',
     'register_link' => 'Зареєструйтесь тут',
 
+    'ubication_title' => 'Розташування',
+    'ubication_description' => 'Ми знаходимося в районі Альхамар, Калаонда.',
+
+
     'make_reservation' => 'Забронювати',
     'ubication' => 'Розташування',
 
