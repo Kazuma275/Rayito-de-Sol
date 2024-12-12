@@ -1056,7 +1056,6 @@
         width: 100%;
         /* Forzamos una altura visible para probar */
         height: 500px; /* Ajusta la altura aquí según lo que necesites */
-        border: 2px solid #1b7bbd; /* Color de borde para debug */
         overflow: hidden;
     }
 
