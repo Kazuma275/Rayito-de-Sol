@@ -479,7 +479,7 @@
 
     .success-message {
         color: green;
-        background-color: #fcfcfc;
+        background-color: #fcfcfc !important;
         border: 1px solid #b3ffb3;
         padding: 10px;
         margin-bottom: 15px;
