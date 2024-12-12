@@ -993,6 +993,11 @@
         color: #2d6a2d;
         border: 1px solid #2d6a2d;
     }
+
+    .alert {
+        background-color: #1e90ff;
+        color: white;
+    }
     
     .error-message {
         color: #9e1a1a;
@@ -1051,7 +1056,7 @@
         width: 100%;
         /* Forzamos una altura visible para probar */
         height: 500px; /* Ajusta la altura aquí según lo que necesites */
-        border: 2px solid red; /* Color de borde para debug */
+        border: 2px solid #1b7bbd; /* Color de borde para debug */
         overflow: hidden;
     }
 
