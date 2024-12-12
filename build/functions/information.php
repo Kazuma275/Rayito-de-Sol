@@ -13,7 +13,7 @@ $lang = $_GET['lang'] ?? $_SESSION['lang'] ?? $default_lang;
 $_SESSION['lang'] = $lang;
 
 // Ruta del archivo de idioma
-$lang_file = __DIR__ . "/lang/{$lang}.php";
+$lang_file = dirname(dirname(__DIR__)) . "/lang/{$lang}.php";
 
 // Carga el archivo de idioma o muestra un error
 if (file_exists($lang_file)) {
@@ -32,7 +32,7 @@ if (!isset($_SESSION['username']) || $_SESSION['logged_in'] !== true) {
 $username = htmlspecialchars($_SESSION['username']);
 
 // Incluye la conexión a la base de datos
-require_once dirname(__DIR__) . "/../../controllers/conection.php";  
+require_once __DIR__ . "/../../controllers/conection.php";  
 
 // Procesa la actualización de la contraseña
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
