@@ -7,7 +7,7 @@ $lang = $_GET['lang'] ?? $_SESSION['lang'] ?? 'es';
 $_SESSION['lang'] = $lang;
 
 // Cargar archivo de idioma
-$lang_file = __DIR__ . "/lang/{$lang}.php";
+$lang_file = dirname(dirname(__DIR__)) . "/lang/{$lang}.php";
 if (!file_exists($lang_file)) {
     die("Error: Archivo de idioma no encontrado.");
 }
