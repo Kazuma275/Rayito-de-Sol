@@ -989,6 +989,7 @@
     }
     
     .success-message {
+        background-color: #fcfcfc;
         color: #2d6a2d;
         border: 1px solid #2d6a2d;
     }
