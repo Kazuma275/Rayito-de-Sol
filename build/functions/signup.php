@@ -12,7 +12,7 @@ $lang = $_GET['lang'] ?? $_SESSION['lang'] ?? $default_lang;
 $_SESSION['lang'] = $lang;
 
 // Ruta del archivo de idioma y verificación de existencia
-$lang_file = __DIR__ . "/lang/{$lang}.php";
+$lang_file = dirname(dirname(__DIR__)) . "/lang/{$lang}.php";
 if (file_exists($lang_file)) {
     include $lang_file;
 } else {
