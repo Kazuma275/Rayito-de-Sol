@@ -115,20 +115,14 @@
         border: 1px solid #444;
     }
 
-    /* Estilo para el navbar en modo claro */
-nav {
-    background-color: #ffffff; /* Fondo claro */
-    color: #000000; /* Texto oscuro */
-    transition: background-color 0.3s, color 0.3s; /* Transición suave */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil para darle profundidad */
-}
 
 /* Estilo para el navbar en modo oscuro */
-body.dark-mode nav {
-    background-color: #1e1e1e; /* Fondo oscuro */
+body.dark-mode .topNav {
+    background-color: #121212; /* Fondo negro en modo oscuro */
     color: #ffffff; /* Texto claro */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra más fuerte en modo oscuro */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra más intensa */
 }
+
 
 /* Estilo para los enlaces dentro del navbar */
 nav a {
