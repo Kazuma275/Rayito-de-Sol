@@ -47,6 +47,7 @@ if (file_exists($lang_file)) {
     <link rel="icon" href="img/favicon.png" type="image/x-icon">
     <script defer src="/js/javascript.js"></script>
     <script defer src="/js/darkmode.js"></script>
+    <script defer src="/js/navbar.js"></script>
     <script defer src="/js/languague.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
