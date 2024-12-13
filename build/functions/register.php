@@ -13,15 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validación básica
     if (empty($username) || empty($password)) {
-        $error_message = $lang[$current_lang]['username_password_required'];
+        $error_message = "El nombre de usuario y la contraseña son requeridos.";
     } elseif (!preg_match("/^[a-zA-Z0-9_]+$/", $username)) {
-        $error_message = $lang[$current_lang]['username_invalid'];
-    } else if (strlen($username) < 4 && strlen($password) < 4) {
-        $error_message = $lang[$current_lang]['username_password_min_length'];
+        $error_message = "El nombre de usuario solo puede contener letras, números y guiones bajos.";
+    } else if (strlen($username) < 4  && strlen($password) < 4) {
+        $error_message = "El nombre de usuario y la contraseña debe tener al menos 4 caracteres.";
     } elseif (strlen($password) < 4) {
-        $error_message = $lang[$current_lang]['password_min_length'];
+        $error_message = "La contraseña debe tener al menos 4 caracteres.";
     } elseif (strlen($username) < 4) { 
-        $error_message = $lang[$current_lang]['username_min_length'];
+        $error_message = "El nombre de usuario debe tener al menos 4 caracteres.";
     }
 
     // Si hay un error, redirigir de vuelta a signup.php con el mensaje
