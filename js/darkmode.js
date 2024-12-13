@@ -24,6 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Estilos para footer en modo oscuro
         footer.style.backgroundColor = '#000000'; // Fondo negro
         footer.style.color = '#ffffff'; // Texto blanco
+
+        amenities.style.backgroundColor = '#000000'; // Fondo negro
+        amenities.style.color = '#ffffff'; // Texto blanco
     }
 
     toggleCheckbox.addEventListener('change', () => {
@@ -43,6 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
             footer.style.backgroundColor = '#000000'; // Fondo negro
             footer.style.color = '#ffffff'; // Texto blanco
 
+            amenities.style.backgroundColor = '#000000'; // Fondo negro
+            amenities.style.color = '#ffffff'; // Texto blanco
+
         } else {
             document.body.classList.remove('dark-mode');
             localStorage.setItem('darkMode', 'disabled');
@@ -58,6 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             footer.style.backgroundColor = '#9EBBE0'; // Fondo claro
             footer.style.color = '#000000'; // Texto oscuro
+
+            amenities.style.backgroundColor = '#ffffff'; // Fondo claro
+            amenities.style.color = '#000000'; // Texto oscuro
         }
     });
 });
