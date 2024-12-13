@@ -42,7 +42,6 @@ if (file_exists($lang_file)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rayito de Sol</title>
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/darkmode.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.css">
     <link rel="icon" href="img/favicon.png" type="image/x-icon">
     <script defer src="/js/javascript.js"></script>
