@@ -194,7 +194,7 @@
         display: block;
     }
 
-    body.dark-mode input {
+    body.dark-mode input[type="submit"] {
         background-color: #000000;
         color: #ffffff;
     }
