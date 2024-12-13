@@ -199,6 +199,10 @@
         color: #ffffff;
     }
 
+    body.dark-mode #signup .links a {
+        color: #ffffff;
+    }
+
     /* Estilo para el botón de modo oscuro (checkbox y su apariencia) */
     .dayNight {
         cursor: pointer;
@@ -1230,8 +1234,4 @@
         .gallery-large {
             grid-template-columns: 1fr; 
         }
-    }
-
-    body.dark-mode .links a {
-        color: #ffffff;
     }
