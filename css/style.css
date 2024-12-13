@@ -1250,3 +1250,10 @@
             display: flex;
         }
     }
+
+    .icon {
+    display: none; /* Ocultamos el icono por defecto */
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+}
