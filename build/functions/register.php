@@ -5,6 +5,19 @@ require_once __DIR__ . "/../../controllers/conection.php";  // Ajusta la ruta de
 // Inicialización de las variables
 $username = $password = $error_message = '';
 
+$lang = $_GET['lang'] ?? $_SESSION['lang'] ?? 'es';
+$_SESSION['lang'] = preg_replace('/[^a-z]/', '', $lang);
+
+// Ruta del archivo de idioma
+$lang_file = $_SERVER['DOCUMENT_ROOT'] . "/lang/{$lang}.php";
+
+// Verifica si el archivo de idioma existe
+if (file_exists($lang_file)) {
+    include $lang_file;
+} else {
+    die("Error: Archivo de idioma no encontrado.");
+}
+
 // Verifica si el formulario ha sido enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Recoger los valores del formulario y evitar valores nulos
