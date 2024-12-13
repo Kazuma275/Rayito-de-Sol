@@ -165,7 +165,7 @@ body.dark-mode nav a.active {
     body.dark-mode #amenities p,
     body.dark-mode #amenities .services-container h3, 
     body.dark-mode #amenities .services-container p {
-        color: #dddddd; /* Texto claro */
+        color: white; /* Texto claro */
     }
 
     body.dark-mode #gallery h2 {
@@ -178,10 +178,6 @@ body.dark-mode nav a.active {
 
     body.dark-mode #amenities .services-container {
         background-color: #000000;
-    }
-
-    body.dark-mode .service-card p, body.dark-mode .service-card h3 {
-        color: #dddddd;
     }
 
     /* Estilos para iconos del botón de modo oscuro */
