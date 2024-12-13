@@ -17,20 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
             topNav.style.color = '#f2f2f2'; // Texto blanco
 
             amenities.style.backgroundColor = '#000000';
-            amenities.style.color = '#000000'; // Texto oscuro
+            amenities.style.color = '#dddddd'; // Texto oscuro
             
             gallery.style.backgroundColor = '#101316';
-            gallery.style.color = '#000000'; // Texto oscuro
+            gallery.style.color = '#dddddd'; // Texto oscuro
 
             // Estilos para reviews-container en modo claro
             reviewsContainer.style.backgroundColor = '#20252D';
-            reviewsContainer.style.color = '#000000'; // Texto oscuro
+            reviewsContainer.style.color = '#dddddd'; // Texto oscuro
 
             ubication.style.backgroundColor = '#2F3843';
-            ubication.style.color = '#000000'; // Texto oscuro
+            ubication.style.color = '#dddddd'; // Texto oscuro
 
             footer.style.backgroundColor = '#3F4B5A';
-            footer.style.color = '#000000'; // Texto oscuro
+            footer.style.color = '#dddddd'; // Texto oscuro
 
         } else {
             document.body.classList.remove('dark-mode');
