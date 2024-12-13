@@ -177,7 +177,7 @@ body.dark-mode nav a.active {
     }
 
     body.dark-mode #amenities .services-container {
-        background-color: #3e3e3e;
+        background-color: #000000;
     }
 
     /* Estilos para iconos del botón de modo oscuro */
