@@ -3,12 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const topNav = document.querySelector('.topnav'); // Selecciona la navbar
     const amenities = document.querySelector('#amenities'); // Amenidades
     const gallery = document.querySelector('#gallery'); // Contenedor de galleria
-    const reviewsContainer = document.querySelector('.reviews-section'); // Contenedor de reviews
+    const reviewsContainer = document.querySelector('#reviews'); // Contenedor de reviews
     const ubication = document.querySelector('#ubication'); // Ubicación
     const footer = document.querySelector('.footer'); // Footer
 
        // Verifica el estado del modo oscuro al cargar la página
-       if (localStorage.getItem('darkMode') === 'enabled') {
+    if (localStorage.getItem('darkMode') === 'enabled') {
         document.body.classList.add('dark-mode');
         toggleCheckbox.checked = true; // Marca el checkbox
         
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gallery.style.backgroundColor = '#101316'; // Fondo oscuro
             gallery.style.style.color = '#dddddd'; // Texto
             
-            reviewsContainer.style.backgroundColor = '#20252D'; // Fondo oscuro
+            reviewsContainer.style.backgroundColor = '#101316'; // Fondo oscuro
             reviewsContainer.style.color = '#dddddd'; // Texto claro
 
             ubication.style.backgroundColor = '#2F3843'; // Fondo
