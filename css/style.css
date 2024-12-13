@@ -1235,21 +1235,20 @@
         .gallery-large {
             grid-template-columns: 1fr; 
         }
-        .topnav {
-            flex-direction: column;
-            align-items: stretch;
+        .topnav a:not(:first-child) {display: none;}
+        .topnav a.icon {
+            float: right;
+            display: block;
         }
-    
-        .topnav a {
-            text-align: center;
-            padding: 10px;
-            border-top: 1px solid #444;
+        .topnav.responsive {position: relative;}
+        .topnav.responsive a.icon {
+            position: absolute;
+            right: 0;
+            top: 0;
         }
-    
-        .topnav.responsive {
-            display: flex;
-        }
-        .settings-container {
-            padding: 20px;
+        .topnav.responsive a {
+            float: none;
+            display: block;
+            text-align: left;
         }
     }
