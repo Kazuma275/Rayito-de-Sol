@@ -1235,19 +1235,5 @@
         .gallery-large {
             grid-template-columns: 1fr; 
         }
-        .topnav a:not(#home-link) {
-            display: none;
-        }
-    
-        /* Cuando el navbar tiene la clase "responsive", los enlaces se muestran */
-        .topnav.responsive a {
-            display: block; /* Hace que cada enlace se muestre como un bloque */
-            width: 100%; /* Los enlaces ocupan todo el ancho */
-            text-align: center; /* Centra el texto dentro de cada enlace */
-        }
-        .topnav {
-            display: block;
-            width: 100%;
-            text-align: center;
-        }
+
     }
