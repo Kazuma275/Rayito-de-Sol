@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const topNav = document.querySelector('.topnav'); // Selecciona la navbar
     const reviewsContainer = document.querySelector('.reviews-section'); // Contenedor de reviews
     const gallery = document.querySelector('#gallery'); // Contenedor de galleria
-    const footer = document.querySelector('footer'); // Footer
+    const footer = document.querySelector('.footer'); // Footer
+    const amenities = document.querySelector('#amenities'); // Footer
 
 
     // Verifica el estado del modo oscuro al cargar la página
