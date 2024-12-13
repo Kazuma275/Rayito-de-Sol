@@ -161,12 +161,17 @@ body.dark-mode nav a.active {
     }
 
     /* Estilos para sección de amenities */
-    body.dark-mode #amenities h2,
-    body.dark-mode #amenities p,
-    body.dark-mode #amenities .services-container h3, 
+    body.dark-mode #amenities h3 {
+        color: white;
+    }
+
+    body.dark-mode #amenities p {
+        color: #dddddd;
+    }
+
+    body.dark-mode #amenities .services-container h2, 
     body.dark-mode #amenities .services-container p {
         color: white; /* Texto claro */
-        font-weight: bold;
     }
 
     body.dark-mode #gallery h2 {
