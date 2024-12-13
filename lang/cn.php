@@ -114,6 +114,12 @@ $lang = [
     'make_reservation' => '预订',
     'ubication' => '位置',
 
+    'username_password_required' => '用户名和密码是必需的。',
+    'username_invalid' => '用户名只能包含字母、数字和下划线。',
+    'username_password_min_length' => '用户名和密码必须至少包含4个字符。',
+    'password_min_length' => '密码必须至少包含4个字符。',
+    'username_min_length' => '用户名必须至少包含4个字符。',
+
 ];
 
 ?>

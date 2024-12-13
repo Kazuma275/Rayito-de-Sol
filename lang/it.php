@@ -110,9 +110,15 @@ $lang = [
     'ubication_title' => 'Ubicazione',
     'ubication_description' => 'Siamo situati nella zona di Alhamar, Calahonda.',
 
-
     'make_reservation' => 'Fai una prenotazione',
     'ubication' => 'Posizione',
+
+    'username_password_required' => 'Il nome utente e la password sono obbligatori.',
+    'username_invalid' => 'Il nome utente può contenere solo lettere, numeri e trattini bassi.',
+    'username_password_min_length' => 'Il nome utente e la password devono essere lunghi almeno 4 caratteri.',
+    'password_min_length' => 'La password deve essere lunga almeno 4 caratteri.',
+    'username_min_length' => 'Il nome utente deve essere lungo almeno 4 caratteri.',
+
 
 ];
 

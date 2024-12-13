@@ -114,6 +114,12 @@ $lang = [
     'make_reservation' => 'Faça uma reserva',
     'ubication' => 'Localização',
 
+    'username_password_required' => 'O nome de usuário e a senha são obrigatórios.',
+    'username_invalid' => 'O nome de usuário pode conter apenas letras, números e sublinhados.',
+    'username_password_min_length' => 'O nome de usuário e a senha devem ter pelo menos 4 caracteres.',
+    'password_min_length' => 'A senha deve ter pelo menos 4 caracteres.',
+    'username_min_length' => 'O nome de usuário deve ter pelo menos 4 caracteres.',
+
 ];
 
 ?>

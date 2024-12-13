@@ -100,6 +100,13 @@ $lang = [
     'make_reservation' => 'Make a reservation',
     'ubication' => 'Location',
 
+    'username_password_required' => 'Username and password are required.',
+    'username_invalid' => 'Username can only contain letters, numbers, and underscores.',
+    'username_password_min_length' => 'Username and password must be at least 4 characters long.',
+    'password_min_length' => 'Password must be at least 4 characters long.',
+    'username_min_length' => 'Username must be at least 4 characters long.',
+
+
 ];
 
 ?>

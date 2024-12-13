@@ -112,9 +112,15 @@ $lang = [
     'register_link' => 'Regístrate aquí',
 
 
-
     'make_reservation' => 'Haz una reserva',
     'ubication' => 'Ubicación',
+
+
+    'username_password_required' => 'El nombre de usuario y la contraseña son requeridos.',
+    'username_invalid' => 'El nombre de usuario solo puede contener letras, números y guiones bajos.',
+    'username_password_min_length' => 'El nombre de usuario y la contraseña deben tener al menos 4 caracteres.',
+    'password_min_length' => 'La contraseña debe tener al menos 4 caracteres.',
+    'username_min_length' => 'El nombre de usuario debe tener al menos 4 caracteres.',
 
 
 ];
