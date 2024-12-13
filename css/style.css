@@ -1249,4 +1249,34 @@
         .topnav.responsive {
             display: flex;
         }
+
+        .topnav {
+            flex-direction: column; /* Apilamos los elementos verticalmente */
+            width: 100%;
+        }
+    
+        .topnav a {
+            text-align: center;
+            padding: 10px;
+            display: none; /* Ocultamos los enlaces por defecto */
+        }
+    
+        .topnav.responsive a {
+            display: block; /* Mostramos los enlaces cuando el menú es "responsive" */
+            width: 100%; /* Los enlaces ocupan todo el ancho */
+            border-top: 1px solid #444;
+        }
+    
+        .icon {
+            display: block; /* Mostramos el icono hamburguesa en pantallas pequeñas */
+            text-align: right;
+            padding: 10px;
+        }
+    }
+
+    .icon {
+        display: none; /* Ocultamos el icono por defecto */
+        font-size: 24px;
+        color: white;
+        cursor: pointer;
     }
