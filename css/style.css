@@ -87,12 +87,6 @@
         transition: background-color 0.3s, color 0.3s; /* Transición suave */
     }
 
-    /* Estilos específicos para el modo oscuro */
-    body.dark-mode {
-        background-color: #121212; /* Fondo oscuro */
-        color: #ffffff; /* Texto claro */
-    }
-
     /* Estilos para tablas y formularios en modo oscuro */
     .dark-mode table,
     .dark-mode header,
@@ -111,36 +105,36 @@
     }
 
 
-/* Estilo para el navbar en modo oscuro */
-body.dark-mode .topNav {
-    background-color: #121212; /* Fondo negro en modo oscuro */
-    color: #ffffff; /* Texto claro */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra más intensa */
-}
+    /* Estilo para el navbar en modo oscuro */
+    body.dark-mode .topNav {
+        background-color: #121212; /* Fondo negro en modo oscuro */
+        color: #ffffff; /* Texto claro */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra más intensa */
+    }
 
 
-/* Estilo para los enlaces dentro del navbar */
-nav a {
-    color: #000000; /* Color de texto en el navbar */
-    text-decoration: none;
-    padding: 10px 15px;
-    display: inline-block;
-}
+    /* Estilo para los enlaces dentro del navbar */
+    nav a {
+        color: #000000; /* Color de texto en el navbar */
+        text-decoration: none;
+        padding: 10px 15px;
+        display: inline-block;
+    }
 
-/* Estilo para los enlaces en el modo oscuro */
-body.dark-mode nav a {
-    color: #ffffff; /* Enlaces claros en el modo oscuro */
-}
+    /* Estilo para los enlaces en el modo oscuro */
+    body.dark-mode nav a {
+        color: #ffffff; /* Enlaces claros en el modo oscuro */
+    }
 
-/* Estilo para el enlace activo o seleccionado */
-nav a.active {
-    color: #1e90ff; /* Enlace activo de color brillante */
-}
+    /* Estilo para el enlace activo o seleccionado */
+    nav a.active {
+        color: #1e90ff; /* Enlace activo de color brillante */
+    }
 
-/* Estilo cuando el modo oscuro está activo */
-body.dark-mode nav a.active {
-    color: #1e90ff; /* Enlace activo de color brillante incluso en el modo oscuro */
-}
+    /* Estilo cuando el modo oscuro está activo */
+    body.dark-mode nav a.active {
+        color: #1e90ff; /* Enlace activo de color brillante incluso en el modo oscuro */
+    }
 
 
     .dark-mode .card {
