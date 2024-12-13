@@ -166,6 +166,7 @@ body.dark-mode nav a.active {
     body.dark-mode #amenities .services-container h3, 
     body.dark-mode #amenities .services-container p {
         color: white; /* Texto claro */
+        font-weight: bold;
     }
 
     body.dark-mode #gallery h2 {
