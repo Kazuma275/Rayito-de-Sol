@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reviewsContainer.style.backgroundColor = '#1e1e1e'; // Fondo oscuro
         reviewsContainer.style.color = '#dddddd'; // Texto claro
 
-        gallery.style.backgroundColor = '#1e1e1e'; // Fondo oscuro
+        gallery.style.backgroundColor = '#2F3843'; // Fondo oscuro
         gallery.style.color = '#dddddd'; // Texto claro
     }
 
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             reviewsContainer.style.backgroundColor = '#1e1e1e'; // Fondo oscuro
             reviewsContainer.style.color = '#dddddd'; // Texto claro
             
-            gallery.style.backgroundColor = '#1e1e1e'; // Fondo oscuro
+            gallery.style.backgroundColor = '#2F3843'; // Fondo oscuro
             gallery.style.style.color = '#dddddd'; // Texto
 
         } else {
