@@ -48,6 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
+     // Determinar el rol del usuario
+    $role = ($username === 'sergio' || $username === 'alvaro') ? 'admin' : 'user';
+
     // Crear la consulta SQL para insertar el nuevo usuario
     $sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
