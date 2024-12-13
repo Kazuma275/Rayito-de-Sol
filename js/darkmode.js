@@ -57,4 +57,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         }
     });
+
+    // Verifica el estado al cargar la página
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        enableDarkMode();
+        toggleCheckbox.checked = true; // Asegura que el toggle esté marcado
+    } else {
+        disableDarkMode();
+        toggleCheckbox.checked = false; // Asegura que el toggle no esté marcado
+    }
+
+    // Evento para cambiar el estado del modo oscuro
+    toggleCheckbox.addEventListener('change', () => {
+        if (toggleCheckbox.checked) {
+            enableDarkMode();
+        } else {
+            disableDarkMode();
+        }
+    });
+
+    
 });
