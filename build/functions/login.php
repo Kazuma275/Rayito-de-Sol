@@ -163,7 +163,7 @@ $conn->close(); // Cierra la conexión
                     <i id="toggle-password" class="fa fa-eye"></i>
                 </div>
 
-                <input type="submit" value="Iniciar Sesión">
+                <input type="submit" value="<?php $lang['login']?>">
             </form>
 
             <?php if (!empty($error_message)): ?>
