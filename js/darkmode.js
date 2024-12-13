@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gallery.style.backgroundColor = '#101316'; // Fondo oscuro
             gallery.style.style.color = '#dddddd'; // Texto
             
-            reviewsContainer.style.backgroundColor = '#101316'; // Fondo oscuro
+            reviewsContainer.style.backgroundColor = '#20252D'; // Fondo oscuro
             reviewsContainer.style.color = '#dddddd'; // Texto claro
 
             ubication.style.backgroundColor = '#2F3843'; // Fondo
