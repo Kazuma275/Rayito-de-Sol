@@ -180,7 +180,7 @@ body.dark-mode nav a.active {
         background-color: #000000;
     }
 
-    body.dark-mode .service-card {
+    body.dark-mode .service-card p, body.dark-mode .service-card h3 {
         color: #dddddd;
     }
 
