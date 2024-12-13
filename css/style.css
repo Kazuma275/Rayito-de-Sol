@@ -93,11 +93,6 @@
         color: #ffffff; /* Texto claro */
     }
 
-    /* Estilo para imágenes en modo oscuro */
-    body.dark-mode img {
-        filter: invert(1);
-    }
-
     /* Estilos para tablas y formularios en modo oscuro */
     .dark-mode table,
     .dark-mode header,
