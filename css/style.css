@@ -84,6 +84,11 @@
         filter: invert(1);
     }
 
+    .dark-mod nav {
+        background-color: #121212;
+        color: #ffffff;
+    }
+
         /* Ejemplo para tablas */
     .dark-mode table {
         background-color: #1e1e1e;
