@@ -199,6 +199,10 @@
         color: #ffffff;
     }
 
+    body.dark-mode .links a {
+        color: #ffffff;
+    }
+
     /* Estilo para el botón de modo oscuro (checkbox y su apariencia) */
     .dayNight {
         cursor: pointer;
