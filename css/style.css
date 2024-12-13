@@ -1236,35 +1236,17 @@
             grid-template-columns: 1fr; 
         }
         .topnav {
-            width: 100%;  /* Aseguramos que la barra ocupe todo el ancho */
+            flex-direction: column;
+            align-items: stretch;
         }
     
-        /* Los enlaces están ocultos por defecto en pantallas pequeñas */
         .topnav a {
-            display: none; /* Ocultamos los enlaces inicialmente */
             text-align: center;
             padding: 10px;
-            width: 100%;
             border-top: 1px solid #444;
         }
     
-        /* Mostramos los enlaces cuando se activa la clase 'responsive' */
-        .topnav.responsive a {
-            display: block; /* Mostramos los enlaces como bloques */
+        .topnav.responsive {
+            display: flex;
         }
-    
-        /* Mostramos el icono hamburguesa en pantallas pequeñas */
-        .icon {
-            display: block; /* El icono de hamburguesa se muestra */
-            padding: 10px;
-            font-size: 30px;
-            text-align: right; /* Alineamos el icono a la derecha */
-        }
-    }
-
-    .icon {
-        display: none; /* Ocultamos el icono por defecto */
-        font-size: 24px;
-        color: white;
-        cursor: pointer;
     }
