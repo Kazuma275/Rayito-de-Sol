@@ -183,7 +183,7 @@ $conn->close(); // Cierra la conexión
                     <a href="/index.php#amenities"><?php echo $lang['amenities']; ?></a>
                     <a href="/index.php#gallery"><?php echo $lang['gallery']; ?></a>
                     <a href="/index.php#reviews"><?php echo $lang['reviews']; ?></a>
-                    <a href="/build/functions/signup.php"><?php echo $lang['account']; ?></a>
+                    <a href="/build/functions/login.php"><?php echo $lang['account']; ?></a>
                 </div>
 
                 <div class="social-media">
