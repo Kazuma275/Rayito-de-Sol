@@ -168,6 +168,14 @@ body.dark-mode nav a.active {
         color: #dddddd; /* Texto claro */
     }
 
+    body.dark-mode #gallery h2 {
+        color: #dddddd; /* Texto claro */
+    }
+
+    body.dark-mode #reviews h2 {
+        color: #dddddd; /* Texto claro */
+    }
+
     body.dark-mode #amenities .services-container {
         background-color: #3e3e3e;
     }
