@@ -50,16 +50,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("ss", $username, $hashed_password);
 
     if ($stmt->execute()) {
-        // Redirigir a la página de login después del registro exitoso
-        header("Location: /build/functions/login.php?registration_success=true");
+        // Iniciar sesión automáticamente
+        $_SESSION['user_id'] = $conn->insert_id; // ID del nuevo usuario
+        $_SESSION['username'] = $username;
+
+        // Redirigir a una página de inicio u otra ruta
+        header("Location: ./index.php");
         exit();
     } else {
         $_SESSION['error_message'] = "Error al registrar el usuario: " . $conn->error;
         header("Location: signup.php");
         exit();
     }
-
-}   
+}
 
 $conn->close();
 
