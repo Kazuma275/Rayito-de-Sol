@@ -1236,10 +1236,6 @@
             grid-template-columns: 1fr; 
         }
 
-        .topnav.responsive {
-            display: flex;
-        }
-
         .topnav {
             flex-direction: column; /* Apilamos los elementos verticalmente */
             width: 100%;
