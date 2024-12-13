@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const toggleCheckbox = document.querySelector('.dayNight input');
     const topNav = document.querySelector('.topnav'); // Selecciona la navbar
-    const reviewsContainer = document.querySelector('.reviews-container'); // Contenedor de reviews
+    const reviewsContainer = document.querySelector('.reviews-section'); // Contenedor de reviews
 
     // Verifica el estado del modo oscuro al cargar la página
     if (localStorage.getItem('darkMode') === 'enabled') {
