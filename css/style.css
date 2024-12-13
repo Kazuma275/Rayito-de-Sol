@@ -115,7 +115,7 @@
     }
 
     /* Cambia los estilos de otros elementos específicos */
-    .dark-mode header, .dark-mode footer {
+    .dark-mode header, .dark-mode footer, .dark-mode nav {
         background-color: #1e1e1e; /* Fondo de encabezado y pie de página oscuro */
         color: #ffffff; /* Texto claro */
     }
