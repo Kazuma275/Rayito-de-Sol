@@ -2,6 +2,13 @@
 session_start();
 require_once __DIR__ . "/../../controllers/conection.php";  // Ajusta la ruta de tu archivo de conexión
 
+// Configurar idioma por defecto si no está configurado
+if (!isset($_SESSION['current_lang'])) {
+    $_SESSION['current_lang'] = 'es'; // Español por defecto
+}
+
+$lang = $_SESSION['lang'][$_SESSION['current_lang']];
+
 // Inicialización de las variables
 $username = $password = $error_message = '';
 
@@ -13,15 +20,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validación básica
     if (empty($username) || empty($password)) {
-        $error_message = "El nombre de usuario y la contraseña son requeridos.";
+        $error_message = $lang['username_password_required'];
     } elseif (!preg_match("/^[a-zA-Z0-9_]+$/", $username)) {
-        $error_message = "El nombre de usuario solo puede contener letras, números y guiones bajos.";
-    } else if (strlen($username) < 4  && strlen($password) < 4) {
-        $error_message = "El nombre de usuario y la contraseña debe tener al menos 4 caracteres.";
+        $error_message = $lang['username_invalid'];
+    } elseif (strlen($username) < 4 && strlen($password) < 4) {
+        $error_message = $lang['username_password_min_length'];
     } elseif (strlen($password) < 4) {
-        $error_message = "La contraseña debe tener al menos 4 caracteres.";
+        $error_message = $lang['password_min_length'];
     } elseif (strlen($username) < 4) { 
-        $error_message = "El nombre de usuario debe tener al menos 4 caracteres.";
+        $error_message = $lang['username_min_length'];
     }
 
     // Si hay un error, redirigir de vuelta a signup.php con el mensaje
