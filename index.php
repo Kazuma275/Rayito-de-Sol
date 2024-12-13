@@ -53,7 +53,7 @@ if (file_exists($lang_file)) {
 <body>
     <div class="container">
         <nav>
-            <div class="topnav" id="myTopnav">
+            <div class="topnav responsive" id="myTopnav">
                 <a href="#parallax-section" class="active"><?php echo $lang['home']?></a>
                 <a href="#amenities"><?php echo $lang['amenities']?></a>
                 <a href="#gallery"><?php echo $lang['gallery']?></a>
