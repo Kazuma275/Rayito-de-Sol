@@ -168,6 +168,10 @@ body.dark-mode nav a.active {
     body.dark-mode #amenities p {
         color: #dddddd;
     }
+    
+    body.dark-mode #amenities h2 {
+        color: white;
+    }
 
     body.dark-mode #amenities .services-container h2, 
     body.dark-mode #amenities .services-container p {
