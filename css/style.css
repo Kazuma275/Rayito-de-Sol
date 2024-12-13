@@ -1231,39 +1231,37 @@
         }
     }
 
-    @media (max-width: 650px) {
-        .gallery-large {
-            grid-template-columns: 1fr; 
-        }
-        .topnav {
-            flex-direction: column;
-            align-items: stretch;
-        }
-    
-        .topnav a {
-            text-align: center;
-            padding: 10px;
-            border-top: 1px solid #444;
-        }
-    
-        .topnav.responsive {
-            display: flex;
-        }
-    }
-
     .icon {
-        display: none;
+        display: none; /* Oculto por defecto */
         font-size: 24px;
         background: none;
         border: none;
         color: white;
         cursor: pointer;
+        padding: 10px;
     }
     
     @media (max-width: 580px) {
         .icon {
-            display: block;
+            display: block; /* Visible solo en pantallas pequeñas */
             text-align: right;
+            margin-left: auto;
+        }
+    
+        .topnav {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    
+        .topnav a {
+            display: none; /* Ocultamos inicialmente los enlaces */
+        }
+    
+        .topnav.responsive a {
+            display: block; /* Mostramos los enlaces cuando se activa el menú */
+            text-align: left;
+            width: 100%;
+            border-top: 1px solid #444;
         }
     }
     

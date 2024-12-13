@@ -53,45 +53,44 @@ if (file_exists($lang_file)) {
 <body>
     <div class="container">
         <nav>
-            <div class="topnav responsive" id="myTopnav">
-                <a href="#parallax-section" class="active"><?php echo $lang['home']?></a>
-                <a href="#amenities"><?php echo $lang['amenities']?></a>
-                <a href="#gallery"><?php echo $lang['gallery']?></a>
-                <a href="#reviews"><?php echo $lang['reviews']?></a>
-                <a href="#ubication"><?php echo $lang['ubication']; ?></a>
-                <a href="/build/functions/login.php"><?php echo $lang['account']?></a>
-                <?php if (!empty($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
-                    <a href="/build/crud/data/create.php"><?php echo $lang['make_reservation']?></a>
-                    <a href="/build/functions/information.php" class="login-message">Hey, <?php echo $_SESSION['username']?></a>
-                    <a href="/build/functions/contact.php"><?php echo $lang['contact_title']?></a>
-                <?php endif; ?>
-                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-                    <a href="/build/functions/admin.php">Admin Panel</a>
-                <?php endif; ?>
-                <div class="settings-container" style="position: relative;">
-                    <button class="icon" onclick="toggleNavbar()">
-                        &#9776;
-                    </button>
-                    <div class="language-selector">
-                        <img id="current-flag" 
-                                src="/img/idiomas/<?php echo $_SESSION['lang'] ?? 'es'; ?>.png" 
-                                alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" 
-                                class="flag">
-                        <ul class="language-menu">
-                            <?php 
-                            $langs = ['en', 'fr', 'es', 'cn', 'it', 'br', 'ua', 'ru'];
-                            foreach ($langs as $lang_code): ?>
-                                <li><a href="?lang=<?php echo $lang_code; ?>" data-lang="<?php echo $lang_code; ?>"><img src="/img/idiomas/<?php echo $lang_code; ?>.png" alt="<?php echo ucfirst($lang_code); ?>" class="flag-preview"></a></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                    <label class="dayNight">
-                        <input type="checkbox" id="darkmode-toggle" <?php echo $dark_mode ? 'checked' : ''; ?>>
-                        <div></div>
-                    </label>
+        <div class="topnav" id="myTopnav">
+            <button class="icon" onclick="toggleNavbar()">&#9776;</button>
+            <a href="#parallax-section" class="active"><?php echo $lang['home']?></a>
+            <a href="#amenities"><?php echo $lang['amenities']?></a>
+            <a href="#gallery"><?php echo $lang['gallery']?></a>
+            <a href="#reviews"><?php echo $lang['reviews']?></a>
+            <a href="#ubication"><?php echo $lang['ubication']; ?></a>
+            <a href="/build/functions/login.php"><?php echo $lang['account']?></a>
+            <?php if (!empty($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
+                <a href="/build/crud/data/create.php"><?php echo $lang['make_reservation']?></a>
+                <a href="/build/functions/information.php" class="login-message">Hey, <?php echo $_SESSION['username']?></a>
+                <a href="/build/functions/contact.php"><?php echo $lang['contact_title']?></a>
+            <?php endif; ?>
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                <a href="/build/functions/admin.php">Admin Panel</a>
+            <?php endif; ?>
+            <div class="settings-container">
+                <div class="language-selector">
+                    <img id="current-flag" 
+                            src="/img/idiomas/<?php echo $_SESSION['lang'] ?? 'es'; ?>.png" 
+                            alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" 
+                            class="flag">
+                    <ul class="language-menu">
+                        <?php 
+                        $langs = ['en', 'fr', 'es', 'cn', 'it', 'br', 'ua', 'ru'];
+                        foreach ($langs as $lang_code): ?>
+                            <li><a href="?lang=<?php echo $lang_code; ?>" data-lang="<?php echo $lang_code; ?>"><img src="/img/idiomas/<?php echo $lang_code; ?>.png" alt="<?php echo ucfirst($lang_code); ?>" class="flag-preview"></a></li>
+                        <?php endforeach; ?>
+                    </ul>
                 </div>
+                <label class="dayNight">
+                    <input type="checkbox" id="darkmode-toggle" <?php echo $dark_mode ? 'checked' : ''; ?>>
+                    <div></div>
+                </label>
             </div>
-        </nav>
+        </div>
+    </nav>
+
 
         <?php if (!empty($_GET['session_expired'])): ?>
             <div class="alert">La sesión ha expirado. Por favor, inicia sesión nuevamente.</div>
