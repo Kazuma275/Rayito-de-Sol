@@ -134,7 +134,7 @@
     /* Estilo cuando el modo oscuro está activo */
     body.dark-mode nav a.active {
         color: #000;
-        background-color: #ffffff;
+        background-color: #cfcfcfcf;
     }
 
 
