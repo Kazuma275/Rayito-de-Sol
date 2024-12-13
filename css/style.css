@@ -200,7 +200,7 @@
     }
 
     body.dark-mode #signup .links a {
-        color: #ffffff;
+        color: black;
     }
 
     /* Estilo para el botón de modo oscuro (checkbox y su apariencia) */
