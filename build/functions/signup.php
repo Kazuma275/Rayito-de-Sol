@@ -19,6 +19,8 @@ if (file_exists($lang_file)) {
     die("Error: Archivo de idioma no encontrado.");
 }
 
+$_SESSION['role'] = ($username === 'sergio' || $username === 'alvaro') ? 'admin' : 'user';
+
 ?>
 
 <!DOCTYPE html>
