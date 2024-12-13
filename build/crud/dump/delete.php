@@ -51,7 +51,7 @@ $default_lang = 'es';
 $lang = $_GET['lang'] ?? $_SESSION['lang'] ?? $default_lang;
 $_SESSION['lang'] = $lang;
 
-$lang_file = __DIR__ . "/lang/{$lang}.php";
+$lang_file = dirname(dirname(__DIR__)) . "/lang/{$lang}.php";
 if (file_exists($lang_file)) {
     include $lang_file;
 } else {
