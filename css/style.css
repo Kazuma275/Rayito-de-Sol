@@ -180,6 +180,10 @@ body.dark-mode nav a.active {
         background-color: #000000;
     }
 
+    body.dark-mode .service-card {
+        color: #dddddd;
+    }
+
     /* Estilos para iconos del botón de modo oscuro */
     body.dark-mode .dark-mode-toggle {
         color: #fff;
