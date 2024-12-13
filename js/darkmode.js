@@ -30,6 +30,22 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             document.body.classList.remove('dark-mode');
             localStorage.setItem('darkMode', 'disabled');
+            // Restaura estilos para modo claro
+            topNav.style.backgroundColor = '#9EBBE0'; // Fondo azul
+            topNav.style.color = '#f2f2f2'; // Texto blanco
+
+            amenities.style.backgroundColor = '#D8E4F3'; // Fondo claro
+            amenities.style.color = '#000000'; // Texto oscuro
+
+            // Estilos para reviews-container en modo claro
+            reviewsContainer.style.backgroundColor = '#ECF1F9'; // Fondo claro
+            reviewsContainer.style.color = '#000000'; // Texto oscuro
+        
+            gallery.style.backgroundColor = '#E2EBF6'; // Fondo claro
+            gallery.style.color = '#000000'; // Texto oscuro
+
+            footer.style.backgroundColor = '#FCFCFC'; // Fondo claro
+            footer.style.color = '#000000'; // Texto oscuro
 
         }
     });
