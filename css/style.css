@@ -1235,32 +1235,39 @@
         .gallery-large {
             grid-template-columns: 1fr; 
         }
-    /* Se ocultan todos los enlaces excepto el primero */
-    .topnav a:not(:first-child) {display: none;}
-    
-    /* El icono de la hamburguesa se muestra */
-    .topnav a.icon {
-        display: block;
-        float: right; /* Coloca el icono a la derecha */
-        padding: 14px 20px;
-    }
-    
-    /* Cuando el navbar tiene la clase "responsive" */
-    .topnav.responsive {
-        position: relative;
-    }
+/* Se ocultan todos los enlaces excepto el primero */
+.topnav a:not(#menu-icon) {
+    display: none;
+}
 
-    /* El icono de la hamburguesa se posiciona en la parte superior derecha */
-    .topnav.responsive a.icon {
-        position: absolute;
-        right: 0;
-        top: 0;
-    }
+/* El icono de la hamburguesa se muestra */
+.topnav a.icon {
+    display: block;
+    float: right; /* Coloca el icono a la derecha */
+    padding: 14px 20px;
+}
 
-    /* Centrar los enlaces y hacerlos bloques */
-    .topnav.responsive a {
-        display: block; /* Hace que cada enlace se muestre como un bloque */
-        width: 100%; /* Los enlaces ocupan todo el ancho */
-        text-align: center; /* Centra el texto dentro de cada enlace */
-    }
+/* Cuando el navbar tiene la clase "responsive" */
+.topnav.responsive {
+    position: relative;
+}
+
+/* El icono de la hamburguesa se posiciona en la parte superior derecha */
+.topnav.responsive a.icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+/* Centrar los enlaces y hacerlos bloques */
+.topnav.responsive a {
+    display: block; /* Hace que cada enlace se muestre como un bloque */
+    width: 100%; /* Los enlaces ocupan todo el ancho */
+    text-align: center; /* Centra el texto dentro de cada enlace */
+}
+
+/* Escondemos el enlace de "Home" mientras el menú está desplegado */
+.topnav.responsive #home-link {
+    display: none;
+}
     }
