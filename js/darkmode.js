@@ -19,16 +19,16 @@ document.addEventListener('DOMContentLoaded', () => {
             amenities.style.backgroundColor = '#000000'; // Fondo negro
             amenities.style.color = '#ffffff'; // Texto blanco
 
-            gallery.style.backgroundColor = '#2F3843'; // Fondo oscuro
+            gallery.style.backgroundColor = '#101316'; // Fondo oscuro
             gallery.style.style.color = '#dddddd'; // Texto
             
             reviewsContainer.style.backgroundColor = '#20252D'; // Fondo oscuro
             reviewsContainer.style.color = '#dddddd'; // Texto claro
 
-            ubication.style.backgroundColor = '#000000'; // Fondo
+            ubication.style.backgroundColor = '#2F3843'; // Fondo
             ubication.style.color = '#ffffff'; // Texto blanco
 
-            footer.style.backgroundColor = '#000000'; // Fondo negro
+            footer.style.backgroundColor = '#3F4B5A'; // Fondo negro
             footer.style.color = '#ffffff'; // Texto blanco
 
 
