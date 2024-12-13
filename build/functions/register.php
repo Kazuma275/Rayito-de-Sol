@@ -18,6 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error_message = "El nombre de usuario solo puede contener letras, números y guiones bajos.";
     } elseif (strlen($password) < 4) {
         $error_message = "La contraseña debe tener al menos 4 caracteres.";
+    } elseif (strlen($username) < 4) { 
+        $error_message = "El nombre de usuario debe tener al menos 4 caracteres.";
     }
 
     // Si hay un error, redirigir de vuelta a signup.php con el mensaje
