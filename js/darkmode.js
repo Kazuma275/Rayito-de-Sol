@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         topNav.style.backgroundColor = '#121212'; // Fondo negro para navbar
         topNav.style.color = '#ffffff'; // Texto blanco
         
-        reviewsContainer.style.backgroundColor = '#1e1e1e'; // Fondo oscuro
+        reviewsContainer.style.backgroundColor = '#20252D'; // Fondo oscuro
         reviewsContainer.style.color = '#dddddd'; // Texto claro
 
         gallery.style.backgroundColor = '#2F3843'; // Fondo oscuro
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
             topNav.style.backgroundColor = '#121212'; // Fondo negro
             topNav.style.color = '#ffffff'; // Texto blanco
             
-            reviewsContainer.style.backgroundColor = '#1e1e1e'; // Fondo oscuro
+            reviewsContainer.style.backgroundColor = '#20252D'; // Fondo oscuro
             reviewsContainer.style.color = '#dddddd'; // Texto claro
             
             gallery.style.backgroundColor = '#2F3843'; // Fondo oscuro
