@@ -49,14 +49,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Crear la consulta SQL para insertar el nuevo usuario
-    $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+    $sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $username, $hashed_password);
+    $stmt->bind_param("sss", $username, $hashed_password, $role);
 
     if ($stmt->execute()) {
         // Iniciar sesión automáticamente
         $_SESSION['user_id'] = $conn->insert_id; // ID del nuevo usuario
         $_SESSION['username'] = $username;
+        $_SESSION['role'] = $role; /* Asigno el rol de la sesión a la base de datos */
         /* El inicio de sesión se hace automático al registrarse */
         $_SESSION['logged_in'] = true;
 
