@@ -69,6 +69,9 @@ if (file_exists($lang_file)) {
                     <a href="/build/functions/admin.php">Admin Panel</a>
                 <?php endif; ?>
                 <div class="settings-container" style="position: relative;">
+                    <button class="icon" onclick="toggleNavbar()">
+                        &#9776;
+                    </button>
                     <div class="language-selector">
                         <img id="current-flag" 
                                 src="/img/idiomas/<?php echo $_SESSION['lang'] ?? 'es'; ?>.png" 
