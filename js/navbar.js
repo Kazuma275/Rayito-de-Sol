@@ -1,8 +1,8 @@
 function toggleNavbar() {
-    const nav = document.getElementById("myTopnav");
+    var nav = document.getElementById("myTopnav");
     if (nav.className === "topnav") {
-        nav.className += " responsive";
+        nav.className += " responsive"; // Agrega la clase "responsive" para mostrar el menú
     } else {
-        nav.className = "topnav";
+        nav.className = "topnav"; // Remueve la clase "responsive" para ocultar el menú
     }
 }
