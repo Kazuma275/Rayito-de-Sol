@@ -36,15 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             document.body.classList.remove('dark-mode');
             localStorage.setItem('darkMode', 'disabled');
-            // Restaura estilos para modo claro
-            topNav.style.backgroundColor = '#9EBBE0'; // Fondo azul
-            topNav.style.color = '#f2f2f2'; // Texto blanco
-            // Estilos para reviews-container en modo claro
-            reviewsContainer.style.backgroundColor = '#ffffff'; // Fondo claro
-            reviewsContainer.style.color = '#000000'; // Texto oscuro
         
-            gallery.style.backgroundColor = '#ffffff'; // Fondo claro
-            gallery.style.color = '#000000'; // Texto oscuro
         }
     });
 });
