@@ -1231,7 +1231,7 @@
         }
     }
 
-    @media (max-width: 580px) {
+    @media (max-width: 650px) {
         .gallery-large {
             grid-template-columns: 1fr; 
         }
