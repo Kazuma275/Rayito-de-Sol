@@ -57,6 +57,13 @@ if (file_exists($lang_file)) {
 } else {
     die("Error: Archivo de idioma no encontrado.");
 }
+
+$dark_mode = $_SESSION['dark_mode'] ?? false;
+if (isset($_GET['toggle_dark_mode'])) {
+    $dark_mode = !$dark_mode;
+    $_SESSION['dark_mode'] = $dark_mode;
+}
+
 ?>
 
 <!DOCTYPE html>
