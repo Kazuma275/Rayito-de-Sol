@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gallery.style.backgroundColor = '#ffffff'; // Fondo claro
             gallery.style.color = '#000000'; // Texto oscuro
 
-            footer.style.backgroundColor = '#9EBBE0'; // Fondo claro
+            footer.style.backgroundColor = '#ffffff'; // Fondo claro
             footer.style.color = '#000000'; // Texto oscuro
 
             amenities.style.backgroundColor = '#ffffff'; // Fondo claro
