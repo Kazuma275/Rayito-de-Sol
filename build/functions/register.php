@@ -16,6 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error_message = "El nombre de usuario y la contraseña son requeridos.";
     } elseif (!preg_match("/^[a-zA-Z0-9_]+$/", $username)) {
         $error_message = "El nombre de usuario solo puede contener letras, números y guiones bajos.";
+    } else if (strlen($username) && strlen($password)) {
+        $error_message = "El nombre de usuario y la contraseña debe tener al menos 4 caracteres.";
     } elseif (strlen($password) < 4) {
         $error_message = "La contraseña debe tener al menos 4 caracteres.";
     } elseif (strlen($username) < 4) { 
