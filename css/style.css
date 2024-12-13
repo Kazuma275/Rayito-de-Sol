@@ -1240,7 +1240,7 @@
         }
     
         /* Cuando el navbar tiene la clase "responsive", los enlaces se muestran */
-        .topnav.responsive a {
+        .topnav.responsive {
             display: block; /* Hace que cada enlace se muestre como un bloque */
             width: 100%; /* Los enlaces ocupan todo el ancho */
             text-align: center; /* Centra el texto dentro de cada enlace */
