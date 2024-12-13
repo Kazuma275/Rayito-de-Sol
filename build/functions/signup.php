@@ -80,7 +80,7 @@ if (file_exists($lang_file)) {
 
             <!-- Mostrar mensaje de error si hay -->
             <?php if (isset($_SESSION['error_message'])): ?>
-                <div class="alert alert-danger">
+                <div class="error-message">
                     <?php echo $_SESSION['error_message']; ?>
                 </div>
                 <?php unset($_SESSION['error_message']); ?>

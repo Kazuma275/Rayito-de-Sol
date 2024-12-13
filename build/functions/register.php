@@ -53,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Iniciar sesión automáticamente
         $_SESSION['user_id'] = $conn->insert_id; // ID del nuevo usuario
         $_SESSION['username'] = $username;
+        /* El inicio de sesión se hace automático al registrarse */
         $_SESSION['logged_in'] = true;
 
         // Redirigir a una página de inicio u otra ruta

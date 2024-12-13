@@ -70,9 +70,9 @@ if (file_exists($lang_file)) {
                 <div class="settings-container" style="position: relative;">
                     <div class="language-selector">
                         <img id="current-flag" 
-                             src="/img/idiomas/<?php echo $_SESSION['lang'] ?? 'es'; ?>.png" 
-                             alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" 
-                             class="flag">
+                                src="/img/idiomas/<?php echo $_SESSION['lang'] ?? 'es'; ?>.png" 
+                                alt="<?php echo $lang['current_lang'] ?? 'Español'; ?>" 
+                                class="flag">
                         <ul class="language-menu">
                             <?php 
                             $langs = ['en', 'fr', 'es', 'cn', 'it', 'br', 'ua', 'ru'];
