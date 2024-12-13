@@ -168,6 +168,7 @@ body.dark-mode nav a.active {
         color: white;
     }
 
+    body.dark-mode #amenities .services-container h3,
     body.dark-mode #amenities .services-container h2, 
     body.dark-mode #amenities .services-container p {
         color: #333; /* Texto claro */
