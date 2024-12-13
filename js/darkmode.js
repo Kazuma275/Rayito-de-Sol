@@ -7,6 +7,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const ubication = document.querySelector('#ubication'); // Ubicación
     const footer = document.querySelector('.footer'); // Footer
 
+       // Verifica el estado del modo oscuro al cargar la página
+       if (localStorage.getItem('darkMode') === 'enabled') {
+        document.body.classList.add('dark-mode');
+        toggleCheckbox.checked = true; // Marca el checkbox
+        
+        topNav.style.backgroundColor = '#121212'; // Fondo negro para navbar
+        topNav.style.color = '#ffffff'; // Texto blanco
+        
+        amenities.style.backgroundColor = '#000000'; // Fondo negro
+        amenities.style.color = '#ffffff'; // Texto blanco
+
+        reviewsContainer.style.backgroundColor = '#101316'; // Fondo oscuro
+        reviewsContainer.style.color = '#dddddd'; // Texto claro
+
+        gallery.style.backgroundColor = '#20252D'; // Fondo oscuro
+        gallery.style.color = '#dddddd'; // Texto claro
+        
+        // Estilos para footer en modo oscuro
+        ubication.style.backgroundColor = '#2F3843'; // Fondo
+        ubication.style.color = '#ffffff'; // Texto blanco
+
+        footer.style.backgroundColor = '#3F4B5A'; // Fondo negro
+        footer.style.color = '#ffffff'; // Texto blanco
+
+    }
 
     toggleCheckbox.addEventListener('change', () => {
         if (toggleCheckbox.checked) {
