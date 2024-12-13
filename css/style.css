@@ -79,28 +79,6 @@
     }
 
     /* TODO MODO OSCURO */
-
-    .dark-mode img {
-        filter: invert(1);
-    }
-
-    /* Ejemplo para tablas */
-    .dark-mode table {
-        background-color: #1e1e1e;
-        color: #ffffff;
-    }
-
-    .dark-mode th, .dark-mode td {
-        border: 1px solid #444;
-    }
-
-    /* Ejemplo para formularios */
-    .dark-mode input, .dark-mode textarea, .dark-mode select {
-        background-color: #2c2c2c;
-        color: #ffffff;
-        border: 1px solid #444;
-    }
-
     /* Estilo general de la página */
     body {
         background-color: #ffffff; /* Fondo claro */
@@ -114,56 +92,65 @@
         color: #ffffff; /* Texto claro */
     }
 
-    /* Cambia los estilos de otros elementos específicos */
+    /* Estilo para imágenes en modo oscuro */
+    body.dark-mode img {
+        filter: invert(1);
+    }
+
+    /* Estilos para tablas y formularios en modo oscuro */
+    .dark-mode table {
+        background-color: #1e1e1e;
+        color: #ffffff;
+    }
+
+    .dark-mode th, .dark-mode td {
+        border: 1px solid #444;
+    }
+
+    .dark-mode input, .dark-mode textarea, .dark-mode select {
+        background-color: #2c2c2c;
+        color: #ffffff;
+        border: 1px solid #444;
+    }
+
+    /* Estilo para elementos como header, footer, y nav */
     .dark-mode header, .dark-mode footer, .dark-mode nav {
-        background-color: #1e1e1e; /* Fondo de encabezado y pie de página oscuro */
-        color: #ffffff; /* Texto claro */
+        background-color: #1e1e1e;
+        color: #ffffff;
     }
 
+    /* Estilo para tarjetas */
     .dark-mode .card {
-        background-color: #2c2c2c; /* Fondo de tarjetas */
-        border: 1px solid #444; /* Borde oscuro */
-        color: #ffffff; /* Texto claro */
+        background-color: #2c2c2c;
+        border: 1px solid #444;
+        color: #ffffff;
     }
 
+    /* Estilo para botones */
     .dark-mode button {
-        background-color: #444; /* Fondo de botones */
-        color: #ffffff; /* Texto de botones */
+        background-color: #444;
+        color: #ffffff;
     }
 
-    /* Estilo para .parallax-content en modo oscuro */
-    body.dark-mode .parallax-content {
-        background-color: #1e1e1e; /* Fondo oscuro */
-        color: #ffffff; /* Texto claro */
-    }
-
+    /* Estilo para enlaces */
     .dark-mode a {
-        color: #1e90ff; /* Enlaces de color brillante */
+        color: #1e90ff; /* Color brillante para enlaces */
     }
 
-    /* Estilo para un botón de modo oscuro/normal */
-    button.dark-mode-toggle {
-        background-color: transparent;
-        border: none;
-        color: inherit;
-        cursor: pointer;
-    }
-
-        /* Estilo para la sección de amenities en modo oscuro */
+    /* Estilo para sección de amenities */
     body.dark-mode #amenities {
-        background-color: #2c2c2c; /* Fondo oscuro */
-        color: #ffffff; /* Texto claro */
+        background-color: #2c2c2c;
+        color: #ffffff;
     }
 
-    /* Cambia los estilos de los elementos dentro de la sección de amenities */
     body.dark-mode #amenities h2,
     body.dark-mode #amenities p {
-        color: #dddddd; /* Texto claro en encabezados y párrafos */
+        color: #dddddd; /* Texto claro */
     }
 
     body.dark-mode #amenities .services-container {
-    background-color: #3e3e3e; /* Fondo oscuro de la caja de servicios */
-    color: #ffffff; /* Texto claro */
+        background-color: #3e3e3e;
+        color: #ffffff;
     }
 
     body.dark-mode #amenities .services-container h3, 
@@ -171,114 +158,12 @@
         color: #dddddd; /* Texto claro */
     }
 
-
-
-    /****************** Dark Button ********************/
-    
-        /* Estilo para el modo oscuro */
-        body.dark-mode,h2.dark-mode {
-            background-color: #121212; /* Fondo oscuro */
-            color: black; /* Texto blanco en modo oscuro */
-        }
-
-        body.dark-mode {
-            background-color: #121212;
-            color: #ffffff;
-        }
-    
-        .language-menu.active {
-            display: block; /* Asegura que el menú se muestre */
-        }
-        
-    
-        .dark-mode-toggle {
-            background-color: transparent;
-            border: none;
-            color: #000;
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 1000;
-            margin-left: 20px; /* Ajusta la distancia entre los enlaces y el botón */
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            margin-top: 5px; /* Añade algo de espacio por encima para bajarlo ligeramente */
-            float: right;
-        }
-    
-    
-        /* Cambiar el color del icono cuando está en modo oscuro */
-        body.dark-mode .dark-mode-toggle {
-            color: #fff;
-        }
-    
-        /* Asegura que el icono de la luna se cambie al de sol cuando se active el modo claro/oscuro */
-        body.dark-mode .dark-mode-toggle .fa-moon {
-            display: none;
-        }
-    
-        body:not(.dark-mode) .dark-mode-toggle .fa-sun {
-            display: none;
-        }
-    
-        /* Cuando el modo oscuro está activo, cambia el icono a sol */
-        body.dark-mode .dark-mode-toggle .fa-sun {
-            display: block;
-        }
-    
-        /* Asegura que el icono de la luna se cambie al de sol cuando se active el modo claro/oscuro */
-        body.dark-mode .dark-mode-toggle .fa-moon {
-            display: none;
-        }
-    
-        body:not(.dark-mode) .dark-mode-toggle .fa-sun {
-            display: none;
-        }
-    
-        /* Cuando el modo oscuro está activo, cambia el icono a sol */
-        body.dark-mode .dark-mode-toggle .fa-sun {
-            display: block;
-        }
-    
-        /* Definir el estilo para el modo oscuro */
-        body.dark-mode {
-            background-color: #121212; 
-            color: #ffffff;
-        }
-
-        /* Estilo para el modo oscuro */
-    body.dark-mode,h2.dark-mode {
-        background-color: #121212; 
-        color: black;
-    }
-
-    .language-menu.active {
-        display: block;
-    }
-    
-
-    .dark-mode-toggle {
-        background-color: transparent;
-        border: none;
-        color: #000;
-        font-size: 24px;
-        cursor: pointer;
-        z-index: 1000;
-        margin-left: 20px; /* Ajusta la distancia entre los enlaces y el botón */
-        padding: 10px 15px;
-        display: flex;
-        align-items: center;
-        margin-top: 5px; /* Añade algo de espacio por encima para bajarlo ligeramente */
-        float: right;
-    }
-
-
-    /* Cambiar el color del icono cuando está en modo oscuro */
+    /* Estilos para iconos del botón de modo oscuro */
     body.dark-mode .dark-mode-toggle {
         color: #fff;
     }
 
-    /* Asegura que el icono de la luna se cambie al de sol cuando se active el modo claro/oscuro */
+    /* Estilo para el botón de modo oscuro (luna y sol) */
     body.dark-mode .dark-mode-toggle .fa-moon {
         display: none;
     }
@@ -287,35 +172,39 @@
         display: none;
     }
 
-    /* Cuando el modo oscuro está activo, cambia el icono a sol */
     body.dark-mode .dark-mode-toggle .fa-sun {
         display: block;
     }
 
-    /* Asegura que el icono de la luna se cambie al de sol cuando se active el modo claro/oscuro */
     body.dark-mode .dark-mode-toggle .fa-moon {
         display: none;
     }
 
-    body:not(.dark-mode) .dark-mode-toggle .fa-sun {
-        display: none;
+    /* Estilo para el checkbox y su apariencia */
+    .dayNight input + div {
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        position: relative;
+        box-shadow: inset 16px -16px 0 0 #fff;
+        transform: scale(1) rotate(-2deg);
+        transition: box-shadow 0.5s, transform 0.4s;
     }
 
-    /* Cuando el modo oscuro está activo, cambia el icono a sol */
-    body.dark-mode .dark-mode-toggle .fa-sun {
-        display: block;
+    .dayNight input:checked + div {
+        box-shadow: inset 32px -32px 0 0 #fff;
+        transform: scale(0.5);
     }
 
-    /* Definir el estilo para el modo oscuro */
-    body.dark-mode {
-        background-color: #121212; /* Fondo oscuro */
-        color: #ffffff; /* Texto blanco */
+    .dayNight input:checked + div:before {
+        background: #000;
     }
 
-    nav.dark-mode {
-        background-color: #121212; /* Fondo oscuro */
-        color: #ffffff; /* Texto blanco */
+    .dayNight input:checked + div:after {
+        transform: scale(1.5);
+        transition: transform 0.5s;
     }
+
 
     /****************** Hero Section *******************/
 
