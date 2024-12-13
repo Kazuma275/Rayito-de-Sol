@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.remove('dark-mode');
             localStorage.setItem('darkMode', 'disabled');
             // Restaura estilos para modo claro
-            topNav.style.backgroundColor = '#007bff'; // Fondo azul
-            topNav.style.color = '#ffffff'; // Texto blanco
+            topNav.style.backgroundColor = '#9EBBE0'; // Fondo azul
+            topNav.style.color = '#f2f2f2'; // Texto blanco
         }
     });
 });
