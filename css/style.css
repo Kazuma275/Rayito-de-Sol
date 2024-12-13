@@ -1231,37 +1231,60 @@
         }
     }
 
-    @media (max-width: 650px) {
-        .gallery-large {
-            grid-template-columns: 1fr; 
-        }
+   /* Estilo básico de la barra de navegación */
+.topnav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 10px;
+}
 
-        .topnav {
-            flex-direction: column; /* Apilamos los elementos verticalmente */
-            width: 100%;
-        }
+.topnav a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    display: inline-block;
+}
+
+/* Ocultamos el icono de menú en pantallas grandes */
+.icon {
+    display: none;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+}
+
+/* Media query para pantallas pequeñas (650px o menos) */
+@media (max-width: 650px) {
+    .gallery-large {
+        grid-template-columns: 1fr; 
+    }
     
-        .topnav a {
-            text-align: center;
-            padding: 10px;
-            display: none; /* Ocultamos los enlaces por defecto */
-        }
-    
-        .topnav.responsive a {
-            display: block; /* Mostramos los enlaces cuando el menú es "responsive" */
-            width: 100%; /* Los enlaces ocupan todo el ancho */
-            border-top: 1px solid #444;
-        }
-    
-        .icon {
-            display: block; /* Mostramos el icono hamburguesa en pantallas pequeñas */
-            text-align: right;
-            padding: 10px;
-        }
+    /* Apilamos los elementos verticalmente en pantallas pequeñas */
+    .topnav {
+        flex-direction: column;
+        width: 100%;
     }
 
+    /* Ocultamos los enlaces de navegación por defecto */
+    .topnav a {
+        text-align: center;
+        padding: 10px;
+        display: none; /* Ocultamos los enlaces por defecto */
+    }
+
+    /* Mostramos los enlaces cuando se activa la clase 'responsive' */
+    .topnav.responsive a {
+        display: block; /* Los enlaces se muestran como bloques */
+        width: 100%; /* Los enlaces ocupan todo el ancho */
+        border-top: 1px solid #444;
+    }
+
+    /* Mostramos el icono hamburguesa */
     .icon {
-        display: none; /* Ocultamos el icono por defecto */
-        font-size: 24px;
-        cursor: pointer;
+        display: block; /* El icono de hamburguesa se muestra */
+        text-align: right;
+        padding: 10px;
     }
+}
