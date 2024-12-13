@@ -995,7 +995,12 @@ body.dark-mode nav a.active {
         overflow: hidden; /* Previene desbordamientos */
     }
 
-    #ubication h2,
+    #ubication h2 {
+        font-size:2.5em;
+        margin: 0 0 15px; /* Margen inferior para separación */
+        text-align: center; /* Opcional: Centrar texto */
+    }
+
     #ubication p {
         margin: 0 0 15px; /* Margen inferior para separación */
         text-align: center; /* Opcional: Centrar texto */
