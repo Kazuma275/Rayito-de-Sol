@@ -1231,17 +1231,24 @@
         }
     }
 
-    .icon {
-        display: none; /* Oculto por defecto */
-        font-size: 24px;
-        background: none;
-        border: none;
-        color: white;
-        cursor: pointer;
-        padding: 10px;
-    }
+    @media (max-width: 650px) {
+        .gallery-large {
+            grid-template-columns: 1fr; 
+        }
+        .topnav {
+            flex-direction: column;
+            align-items: stretch;
+        }
     
-    @media (max-width: 580px) {
+        .topnav a {
+            text-align: center;
+            padding: 10px;
+            border-top: 1px solid #444;
+        }
+    
+        .topnav.responsive {
+            display: flex;
+        }
         .icon {
             display: block; /* Visible solo en pantallas pequeñas */
             text-align: right;
@@ -1264,4 +1271,13 @@
             border-top: 1px solid #444;
         }
     }
-    
+
+.icon {
+    display: none; /* Oculto por defecto */
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+}
