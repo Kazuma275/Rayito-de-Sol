@@ -11,25 +11,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (toggleCheckbox.checked) {
             document.body.classList.add('dark-mode');
             localStorage.setItem('darkMode', 'enabled');
-            // Aplica estilos para modo oscuro
-            topNav.style.backgroundColor = '#121212'; // Fondo negro
-            topNav.style.color = '#ffffff'; // Texto blanco
 
-            amenities.style.backgroundColor = '#000000'; // Fondo negro
-            amenities.style.color = '#ffffff'; // Texto blanco
+            // Restaura estilos para modo claro
+            topNav.style.backgroundColor = '#000000'; 
+            topNav.style.color = '#f2f2f2'; // Texto blanco
 
-            gallery.style.backgroundColor = '#101316'; // Fondo oscuro
-            gallery.style.style.color = '#dddddd'; // Texto
+            amenities.style.backgroundColor = '#000000';
+            amenities.style.color = '#000000'; // Texto oscuro
             
-            reviewsContainer.style.backgroundColor = '#20252D'; // Fondo oscuro
-            reviewsContainer.style.color = '#dddddd'; // Texto claro
+            gallery.style.backgroundColor = '#101316';
+            gallery.style.color = '#000000'; // Texto oscuro
 
-            ubication.style.backgroundColor = '#2F3843'; // Fondo
-            ubication.style.color = '#ffffff'; // Texto blanco
+            // Estilos para reviews-container en modo claro
+            reviewsContainer.style.backgroundColor = '#20252D';
+            reviewsContainer.style.color = '#000000'; // Texto oscuro
 
-            footer.style.backgroundColor = '#3F4B5A'; // Fondo negro
-            footer.style.color = '#ffffff'; // Texto blanco
+            ubication.style.backgroundColor = '#2F3843';
+            ubication.style.color = '#000000'; // Texto oscuro
 
+            footer.style.backgroundColor = '#3F4B5A';
+            footer.style.color = '#000000'; // Texto oscuro
 
         } else {
             document.body.classList.remove('dark-mode');
