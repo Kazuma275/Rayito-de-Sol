@@ -12,22 +12,18 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('dark-mode');
         toggleCheckbox.checked = true; // Marca el checkbox
         
-        topNav.style.backgroundColor = '#121212'; // Fondo negro para navbar
+        topNav.style.backgroundColor = '#121212'; // Fondo negro
         topNav.style.color = '#ffffff'; // Texto blanco
-        
+
         amenities.style.backgroundColor = '#000000'; // Fondo negro
         amenities.style.color = '#ffffff'; // Texto blanco
 
-        reviewsContainer.style.backgroundColor = '#101316'; // Fondo oscuro
-        reviewsContainer.style.color = '#dddddd'; // Texto claro
-
-        gallery.style.backgroundColor = '#20252D'; // Fondo oscuro
-        gallery.style.color = '#dddddd'; // Texto claro
-
+        gallery.style.backgroundColor = '#101316'; // Fondo oscuro
+        gallery.style.style.color = '#dddddd'; // Texto
+        
         reviewsContainer.style.backgroundColor = '#20252D'; // Fondo oscuro
         reviewsContainer.style.color = '#dddddd'; // Texto claro
-        
-        // Estilos para footer en modo oscuro
+
         ubication.style.backgroundColor = '#2F3843'; // Fondo
         ubication.style.color = '#ffffff'; // Texto blanco
 
@@ -67,20 +63,21 @@ document.addEventListener('DOMContentLoaded', () => {
             topNav.style.backgroundColor = '#9EBBE0'; // Fondo azul
             topNav.style.color = '#f2f2f2'; // Texto blanco
 
-            amenities.style.backgroundColor = '#000000'; // Fondo negro
-            amenities.style.color = '#ffffff'; // Texto blanco
-
-            gallery.style.backgroundColor = '#101316'; // Fondo oscuro
-            gallery.style.style.color = '#dddddd'; // Texto
+            amenities.style.backgroundColor = '#D8E4F3'; // Fondo claro
+            amenities.style.color = '#000000'; // Texto oscuro
             
-            reviewsContainer.style.backgroundColor = '#20252D'; // Fondo oscuro
-            reviewsContainer.style.color = '#dddddd'; // Texto claro
+            gallery.style.backgroundColor = '#E2EBF6'; // Fondo claro
+            gallery.style.color = '#000000'; // Texto oscuro
 
-            ubication.style.backgroundColor = '#2F3843'; // Fondo
-            ubication.style.color = '#ffffff'; // Texto blanco
+            // Estilos para reviews-container en modo claro
+            reviewsContainer.style.backgroundColor = '#ECF1F9'; // Fondo claro
+            reviewsContainer.style.color = '#000000'; // Texto oscuro
 
-            footer.style.backgroundColor = '#3F4B5A'; // Fondo negro
-            footer.style.color = '#ffffff'; // Texto blanco
+            ubication.style.backgroundColor = '#F5F8FC'; // Fondo claro
+            ubication.style.color = '#000000'; // Texto oscuro
+
+            footer.style.backgroundColor = '#FCFCFC'; // Fondo claro
+            footer.style.color = '#000000'; // Texto oscuro
 
         }
     });
