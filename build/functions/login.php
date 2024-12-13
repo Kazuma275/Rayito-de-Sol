@@ -116,7 +116,7 @@ $conn->close(); // Cierra la conexión
                 <a href="/index.php#gallery"><?php echo $lang['gallery']?></a>
                 <a href="/index.php#reviews"><?php echo $lang['reviews']?></a>
                 <a href="/index.php#ubication"><?php echo $lang['ubication']; ?></a>
-                <a href="/build/functions/signup.php"><?php echo $lang['account']?></a>
+                <a href="/build/functions/login.php"><?php echo $lang['account']?></a>
                 <?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true): ?>
                     <a href="/build/crud/data/create.php"><?php echo $lang['make_reservation']?></a>
                     <a href="/build/functions/information.php" class="login-message"><?php echo "Hey," . htmlspecialchars($_SESSION['username']); ?></a>
