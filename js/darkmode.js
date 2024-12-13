@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         gallery.style.backgroundColor = '#20252D'; // Fondo oscuro
         gallery.style.color = '#dddddd'; // Texto claro
+
+        reviewsContainer.style.backgroundColor = '#20252D'; // Fondo oscuro
+        reviewsContainer.style.color = '#dddddd'; // Texto claro
         
         // Estilos para footer en modo oscuro
         ubication.style.backgroundColor = '#2F3843'; // Fondo
