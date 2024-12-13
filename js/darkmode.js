@@ -7,28 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const amenities = document.querySelector('#amenities'); // Footer
 
 
-    // Verifica el estado del modo oscuro al cargar la página
-    if (localStorage.getItem('darkMode') === 'enabled') {
-        document.body.classList.add('dark-mode');
-        toggleCheckbox.checked = true; // Marca el checkbox
-        
-        topNav.style.backgroundColor = '#121212'; // Fondo negro para navbar
-        topNav.style.color = '#ffffff'; // Texto blanco
-        
-        reviewsContainer.style.backgroundColor = '#20252D'; // Fondo oscuro
-        reviewsContainer.style.color = '#dddddd'; // Texto claro
-
-        gallery.style.backgroundColor = '#2F3843'; // Fondo oscuro
-        gallery.style.color = '#dddddd'; // Texto claro
-
-        // Estilos para footer en modo oscuro
-        footer.style.backgroundColor = '#000000'; // Fondo negro
-        footer.style.color = '#ffffff'; // Texto blanco
-
-        amenities.style.backgroundColor = '#000000'; // Fondo negro
-        amenities.style.color = '#ffffff'; // Texto blanco
-    }
-
     toggleCheckbox.addEventListener('change', () => {
         if (toggleCheckbox.checked) {
             document.body.classList.add('dark-mode');
@@ -62,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gallery.style.backgroundColor = '#ffffff'; // Fondo claro
             gallery.style.color = '#000000'; // Texto oscuro
 
-            footer.style.backgroundColor = '#ffffff'; // Fondo claro
+            footer.style.backgroundColor = '#FCFCFC'; // Fondo claro
             footer.style.color = '#000000'; // Texto oscuro
 
             amenities.style.backgroundColor = '#ffffff'; // Fondo claro
