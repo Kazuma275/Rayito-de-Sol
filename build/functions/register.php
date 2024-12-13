@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validación básica
     if (empty($username) || empty($password)) {
-        $error_message = "El nombre de usuario y la contraseña son requeridos.";
+        $error_message = $lang['username_password_required'];
     } elseif (!preg_match("/^[a-zA-Z0-9_]+$/", $username)) {
         $error_message = "El nombre de usuario solo puede contener letras, números y guiones bajos.";
     } else if (strlen($username) < 4  && strlen($password) < 4) {
