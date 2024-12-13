@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const topNav = document.querySelector('.topnav'); // Selecciona la navbar
     const reviewsContainer = document.querySelector('.reviews-section'); // Contenedor de reviews
     const gallery = document.querySelector('#gallery'); // Contenedor de galleria
+    const footer = document.querySelector('footer'); // Footer
+
 
     // Verifica el estado del modo oscuro al cargar la página
     if (localStorage.getItem('darkMode') === 'enabled') {
@@ -17,6 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         gallery.style.backgroundColor = '#2F3843'; // Fondo oscuro
         gallery.style.color = '#dddddd'; // Texto claro
+
+        // Estilos para footer en modo oscuro
+        footer.style.backgroundColor = '#000000'; // Fondo negro
+        footer.style.color = '#ffffff'; // Texto blanco
     }
 
     toggleCheckbox.addEventListener('change', () => {
@@ -33,6 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
             gallery.style.backgroundColor = '#2F3843'; // Fondo oscuro
             gallery.style.style.color = '#dddddd'; // Texto
 
+            footer.style.backgroundColor = '#000000'; // Fondo negro
+            footer.style.color = '#ffffff'; // Texto blanco
+
         } else {
             document.body.classList.remove('dark-mode');
             localStorage.setItem('darkMode', 'disabled');
@@ -45,6 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
             gallery.style.backgroundColor = '#ffffff'; // Fondo claro
             gallery.style.color = '#000000'; // Texto oscuro
+
+            footer.style.backgroundColor = '#f8f9fa'; // Fondo claro
+            footer.style.color = '#000000'; // Texto oscuro
         }
     });
 });
