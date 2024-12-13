@@ -1246,12 +1246,18 @@
             border-top: 1px solid #444;
         }
     
-        .topnav.responsive {
-            display: flex;
+        .topnav.responsive a {
+            display: block; /* Mostramos los enlaces como bloques */
+        }
+    
+        .icon {
+            display: block; /* El icono de hamburguesa se muestra */
+            padding: 10px;
+            font-size: 30px;
         }
     }
 
-    .icon {
+.icon {
     display: none; /* Ocultamos el icono por defecto */
     font-size: 24px;
     color: white;
