@@ -1235,4 +1235,18 @@
         .gallery-large {
             grid-template-columns: 1fr; 
         }
+        .topnav {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    
+        .topnav a {
+            text-align: center;
+            padding: 10px;
+            border-top: 1px solid #444;
+        }
+    
+        .topnav.responsive {
+            display: flex;
+        }
     }
