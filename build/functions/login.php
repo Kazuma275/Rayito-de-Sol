@@ -171,7 +171,7 @@ $conn->close(); // Cierra la conexión
             <?php endif; ?>
 
             <div class="links">
-                <?php echo $lang['register_prompt']; ?> <a href="/build/functions/login.php"><?php echo $lang['register_link']; ?></a>
+                <?php echo $lang['register_prompt']; ?> <a href="/build/functions/signup.php"><?php echo $lang['register_link']; ?></a>
             </div>
         </section>
 
