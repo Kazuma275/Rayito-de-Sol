@@ -54,7 +54,7 @@ if (file_exists($lang_file)) {
     <div class="container">
         <nav>
             <div class="topnav responsive" id="myTopnav">
-                <a href="#parallax-section" class="active"><?php echo $lang['home']?></a>
+                <a href="#parallax-section" onclick="toggleNavbar()" class="active"><?php echo $lang['home']?></a>
                 <a href="#amenities"><?php echo $lang['amenities']?></a>
                 <a href="#gallery"><?php echo $lang['gallery']?></a>
                 <a href="#reviews"><?php echo $lang['reviews']?></a>
@@ -69,9 +69,6 @@ if (file_exists($lang_file)) {
                     <a href="/build/functions/admin.php">Admin Panel</a>
                 <?php endif; ?>
                 <div class="settings-container" style="position: relative;">
-                    <button class="icon" onclick="toggleNavbar()">
-                        &#9776;
-                    </button>
                     <div class="language-selector">
                         <img id="current-flag" 
                                 src="/img/idiomas/<?php echo $_SESSION['lang'] ?? 'es'; ?>.png" 
