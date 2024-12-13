@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['username'] = $username;
 
         // Redirigir a una página de inicio u otra ruta
-        header("Location: ./index.php");
+        header("Location: /index.php");
         exit();
     } else {
         $_SESSION['error_message'] = "Error al registrar el usuario: " . $conn->error;
