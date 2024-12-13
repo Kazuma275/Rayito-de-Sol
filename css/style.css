@@ -312,6 +312,11 @@
         color: #ffffff; /* Texto blanco */
     }
 
+    nav.dark-mode {
+        background-color: #121212; /* Fondo oscuro */
+        color: #ffffff; /* Texto blanco */
+    }
+
     /****************** Hero Section *******************/
 
     #hero {
