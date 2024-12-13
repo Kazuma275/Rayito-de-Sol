@@ -32,7 +32,6 @@ if (file_exists($lang_file)) {
 } else {
     die("Error: Archivo de idioma no encontrado.");
 }
-$_SESSION['role'] = ($username === 'sergio' || $username === 'alvaro') ? 'admin' : 'user';
 
 ?>
 
@@ -66,7 +65,7 @@ $_SESSION['role'] = ($username === 'sergio' || $username === 'alvaro') ? 'admin'
                     <a href="/build/functions/information.php" class="login-message">Hey, <?php echo $_SESSION['username']?></a>
                     <a href="/build/functions/contact.php"><?php echo $lang['contact_title']?></a>
                 <?php endif; ?>
-                <?php if ($_SESSION['role'] === 'admin'): ?>
+                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                     <a href="/build/functions/admin.php">Admin Panel</a>
                 <?php endif; ?>
                 <div class="settings-container" style="position: relative;">
