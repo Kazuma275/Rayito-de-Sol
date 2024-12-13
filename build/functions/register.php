@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Iniciar sesión automáticamente
         $_SESSION['user_id'] = $conn->insert_id; // ID del nuevo usuario
         $_SESSION['username'] = $username;
-        $_SESSION['logged_in'] === true;
+        $_SESSION['logged_in'] = true;
 
         // Redirigir a una página de inicio u otra ruta
         header("Location: /index.php");
