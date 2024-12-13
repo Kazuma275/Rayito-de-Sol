@@ -118,7 +118,7 @@
 
 /* Estilo para el navbar en modo oscuro */
 body.dark-mode .topNav {
-    background-color: #121212; /* Fondo negro en modo oscuro */
+    background-color: #121212 !important; /* Fondo negro en modo oscuro */
     color: #ffffff; /* Texto claro */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra más intensa */
 }
