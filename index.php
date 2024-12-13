@@ -18,19 +18,19 @@ $_SESSION['LAST_ACTIVITY'] = time();
 $lang = $_GET['lang'] ?? $_SESSION['lang'] ?? $default_lang;
 $_SESSION['lang'] = $lang;
 
+// Determinar estado del modo oscuro
+$dark_mode = $_SESSION['dark_mode'] ?? false;
+if (isset($_GET['toggle_dark_mode'])) {
+    $dark_mode = !$dark_mode;
+    $_SESSION['dark_mode'] = $dark_mode;
+}
+
 // Incluir archivo de idioma
 $lang_file = __DIR__ . "/lang/{$lang}.php";
 if (file_exists($lang_file)) {
     include $lang_file;
 } else {
     die("Error: Archivo de idioma no encontrado.");
-}
-
-// Determinar estado del modo oscuro
-$dark_mode = $_SESSION['dark_mode'] ?? false;
-if (isset($_GET['toggle_dark_mode'])) {
-    $dark_mode = !$dark_mode;
-    $_SESSION['dark_mode'] = $dark_mode;
 }
 
 ?>
