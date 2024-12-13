@@ -194,6 +194,11 @@
         display: block;
     }
 
+    body.dark-mode input {
+        background-color: #000000;
+        color: #ffffff;
+    }
+
     /* Estilo para el botón de modo oscuro (checkbox y su apariencia) */
     .dayNight {
         cursor: pointer;
