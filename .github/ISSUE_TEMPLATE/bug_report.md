@@ -1,38 +1,52 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Reporta un problema en la página web del apartamento
 title: ''
-labels: ''
+labels: 'bug'
 assignees: ''
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Describe el error**
+Proporciona una descripción clara y concisa del problema que encontraste.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+**Pasos para reproducir el error**
+Indica los pasos necesarios para reproducir el comportamiento erróneo:
+1. Ve a '...'
+2. Haz clic en '....'
+3. Navega hasta '....'
+4. Observa el error
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Comportamiento esperado**
+Describe de forma clara y concisa lo que esperabas que ocurriera.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Capturas de pantalla**
+Si es posible, añade capturas de pantalla para ayudar a explicar el problema.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Detalles del entorno**
+Completa la siguiente información para describir tu entorno:
+- **Escritorio**:
+  - Sistema Operativo: [p. ej., Windows, macOS]
+  - Navegador: [p. ej., Chrome, Safari]
+  - Versión: [p. ej., 22]
+  
+- **Teléfono móvil**:
+  - Dispositivo: [p. ej., iPhone 12, Samsung Galaxy S21]
+  - Sistema Operativo: [p. ej., iOS 16, Android 13]
+  - Navegador: [p. ej., navegador integrado, Safari]
+  - Versión: [p. ej., 22]
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+**Funcionalidades relacionadas**
+Selecciona las funcionalidades del sitio web que estén afectadas (si aplica):
+- [ ] Creación de cuenta
+- [ ] Inicio de sesión
+- [ ] Modificación de contraseña
+- [ ] Eliminación de cuenta
+- [ ] Reservas
+- [ ] Contacto con el administrador
+- [ ] Servicios
+- [ ] Reseñas
+- [ ] Galería
 
-**Additional context**
-Add any other context about the problem here.
+**Contexto adicional**
+Añade cualquier otra información relevante sobre el problema aquí.
