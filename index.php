@@ -148,7 +148,9 @@ if (file_exists($lang_file)) {
             </div>
         </section>
 
-
+        <!-- Elfsight Booking.com Reviews | Untitled Booking.com Reviews -->
+        <script src="https://static.elfsight.com/platform/platform.js" async></script>
+        <div class="elfsight-app-82dc7809-466e-4446-8adb-4a23e4b89daa" data-elfsight-app-lazy></div>
 
         <footer class="footer">
             <div class="container">
