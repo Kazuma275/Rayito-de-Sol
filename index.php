@@ -136,7 +136,7 @@ if (file_exists($lang_file)) {
         <section id="reviews" class="reviews-section">
             <h2><?php echo $lang['reviews_title']; ?></h2>
             <div class="reviews-container">
-                <?php require_once "./controllers/reviews.php"; ?>
+                <?php require_once "./backend/controllers/reviews.php"; ?>
             </div>
         </section>
 
@@ -144,7 +144,7 @@ if (file_exists($lang_file)) {
             <h2><?php echo $lang['ubication_title']; ?></h2>
             <p><?php echo $lang['ubication_description']; ?></p>
             <div class="iframe-container">
-                <?php require_once './controllers/ubication.php'; ?>
+                <?php require_once './backend/controllers/ubication.php.php'; ?>
             </div>
         </section>
 
