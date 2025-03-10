@@ -26,7 +26,7 @@ if (isset($_GET['toggle_dark_mode'])) {
 }
 
 // Incluir archivo de idioma
-$lang_file = __DIR__ . "/lang/{$lang}.php";
+$lang_file = __DIR__ . __DIR__ . "/lang/{$lang}.php";
 if (file_exists($lang_file)) {
     include $lang_file;
 } else {
