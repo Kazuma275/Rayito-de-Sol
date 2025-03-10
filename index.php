@@ -121,7 +121,7 @@ if (file_exists($lang_file)) {
             <div class="gallery-large">
                 <?php for ($i = 1; $i <= 12; $i++): ?>
                     <?php if ($i !== 4 && $i !== 8): // Omitir imágenes específicas ?>
-                        <img class="gallery-thumbnail" src="img/gallery/img-<?php echo $i; ?>.jpg" alt="Image <?php echo $i; ?>">
+                        <img class="gallery-thumbnail" src="./img/-<?php echo $i; ?>.jpg" alt="Image <?php echo $i; ?>">
                     <?php endif; ?>
                 <?php endfor; ?>
             </div>
