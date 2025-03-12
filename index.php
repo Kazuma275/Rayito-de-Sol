@@ -159,7 +159,7 @@ if (file_exists($lang_file)) {
                     <a href="#amenities"><?php echo $lang['amenities']; ?></a>
                     <a href="#gallery"><?php echo $lang['gallery']; ?></a>
                     <a href="#reviews"><?php echo $lang['reviews']; ?></a>
-                    <a href="/build/functions/login.php"><?php echo $lang['account']; ?></a>
+                    <a href="./backend/build/functions/login.php"><?php echo $lang['account']; ?></a>
                 </div>
                 <div class="social-media">
                     <a href="https://www.facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
