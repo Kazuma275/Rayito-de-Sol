@@ -3,7 +3,12 @@
     <div class="header-container">
       <div class="logo">
         <SunIcon class="logo-icon" />
-        <span class="logo-text">Rayito de Sol</span>
+        
+        <!-- Aquí usamos router-link para volver al main -->
+        <router-link to="/" class="back-link no-underline">
+          <span class="logo-text">Rayito de Sol</span>
+        </router-link>
+
       </div>
       
       <nav class="nav-menu">
@@ -13,6 +18,7 @@
         <router-link to="/manage/bookings" class="nav-link" :class="{ active: activeTab === 'bookings' }" @click="changeTab('bookings')">Reservas</router-link>
         <router-link to="/manage/calendar" class="nav-link" :class="{ active: activeTab === 'calendar' }" @click="changeTab('calendar')">Calendario</router-link>
         <router-link to="/manage/messages" class="nav-link" :class="{ active: activeTab === 'messages' }" @click="changeTab('messages')">Mensajes</router-link>
+        <router-link to="/manage/settings" class="nav-link" :class="{ active: activeTab ==='settings' }" @click="changeTab('settings')">Ajustes</router-link>
       </nav>
       
       <div class="header-actions">
@@ -116,6 +122,11 @@ const changeTab = (tab) => {
 .logo-text {
   font-size: 1.5rem;
   font-weight: 700;
+  color: white;
+}
+
+.no-underline {
+  text-decoration: none;
 }
 
 .nav-menu {
