@@ -1,10 +1,16 @@
 <template>
+  <div class="mt-4">
+
+    <Welcome/>
+
+  </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { CalendarIcon, HomeIcon } from 'lucide-vue-next';
+import Welcome from './components/views/Welcome.vue';
 
 // Get router instance
 const router = useRouter();
