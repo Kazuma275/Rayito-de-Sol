@@ -9,6 +9,7 @@ import CalendarPage from '@/components/calendar/CalendarPage.vue';
 import MessagesPage from '@/components/messages/MessagesPage.vue';
 import SettingsPage from '@/components/settings/SettingsPage.vue';
 import HelpSupportPage from '@/components/help/HelpSupportPage.vue';
+import BookingTest from '@/components/views/BookingTest.vue';
 
 const routes = [
   {
@@ -20,6 +21,11 @@ const routes = [
     path: '/main',
     name: 'MainPage',
     component: MainPage,
+  },
+  {
+    path: '/booking-test',
+    name: 'BookingTest',
+    component: BookingTest,
   },
   {
     path: '/manage',
