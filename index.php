@@ -97,10 +97,6 @@ if (file_exists($lang_file)) {
 
         <section id="parallax-section">
             <div class="parallax-content">
-                <?php if (!empty($_GET['registration_success']) && $_GET['registration_success'] === 'true'): ?>
-                    <?php require_once "test.php"; ?>
-                    <div class="success-message">¡Registro realizado con éxito!</div>
-                <?php endif; ?>
                 <h1><?php echo $lang['parallax_title']; ?></h1>
                 <p><?php echo $lang['parallax_subtitle']; ?></p>
             </div>
@@ -111,7 +107,7 @@ if (file_exists($lang_file)) {
                 <h2><?php echo $lang['amenities_title']; ?></h2>
                 <p><?php echo $lang['amenities_description']; ?></p>
                 <div class="services-container">
-                    <?php require_once "../controllers/amenities"; ?>
+                    <?php require_once "/controllers/amenities.php"; ?>
                 </div>
             </div>
         </section>
