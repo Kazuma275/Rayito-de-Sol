@@ -14,7 +14,8 @@ const title = ref('¡Bienvenido a nuestra aplicación!');
 <style scoped>
 .welcome {
   text-align: center;
-  padding: 2rem;
+  padding: 9.5rem;
+  margin-top: -1.5rem;
 }
 
 h1 {

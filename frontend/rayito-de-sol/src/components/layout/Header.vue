@@ -18,15 +18,14 @@
         <router-link to="/manage/bookings" class="nav-link" :class="{ active: activeTab === 'bookings' }" @click="changeTab('bookings')">Reservas</router-link>
         <router-link to="/manage/calendar" class="nav-link" :class="{ active: activeTab === 'calendar' }" @click="changeTab('calendar')">Calendario</router-link>
         <router-link to="/manage/messages" class="nav-link" :class="{ active: activeTab === 'messages' }" @click="changeTab('messages')">Mensajes</router-link>
-        <router-link to="/manage/settings" class="nav-link" :class="{ active: activeTab ==='settings' }" @click="changeTab('settings')">Ajustes</router-link>
       </nav>
       
       <div class="header-actions">
-        <button class="help-button" @click="changeTab('help')">
+        <router-link to="/manage/help" class="help-button" @click="changeTab('help')">
           <HelpCircleIcon class="help-icon" />
           <span class="help-link">Ayuda</span>
-        </button>
-        
+        </router-link>
+
         <div class="user-menu">
           <button class="user-button" @click="toggleUserMenu">
             <div v-if="user && user.avatar" class="user-avatar">
@@ -40,14 +39,14 @@
           </button>
           
           <div v-if="userMenuOpen" class="user-dropdown">
-            <a href="#" class="dropdown-item" @click.prevent="changeTab('settings')">
+            <router-link to="/manage/settings" href="#" class="dropdown-item" @click.prevent="changeTab('settings')">
               <SettingsIcon class="dropdown-icon" />
               Configuración
-            </a>
-            <a href="#" class="dropdown-item">
+            </router-link>
+            <router-link to="/" href="#" class="dropdown-item">
               <LogOutIcon class="dropdown-icon" />
               Cerrar sesión
-            </a>
+            </router-link>
           </div>
         </div>
       </div>

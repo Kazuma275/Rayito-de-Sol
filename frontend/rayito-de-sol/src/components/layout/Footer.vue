@@ -24,11 +24,13 @@
       <div class="footer-section">
         <h4 class="footer-title">Soporte</h4>
         <ul class="footer-links">
-          <li><a href="#" @click.prevent="changeTab('help')">Centro de ayuda</a></li>
+          <li><router-link to="/help" @click.prevent="changeTab('/help')">Centro de Ayuda</router-link></li>
           <li><a href="#" @click.prevent="changeTab('help')">Contacto</a></li>
-          <li><a href="#" @click.prevent="changeTab('settings')">Términos y condiciones</a></li>
+          <li><router-link to="/terms" @click.prevent="changeTab('/terms')">Términos y condiciones</router-link></li>
           <li><a href="#" @click.prevent="changeTab('settings')">Política de privacidad</a></li>
         </ul>
+      
+
       </div>
       
       <div class="footer-section">

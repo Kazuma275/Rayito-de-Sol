@@ -10,6 +10,7 @@ import MessagesPage from '@/components/messages/MessagesPage.vue';
 import SettingsPage from '@/components/settings/SettingsPage.vue';
 import HelpSupportPage from '@/components/help/HelpSupportPage.vue';
 import BookingTest from '@/components/views/BookingTest.vue';
+import TermsConditions from '@/components/settings/TermsConditions.vue'
 
 const routes = [
   {
@@ -26,6 +27,16 @@ const routes = [
     path: '/booking-test',
     name: 'BookingTest',
     component: BookingTest,
+  },
+  {
+      path: '/terms',
+      name: 'Terms',
+      component: TermsConditions,
+  },
+  {
+    path: '/help',
+    name: 'Help',
+    component: HelpSupportPage,
   },
   {
     path: '/manage',
@@ -65,11 +76,6 @@ const routes = [
         name: 'Settings',
         component: SettingsPage,
       },
-      {
-        path: 'help',
-        name: 'Help',
-        component: HelpSupportPage,
-      }
     ]
   }
 ];
