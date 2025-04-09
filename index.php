@@ -111,7 +111,7 @@ if (file_exists($lang_file)) {
                 <h2><?php echo $lang['amenities_title']; ?></h2>
                 <p><?php echo $lang['amenities_description']; ?></p>
                 <div class="services-container">
-                    <?php require_once "controllers/amenities.php"; ?>
+                    <?php require_once __DIR__ . "/controllers/amenities.php"; ?>
                 </div>
             </div>
         </section>
