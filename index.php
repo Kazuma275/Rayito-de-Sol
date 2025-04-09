@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+
 // Configuración de idioma predeterminado y tiempo de vida de la sesión
 $default_lang = 'es';
 $session_lifetime = 360;
