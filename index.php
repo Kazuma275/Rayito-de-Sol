@@ -55,7 +55,11 @@
      <div class="container">
          <nav>
              <div class="topnav responsive" id="myTopnav">
-             <a href="javascript:void(0);" onclick="toggleNavbar()" class="active" id="home-link"><?php echo $lang['home']?></a>
+                         <!-- Botón hamburguesa -->
+                 <a href="javascript:void(0);" class="icon" onclick="toggleNavbar()">
+                     &#9776; <!-- Este es el símbolo del menú hamburguesa -->
+                 </a>
+                 <a href="#" onclick="toggleNavbar()" class="active"><?php echo $lang['home']?></a>
                  <a href="#amenities"><?php echo $lang['amenities']?></a>
                  <a href="#gallery"><?php echo $lang['gallery']?></a>
                  <a href="#reviews"><?php echo $lang['reviews']?></a>
@@ -149,9 +153,6 @@
          </section>
  
  
-         <!-- Elfsight Booking.com Reviews | Untitled Booking.com Reviews -->
-         <script src="https://static.elfsight.com/platform/platform.js" async></script>
-         <div class="elfsight-app-82dc7809-466e-4446-8adb-4a23e4b89daa" data-elfsight-app-lazy></div>
  
          <footer class="footer">
              <div class="container">
