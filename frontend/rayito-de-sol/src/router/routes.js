@@ -11,6 +11,7 @@ import SettingsPage from "@/components/settings/SettingsPage.vue"
 import HelpSupportPage from "@/components/help/HelpSupportPage.vue"
 import BookingTest from "@/components/views/BookingTest.vue"
 import TermsConditions from "@/components/settings/TermsConditions.vue"
+import LoginForm from "@/components/views/LoginForm.vue"
 
 const routes = [
   {
@@ -22,6 +23,12 @@ const routes = [
     path: "/main",
     name: "MainPage",
     component: MainPage,
+  },
+  {
+    path: "/form",
+    name: "Form",
+    component: LoginForm,
+
   },
   {
     path: "/booking-test",
