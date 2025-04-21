@@ -12,6 +12,7 @@ import HelpSupportPage from "@/components/help/HelpSupportPage.vue"
 import BookingTest from "@/components/views/BookingTest.vue"
 import TermsConditions from "@/components/settings/TermsConditions.vue"
 import LoginForm from "@/components/views/LoginForm.vue"
+import RegisterForm from "@/components/views/RegisterForm.vue"
 
 const routes = [
   {
@@ -25,10 +26,14 @@ const routes = [
     component: MainPage,
   },
   {
-    path: "/form",
+    path: "/login",
     name: "Form",
     component: LoginForm,
-
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: RegisterForm,
   },
   {
     path: "/booking-test",

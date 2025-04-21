@@ -3,7 +3,7 @@
     <div class="login-card">
       <h2 class="login-title">Iniciar sesión</h2>
       <p class="login-subtitle">Accede a tu cuenta para gestionar tus propiedades</p>
-      
+
       <form @submit.prevent="handleSubmit" class="login-form">
         <div class="form-group">
           <label for="email">Correo electrónico</label>
@@ -14,10 +14,11 @@
             required 
             class="form-input"
             :class="{ 'input-error': errors.email }"
+            placeholder="ejemplo@correo.com"
           />
           <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
         </div>
-        
+
         <div class="form-group">
           <label for="password">Contraseña</label>
           <div class="password-input-container">
@@ -28,11 +29,13 @@
               required 
               class="form-input"
               :class="{ 'input-error': errors.password }"
+              placeholder="Introduce tu contraseña"
             />
             <button 
               type="button" 
               class="password-toggle" 
               @click="showPassword = !showPassword"
+              aria-label="Mostrar contraseña"
             >
               <EyeIcon v-if="!showPassword" class="icon" />
               <EyeOffIcon v-else class="icon" />
@@ -40,28 +43,36 @@
           </div>
           <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
         </div>
-        
-        <div class="form-group checkbox-group">
-          <input 
-            type="checkbox" 
-            id="remember" 
-            v-model="formData.remember"
-          />
-          <label for="remember">Recordar mi sesión</label>
+
+        <div class="form-options">
+          <div class="form-group checkbox-group">
+            <input 
+              type="checkbox" 
+              id="remember" 
+              v-model="formData.remember"
+            />
+            <label for="remember">Recordar mi sesión</label>
+          </div>
+
+          <div class="forgot-password">
+            <a href="#" @click.prevent="forgotPassword">¿Olvidaste tu contraseña?</a>
+          </div>
         </div>
-        
-        <div class="forgot-password">
-          <a href="#" @click.prevent="forgotPassword">¿Olvidaste tu contraseña?</a>
-        </div>
-        
+
         <button type="submit" class="submit-button" :disabled="isSubmitting">
           <LoaderIcon v-if="isSubmitting" class="spinner" />
           <span v-else>Iniciar sesión</span>
         </button>
       </form>
-      
+
       <div class="register-link">
-        ¿No tienes una cuenta? <a href="#" @click.prevent="goToRegister">Regístrate</a>
+        ¿No tienes una cuenta? <a href="#" @click.prevent="goToRegister" class="link">Regístrate</a>
+      </div>
+
+      <div class="back-button-container">
+        <a href="http://localhost:5173/portal/" class="back-button">
+          ← Volver al portal
+        </a>
       </div>
     </div>
   </div>
@@ -73,7 +84,6 @@ import { useRouter } from 'vue-router';
 import { EyeIcon, EyeOffIcon, LoaderIcon } from 'lucide-vue-next';
 
 const router = useRouter();
-const emit = defineEmits(['register']);
 
 const formData = reactive({
   email: '',
@@ -88,54 +98,38 @@ const errors = reactive({
 
 const isSubmitting = ref(false);
 const showPassword = ref(false);
+const isValid = ref(true);
 
 const validateForm = () => {
-  let isValid = true;
-  
-  // Reset errors
-  Object.keys(errors).forEach(key => {
-    errors[key] = '';
-  });
-  
-  // Validate email
+  isValid.value = true;
+  Object.keys(errors).forEach(key => errors[key] = '');
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(formData.email)) {
     errors.email = 'Por favor, introduce un correo electrónico válido';
-    isValid = false;
+    isValid.value = false;
   }
-  
-  // Validate password
+
   if (formData.password.length < 1) {
     errors.password = 'Por favor, introduce tu contraseña';
-    isValid = false;
+    isValid.value = false;
   }
-  
-  return isValid;
+
+  return isValid.value;
 };
 
 const handleSubmit = async () => {
-  if (!validateForm()) {
-    return;
-  }
-  
+  if (!validateForm()) return;
+
   isSubmitting.value = true;
-  
+
   try {
-    // Simulamos una petición al servidor
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Aquí iría la lógica para enviar los datos al servidor
-    console.log('Datos de inicio de sesión:', {
-      email: formData.email,
-      password: formData.password,
-      remember: formData.remember
-    });
-    
-    // Redirigir al usuario al dashboard
+    console.log('Datos de inicio de sesión:', { ...formData });
     router.push('/manage/dashboard');
   } catch (error) {
     console.error('Error al iniciar sesión:', error);
-    alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');
+    alert('Correo electrónico o contraseña incorrectos.');
   } finally {
     isSubmitting.value = false;
   }
@@ -146,7 +140,7 @@ const forgotPassword = () => {
 };
 
 const goToRegister = () => {
-  emit('register');
+  router.push('/register');
 };
 </script>
 
@@ -156,22 +150,29 @@ const goToRegister = () => {
   justify-content: center;
   align-items: center;
   padding: 2rem;
+  min-height: calc(100vh - 100px);
+  background: linear-gradient(145deg, #eaf1f8, #f5f7fa);
 }
 
 .login-card {
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 113, 194, 0.15);
+  padding: 3rem 2.5rem;
   width: 100%;
-  max-width: 450px;
+  max-width: 460px;
+  transition: transform 0.3s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-3px);
 }
 
 .login-title {
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 700;
   color: var(--primary-color, #0071c2);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   text-align: center;
 }
 
@@ -179,12 +180,13 @@ const goToRegister = () => {
   color: #666;
   margin-bottom: 2rem;
   text-align: center;
+  font-size: 1rem;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
 
 .form-group {
@@ -193,17 +195,31 @@ const goToRegister = () => {
   gap: 0.5rem;
 }
 
+.form-group label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
 .form-input {
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.3s;
+  transition: all 0.3s ease;
+  color: #333;
+}
+
+.form-input::placeholder {
+  color: #a0a7b4;
+  font-style: italic;
+  font-size: 0.95rem;
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--primary-color, #0071c2);
+  box-shadow: 0 0 0 3px rgba(0, 113, 194, 0.15);
 }
 
 .input-error {
@@ -215,41 +231,47 @@ const goToRegister = () => {
   font-size: 0.875rem;
 }
 
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
 .checkbox-group {
   flex-direction: row;
   align-items: center;
   gap: 0.75rem;
-}
-
-.forgot-password {
-  text-align: right;
-  margin-top: -0.5rem;
+  display: flex;
 }
 
 .forgot-password a {
   color: var(--primary-color, #0071c2);
   text-decoration: none;
   font-size: 0.875rem;
+  transition: color 0.3s ease;
 }
 
 .forgot-password a:hover {
   text-decoration: underline;
+  color: #005999;
 }
 
 .submit-button {
   background-color: var(--primary-color, #0071c2);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   padding: 0.875rem;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 1rem;
+  height: 48px;
 }
 
 .submit-button:hover {
@@ -278,14 +300,16 @@ const goToRegister = () => {
   color: #666;
 }
 
-.register-link a {
+.register-link .link {
   color: var(--primary-color, #0071c2);
   text-decoration: none;
   font-weight: 500;
+  transition: color 0.3s ease;
 }
 
-.register-link a:hover {
+.register-link .link:hover {
   text-decoration: underline;
+  color: #005999;
 }
 
 .password-input-container {
@@ -294,17 +318,71 @@ const goToRegister = () => {
 
 .password-toggle {
   position: absolute;
-  right: 10px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
   color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
 .icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
+}
+
+.back-button-container {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.back-button {
+  display: inline-block;
+  color: #0071c2;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border: 1px solid #0071c2;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #0071c2;
+  color: white;
+}
+
+/* 🎯 Mobile Responsive */
+@media (max-width: 500px) {
+  .login-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .login-title {
+    font-size: 1.6rem;
+  }
+
+  .login-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .form-input {
+    font-size: 0.95rem;
+  }
+
+  .submit-button {
+    font-size: 0.95rem;
+    height: 44px;
+  }
+
+  .back-button {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.75rem;
+  }
 }
 </style>
