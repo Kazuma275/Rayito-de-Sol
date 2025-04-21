@@ -42,7 +42,7 @@ const goToWebsite = () => {
 
 const goToPortal = () => {
   // Navigate directly to the main page
-  router.push('/main');
+  router.push('/form');
 };
 </script>
 
