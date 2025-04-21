@@ -132,7 +132,6 @@ const handleSubmit = async () => {
     });
     
     // Redirigir al usuario al dashboard
-    router.push('/manage/dashboard');
   } catch (error) {
     console.error('Error al iniciar sesión:', error);
     alert('Correo electrónico o contraseña incorrectos. Por favor, inténtalo de nuevo.');

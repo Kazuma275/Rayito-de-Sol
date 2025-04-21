@@ -40,10 +40,6 @@ const goToWebsite = () => {
   window.location.href = 'https://rayitodesol.es';
 };
 
-const goToPortal = () => {
-  router.push({ name: 'Form' });
-};
-
 </script>
 
 <style scoped>
