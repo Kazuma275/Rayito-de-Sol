@@ -41,9 +41,9 @@ const goToWebsite = () => {
 };
 
 const goToPortal = () => {
-  // Navigate directly to the main page
-  router.push('/form');
+  router.push({ name: 'Form' });
 };
+
 </script>
 
 <style scoped>
