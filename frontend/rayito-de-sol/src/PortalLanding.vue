@@ -37,9 +37,13 @@ const router = useRouter();
 
 // Navigation functions
 const goToWebsite = () => {
-  window.location.href = 'https://rayitodesol.es';
+  router.push('/form');
 };
 
+const goToPortal = () => {
+  // Navigate directly to the main page
+  router.push('/main');
+};
 </script>
 
 <style scoped>
