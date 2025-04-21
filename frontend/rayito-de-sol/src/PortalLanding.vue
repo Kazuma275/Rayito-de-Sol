@@ -7,7 +7,7 @@
       </div>
       
       <div class="portal-options">
-        <div class="portal-option website" @click="goToWebsite">
+        <div class="portal-option website" >
           <HomeIcon class="option-icon" />
           <h2>Sitio Web</h2>
           <p>Visita nuestro sitio web para conocer nuestras propiedades y servicios</p>
@@ -37,7 +37,7 @@ const router = useRouter();
 
 // Navigation functions
 const goToWebsite = () => {
-  router.push('/form');
+  window.location.href = 'https://rayitodesol.es';
 };
 
 const goToPortal = () => {
