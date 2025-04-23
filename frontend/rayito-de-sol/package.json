@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@stripe/stripe-js": "^6.0.0",
+    "artisan": "^0.1.2",
     "lucide-vue-next": "^0.479.0",
     "stripe": "^17.7.0",
     "vite-plugin-vue-inspector": "^5.3.1",

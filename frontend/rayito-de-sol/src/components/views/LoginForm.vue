@@ -82,6 +82,8 @@
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { EyeIcon, EyeOffIcon, LoaderIcon } from 'lucide-vue-next';
+import axios from 'axios';
+
 
 const router = useRouter();
 
@@ -118,20 +120,38 @@ const validateForm = () => {
   return isValid.value;
 };
 
+/* LLAMADA A LARAVEL */
 const handleSubmit = async () => {
-  if (!validateForm()) return;
+  if (!validateForm()) return;  // Verifica si el formulario es válido
 
-  isSubmitting.value = true;
+  isSubmitting.value = true;  // Cambia el estado de envío a verdadero
 
   try {
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    console.log('Datos de inicio de sesión:', { ...formData });
-    router.push('/manage/dashboard');
+    // Realiza la solicitud POST a la API de Laravel
+    const response = await axios.post('http://127.0.0.1:8000/api/login', {
+      email: formData.email,
+      password: formData.password,
+    });
+
+    // Si la autenticación es exitosa, puedes almacenar el token o realizar cualquier acción
+    console.log('Inicio de sesión exitoso:', response.data);
+    
+    // Aquí puedes almacenar el token de la respuesta (si es un JWT o cualquier otro token)
+    localStorage.setItem('auth_token', response.data.token);  
+
+    // Redirigir al dashboard (o a la página que desees)
+    router.push('/dashboard');
   } catch (error) {
-    console.error('Error al iniciar sesión:', error);
-    alert('Correo electrónico o contraseña incorrectos.');
+    // Verifica si el error tiene una respuesta y muestra el mensaje correspondiente
+    if (error.response) {
+      console.error('Error al iniciar sesión:', error.response.data.message);
+      alert(error.response.data.message || 'Correo electrónico o contraseña incorrectos.');
+    } else {
+      console.error('Error de red:', error);
+      alert('Hubo un problema con la conexión, por favor intenta más tarde.');
+    }
   } finally {
-    isSubmitting.value = false;
+    isSubmitting.value = false; 
   }
 };
 
