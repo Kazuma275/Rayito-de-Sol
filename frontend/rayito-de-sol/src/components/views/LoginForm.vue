@@ -135,8 +135,8 @@ const handleSubmit = async () => {
 
     // Si la autenticación es exitosa, puedes almacenar el token o realizar cualquier acción
     console.log('Inicio de sesión exitoso:', response.data);
-    
-    // Aquí puedes almacenar el token de la respuesta (si es un JWT o cualquier otro token)
+
+    // Almacena el token de la respuesta (si es un JWT u otro tipo de token)
     localStorage.setItem('auth_token', response.data.token);  
 
     // Redirigir al main 

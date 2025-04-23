@@ -100,8 +100,9 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 import { EyeIcon, EyeOffIcon, LoaderIcon } from 'lucide-vue-next';
 
 const router = useRouter();
@@ -175,24 +176,27 @@ const handleSubmit = async () => {
   isSubmitting.value = true;
   
   try {
-    // Simulamos una petición al servidor
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Aquí iría la lógica para enviar los datos al servidor
-    console.log('Datos de registro:', {
+    // Llamada a la API de Laravel para registrar al usuario
+    const response = await axios.post('http://127.0.0.1:8000/api/register', {
       name: formData.name,
       email: formData.email,
-      password: formData.password
+      password: formData.password,
+        }, {
+      withCredentials: true,  // Permitir que se envíen credenciales (como cookies)
     });
-    
-    // Redirigir al usuario o mostrar mensaje de éxito
+
+    // Si la respuesta es exitosa, redirigir al login
     alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
-    
-    // Redirigir a la página de inicio de sesión
     router.push('/login');
   } catch (error) {
     console.error('Error al registrar:', error);
-    alert('Ha ocurrido un error al registrarse. Por favor, inténtalo de nuevo.');
+
+    // Verifica si el error tiene una respuesta y muestra el mensaje correspondiente
+    if (error.response && error.response.data && error.response.data.message) {
+      alert(error.response.data.message);
+    } else {
+      alert('Ha ocurrido un error al registrarse. Por favor, inténtalo de nuevo.');
+    }
   } finally {
     isSubmitting.value = false;
   }
