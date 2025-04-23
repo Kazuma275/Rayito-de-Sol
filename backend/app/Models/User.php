@@ -3,16 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Model
+class User extends Authenticatable
 {
     use HasFactory;
 
-    protected $table = 'users';  // Asegúrate de que el nombre de la tabla esté correcto.
+    protected $table = 'users';
 
     protected $fillable = [
         'username',
+        'email',
         'password',
         'token_verificacion',
         'verificado',
@@ -20,6 +21,23 @@ class User extends Model
         'role',
     ];
 
-    // Si usas timestamps, puedes configurarlos así
-    public $timestamps = true;
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class, 'user_id');
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, 'user_id');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'user_id');
+    }
+
+    public function services()
+    {
+        return $this->hasMany(Service::class, 'user_id');
+    }
 }

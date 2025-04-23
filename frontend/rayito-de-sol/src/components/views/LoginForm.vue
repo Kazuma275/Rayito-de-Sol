@@ -139,8 +139,8 @@ const handleSubmit = async () => {
     // Aquí puedes almacenar el token de la respuesta (si es un JWT o cualquier otro token)
     localStorage.setItem('auth_token', response.data.token);  
 
-    // Redirigir al dashboard (o a la página que desees)
-    router.push('/dashboard');
+    // Redirigir al main 
+    router.push('/main');
   } catch (error) {
     // Verifica si el error tiene una respuesta y muestra el mensaje correspondiente
     if (error.response) {
