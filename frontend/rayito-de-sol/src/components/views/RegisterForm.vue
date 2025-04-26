@@ -181,25 +181,31 @@ const handleSubmit = async () => {
       name: formData.name,
       email: formData.email,
       password: formData.password,
-        }, {
-      withCredentials: true,  // Permitir que se envíen credenciales (como cookies)
+      password_confirmation: formData.confirmPassword,
+    }, {
+      withCredentials: true,
     });
 
     // Si la respuesta es exitosa, redirigir al login
     alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
     router.push('/login');
   } catch (error) {
-    console.error('Error al registrar:', error);
+  console.error('Respuesta de error:', error.response?.data);
 
-    // Verifica si el error tiene una respuesta y muestra el mensaje correspondiente
-    if (error.response && error.response.data && error.response.data.message) {
+  if (error.response && error.response.data) {
+    if (error.response.data.errors) {
+      console.log('Errores de validación:', error.response.data.errors);
+      const firstError = Object.values(error.response.data.errors)[0][0];
+      alert(firstError);
+    } else if (error.response.data.message) {
       alert(error.response.data.message);
     } else {
-      alert('Ha ocurrido un error al registrarse. Por favor, inténtalo de nuevo.');
+      alert('Error desconocido en la respuesta del servidor.');
     }
-  } finally {
-    isSubmitting.value = false;
+  } else {
+    alert('Error de red o del servidor.');
   }
+}
 };
 </script>
 
