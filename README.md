@@ -115,6 +115,10 @@ Acordar precios, fechas y condiciones específicas mediante chat.
 - Protección frente a ataques comunes como XSS, CSRF y SQL Injection.
 - Integración segura del sistema de pagos (PCI DSS compliance con Stripe).
 
+## Vídeo explicativo
+
+[🎥 Ver el vídeo explicativo en YouTube](https://www.youtube.com/)
+
 ## Licencia
 Este proyecto está licenciado bajo la **RayitodeSol License**. Puedes usar, modificar y distribuir el código bajo los términos especificados en el archivo de licencia.
 
@@ -188,10 +192,6 @@ Para conocer a los contribuyentes de este proyecto, visita el archivo [AUTHORS.m
 - Se implementa autenticación de usuario con almacenamiento de contraseñas de manera segura (hashing y salting).
 - Uso de HTTPS para la protección de la información en tránsito.
 - Verificación y validación de formularios tanto del lado del cliente (JavaScript) como del servidor (PHP) para evitar inyecciones y otros ataques comunes.
-
-## Vídeo explicativo
-
-[🎥 Ver el vídeo explicativo en YouTube](https://www.youtube.com/)
 
 ## Licencia
 Este proyecto está licenciado bajo la **RayitodeSol License**. Puedes usar, modificar y distribuir el código, sujeto a los términos de la licencia.
