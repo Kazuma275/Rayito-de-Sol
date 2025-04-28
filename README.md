@@ -3,6 +3,14 @@
 ## Descripción del proyecto
 **"Rayito de Sol"** es una plataforma web destinada al alquiler del apartamento de mi madre, ubicado en primera línea de playa en Calahonda. En esta segunda versión, la página evoluciona hacia un **portal de propietarios**, permitiendo que los usuarios no solo reserven el apartamento, sino también gestionen sus propios inmuebles de forma autónoma.
 
+## Índice
+
+- [Descripción del Proyecto](#descripción-del-proyecto)
+- [Histórico de cambios](#histórico-de-cambios)
+- [Bibliografía y recursos utilizados](#bibliografía-y-recursos-utilizados)
+- [Vídeo explicativo](#vídeo-explicativo)
+
+
 El sistema permite a los propietarios:
 - Crear una cuenta y gestionar su perfil.
 - Añadir propiedades, visualizar su disponibilidad y alquilarlas a terceros.
@@ -67,6 +75,19 @@ Acordar precios, fechas y condiciones específicas mediante chat.
   - Autenticación y control de accesos seguros.
   - Integración de pagos con **Stripe API**.
   - Gestión de calendarios dinámicos para disponibilidad de propiedades.
+ 
+## Histórico de cambios
+
+| Fecha       | Cambio realizado                              | Estado |
+|-------------|------------------------------------------------|:------:|
+| 01/04/2025  | Inicio del proyecto en Laravel + Vue.js        | ✅ |
+| 08/04/2025  | Sistema de registro e inicio de sesión         | ✅ |
+| 15/04/2025  | Módulo de gestión de propiedades               | ✅ |
+| 20/04/2025  | Integración de Stripe para pagos               | ✅ |
+| 24/04/2025  | Sistema de mensajería interna                  | ✅ |
+| 27/04/2025  | Página de Help & Support                       | ✅ |
+| 28/04/2025  | Grabación del vídeo explicativo para checkpoint | ✅ |
+
 
 ## Uso de la aplicación
 
@@ -76,6 +97,15 @@ Acordar precios, fechas y condiciones específicas mediante chat.
 - **Consultar reservas**: Visualización y gestión de reservas recibidas.
 - **Realizar pagos**: Stripe facilita los pagos de manera rápida y segura.
 - **Actualizar configuración**: Gestión personalizada de la cuenta desde el área de usuario.
+
+## Bibliografía y recursos utilizados
+
+- [Documentación oficial de Vue.js](https://vuejs.org/)
+- [Documentación oficial de Laravel](https://laravel.com/docs)
+- [Documentación oficial de MariaDB](https://mariadb.org/)
+- [Stripe API Documentation](https://stripe.com/docs/api)
+- Cursos de Udemy sobre Laravel y Vue.js
+- Guías de seguridad web de OWASP
 
 ## Consideraciones de seguridad
 
@@ -158,6 +188,10 @@ Para conocer a los contribuyentes de este proyecto, visita el archivo [AUTHORS.m
 - Se implementa autenticación de usuario con almacenamiento de contraseñas de manera segura (hashing y salting).
 - Uso de HTTPS para la protección de la información en tránsito.
 - Verificación y validación de formularios tanto del lado del cliente (JavaScript) como del servidor (PHP) para evitar inyecciones y otros ataques comunes.
+
+## Vídeo explicativo
+
+[🎥 Ver el vídeo explicativo en YouTube](https://www.youtube.com/)
 
 ## Licencia
 Este proyecto está licenciado bajo la **RayitodeSol License**. Puedes usar, modificar y distribuir el código, sujeto a los términos de la licencia.
