@@ -7,9 +7,12 @@ El sistema permite a los propietarios:
 - Crear una cuenta y gestionar su perfil.
 - Añadir propiedades, visualizar su disponibilidad y alquilarlas a terceros.
 - Consultar las fechas libres mediante un calendario interactivo.
+- Comunicarse directamente con los interesados mediante un sistema de mensajería interno.
 - Configurar su información personal y preferencias.
+- Concordar fechas, precios y otros detalles a través del chat.
 - Realizar pagos a través de **Stripe** de manera segura.
 - Acceder a documentos legales como la política de privacidad.
+- Consultar la sección de ayuda en la nueva página de Help & Support.
 
 Esta nueva versión está desarrollada con **Vue.js** en el front-end y **Laravel** en el back-end, utilizando **MariaDB** como sistema de bases de datos.
 
@@ -46,6 +49,14 @@ Esta nueva versión está desarrollada con **Vue.js** en el front-end y **Larave
 
 ### 6. Pagos Integrados
 - Sistema de cobro a través de **Stripe** para mayor comodidad y seguridad.
+
+## 7. Página de soporte
+- Documentación de ayuda y soporte para resolver dudas comunes.
+- Canal de contacto directo para recibir soporte adicional.
+
+## 8. Sistema de mensajería interno
+- Comunicación directa entre propietarios e interesados.
+Acordar precios, fechas y condiciones específicas mediante chat.
 
 ## Tecnologías utilizadas
 
