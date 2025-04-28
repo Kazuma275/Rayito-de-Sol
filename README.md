@@ -7,10 +7,11 @@
 
 - [Objetivos del Proyecto](#objetivos-del-proyecto)
 - [Descripción del Proyecto](#descripción-del-proyecto)
-- [Funcionalidades](#funcionalidades)
 - [Histórico de cambios](#histórico-de-cambios)
 - [Bibliografía y recursos utilizados](#bibliografía-y-recursos-utilizados)
 - [Vídeo explicativo](#vídeo-explicativo)
+- [Licencia](#licencia)
+- [Contacto](#contacto)
 
 ## Objetivos del Proyecto
 
@@ -24,7 +25,8 @@ Los objetivos principales de **Rayito de Sol** son:
 
 ## Funcionalidades
 
-El sistema permite a los propietarios:
+La plataforma permite a los propietarios:
+
 - Crear una cuenta y gestionar su perfil.
 - Añadir propiedades, visualizar su disponibilidad y alquilarlas a terceros.
 - Consultar las fechas libres mediante un calendario interactivo.
@@ -44,51 +46,8 @@ Esta nueva versión está desarrollada con **Vue.js** en el front-end y **Larave
 - [Licencia](LICENSE)
 - [Contribuciones](CONTRIBUTING.md)
 - [Seguridad](SECURITY.md)
+- [Vídeo explicativo](https://www.youtube.com/)
 
-## Características principales
-
-### 1. Portal de Propietarios
-- Registro y gestión de cuentas de propietarios.
-- Acceso seguro mediante inicio de sesión.
-
-### 2. Gestión de Propiedades
-- Alta de nuevas propiedades (con fotos, descripciones y tarifas).
-- Visualización de calendarios de disponibilidad.
-- Edición y eliminación de propiedades.
-
-### 3. Alquiler y Reservas
-- Consulta de fechas disponibles.
-- Reservas en línea desde el portal.
-- Confirmaciones automáticas de reservas por correo electrónico.
-
-### 4. Configuración de Usuario
-- Modificación de datos personales y de inicio de sesión.
-- Gestión de la privacidad y notificaciones.
-
-### 5. Políticas Legales
-- Acceso a la política de privacidad y términos de uso desde la web.
-
-### 6. Pagos Integrados
-- Sistema de cobro a través de **Stripe** para mayor comodidad y seguridad.
-
-### 7. Página de soporte
-- Documentación de ayuda y soporte para resolver dudas comunes.
-- Canal de contacto directo para recibir soporte adicional.
-
-### 8. Sistema de mensajería interno
-- Comunicación directa entre propietarios e interesados.
-Acordar precios, fechas y condiciones específicas mediante chat.
-
-## Tecnologías utilizadas
-
-- **Front-end**: [Vue.js](https://vuejs.org/)
-- **Back-end**: [Laravel](https://laravel.com/)
-- **Base de datos**: [MariaDB](https://mariadb.org/)
-- **Otros**:
-  - Autenticación y control de accesos seguros.
-  - Integración de pagos con **Stripe API**.
-  - Gestión de calendarios dinámicos para disponibilidad de propiedades.
- 
 ## Histórico de cambios
 
 | Fecha       | Cambio realizado                              | Estado |
@@ -100,16 +59,6 @@ Acordar precios, fechas y condiciones específicas mediante chat.
 | 24/04/2025  | Sistema de mensajería interna                  | ✅ |
 | 27/04/2025  | Página de Help & Support                       | ✅ |
 | 28/04/2025  | Grabación del vídeo explicativo para checkpoint | ✅ |
-
-
-## Uso de la aplicación
-
-- **Registro**: Cualquier propietario puede crear una cuenta desde la página de inicio.
-- **Inicio de sesión**: Acceso a las funcionalidades de gestión tras autenticación.
-- **Añadir propiedades**: Panel de control intuitivo para registrar apartamentos o viviendas disponibles para alquiler.
-- **Consultar reservas**: Visualización y gestión de reservas recibidas.
-- **Realizar pagos**: Stripe facilita los pagos de manera rápida y segura.
-- **Actualizar configuración**: Gestión personalizada de la cuenta desde el área de usuario.
 
 ## Bibliografía y recursos utilizados
 
@@ -128,10 +77,6 @@ Acordar precios, fechas y condiciones específicas mediante chat.
 - Protección frente a ataques comunes como XSS, CSRF y SQL Injection.
 - Integración segura del sistema de pagos (PCI DSS compliance con Stripe).
 
-## Vídeo explicativo
-
-[🎥 Ver el vídeo explicativo en YouTube](https://www.youtube.com/)
-
 ## Licencia
 Este proyecto está licenciado bajo la **RayitodeSol License**. Puedes usar, modificar y distribuir el código bajo los términos especificados en el archivo de licencia.
 
@@ -140,6 +85,7 @@ Para consultas, problemas o sugerencias, puedes comunicarte mediante el formular
 
 ## Autores
 Para conocer a los contribuyentes de este proyecto, visita el archivo [AUTHORS.md](./AUTHORS.md).
+
 
 --------------------------------------------------------------------------------------------------
 
