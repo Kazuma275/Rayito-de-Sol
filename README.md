@@ -104,12 +104,11 @@ Para conocer a los contribuyentes de este proyecto, visita el archivo [AUTHORS.m
 
 ## Documentación del proyecto
 
-# [Anteproyecto](https://www.notion.so/Anteproyecto-Plantilla-1c5279a519238093af6ae105e277e424?pvs=4)
-
 - [Código de Conducta](CODE_OF_CONDUCT.md)
 - [Licencia](LICENSE)
 - [Contribuciones](CONTRIBUTING.md)
 - [Seguridad](SECURITY.md)
+- [Anteproyecto](https://www.notion.so/Anteproyecto-Plantilla-1c5279a519238093af6ae105e277e424?pvs=4)
 
 ## Características de la página web
 
