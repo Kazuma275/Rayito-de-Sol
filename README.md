@@ -21,6 +21,8 @@ Los objetivos principales de **Rayito de Sol** son:
 - Proporcionar un sistema sencillo y seguro para gestionar reservas, comunicaciones y pagos online.
 - Ofrecer una experiencia de usuario cómoda, con acceso a ayuda y soporte técnico.
 
+## Descripción del proyecto
+
 El sistema permite a los propietarios:
 - Crear una cuenta y gestionar su perfil.
 - Añadir propiedades, visualizar su disponibilidad y alquilarlas a terceros.
