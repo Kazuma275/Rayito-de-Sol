@@ -1,21 +1,104 @@
-# Rayito de Sol - README - BETA
+# Rayito de Sol - README
 
 ## Descripción del proyecto
-"Rayito de Sol" es una página web dedicada al alquiler del apartamento de mi madre, situado a primera línea de playa en Calahonda. Esta plataforma ha sido diseñada para ofrecer a los visitantes una experiencia completa y cómoda para alquilar el apartamento y gestionar sus reservas. Los usuarios pueden registrarse, iniciar sesión y enviar formularios de contacto al administrador. Además, se incluyen funcionalidades para la gestión de cuenta o la modificación de contraseñas.
+**"Rayito de Sol"** es una plataforma web destinada al alquiler del apartamento de mi madre, ubicado en primera línea de playa en Calahonda. En esta segunda versión, la página evoluciona hacia un **portal de propietarios**, permitiendo que los usuarios no solo reserven el apartamento, sino también gestionen sus propios inmuebles de forma autónoma.
+
+El sistema permite a los propietarios:
+- Crear una cuenta y gestionar su perfil.
+- Añadir propiedades, visualizar su disponibilidad y alquilarlas a terceros.
+- Consultar las fechas libres mediante un calendario interactivo.
+- Configurar su información personal y preferencias.
+- Realizar pagos a través de **Stripe** de manera segura.
+- Acceder a documentos legales como la política de privacidad.
+
+Esta nueva versión está desarrollada con **Vue.js** en el front-end y **Laravel** en el back-end, utilizando **MariaDB** como sistema de bases de datos.
 
 ## Documentación del proyecto
-⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
-⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⚠️⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⚠️
-# [ANTEPROYECTO](https://www.notion.so/Anteproyecto-Plantilla-1c5279a519238093af6ae105e277e424?pvs=4)] AQUIIIIIIIIIII🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙
 
-⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⚠️⚠️⚠️⚠️⚠️⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⚠️⚠️⚠️⚠️⚠️⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
-
+- [Anteproyecto](https://www.notion.so/Anteproyecto-Plantilla-1c5279a519238093af6ae105e277e424?pvs=4)
 - [Código de Conducta](CODE_OF_CONDUCT.md)
 - [Licencia](LICENSE)
 - [Contribuciones](CONTRIBUTING.md)
 - [Seguridad](SECURITY.md)
 
+## Características principales
 
+### 1. Portal de Propietarios
+- Registro y gestión de cuentas de propietarios.
+- Acceso seguro mediante inicio de sesión.
+
+### 2. Gestión de Propiedades
+- Alta de nuevas propiedades (con fotos, descripciones y tarifas).
+- Visualización de calendarios de disponibilidad.
+- Edición y eliminación de propiedades.
+
+### 3. Alquiler y Reservas
+- Consulta de fechas disponibles.
+- Reservas en línea desde el portal.
+- Confirmaciones automáticas de reservas por correo electrónico.
+
+### 4. Configuración de Usuario
+- Modificación de datos personales y de inicio de sesión.
+- Gestión de la privacidad y notificaciones.
+
+### 5. Políticas Legales
+- Acceso a la política de privacidad y términos de uso desde la web.
+
+### 6. Pagos Integrados
+- Sistema de cobro a través de **Stripe** para mayor comodidad y seguridad.
+
+## Tecnologías utilizadas
+
+- **Front-end**: [Vue.js](https://vuejs.org/)
+- **Back-end**: [Laravel](https://laravel.com/)
+- **Base de datos**: [MariaDB](https://mariadb.org/)
+- **Otros**:
+  - Autenticación y control de accesos seguros.
+  - Integración de pagos con **Stripe API**.
+  - Gestión de calendarios dinámicos para disponibilidad de propiedades.
+
+## Uso de la aplicación
+
+- **Registro**: Cualquier propietario puede crear una cuenta desde la página de inicio.
+- **Inicio de sesión**: Acceso a las funcionalidades de gestión tras autenticación.
+- **Añadir propiedades**: Panel de control intuitivo para registrar apartamentos o viviendas disponibles para alquiler.
+- **Consultar reservas**: Visualización y gestión de reservas recibidas.
+- **Realizar pagos**: Stripe facilita los pagos de manera rápida y segura.
+- **Actualizar configuración**: Gestión personalizada de la cuenta desde el área de usuario.
+
+## Consideraciones de seguridad
+
+- Autenticación robusta con tokens y hashing de contraseñas.
+- Comunicación segura mediante HTTPS.
+- Validaciones estrictas en front-end y back-end.
+- Protección frente a ataques comunes como XSS, CSRF y SQL Injection.
+- Integración segura del sistema de pagos (PCI DSS compliance con Stripe).
+
+## Licencia
+Este proyecto está licenciado bajo la **RayitodeSol License**. Puedes usar, modificar y distribuir el código bajo los términos especificados en el archivo de licencia.
+
+## Contacto
+Para consultas, problemas o sugerencias, puedes comunicarte mediante el formulario de contacto de la página o directamente al correo electrónico del administrador.
+
+## Autores
+Para conocer a los contribuyentes de este proyecto, visita el archivo [AUTHORS.md](./AUTHORS.md).
+
+--------------------------------------------------------------------------------------------------
+
+
+# Rayito de Sol (PHP) - README - BETA
+
+## Descripción del proyecto
+"Rayito de Sol" es una página web dedicada al alquiler del apartamento de mi madre, situado a primera línea de playa en Calahonda. Esta plataforma ha sido diseñada para ofrecer a los visitantes una experiencia completa y cómoda para alquilar el apartamento y gestionar sus reservas. Los usuarios pueden registrarse, iniciar sesión y enviar formularios de contacto al administrador. Además, se incluyen funcionalidades para la gestión de cuenta o la modificación de contraseñas.
+
+## Documentación del proyecto
+
+# [Anteproyecto](https://www.notion.so/Anteproyecto-Plantilla-1c5279a519238093af6ae105e277e424?pvs=4)
+
+- [Código de Conducta](CODE_OF_CONDUCT.md)
+- [Licencia](LICENSE)
+- [Contribuciones](CONTRIBUTING.md)
+- [Seguridad](SECURITY.md)
 
 ## Características de la página web
 
