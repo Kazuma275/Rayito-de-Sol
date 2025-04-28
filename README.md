@@ -5,7 +5,7 @@
 
 ## Documentación del proyecto
 
-# [Anteproyecto](https://www.notion.so/Anteproyecto-Plantilla-1c5279a519238093af6ae105e277e424?pvs=4)] AQUIIIIIIIIIII🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙🔙
+# [Anteproyecto](https://www.notion.so/Anteproyecto-Plantilla-1c5279a519238093af6ae105e277e424?pvs=4)
 
 - [Código de Conducta](CODE_OF_CONDUCT.md)
 - [Licencia](LICENSE)
