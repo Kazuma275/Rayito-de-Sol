@@ -5,11 +5,21 @@
 
 ## Índice
 
+- [Objetivos del Proyecto](#objetivos-del-proyecto)
 - [Descripción del Proyecto](#descripción-del-proyecto)
 - [Histórico de cambios](#histórico-de-cambios)
 - [Bibliografía y recursos utilizados](#bibliografía-y-recursos-utilizados)
 - [Vídeo explicativo](#vídeo-explicativo)
 
+## Objetivos del Proyecto
+
+Los objetivos principales de **Rayito de Sol** son:
+
+- Ofrecer a mi madre una plataforma propia para patrocinar y alquilar su apartamento vacacional, sin depender de plataformas externas.
+- Reducir las comisiones habituales de intermediarios, mejorando así los beneficios para el propietario.
+- Permitir a los usuarios alquilar el apartamento a un coste más bajo.
+- Proporcionar un sistema sencillo y seguro para gestionar reservas, comunicaciones y pagos online.
+- Ofrecer una experiencia de usuario cómoda, con acceso a ayuda y soporte técnico.
 
 El sistema permite a los propietarios:
 - Crear una cuenta y gestionar su perfil.
