@@ -7,6 +7,7 @@
 
 - [Objetivos del Proyecto](#objetivos-del-proyecto)
 - [Descripción del Proyecto](#descripción-del-proyecto)
+- [Funcionalidades](#funcionalidades)
 - [Histórico de cambios](#histórico-de-cambios)
 - [Bibliografía y recursos utilizados](#bibliografía-y-recursos-utilizados)
 - [Vídeo explicativo](#vídeo-explicativo)
@@ -21,7 +22,7 @@ Los objetivos principales de **Rayito de Sol** son:
 - Proporcionar un sistema sencillo y seguro para gestionar reservas, comunicaciones y pagos online.
 - Ofrecer una experiencia de usuario cómoda, con acceso a ayuda y soporte técnico.
 
-## Descripción del proyecto
+## Funcionalidades
 
 El sistema permite a los propietarios:
 - Crear una cuenta y gestionar su perfil.
