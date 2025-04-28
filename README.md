@@ -58,11 +58,11 @@ Esta nueva versión está desarrollada con **Vue.js** en el front-end y **Larave
 ### 6. Pagos Integrados
 - Sistema de cobro a través de **Stripe** para mayor comodidad y seguridad.
 
-## 7. Página de soporte
+### 7. Página de soporte
 - Documentación de ayuda y soporte para resolver dudas comunes.
 - Canal de contacto directo para recibir soporte adicional.
 
-## 8. Sistema de mensajería interno
+### 8. Sistema de mensajería interno
 - Comunicación directa entre propietarios e interesados.
 Acordar precios, fechas y condiciones específicas mediante chat.
 
