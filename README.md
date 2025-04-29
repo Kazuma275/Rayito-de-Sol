@@ -5,7 +5,7 @@
 
 ## Documentación del proyecto
 
-# [Checkpoint][(https://www.notion.so/Anteproyecto-Plantilla-1c5279a519238093af6ae105e277e424?pvs=4)]](https://github.com/Kazuma275/Rayito-de-Sol/tree/checkpoint)
+# [Checkpoint](https://www.notion.so/Anteproyecto-Plantilla-1c5279a519238093af6ae105e277e424?pvs=4)]](https://github.com/Kazuma275/Rayito-de-Sol/tree/checkpoint)
 
 
 - [Código de Conducta](CODE_OF_CONDUCT.md)
