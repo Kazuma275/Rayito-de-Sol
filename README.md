@@ -46,7 +46,7 @@ Esta nueva versión está desarrollada con **Vue.js** en el front-end y **Larave
 - [Licencia](LICENSE)
 - [Contribuciones](CONTRIBUTING.md)
 - [Seguridad](SECURITY.md)
-- [Vídeo explicativo](https://www.youtube.com/)
+- [Vídeo explicativo](https://youtu.be/qilXgt90NZE)
 
 ## Histórico de cambios
 
