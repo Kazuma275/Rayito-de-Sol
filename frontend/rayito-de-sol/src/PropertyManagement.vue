@@ -27,13 +27,13 @@
             </div>
           </div>
           
-          <div class="stat-card">
-            <TrendingUpIcon class="stat-icon" />
-            <div class="stat-content">
-              <h3 class="stat-title">Tasa de Ocupación</h3>
-              <p class="stat-value">{{ occupancyRate }}%</p>
+            <div class="stat-card">
+              <TrendingUpIcon class="stat-icon" />
+              <div class="stat-content">
+                <h3 class="stat-title">Tasa de Ocupación</h3>
+                <p class="stat-value">{{ occupancyRate }}%</p> <!-- Dinámico -->
+              </div>
             </div>
-          </div>
           
           <div class="stat-card">
             <EuroIcon class="stat-icon" />
@@ -339,49 +339,65 @@
         </div>
       </section>
       
-      <!-- Calendar -->
+      <!-- Calendar - VERSIÓN MEJORADA -->
       <section v-if="activeTab === 'calendar'" class="calendar-section">
         <div class="section-header">
           <h2 class="section-title">Calendario de Disponibilidad</h2>
-          <div class="calendar-property-select">
-            <label>Propiedad:</label>
+          <div class="property-selector">
             <select v-model="calendarPropertyId" class="property-select">
               <option v-for="property in properties" :key="property.id" :value="property.id">
                 {{ property.name }}
               </option>
             </select>
+            <ChevronDownIcon class="select-icon" />
           </div>
         </div>
         
-        <div class="calendar-controls">
-          <button class="calendar-nav" @click="previousMonth">
+        <div class="calendar-navigation">
+          <button class="nav-button" @click="previousMonth">
             <ChevronLeftIcon />
           </button>
-          <h3 class="calendar-month">{{ currentMonthName }} {{ currentYear }}</h3>
-          <button class="calendar-nav" @click="nextMonth">
+          <h3 class="current-month">{{ currentMonthName }} {{ currentYear }}</h3>
+          <button class="nav-button" @click="nextMonth">
             <ChevronRightIcon />
           </button>
         </div>
         
-        <div class="calendar-container">
-          <div class="calendar-grid">
-            <div v-for="day in weekDays" :key="day" class="calendar-day header">{{ day }}</div>
-            <div v-for="(day, index) in calendarDays" :key="index" 
-                 :class="['calendar-day', { 
-                   'empty': !day.date, 
-                   'available': day.available && day.date,
-                   'unavailable': !day.available && day.date,
-                   'booked': day.booked && day.date,
-                   'today': day.isToday
-                 }]"
-                 @click="day.date && toggleAvailability(day)">
-              <span v-if="day.date" class="day-number">{{ day.date }}</span>
-              <div v-if="day.date && day.booked" class="day-info">Reservado</div>
-              <div v-else-if="day.date && !day.available" class="day-info">No disponible</div>
-              <div v-else-if="day.date" class="day-info">Disponible</div>
+        <transition name="calendar-fade" mode="out-in">
+          <div :key="currentMonthKey" class="calendar-container">
+            <div class="weekdays-header">
+              <div v-for="day in weekDays" :key="day" class="weekday">{{ day }}</div>
+            </div>
+            <div class="calendar-grid">
+              <div 
+                v-for="(day, index) in calendarDays" 
+                :key="index" 
+                :class="[
+                  'calendar-day', 
+                  { 
+                    'empty': !day.date, 
+                    'available': day.available && day.date,
+                    'unavailable': !day.available && day.date,
+                    'booked': day.booked && day.date,
+                    'today': day.isToday,
+                    'in-selection': isInSelection(day)
+                  }
+                ]"
+                @click="day.date && handleDayClick(day)"
+                @mouseenter="day.date && handleDayHover(day)"
+              >
+                <span v-if="day.date" class="day-number">{{ day.date }}</span>
+                <transition name="status-fade">
+                  <div v-if="day.date" class="day-status">
+                    <span v-if="day.booked" class="status booked">Reservado</span>
+                    <span v-else-if="!day.available" class="status unavailable">No disponible</span>
+                    <span v-else class="status available">Disponible</span>
+                  </div>
+                </transition>
+              </div>
             </div>
           </div>
-        </div>
+        </transition>
         
         <div class="calendar-legend">
           <div class="legend-item">
@@ -399,20 +415,34 @@
         </div>
         
         <div class="bulk-actions">
-          <h4>Acciones en bloque</h4>
-          <div class="date-range">
-            <div class="date-input">
-              <label>Desde</label>
-              <input type="date" v-model="bulkStartDate" class="form-input" />
-            </div>
-            <div class="date-input">
-              <label>Hasta</label>
-              <input type="date" v-model="bulkEndDate" class="form-input" />
-            </div>
+          <div class="bulk-header">
+            <h4>Acciones en bloque</h4>
+            <button v-if="isSelecting" class="cancel-selection" @click="cancelSelection">
+              <XIcon class="icon" />
+              Cancelar selección
+            </button>
           </div>
-          <div class="action-buttons">
-            <button class="bulk-button available" @click="setBulkAvailability(true)">Marcar como disponible</button>
-            <button class="bulk-button unavailable" @click="setBulkAvailability(false)">Marcar como no disponible</button>
+          
+          <div v-if="!isSelecting" class="selection-prompt">
+            <p>Haz clic en una fecha para comenzar a seleccionar un rango</p>
+          </div>
+          
+          <div v-else class="selection-info">
+            <div class="date-range-display">
+              <CalendarIcon class="icon" />
+              <span>{{ formatDateRange(selectionStart, selectionEnd) }}</span>
+            </div>
+            
+            <div class="action-buttons">
+              <button class="action-button available" @click="applyBulkAction(true)">
+                <CheckIcon class="icon" />
+                Marcar como disponible
+              </button>
+              <button class="action-button unavailable" @click="applyBulkAction(false)">
+                <XIcon class="icon" />
+                Marcar como no disponible
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -686,7 +716,9 @@ import {
   SearchIcon,
   SendIcon,
   CreditCardIcon,
-  BellIcon
+  BellIcon,
+  CheckIcon,
+  ChevronDownIcon
 } from 'lucide-vue-next';
 
 // Get router and route
@@ -928,84 +960,148 @@ const filteredBookings = computed(() => {
   return filtered;
 });
 
-// Calendar
+// Calendar - VERSIÓN MEJORADA CON ACTUALIZACIÓN DE DISPONIBILIDAD
+
 const calendarPropertyId = ref(properties.value.length > 0 ? properties.value[0].id : null);
-const currentMonth = ref(new Date().getMonth());
-const currentYear = ref(new Date().getFullYear());
-const bulkStartDate = ref('');
-const bulkEndDate = ref('');
+const currentDate = ref(new Date());
+const selectionStart = ref(null);
+const selectionEnd = ref(null);
+const isSelecting = ref(false);
+const hoverDate = ref(null);
 
-const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-
+// Datos computados
+const currentYear = computed(() => currentDate.value.getFullYear());
+const currentMonth = computed(() => currentDate.value.getMonth());
 const currentMonthName = computed(() => {
-  const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-  return months[currentMonth.value];
+  return new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(currentDate.value);
 });
+const currentMonthKey = computed(() => `${currentYear.value}-${currentMonth.value}`);
+const weekDays = computed(() => ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']);
 
-const calendarDays = computed(() => {
+// Días del calendario (ahora es un ref)
+const calendarDays = ref([]);
+
+const generateCalendarDays = () => {
   const days = [];
   const firstDay = new Date(currentYear.value, currentMonth.value, 1);
   const lastDay = new Date(currentYear.value, currentMonth.value + 1, 0);
-  
-  // Get the day of the week for the first day (0 = Sunday, 1 = Monday, etc.)
+
   let firstDayOfWeek = firstDay.getDay() - 1;
-  if (firstDayOfWeek < 0) firstDayOfWeek = 6; // Adjust for Monday as first day
-  
-  // Add empty days for the beginning of the month
+  if (firstDayOfWeek < 0) firstDayOfWeek = 6;
+
   for (let i = 0; i < firstDayOfWeek; i++) {
     days.push({ date: null });
   }
-  
-  // Add days of the month
+
   const today = new Date();
   for (let i = 1; i <= lastDay.getDate(); i++) {
-    const isToday = 
-      today.getDate() === i && 
-      today.getMonth() === currentMonth.value && 
-      today.getFullYear() === currentYear.value;
-    
-    // For demo purposes, randomly determine availability and bookings
-    const random = Math.random();
-    const available = random > 0.3;
-    const booked = random < 0.2;
-    
-    days.push({ 
-      date: i, 
-      available, 
-      booked,
-      isToday 
+    const date = new Date(currentYear.value, currentMonth.value, i);
+    days.push({
+      date: i,
+      fullDate: date,
+      available: Math.random() > 0.3, // Simulación
+      booked: Math.random() < 0.2, // Simulación
+      isToday: today.getDate() === i &&
+               today.getMonth() === currentMonth.value &&
+               today.getFullYear() === currentYear.value
     });
   }
-  
-  return days;
-});
+
+  calendarDays.value = days;
+};
+
+// Inicializar al cargar
+generateCalendarDays();
+
+// Navegación entre meses
+const nextMonth = () => {
+  currentDate.value = new Date(currentYear.value, currentMonth.value + 1, 1);
+  generateCalendarDays();
+  cancelSelection();
+};
 
 const previousMonth = () => {
-  if (currentMonth.value === 0) {
-    currentMonth.value = 11;
-    currentYear.value--;
+  currentDate.value = new Date(currentYear.value, currentMonth.value - 1, 1);
+  generateCalendarDays();
+  cancelSelection();
+};
+
+// Selección de días
+const handleDayClick = (day) => {
+  if (!day.date) return;
+
+  if (!isSelecting.value) {
+    selectionStart.value = new Date(currentYear.value, currentMonth.value, day.date);
+    selectionEnd.value = new Date(currentYear.value, currentMonth.value, day.date);
+    isSelecting.value = true;
   } else {
-    currentMonth.value--;
+    const clickedDate = new Date(currentYear.value, currentMonth.value, day.date);
+
+    if (clickedDate < selectionStart.value) {
+      selectionEnd.value = selectionStart.value;
+      selectionStart.value = clickedDate;
+    } else {
+      selectionEnd.value = clickedDate;
+    }
   }
 };
 
-const nextMonth = () => {
-  if (currentMonth.value === 11) {
-    currentMonth.value = 0;
-    currentYear.value++;
-  } else {
-    currentMonth.value++;
-  }
+const handleDayHover = (day) => {
+  if (!isSelecting.value || selectionEnd.value || !day.date) return;
+  hoverDate.value = new Date(currentYear.value, currentMonth.value, day.date);
 };
 
-const toggleAvailability = (day) => {
-  if (day.booked) return; // Can't change availability for booked days
-  day.available = !day.available;
+const isInSelection = (day) => {
+  if (!day.date || !isSelecting.value || !selectionStart.value) return false;
+
+  const dayDate = new Date(currentYear.value, currentMonth.value, day.date);
+  const endDate = hoverDate.value || selectionEnd.value;
+
+  return dayDate >= selectionStart.value && dayDate <= endDate;
 };
 
-const setBulkAvailability = (available) => {
-  console.log(`Set availability to ${available} from ${bulkStartDate.value} to ${bulkEndDate.value}`);
-  // This would update the availability for the selected date range
+const cancelSelection = () => {
+  isSelecting.value = false;
+  selectionStart.value = null;
+  selectionEnd.value = null;
+  hoverDate.value = null;
+};
+
+// Actualizar disponibilidad en el rango seleccionado
+const applyBulkAction = (makeAvailable) => {
+  if (!selectionStart.value || !selectionEnd.value) return;
+
+  const start = selectionStart.value;
+  const end = selectionEnd.value;
+
+  calendarDays.value = calendarDays.value.map(day => {
+    if (!day.fullDate) return day;
+
+    const date = new Date(day.fullDate);
+    if (date >= start && date <= end) {
+      return {
+        ...day,
+        available: makeAvailable
+      };
+    }
+    return day;
+  });
+
+  console.log(`Estableciendo disponibilidad a ${makeAvailable} desde ${start} hasta ${end}`);
+  cancelSelection();
+};
+
+const formatDateRange = (start, end) => {
+  if (!start || !end) return '';
+
+  const formatDate = (date) => {
+    return new Intl.DateTimeFormat('es-ES', {
+      day: 'numeric',
+      month: 'short'
+    }).format(date);
+  };
+
+  return `${formatDate(start)} - ${formatDate(end)}`;
 };
 
 // Messages
@@ -1085,6 +1181,15 @@ const settings = ref({
     iban: 'ES91 2100 0418 4502 0005 1332'
   }
 });
+
+// Función para cambiar de tab
+const changeTab = (tabId) => {
+  activeTab.value = tabId;
+  const tab = tabs.find(t => t.id === tabId);
+  if (tab) {
+    router.push(tab.path);
+  }
+};
 </script>
 
 <style scoped>
@@ -1970,195 +2075,334 @@ const settings = ref({
   padding: 3rem 0;
 }
 
-/* Calendar styles */
-.calendar-property-select {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+/* Calendar styles - VERSIÓN MEJORADA */
+.calendar-section {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.calendar-controls {
+.property-selector {
+  position: relative;
+  width: 200px;
+}
+
+.property-select {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e7ee;
+  background-color: #f8fafc;
+  font-size: 0.9rem;
+  color: #2b3a4a;
+  appearance: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.property-select:hover {
+  border-color: #0071c2;
+}
+
+.property-select:focus {
+  outline: none;
+  border-color: #0071c2;
+  box-shadow: 0 0 0 2px rgba(0, 113, 194, 0.2);
+}
+
+.select-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.calendar-navigation {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 16px;
 }
 
-.calendar-month {
+.current-month {
   font-size: 1.2rem;
-  color: #003580;
+  font-weight: 600;
+  color: #2b3a4a;
+  text-transform: capitalize;
   margin: 0;
 }
 
-.calendar-nav {
-  background: none;
-  border: none;
-  color: #0071c2;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 50%;
+.nav-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f1f5f9;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.calendar-nav:hover {
-  background-color: #f5f5f5;
+.nav-button:hover {
+  background-color: #e2e8f0;
+  color: #0071c2;
 }
 
 .calendar-container {
-  background-color: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
+}
+
+.weekdays-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 8px;
+}
+
+.weekday {
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #64748b;
+  padding: 8px 0;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0.5rem;
+  gap: 4px;
 }
 
 .calendar-day {
-  text-align: center;
-  padding: 0.75rem;
-  border-radius: 4px;
   position: relative;
-}
-
-.calendar-day.header {
-  font-weight: 600;
-  color: #003580;
+  height: 70px;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .calendar-day.empty {
-  background: none;
+  cursor: default;
+}
+
+.calendar-day:not(.empty):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .day-number {
-  font-weight: 500;
-  margin-bottom: 0.25rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
 }
 
-.day-info {
+.day-status {
   font-size: 0.7rem;
+  text-align: center;
 }
 
 .calendar-day.available {
   background-color: #e6f7ee;
-  color: #00703c;
-  cursor: pointer;
+  color: #0f766e;
 }
 
 .calendar-day.unavailable {
-  background-color: #fff2f0;
-  color: #e41c00;
-  cursor: pointer;
+  background-color: #fef2f2;
+  color: #b91c1c;
 }
 
 .calendar-day.booked {
-  background-color: #e6f0ff;
-  color: #0071c2;
+  background-color: #eff6ff;
+  color: #1e40af;
 }
 
 .calendar-day.today {
   border: 2px solid #0071c2;
-  font-weight: 600;
+}
+
+.calendar-day.in-selection {
+  background-color: #0071c2;
+  color: white;
+}
+
+.calendar-day.in-selection .status {
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .calendar-legend {
   display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  gap: 16px;
+  margin-bottom: 24px;
   justify-content: center;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #475569;
 }
 
 .legend-color {
   width: 16px;
   height: 16px;
   border-radius: 4px;
-  margin-right: 0.5rem;
 }
 
 .legend-color.available {
   background-color: #e6f7ee;
+  border: 1px solid #0f766e;
 }
 
 .legend-color.unavailable {
-  background-color: #fff2f0;
+  background-color: #fef2f2;
+  border: 1px solid #b91c1c;
 }
 
 .legend-color.booked {
-  background-color: #e6f0ff;
+  background-color: #eff6ff;
+  border: 1px solid #1e40af;
 }
 
 .bulk-actions {
-  background-color: white;
+  background-color: #f8fafc;
   border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
 }
 
-.bulk-actions h4 {
-  font-size: 1.1rem;
-  color: #003580;
-  margin: 0 0 1rem;
-}
-
-.date-range {
+.bulk-header {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
 }
 
-.date-input {
-  flex: 1;
+.bulk-header h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2b3a4a;
+  margin: 0;
 }
 
-.date-input label {
-  display: block;
+.cancel-selection {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.cancel-selection:hover {
+  background-color: #fee2e2;
+}
+
+.selection-prompt {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9rem;
+  padding: 16px 0;
+}
+
+.selection-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.date-range-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #e0e7ee;
+  color: #2b3a4a;
   font-weight: 500;
-  margin-bottom: 0.5rem;
 }
 
 .action-buttons {
   display: flex;
-  gap: 1rem;
+  gap: 12px;
 }
 
-.bulk-button {
+.action-button {
   flex: 1;
-  padding: 0.75rem;
-  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
-  border: none;
+  transition: all 0.2s ease;
 }
 
-.bulk-button.available {
-  background-color: #e6f7ee;
-  color: #00703c;
+.action-button.available {
+  background-color: #0071c2;
+  color: white;
 }
 
-.bulk-button.available:hover {
-  background-color: #d1f0e0;
+.action-button.available:hover {
+  background-color: #005a9c;
 }
 
-.bulk-button.unavailable {
-  background-color: #fff2f0;
-  color: #e41c00;
+.action-button.unavailable {
+  background-color: #f1f5f9;
+  color: #475569;
 }
 
-.bulk-button.unavailable:hover {
-  background-color: #ffe5e2;
+.action-button.unavailable:hover {
+  background-color: #e2e8f0;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Animaciones */
+.calendar-fade-enter-active,
+.calendar-fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.calendar-fade-enter-from,
+.calendar-fade-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.status-fade-enter-active,
+.status-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.status-fade-enter-from,
+.status-fade-leave-to {
+  opacity: 0;
 }
 
 /* Messages styles */
@@ -2835,6 +3079,29 @@ const settings = ref({
     flex-direction: column;
     gap: 1rem;
   }
+  
+  /* Responsive calendar */
+  .calendar-section {
+    padding: 16px;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .property-selector {
+    width: 100%;
+  }
+  
+  .calendar-day {
+    height: 60px;
+    padding: 4px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
 }
 </style>
-
