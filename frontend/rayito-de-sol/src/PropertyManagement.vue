@@ -206,11 +206,19 @@
                 
                 <div class="form-group">
                   <label>Fotos</label>
-                  <div class="photo-upload">
-                    <div class="upload-placeholder">
+                  <div class="photo-upload" @click="$refs.imageInput.click()">
+                    <div class="upload-placeholder" v-if="!newProperty.image">
                       <UploadIcon class="upload-icon" />
-                      <span>Subir fotos</span>
+                      <span>Subir foto</span>
                     </div>
+                    <img v-else :src="newProperty.image" class="uploaded-image-preview" />
+                    <input
+                      ref="imageInput"
+                      type="file"
+                      accept="image/*"
+                      @change="handleImageUpload"
+                      style="display: none"
+                    />
                   </div>
                 </div>
                 
@@ -782,7 +790,7 @@ const properties = ref([
     description: 'Hermoso apartamento con vistas al mar Mediterráneo.',
     status: 'active',
     statusText: 'Activo',
-    amenities: ['wifi', 'pool', 'parking', 'ac']
+    amenities: ['wifi', 'pool', 'parking', 'ac'],
   },
   {
     id: 2,
@@ -878,15 +886,50 @@ const getPropertyById = (id) => {
 
 // Add property modal
 const showAddPropertyModal = ref(false);
-const newProperty = ref({
-  name: '',
-  location: '',
-  bedrooms: 2,
-  capacity: 4,
-  price: 100,
-  description: '',
-  amenities: []
-});
+  const newProperty = ref({
+    id: null,
+    name: '',
+    location: '',
+    bedrooms: 1,
+    capacity: 1,
+    price: 0,
+    image: null,
+    description: '',
+    amenities: [],
+    status: 'active',
+    statusText: 'Activo',
+  });
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        newProperty.value.image = e.target.result; // Base64 string
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+    const addProperty = () => {
+    newProperty.value.id = Date.now(); // ID único simple
+    properties.value.push({ ...newProperty.value });
+    // Resetear
+    newProperty.value = {
+      id: null,
+      name: '',
+      location: '',
+      bedrooms: 1,
+      capacity: 1,
+      price: 0,
+      image: null,
+      description: '',
+      amenities: [],
+      status: 'active',
+      statusText: 'Activo',
+    };
+    showAddPropertyModal.value = false;
+  };
 
 const amenities = [
   { id: 'wifi', name: 'WiFi' },
@@ -898,31 +941,6 @@ const amenities = [
   { id: 'tv', name: 'TV' },
   { id: 'washer', name: 'Lavadora' }
 ];
-
-const addProperty = () => {
-  const newId = properties.value.length > 0 ? Math.max(...properties.value.map(p => p.id)) + 1 : 1;
-  
-  properties.value.push({
-    id: newId,
-    ...newProperty.value,
-    image: '/placeholder.svg?height=300&width=400',
-    status: 'active',
-    statusText: 'Activo'
-  });
-  
-  showAddPropertyModal.value = false;
-  
-  // Reset form
-  newProperty.value = {
-    name: '',
-    location: '',
-    bedrooms: 2,
-    capacity: 4,
-    price: 100,
-    description: '',
-    amenities: []
-  };
-};
 
 const editProperty = (id) => {
   console.log('Edit property', id);
