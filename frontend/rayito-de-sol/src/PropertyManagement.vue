@@ -137,18 +137,30 @@
                   <EuroIcon class="detail-icon" />
                   <span>€{{ property.price }}/noche</span>
                 </div>
+                <div class="property-description">
+                  <p>{{ property.description }}</p>
+                </div>
               </div>
             </div>
-            <div class="property-actions">
-              <button class="action-button edit" @click="editProperty(property.id)">
-                <EditIcon class="action-icon" />
-                Editar
-              </button>
-              <button class="action-button calendar" @click="viewCalendar(property.id)">
-                <CalendarIcon class="action-icon" />
-                Calendario
-              </button>
-            </div>
+<div class="property-actions">
+  <button class="action-button edit" @click="openEditModal(property.id)">
+    <EditIcon class="action-icon" /> <!-- ícono solamente -->
+    Editar
+  </button>
+  
+  <EditPropertyModal
+    :visible="showPropertyModal"
+    :property="currentProperty"
+    :isEditMode="isEditMode"
+    @submit="saveProperty"
+    @close="showPropertyModal = false"
+  />
+  
+  <button class="action-button calendar" @click="viewCalendar(property.id)">
+    <CalendarIcon class="action-icon" />
+    Calendario
+  </button>
+</div>
           </div>
         </div>
         
@@ -544,149 +556,172 @@
           </div>
           
           <div class="settings-content">
-            <!-- Profile Settings -->
-            <div v-if="activeSettingsTab === 'profile'" class="settings-panel">
-              <h3 class="panel-title">Perfil</h3>
-              
-              <form class="settings-form">
-                <div class="profile-avatar">
-                  <div class="avatar-placeholder">
-                    <UserIcon class="avatar-icon" />
-                  </div>
-                  <button class="change-avatar-button">Cambiar foto</button>
-                </div>
-                
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="profile-name">Nombre</label>
-                    <input id="profile-name" type="text" v-model="settings.profile.name" class="form-input" />
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="profile-lastname">Apellidos</label>
-                    <input id="profile-lastname" type="text" v-model="settings.profile.lastname" class="form-input" />
-                  </div>
-                </div>
-                
-                <div class="form-group">
-                  <label for="profile-email">Email</label>
-                  <input id="profile-email" type="email" v-model="settings.profile.email" class="form-input" />
-                </div>
-                
-                <div class="form-group">
-                  <label for="profile-phone">Teléfono</label>
-                  <input id="profile-phone" type="tel" v-model="settings.profile.phone" class="form-input" />
-                </div>
-                
-                <div class="form-actions">
-                  <button type="submit" class="save-button">Guardar cambios</button>
-                </div>
-              </form>
-            </div>
-            
-            <!-- Notifications Settings -->
-            <div v-if="activeSettingsTab === 'notifications'" class="settings-panel">
-              <h3 class="panel-title">Notificaciones</h3>
-              
-              <div class="notification-settings">
-                <div class="notification-group">
-                  <h4>Email</h4>
-                  
-                  <div class="notification-option">
-                    <div>
-                      <h5>Nuevas reservas</h5>
-                      <p>Recibe un email cuando recibas una nueva reserva</p>
-                    </div>
-                    <label class="toggle">
-                      <input type="checkbox" v-model="settings.notifications.newBookingEmail" />
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="notification-option">
-                    <div>
-                      <h5>Mensajes</h5>
-                      <p>Recibe un email cuando recibas un nuevo mensaje</p>
-                    </div>
-                    <label class="toggle">
-                      <input type="checkbox" v-model="settings.notifications.newMessageEmail" />
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-                
-                <div class="notification-group">
-                  <h4>SMS</h4>
-                  
-                  <div class="notification-option">
-                    <div>
-                      <h5>Nuevas reservas</h5>
-                      <p>Recibe un SMS cuando recibas una nueva reserva</p>
-                    </div>
-                    <label class="toggle">
-                      <input type="checkbox" v-model="settings.notifications.newBookingSMS" />
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-                
-                <div class="form-actions">
-                  <button class="save-button">Guardar preferencias</button>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Payment Settings -->
-            <div v-if="activeSettingsTab === 'payment'" class="settings-panel">
-              <h3 class="panel-title">Pagos</h3>
-              
-              <div class="payment-methods">
-                <h4>Métodos de pago</h4>
-                
-                <div class="payment-method">
-                  <div class="payment-info">
-                    <CreditCardIcon class="payment-icon" />
-                    <div>
-                      <h5>Visa terminada en 4242</h5>
-                      <p>Expira 12/2025</p>
-                    </div>
-                  </div>
-                  <div class="payment-actions">
-                    <button class="edit-button">Editar</button>
-                    <button class="delete-button">Eliminar</button>
-                  </div>
-                </div>
-                
-                <button class="add-payment-button">
-                  <PlusIcon class="add-icon" />
-                  Añadir método de pago
-                </button>
-              </div>
-              
-              <div class="bank-account">
-                <h4>Cuenta bancaria</h4>
-                
-                <div class="form-group">
-                  <label for="bank-name">Nombre del banco</label>
-                  <input id="bank-name" type="text" v-model="settings.payment.bankName" class="form-input" />
-                </div>
-                
-                <div class="form-group">
-                  <label for="account-holder">Titular de la cuenta</label>
-                  <input id="account-holder" type="text" v-model="settings.payment.accountHolder" class="form-input" />
-                </div>
-                
-                <div class="form-group">
-                  <label for="iban">IBAN</label>
-                  <input id="iban" type="text" v-model="settings.payment.iban" class="form-input" />
-                </div>
-                
-                <div class="form-actions">
-                  <button class="save-button">Guardar información bancaria</button>
-                </div>
-              </div>
+  <!-- Profile Settings -->
+  <div v-if="activeSettingsTab === 'profile'" class="settings-panel">
+    <h3 class="panel-title">Perfil</h3>
+    <form class="settings-form" @submit.prevent="saveProfile">
+      <div class="profile-avatar">
+        <div class="avatar-placeholder">
+          <img v-if="previewImage" :src="previewImage" class="avatar-preview" />
+          <UserIcon v-else class="avatar-icon" />
+        </div>
+        <button type="button" class="change-avatar-button" @click="triggerFileInput">Cambiar foto</button>
+        <input
+          type="file"
+          ref="avatarInput"
+          accept="image/*"
+          @change="handleAvatarChange"
+          style="display: none"
+        />
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="profile-name">Nombre</label>
+          <input id="profile-name" type="text" v-model="localSettings.profile.name" class="form-input" />
+        </div>
+        
+        <div class="form-group">
+          <label for="profile-lastname">Apellidos</label>
+          <input id="profile-lastname" type="text" v-model="localSettings.profile.lastname" class="form-input" />
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="profile-email">Email</label>
+        <input id="profile-email" type="email" v-model="localSettings.profile.email" class="form-input" />
+      </div>
+      
+      <div class="form-group">
+        <label for="profile-phone">Teléfono</label>
+        <input id="profile-phone" type="tel" v-model="localSettings.profile.phone" class="form-input" />
+      </div>
+      
+      <div class="form-actions">
+        <button type="submit" class="save-button">Guardar cambios</button>
+      </div>
+    </form>
+  </div>
+  
+  <!-- Notifications Settings -->
+  <div v-if="activeSettingsTab === 'notifications'" class="settings-panel">
+    <h3 class="panel-title">Notificaciones</h3>
+    
+    <div class="notification-settings">
+      <div class="notification-group">
+        <h4>Email</h4>
+        
+        <div class="notification-option">
+          <div>
+            <h5>Nuevas reservas</h5>
+            <p>Recibe un email cuando recibas una nueva reserva</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" v-model="localSettings.notifications.newBookingEmail" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        
+        <div class="notification-option">
+          <div>
+            <h5>Mensajes</h5>
+            <p>Recibe un email cuando recibas un nuevo mensaje</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" v-model="localSettings.notifications.newMessageEmail" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="notification-group">
+        <h4>SMS</h4>
+        
+        <div class="notification-option">
+          <div>
+            <h5>Nuevas reservas</h5>
+            <p>Recibe un SMS cuando recibas una nueva reserva</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" v-model="localSettings.notifications.newBookingSMS" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button class="save-button">Guardar preferencias</button>
+      </div>
+    </div>
+  </div>
+  
+    <div>
+    <!-- Panel de configuración de pagos -->
+    <div v-if="activeSettingsTabPayment === 'payment'" class="settings-panel">
+      <h3 class="panel-title">Pagos</h3>
+
+      <div class="payment-methods">
+        <h4>Métodos de pago</h4>
+
+        <!-- Listado de métodos de pago -->
+        <div v-for="(payment, index) in paymentMethods" :key="index" class="payment-method">
+          <div class="payment-info">
+            <CreditCardIcon class="payment-icon" />
+            <div>
+              <h5>{{ payment.cardType }} terminada en {{ payment.last4 }}</h5>
+              <p>Expira {{ payment.expiryDate }}</p>
             </div>
           </div>
+          <div class="payment-actions">
+            <button class="edit-button" @click="showModal = true">Editar</button>
+            <EditPaymentModal v-if="showModal" @close="showModal = false" @update-payment="handlePaymentUpdate"/>
+            <button class="delete-button" @click="deletePayment(index)">Eliminar</button>
+          </div>
+        </div>
+
+        <!-- Botón para abrir el modal para añadir un nuevo método de pago -->
+        <button class="add-payment-button" @click="openModal">
+          <PlusIcon class="add-icon" />
+          Añadir método de pago
+        </button>
+
+        <!-- Modal PaymentSettings que solo se muestra cuando `isModalVisible` es `true` -->
+        <PaymentSettings
+          v-if="isModalVisible"
+          :visible="isModalVisible"
+          :isEditMode="false"
+          @close="closeModal"
+          @submit="handlePaymentSubmit"
+        />
+      </div>
+
+      <!-- Información de cuenta bancaria (esto es aparte) -->
+      <div class="bank-account">
+        <h4>Cuenta bancaria</h4>
+
+        <div class="form-group">
+          <label for="bank-name">Nombre del banco</label>
+          <input id="bank-name" type="text" v-model="localSettings.payment.bankName" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label for="account-holder">Titular de la cuenta</label>
+          <input id="account-holder" type="text" v-model="localSettings.payment.accountHolder" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label for="iban">IBAN</label>
+          <input id="iban" type="text" v-model="localSettings.payment.iban" class="form-input" />
+        </div>
+
+        <div class="form-actions">
+          <button class="save-button">Guardar información bancaria</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
         </div>
       </section>
     </main>
@@ -699,8 +734,11 @@
 <script setup>
 import Header from './components/layout/Header.vue';
 import Footer from './components/layout/Footer.vue';
+import EditPaymentModal from './components/settings/EditPaymentModal.vue';
+import PaymentSettings from './components/settings/PaymentSettings.vue' 
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import EditPropertyModal from './components/properties/EditPropertyModal.vue'
 import { 
   UserIcon, 
   CalendarIcon, 
@@ -732,6 +770,117 @@ import {
 // Get router and route
 const router = useRouter();
 const route = useRoute();
+const showPropertyModal = ref(false)
+const isEditMode = ref(false)
+const currentProperty = ref({})
+const avatarInput = ref(null);
+const previewImage = ref(null);
+
+
+// Settings
+
+const localSettings = ref({
+  profile: {
+    name: 'Carlos',
+    lastname: 'Rodríguez',
+    email: 'carlos@example.com',
+    phone: '+34 612 345 678',
+    avatar: null,
+  },
+  notifications: {
+    newBookingEmail: true,
+    newMessageEmail: true,
+    newBookingSMS: false,
+  },
+  payment: {
+    bankName: 'Banco Santander',
+    accountHolder: 'Carlos Rodríguez',
+    iban: 'ES91 2100 0418 4502 0005 1332',
+  }
+});
+
+function triggerFileInput() {
+  avatarInput.value.click();
+}
+
+function handleAvatarChange(event) {
+  const file = event.target.files[0];
+  if (file && file.type.startsWith('image/')) {
+    localSettings.value.profile.avatar = file;
+    previewImage.value = URL.createObjectURL(file);
+  }
+}
+
+async function saveProfile() {
+  const formData = new FormData();
+  formData.append("name", localSettings.value.profile.name);
+  formData.append("lastname", localSettings.value.profile.lastname);
+  formData.append("email", localSettings.value.profile.email);
+  formData.append("phone", localSettings.value.profile.phone);
+
+  if (localSettings.value.profile.avatar) {
+    formData.append("avatar", localSettings.value.profile.avatar);
+  }
+
+  try {
+    const response = await fetch('/api/profile/update', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const result = await response.json();
+    console.log('Perfil actualizado', result);
+  } catch (error) {
+    console.error('Error al guardar el perfil:', error);
+  }
+}
+
+// Payment
+
+const isModalVisible = ref(false)
+const activeSettingsTabPayment = ref('payment') // Para cambiar entre las pestañas si es necesario
+
+// Lista de métodos de pago
+const paymentMethods = ref([
+  { cardType: 'Visa', last4: '4242', expiryDate: '12/2025' },
+  { cardType: 'MasterCard', last4: '1234', expiryDate: '05/2024' }
+])
+
+// Función para abrir el modal
+const openModal = () => {
+  isModalVisible.value = true
+}
+
+// Función para cerrar el modal
+const closeModal = () => {
+  isModalVisible.value = false
+}
+
+// Función para manejar el envío del formulario del método de pago
+const handlePaymentSubmit = (paymentData) => {
+  // Añadir el nuevo método de pago al listado
+  paymentMethods.value.push(paymentData)
+  closeModal() // Cerrar el modal después de guardar
+}
+
+// Función para eliminar un método de pago
+const deletePayment = (index) => {
+  paymentMethods.value.splice(index, 1)
+}
+
+// Función para editar un método de pago
+const editPayment = (index) => {
+  // Aquí podrías poner la lógica para editar el método de pago si fuera necesario
+  console.log('Editar método de pago', index)
+}
+
+const showModal = ref(false);
+
+const handlePaymentUpdate = (updatedPayment) => {
+  console.log("Método de pago actualizado:", updatedPayment);
+  // Lógica para manejar la actualización del método de pago
+  showModal.value = false;  // Cerrar el modal después de la actualización
+};
 
 // Tabs with paths for router
 const tabs = [
@@ -766,6 +915,46 @@ const updateActiveTabFromRoute = () => {
     activeTab.value = 'help';
   }
 };
+
+const openAddModal = () => {
+  isEditMode.value = false
+  currentProperty.value = {
+    id: null,
+    name: '',
+    location: '',
+    bedrooms: 1,
+    capacity: 1,
+    price: 0,
+    image: null,
+    description: '',
+    amenities: [],
+    status: 'active',
+    statusText: 'Activo'
+  }
+  showPropertyModal.value = true
+}
+
+const openEditModal = (id) => {
+  const property = properties.value.find(p => p.id === id)
+  if (property) {
+    isEditMode.value = true
+    currentProperty.value = { ...property }
+    showPropertyModal.value = true
+  }
+}
+
+const saveProperty = (data) => {
+  if (isEditMode.value) {
+    const index = properties.value.findIndex(p => p.id === data.id)
+    if (index !== -1) {
+      properties.value[index] = data
+    }
+  } else {
+    data.id = Date.now()
+    properties.value.push(data)
+  }
+  showPropertyModal.value = false
+}
 
 // Watch for route changes
 watch(() => route.path, () => {

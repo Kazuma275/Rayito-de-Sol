@@ -1,188 +1,323 @@
 <template>
-  <div class="settings-panel">
-    <h3 class="panel-title">Pagos</h3>
-    
-    <div class="payment-methods">
-      <h4>Métodos de pago</h4>
-      
-      <div class="payment-method">
-        <div class="payment-info">
-          <CreditCardIcon class="payment-icon" />
-          <div>
-            <h5>Visa terminada en 4242</h5>
-            <p>Expira 12/2025</p>
+  <div v-if="visible" class="modal-overlay" @click="$emit('close')">
+    <div class="modal-content" @click.stop>
+      <div class="modal-header">
+        <h3>{{ isEditMode ? 'Editar Método de Pago' : 'Añadir Nuevo Método de Pago' }}</h3>
+        <button class="close-button" @click="$emit('close')">
+          <XIcon />
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form @submit.prevent="handleSubmit" class="payment-form">
+          <div class="form-group">
+            <label for="payment-type">Tipo de Método de Pago</label>
+            <select v-model="localPayment.method" id="payment-type" class="form-input" required>
+              <option value="credit-card">Tarjeta de Crédito</option>
+              <option value="paypal">PayPal</option>
+              <option value="apple-pay">Apple Pay</option>
+              <option value="google-pay">Google Pay</option>
+              <option value="bank-transfer">Transferencia Bancaria</option>
+            </select>
           </div>
-        </div>
-        <div class="payment-actions">
-          <button class="edit-button">Editar</button>
-          <button class="delete-button">Eliminar</button>
-        </div>
-      </div>
-      
-      <button class="add-payment-button">
-        <PlusIcon class="add-icon" />
-        Añadir método de pago
-      </button>
-    </div>
-    
-    <div class="bank-account">
-      <h4>Cuenta bancaria</h4>
-      
-      <div class="form-group">
-        <label for="bank-name">Nombre del banco</label>
-        <input id="bank-name" type="text" v-model="payment.bankName" class="form-input" />
-      </div>
-      
-      <div class="form-group">
-        <label for="account-holder">Titular de la cuenta</label>
-        <input id="account-holder" type="text" v-model="payment.accountHolder" class="form-input" />
-      </div>
-      
-      <div class="form-group">
-        <label for="iban">IBAN</label>
-        <input id="iban" type="text" v-model="payment.iban" class="form-input" />
-      </div>
-      
-      <div class="form-actions">
-        <button class="save-button">Guardar información bancaria</button>
+
+          <div v-if="localPayment.method === 'credit-card'">
+            <div class="form-group">
+              <label for="card-number">Número de tarjeta</label>
+              <input
+                id="card-number"
+                type="text"
+                v-model="localPayment.cardNumber"
+                required
+                class="form-input"
+                placeholder="Número de tarjeta"
+                pattern="^[0-9]{16}$"
+                title="El número de tarjeta debe tener 16 dígitos"
+              />
+              <small v-if="!isValidCardNumber && formSubmitted" class="error-message">Número de tarjeta inválido</small>
+            </div>
+            <div class="form-group">
+              <label for="expiry-date">Fecha de expiración</label>
+              <input
+                id="expiry-date"
+                type="month"
+                v-model="localPayment.expiryDate"
+                required
+                class="form-input"
+                min="2025-01"
+              />
+            </div>
+            <div class="form-group">
+              <label for="cvv">CVV</label>
+              <input
+                id="cvv"
+                type="text"
+                v-model="localPayment.cvv"
+                required
+                class="form-input"
+                placeholder="CVV"
+                pattern="^[0-9]{3,4}$"
+                title="El CVV debe ser de 3 o 4 dígitos"
+              />
+            </div>
+          </div>
+
+          <div v-if="localPayment.method === 'paypal'">
+            <div class="form-group">
+              <label for="paypal-email">Correo electrónico de PayPal</label>
+              <input
+                id="paypal-email"
+                type="email"
+                v-model="localPayment.paypalEmail"
+                required
+                class="form-input"
+                placeholder="Correo electrónico asociado a PayPal"
+                :class="{'input-error': !isValidPaypalEmail && formSubmitted}"
+              />
+              <small v-if="!isValidPaypalEmail && formSubmitted" class="error-message">Correo electrónico inválido</small>
+            </div>
+          </div>
+
+          <div v-if="localPayment.method === 'apple-pay'">
+            <div class="form-group">
+              <label for="apple-id">ID de Apple</label>
+              <input
+                id="apple-id"
+                type="email"
+                v-model="localPayment.appleId"
+                required
+                class="form-input"
+                placeholder="Correo de Apple ID"
+                :class="{'input-error': !isValidAppleId && formSubmitted}"
+              />
+              <small v-if="!isValidAppleId && formSubmitted" class="error-message">Correo electrónico inválido</small>
+            </div>
+          </div>
+
+          <div v-if="localPayment.method === 'google-pay'">
+            <div class="form-group">
+              <label for="google-email">Correo electrónico de Google Pay</label>
+              <input
+                id="google-email"
+                type="email"
+                v-model="localPayment.googleEmail"
+                required
+                class="form-input"
+                placeholder="Correo asociado a Google Pay"
+                :class="{'input-error': !isValidGoogleEmail && formSubmitted}"
+              />
+              <small v-if="!isValidGoogleEmail && formSubmitted" class="error-message">Correo electrónico inválido</small>
+            </div>
+          </div>
+
+          <div v-if="localPayment.method === 'bank-transfer'">
+            <div class="form-group">
+              <label for="bank-account">Número de cuenta bancaria</label>
+              <input
+                id="bank-account"
+                type="text"
+                v-model="localPayment.bankAccount"
+                required
+                class="form-input"
+                placeholder="Número de cuenta bancaria"
+              />
+            </div>
+            <div class="form-group">
+              <label for="bank-iban">IBAN</label>
+              <input
+                id="bank-iban"
+                type="text"
+                v-model="localPayment.bankIban"
+                required
+                class="form-input"
+                placeholder="Código IBAN"
+                pattern="^[A-Z0-9]{2}[A-Z0-9]{4}[A-Z0-9]{10}$"
+                title="El IBAN debe tener el formato correcto"
+              />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="cancel-button" @click="$emit('close')">Cancelar</button>
+            <button type="submit" class="submit-button" :disabled="isSubmitDisabled">{{ isEditMode ? 'Guardar Cambios' : 'Añadir Método de Pago' }}</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { CreditCardIcon, PlusIcon } from 'lucide-vue-next';
+import { ref, computed } from 'vue'
+import { XIcon } from 'lucide-vue-next'
 
-const payment = ref({
-  bankName: 'Banco Santander',
-  accountHolder: 'Carlos Rodríguez',
-  iban: 'ES91 2100 0418 4502 0005 1332'
-});
+const props = defineProps({
+  visible: Boolean,
+  isEditMode: Boolean
+})
+
+const emit = defineEmits(['submit', 'close'])
+
+const localPayment = ref({
+  method: 'credit-card',
+  cardNumber: '',
+  expiryDate: '',
+  cvv: '',
+  paypalEmail: '',
+  appleId: '',
+  googleEmail: '',
+  bankAccount: '',
+  bankIban: ''
+})
+
+const formSubmitted = ref(false)
+
+// Validaciones
+const isValidCardNumber = computed(() => /^[0-9]{16}$/.test(localPayment.value.cardNumber))
+const isValidPaypalEmail = computed(() => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(localPayment.value.paypalEmail))
+const isValidAppleId = computed(() => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(localPayment.value.appleId))
+const isValidGoogleEmail = computed(() => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(localPayment.value.googleEmail))
+
+const isSubmitDisabled = computed(() => !(isValidCardNumber && isValidPaypalEmail && isValidAppleId && isValidGoogleEmail))
+
+const handleSubmit = () => {
+  formSubmitted.value = true
+  emit('submit', { ...localPayment.value })
+}
 </script>
 
 <style scoped>
-.settings-panel {
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
   max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
-.panel-title {
-  font-size: 1.2rem;
-  color: #003580;
-  margin: 0 0 1.5rem;
-}
-
-.payment-methods {
-  margin-bottom: 2rem;
-}
-
-.payment-methods h4, .bank-account h4 {
-  font-size: 1.1rem;
-  color: #003580;
-  margin: 0 0 1rem;
-}
-
-.payment-method {
+.modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  border: 1px solid #eee;
-  border-radius: 4px;
-  margin-bottom: 1rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
 }
 
-.payment-info {
-  display: flex;
-  align-items: center;
-}
-
-.payment-icon {
-  width: 24px;
-  height: 24px;
-  color: #0071c2;
-  margin-right: 1rem;
-}
-
-.payment-info h5 {
-  font-size: 1rem;
-  margin: 0 0 0.25rem;
-}
-
-.payment-info p {
-  font-size: 0.9rem;
-  color: #666;
+.modal-header h3 {
+  font-size: 1.2rem;
+  color: #003580;
   margin: 0;
 }
 
-.payment-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.edit-button, .delete-button {
+.close-button {
   background: none;
   border: none;
-  font-size: 0.9rem;
+  color: #666;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
   transition: background-color 0.3s;
 }
 
-.edit-button {
-  color: #0071c2;
+.close-button:hover {
+  background-color: #f5f5f5;
 }
 
-.edit-button:hover {
-  background-color: #e6f0ff;
+.modal-body {
+  padding: 1.5rem;
 }
 
-.delete-button {
-  color: #e41c00;
-}
-
-.delete-button:hover {
-  background-color: #fff2f0;
-}
-
-.add-payment-button {
+.payment-form {
   display: flex;
-  align-items: center;
-  background: none;
-  border: 1px dashed #ccc;
-  width: 100%;
-  padding: 0.75rem;
-  border-radius: 4px;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-group label {
   font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.form-input, .form-textarea {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.form-textarea {
+  resize: vertical;
+}
+
+.error-message {
+  color: #f44336;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.submit-button,
+.cancel-button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
   cursor: pointer;
-  transition: border-color 0.3s;
-  justify-content: center;
+  font-size: 0.875rem;
 }
 
-.add-payment-button:hover {
-  border-color: #0071c2;
-}
-
-.add-payment-button .add-icon {
-  width: 16px;
-  height: 16px;
-  margin-right: 0.5rem;
-}
-
-.save-button {
+.submit-button {
   background-color: #0071c2;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 1rem;
 }
 
-.save-button:hover {
-  background-color: #005999;
+.cancel-button {
+  background-color: white;
+  color: #666;
+  border: 1px solid #ccc;
+}
+
+.submit-button:hover {
+  background-color: #005fa3;
+}
+
+.cancel-button:hover {
+  background-color: #f5f5f5;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
 }
 </style>
