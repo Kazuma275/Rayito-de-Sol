@@ -22,7 +22,7 @@
     
     <div class="header-actions">
       <!-- Cambiamos la ruta de ayuda a /manage/help -->
-      <router-link to="/manage/help" class="help-button" @click="changeTab('help')">
+      <router-link to="/manage/help" class="help-button" @click="changeTab('/help')">
         <HelpCircleIcon class="help-icon" />
         <span class="help-link">Ayuda</span>
       </router-link>

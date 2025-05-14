@@ -45,7 +45,11 @@ const routes = [
     name: "Terms",
     component: TermsConditions,
   },
-  // Eliminamos la ruta independiente /help
+  {
+    path: "/help",
+    name: "Help",
+    component: HelpSupportPage,
+  },
   {
     path: "/manage",
     component: PropertyManagement,
@@ -83,11 +87,6 @@ const routes = [
         path: "settings",
         name: "Settings",
         component: SettingsPage,
-      },
-      {
-        path: "help",
-        name: "Help",
-        component: HelpSupportPage,
       },
     ],
   },
