@@ -27,13 +27,13 @@
             </div>
           </div>
           
-            <div class="stat-card">
-              <TrendingUpIcon class="stat-icon" />
-              <div class="stat-content">
-                <h3 class="stat-title">Tasa de Ocupación</h3>
-                <p class="stat-value">{{ occupancyRate }}%</p> <!-- Dinámico -->
-              </div>
+          <div class="stat-card">
+            <TrendingUpIcon class="stat-icon" />
+            <div class="stat-content">
+              <h3 class="stat-title">Tasa de Ocupación</h3>
+              <p class="stat-value">{{ occupancyRate }}%</p> <!-- Dinámico -->
             </div>
+          </div>
           
           <div class="stat-card">
             <EuroIcon class="stat-icon" />
@@ -51,23 +51,25 @@
               <router-link to="/manage/bookings" class="view-all-button">Ver todas</router-link>
             </div>
             <div v-if="upcomingBookings.length > 0" class="upcoming-bookings">
-              <div v-for="(booking, index) in upcomingBookings" :key="index" class="booking-item">
-                <div class="booking-property">
-                  <img :src="getPropertyById(booking.propertyId).image" alt="Property" class="booking-image" />
-                  <div>
-                    <h4>{{ getPropertyById(booking.propertyId).name }}</h4>
-                    <p class="booking-dates">{{ booking.checkIn }} - {{ booking.checkOut }}</p>
-                  </div>
+            <div v-for="booking in upcomingBookings" :key="booking.id">
+              <div class="booking-property">
+                <img :src="getPropertyById(booking.property_id).image" alt="Property" class="booking-image" />
+                <div>
+                  <h4>{{ getPropertyById(booking.property_id).name }}</h4>
+                  <p class="booking-dates">
+                    {{ formatDate(booking.check_in) }} - {{ formatDate(booking.check_out) }}
+                  </p>
                 </div>
-                <div class="booking-guest">
-                  <UserIcon class="guest-icon" />
-                  <div>
-                    <p class="guest-name">{{ booking.guestName }}</p>
-                    <p class="guest-info">{{ booking.guests }} huéspedes</p>
-                  </div>
+              </div>
+              <div class="booking-guest">
+                <UserIcon class="guest-icon" />
+                <div>
+                  <p class="guest-name">{{ booking.guest_name }}</p>
+                  <p class="guest-info">{{ booking.guests }} huéspedes</p>
                 </div>
               </div>
             </div>
+          </div>
             <div v-else class="empty-state">
               <CalendarOffIcon class="empty-icon" />
               <p>No hay reservas próximas</p>
@@ -79,19 +81,19 @@
               <h3>Mensajes Recientes</h3>
               <router-link to="/manage/messages" class="view-all-button">Ver todos</router-link>
             </div>
-            <div v-if="messages.length > 0" class="messages-list">
-              <div v-for="(message, index) in messages" :key="index" class="message-item">
-                <div class="message-sender">
-                  <UserIcon class="message-icon" />
-                  <div>
-                    <h4>{{ message.sender }}</h4>
-                    <p class="message-property">{{ getPropertyById(message.propertyId).name }}</p>
-                  </div>
+            <div v-if="recentMessages.length > 0" class="messages-list">
+            <div v-for="message in recentMessages" :key="message.id" class="message-item">
+              <div class="message-sender">
+                <UserIcon class="message-icon" />
+                <div>
+                  <h4>{{ message.sender_name }}</h4>
+                  <p class="message-property">{{ getPropertyById(message.property_id).name }}</p>
                 </div>
-                <p class="message-preview">{{ message.text.substring(0, 60) }}{{ message.text.length > 60 ? '...' : '' }}</p>
-                <p class="message-time">{{ message.time }}</p>
               </div>
+              <p class="message-preview">{{ message.text.substring(0, 60) }}{{ message.text.length > 60 ? '...' : '' }}</p>
+              <p class="message-time">{{ formatDateTime(message.created_at) }}</p>
             </div>
+          </div>
             <div v-else class="empty-state">
               <MailIcon class="empty-icon" />
               <p>No hay mensajes nuevos</p>
@@ -767,37 +769,81 @@ import {
   ChevronDownIcon
 } from 'lucide-vue-next';
 
+// Obtén el token del store/user.js
+/* CAMBIAR */
+import { useUserStore } from '../stores/user'
+import axios from 'axios';
+
 // Get router and route
 const router = useRouter();
 const route = useRoute();
+const userStore = useUserStore();
 const showPropertyModal = ref(false)
 const isEditMode = ref(false)
 const currentProperty = ref({})
 const avatarInput = ref(null);
 const previewImage = ref(null);
 
-
-// Settings
-
-const localSettings = ref({
-  profile: {
-    name: 'Carlos',
-    lastname: 'Rodríguez',
-    email: 'carlos@example.com',
-    phone: '+34 612 345 678',
-    avatar: null,
-  },
-  notifications: {
-    newBookingEmail: true,
-    newMessageEmail: true,
-    newBookingSMS: false,
-  },
-  payment: {
-    bankName: 'Banco Santander',
-    accountHolder: 'Carlos Rodríguez',
-    iban: 'ES91 2100 0418 4502 0005 1332',
+// Función para configurar headers con el token
+const apiHeaders = () => ({
+  headers: {
+    Authorization: `Bearer ${userStore.token}`,
   }
 });
+
+// Cargar datos al montar el componente
+onMounted(async () => {
+  try {
+    const [propsRes, bookingsRes, messagesRes] = await Promise.all([
+      axios.get('/api/properties', apiHeaders()),
+      axios.get('/api/bookings', apiHeaders()),
+      axios.get('/api/messages', apiHeaders()),
+    ]);
+    properties.value = propsRes.data;
+    allBookings.value = bookingsRes.data;
+    messages.value = messagesRes.data;
+  } catch (err) {
+    // Maneja errores aquí
+    console.error('Error cargando datos del dashboard', err);
+  }
+});
+
+// Settings
+// Creamos un localSettings reactivo para edición en formularios
+const localSettings = ref({
+  profile: {
+    name: '',
+    lastname: '',
+    email: '',
+    phone: '',
+    avatar: null
+  },
+  notifications: {
+    newBookingEmail: false,
+    newMessageEmail: false,
+    newBookingSMS: false
+  },
+  payment: {
+    bankName: '',
+    accountHolder: '',
+    iban: ''
+  }
+});
+
+// Al montar, inicializamos con los datos reales del usuario
+onMounted(() => {
+  if (userStore.user) {
+    localSettings.value.profile = {
+      name: userStore.user.name || '',
+      lastname: userStore.user.lastname || '',
+      email: userStore.user.email || '',
+      phone: userStore.user.phone || '',
+      avatar: userStore.user.avatar || null
+    }
+    // Si tienes settings de notificaciones/pago en tu backend, rellénalos aquí también
+  }
+})
+
 
 function triggerFileInput() {
   avatarInput.value.click();
@@ -811,27 +857,25 @@ function handleAvatarChange(event) {
   }
 }
 
-async function saveProfile() {
-  const formData = new FormData();
-  formData.append("name", localSettings.value.profile.name);
-  formData.append("lastname", localSettings.value.profile.lastname);
-  formData.append("email", localSettings.value.profile.email);
-  formData.append("phone", localSettings.value.profile.phone);
-
-  if (localSettings.value.profile.avatar) {
-    formData.append("avatar", localSettings.value.profile.avatar);
-  }
-
+// Esta función se llama cuando el usuario guarda el perfil
+const saveProfile = async () => {
   try {
-    const response = await fetch('/api/profile/update', {
-      method: 'POST',
-      body: formData,
-    });
-
-    const result = await response.json();
-    console.log('Perfil actualizado', result);
-  } catch (error) {
-    console.error('Error al guardar el perfil:', error);
+    // Aquí 'localSettings.value.profile' son los datos a actualizar
+    const response = await axios.patch(
+      '/api/user/profile',
+      localSettings.value.profile,
+      {
+        headers: {
+          Authorization: `Bearer ${userStore.token}` // El token viene de tu store
+        }
+      }
+    )
+    // Actualiza el usuario en el store si quieres
+    userStore.setUser(response.data.user)
+    alert('¡Perfil guardado correctamente!')
+  } catch (err) {
+    alert('Ocurrió un error al guardar el perfil')
+    console.error(err)
   }
 }
 
@@ -967,110 +1011,85 @@ onMounted(() => {
 });
 
 // Properties data
-const properties = ref([
-  {
-    id: 1,
-    name: 'Apartamento Vista al Mar',
-    location: 'Playa de Calahonda, Mijas Costa',
-    bedrooms: 2,
-    capacity: 4,
-    price: 120,
-    image: '/placeholder.svg?height=300&width=400',
-    description: 'Hermoso apartamento con vistas al mar Mediterráneo.',
-    status: 'active',
-    statusText: 'Activo',
-    amenities: ['wifi', 'pool', 'parking', 'ac'],
-  },
-  {
-    id: 2,
-    name: 'Ático con Terraza',
-    location: 'Puerto Banús, Marbella',
-    bedrooms: 3,
-    capacity: 6,
-    price: 180,
-    image: '/placeholder.svg?height=300&width=400',
-    description: 'Lujoso ático con amplia terraza y vistas panorámicas.',
-    status: 'inactive',
-    statusText: 'Inactivo',
-    amenities: ['wifi', 'pool', 'parking', 'ac', 'gym']
-  }
-]);
+const properties = ref([]);
 
 // Bookings data
-const allBookings = ref([
-  {
-    id: 'B1234',
-    propertyId: 1,
-    guestName: 'María García',
-    guests: 3,
-    checkIn: '15 Jun 2023',
-    checkOut: '22 Jun 2023',
-    total: 890,
-    status: 'completed',
-    statusText: 'Completada'
-  },
-  {
-    id: 'B5678',
-    propertyId: 1,
-    guestName: 'Juan Pérez',
-    guests: 2,
-    checkIn: '10 Aug 2023',
-    checkOut: '17 Aug 2023',
-    total: 980,
-    status: 'confirmed',
-    statusText: 'Confirmada'
-  },
-  {
-    id: 'B9012',
-    propertyId: 2,
-    guestName: 'Ana Martínez',
-    guests: 4,
-    checkIn: '5 Sep 2023',
-    checkOut: '12 Sep 2023',
-    total: 1260,
-    status: 'pending',
-    statusText: 'Pendiente'
-  }
-]);
+const allBookings = ref([]);
 
 // Dashboard stats
+// Reservas Activas (status === 'confirmed')
 const activeBookings = computed(() => {
   return allBookings.value.filter(booking => booking.status === 'confirmed').length;
 });
 
+// Tasa de Ocupación (%)
+// Supongamos que ocupación = noches reservadas / noches disponibles en los últimos 30 días
+function getDaysBetween(start, end) {
+  const msPerDay = 1000 * 60 * 60 * 24;
+  return Math.max(0, Math.ceil((new Date(end) - new Date(start)) / msPerDay));
+}
 const occupancyRate = computed(() => {
-  return 75; // This would be calculated based on actual data
+  const now = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(now.getDate() - 30);
+
+  // Total noches disponibles = propiedades * 30 días
+  const totalNights = properties.value.length * 30;
+  if (totalNights === 0) return 0;
+
+  // Noches reservadas en los últimos 30 días
+  let reservedNights = 0;
+  allBookings.value.forEach(booking => {
+    if (booking.status !== 'confirmed') return;
+    // Ajusta las fechas al rango de los últimos 30 días
+    const checkIn = new Date(booking.check_in);
+    const checkOut = new Date(booking.check_out);
+    const start = checkIn < thirtyDaysAgo ? thirtyDaysAgo : checkIn;
+    const end = checkOut > now ? now : checkOut;
+    reservedNights += getDaysBetween(start, end);
+  });
+  return Math.round((reservedNights / totalNights) * 100);
 });
 
+// Ingresos últimos 30 días
 const monthlyRevenue = computed(() => {
-  return 2130; // This would be calculated based on actual data
+  const now = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(now.getDate() - 30);
+
+  return allBookings.value
+    .filter(booking => booking.status === 'confirmed')
+    .filter(booking => {
+      // Si cualquier parte de la reserva cae en los últimos 30 días
+      const checkIn = new Date(booking.check_in);
+      const checkOut = new Date(booking.check_out);
+      return checkOut >= thirtyDaysAgo && checkIn <= now;
+    })
+    .reduce((sum, booking) => sum + Number(booking.total || 0), 0);
 });
 
 const upcomingBookings = computed(() => {
+  // Solo las próximas reservas confirmadas, ordenadas por fecha de check-in
+  const now = new Date();
   return allBookings.value
-    .filter(booking => booking.status === 'confirmed')
+    .filter(b => b.status === 'confirmed' && new Date(b.check_in) >= now)
+    .sort((a, b) => new Date(a.check_in) - new Date(b.check_in))
     .slice(0, 3);
 });
 
+const recentMessages = computed(() => {
+  return messages.value
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, 5);
+});
+
 // Messages data
-const messages = ref([
-  {
-    sender: 'Juan Pérez',
-    propertyId: 1,
-    text: '¿Podría hacer el check-in un poco antes? Llegaremos alrededor de las 13:00.',
-    time: 'Hace 2 horas'
-  },
-  {
-    sender: 'Ana Martínez',
-    propertyId: 2,
-    text: 'Gracias por aceptar mi reserva. ¿Hay algún restaurante que recomiende cerca del apartamento?',
-    time: 'Hace 1 día'
-  }
-]);
+const messages = ref([]);
 
 // Property functions
 const getPropertyById = (id) => {
-  return properties.value.find(property => property.id === id) || { name: 'Propiedad no encontrada', image: '/placeholder.svg?height=100&width=100' };
+  return properties.value.find(property => property.id === id)
+    || { name: 'Propiedad no encontrada', image: '/placeholder.svg?height=100&width=100' };
 };
 
 // Add property modal

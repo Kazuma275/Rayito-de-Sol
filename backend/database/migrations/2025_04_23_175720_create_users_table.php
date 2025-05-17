@@ -12,7 +12,7 @@ class CreateUsersTable extends Migration
             $table->id(); // user_id
             $table->string('username', 50);
             $table->string('email', 100)->unique();
-            $table->string('password', 255);
+            $table->string('password', 60);
             $table->string('token_verificacion', 255)->nullable();
             $table->boolean('verificado')->default(0);
             $table->timestamp('fecha_registro')->useCurrent();

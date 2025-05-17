@@ -15,8 +15,7 @@ class AuthController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function register(Request $request)
-    {
+        public function register(Request $request) {
         // Validar la entrada
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -55,4 +54,5 @@ class AuthController extends Controller
             ], 500); // 500 Internal Server Error
         }
     }
+
 }

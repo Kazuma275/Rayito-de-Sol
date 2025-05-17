@@ -83,10 +83,11 @@ import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { EyeIcon, EyeOffIcon, LoaderIcon } from 'lucide-vue-next';
 import axios from 'axios';
-
+/* CAMBIAR */
+import { useUserStore } from '../../../stores/user';
 
 const router = useRouter();
-
+const userStore = useUserStore()
 const formData = reactive({
   email: '',
   password: '',
@@ -138,6 +139,9 @@ const handleSubmit = async () => {
 
     // Almacena el token de la respuesta (si es un JWT u otro tipo de token)
     localStorage.setItem('auth_token', response.data.token);  
+    localStorage.setItem('auth_user', JSON.stringify(response.data.user));
+    userStore.setUser(response.data.user)
+    userStore.setToken(response.data.token)
 
     // Redirigir al main 
     router.push('/main');
