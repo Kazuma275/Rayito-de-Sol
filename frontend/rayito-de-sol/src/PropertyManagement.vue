@@ -1119,10 +1119,26 @@ const showAddPropertyModal = ref(false);
     }
   };
 
-    const addProperty = () => {
-    newProperty.value.id = Date.now(); // ID único simple
-    properties.value.push({ ...newProperty.value });
-    // Resetear
+const addProperty = async () => {
+  try {
+    const formData = new FormData();
+    Object.entries(newProperty.value).forEach(([key, val]) => {
+      // Solo agregamos la imagen si es un archivo, no en base64
+      // Si tienes la imagen como archivo, usa: formData.append('image', newProperty.value.imageFile)
+      if (val !== null) formData.append(key, val);
+    });
+
+    const response = await fetch('http://localhost:8000/api/properties', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) throw new Error('No se pudo guardar la propiedad');
+    const savedProperty = await response.json();
+
+    properties.value.push(savedProperty);
+
+    // Reset
     newProperty.value = {
       id: null,
       name: '',
@@ -1137,7 +1153,10 @@ const showAddPropertyModal = ref(false);
       statusText: 'Activo',
     };
     showAddPropertyModal.value = false;
-  };
+  } catch (error) {
+    alert('Error al guardar: ' + error.message);
+  }
+};
 
 const amenities = [
   { id: 'wifi', name: 'WiFi' },
