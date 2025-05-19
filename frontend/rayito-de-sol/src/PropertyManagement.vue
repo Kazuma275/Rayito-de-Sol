@@ -101,160 +101,154 @@
           </div>
         </div>
       </section>
+
       
-      <!-- Properties -->
-      <section v-if="activeTab === 'properties'" class="properties-section">
-        <div class="section-header">
-          <h2 class="section-title">Mis Propiedades</h2>
-          <button class="add-button" @click="showAddPropertyModal = true">
-            <PlusIcon class="add-icon" />
-            Añadir Propiedad
-          </button>
-        </div>
+      <div v-if="isLoading" class="loading-message">
         
+      </div>
+      <div v-else>
         <div v-if="properties.length > 0" class="properties-grid">
-          <div v-for="(property, index) in properties" :key="index" class="property-card">
-            <div class="property-image-container">
-              <img :src="property.image" alt="Property" class="property-image" />
-              <div class="property-status" :class="property.status">
-                {{ property.statusText }}
-              </div>
-            </div>
-            <div class="property-content">
-              <h3 class="property-name">{{ property.name }}</h3>
-              <div class="property-location">
-                <MapPinIcon class="location-icon" />
-                <span>{{ property.location }}</span>
-              </div>
-              <div class="property-details">
-                <div class="property-detail">
-                  <BedIcon class="detail-icon" />
-                  <span>{{ property.bedrooms }} dormitorios</span>
-                </div>
-                <div class="property-detail">
-                  <UsersIcon class="detail-icon" />
-                  <span>{{ property.capacity }} huéspedes</span>
-                </div>
-                <div class="property-detail">
-                  <EuroIcon class="detail-icon" />
-                  <span>€{{ property.price }}/noche</span>
-                </div>
-                <div class="property-description">
-                  <p>{{ property.description }}</p>
-                </div>
-              </div>
-            </div>
-<div class="property-actions">
-  <button class="action-button edit" @click="openEditModal(property.id)">
-    <EditIcon class="action-icon" /> <!-- ícono solamente -->
-    Editar
-  </button>
-  
-  <EditPropertyModal
-    :visible="showPropertyModal"
-    :property="currentProperty"
-    :isEditMode="isEditMode"
-    @submit="saveProperty"
-    @close="showPropertyModal = false"
-  />
-  
-  <button class="action-button calendar" @click="viewCalendar(property.id)">
-    <CalendarIcon class="action-icon" />
-    Calendario
-  </button>
+          <!-- tu v-for y las tarjetas aquí -->
+        </div>
+        <div v-else class="no-properties-message">
+          No hay propiedades para mostrar.
+        </div>
+      </div>
+      
+<!-- Properties -->
+<section v-if="activeTab === 'properties'" class="properties-section">
+  <div class="section-header">
+    <h2 class="section-title">Mis Propiedades</h2>
+    <button class="add-button" @click="openAddModal">
+      <PlusIcon class="add-icon" />
+      Añadir Propiedad
+    </button>
+  </div>
+
+  <!-- MENSAJE DE CARGA -->
+  <div v-if="isLoading" class="loading-properties">
+    <svg class="spinner" viewBox="0 0 50 50">
+      <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"/>
+    </svg>
+    <span class="loading-text">Esperando... Cargando propiedades</span>
+  </div>
+
+  <!-- GRID DE PROPIEDADES -->
+  <div v-else-if="properties.length > 0" class="properties-grid">
+    <div v-for="(property, index) in properties" :key="index" class="property-card">
+      <div class="property-image-container">
+        <img :src="property.image" alt="Property" class="property-image" />
+        <div class="property-status" :class="property.status">
+          {{ property.statusText }}
+        </div>
+      </div>
+      <div class="property-content">
+        <h3 class="property-name">{{ property.name }}</h3>
+        <div class="property-location">
+          <span>{{ property.location }}</span>
+        </div>
+        <div class="property-details">
+          <div class="property-detail">
+            <span>{{ property.bedrooms }} dormitorios</span>
+          </div>
+          <div class="property-detail">
+            <span>{{ property.capacity }} huéspedes</span>
+          </div>
+          <div class="property-detail">
+            <span>€{{ property.price }}/noche</span>
+          </div>
+          <div class="property-description">
+            <p>{{ property.description }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="property-actions">
+        <button class="action-button edit" @click="openEditModal(property)">
+          <EditIcon class="action-icon" />
+          Editar
+        </button>
+        <button class="action-button calendar" @click="viewCalendar(property.id)">
+          Calendario
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VACÍO, NO HAY PROPIEDADES -->
+  <div v-else class="empty-properties">
+    <HomeIcon class="empty-icon" />
+    <h3>No tienes propiedades registradas</h3>
+    <p>Añade tu primera propiedad para empezar a recibir reservas</p>
+    <button class="add-property-button" @click="openAddModal">
+      Añadir Propiedad
+    </button>
+  </div>
+</section>
+
+<!-- MODAL DE CREAR/EDITAR PROPIEDAD -->
+<div v-if="showPropertyModal" class="modal-overlay" @click="closeModal">
+  <div class="modal-content" @click.stop>
+    <h2>{{ isEditMode ? 'Editar' : 'Añadir' }} Propiedad</h2>
+    <form @submit.prevent="saveProperty">
+      <div class="form-group">
+        <label for="property-name">Nombre de la propiedad</label>
+        <input id="property-name" v-model="currentProperty.name" type="text" class="form-input" required />
+      </div>
+      <div class="form-group">
+        <label for="property-location">Ubicación</label>
+        <input id="property-location" v-model="currentProperty.location" type="text" class="form-input" required />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="property-bedrooms">Dormitorios</label>
+          <input id="property-bedrooms" v-model="currentProperty.bedrooms" type="number" min="1" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label for="property-capacity">Capacidad (huéspedes)</label>
+          <input id="property-capacity" v-model="currentProperty.capacity" type="number" min="1" class="form-input" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="property-price">Precio por noche (€)</label>
+        <input id="property-price" v-model="currentProperty.price" type="number" min="1" class="form-input" required />
+      </div>
+      <div class="form-group">
+        <label for="property-description">Descripción</label>
+        <textarea id="property-description" v-model="currentProperty.description" class="form-textarea" rows="4" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Fotos</label>
+        <div class="photo-upload" @click="$refs.imageInput.click()">
+          <div class="upload-placeholder" v-if="!currentProperty.image">
+            <UploadIcon class="upload-icon" />
+            <span>Subir foto</span>
+          </div>
+          <img v-else :src="currentProperty.image" class="uploaded-image-preview" />
+          <input
+            ref="imageInput"
+            type="file"
+            accept="image/*"
+            @change="handleImageUpload"
+            style="display: none"
+          />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Servicios</label>
+        <div class="amenities-grid">
+          <div v-for="(amenity, index) in amenities" :key="index" class="amenity-checkbox">
+            <input :id="`amenity-${index}`" type="checkbox" v-model="currentProperty.amenities" :value="amenity.id" />
+            <label :for="`amenity-${index}`">{{ amenity.name }}</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="cancel-button" @click="closeModal">Cancelar</button>
+        <button type="submit" class="submit-button">{{ isEditMode ? 'Guardar Cambios' : 'Guardar Propiedad' }}</button>
+      </div>
+    </form>
+  </div>
 </div>
-          </div>
-        </div>
-        
-        <div v-else class="empty-properties">
-          <HomeIcon class="empty-icon" />
-          <h3>No tienes propiedades registradas</h3>
-          <p>Añade tu primera propiedad para empezar a recibir reservas</p>
-          <button class="add-property-button" @click="showAddPropertyModal = true">
-            Añadir Propiedad
-          </button>
-        </div>
-        
-        <!-- Add Property Modal -->
-        <div v-if="showAddPropertyModal" class="modal-overlay" @click="showAddPropertyModal = false">
-          <div class="modal-content" @click.stop>
-            <div class="modal-header">
-              <h3>Añadir Nueva Propiedad</h3>
-              <button class="close-button" @click="showAddPropertyModal = false">
-                <XIcon />
-              </button>
-            </div>
-            <div class="modal-body">
-              <form @submit.prevent="addProperty" class="property-form">
-                <div class="form-group">
-                  <label for="property-name">Nombre de la propiedad</label>
-                  <input id="property-name" v-model="newProperty.name" type="text" class="form-input" required />
-                </div>
-                
-                <div class="form-group">
-                  <label for="property-location">Ubicación</label>
-                  <input id="property-location" v-model="newProperty.location" type="text" class="form-input" required />
-                </div>
-                
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="property-bedrooms">Dormitorios</label>
-                    <input id="property-bedrooms" v-model="newProperty.bedrooms" type="number" min="1" class="form-input" required />
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="property-capacity">Capacidad (huéspedes)</label>
-                    <input id="property-capacity" v-model="newProperty.capacity" type="number" min="1" class="form-input" required />
-                  </div>
-                </div>
-                
-                <div class="form-group">
-                  <label for="property-price">Precio por noche (€)</label>
-                  <input id="property-price" v-model="newProperty.price" type="number" min="1" class="form-input" required />
-                </div>
-                
-                <div class="form-group">
-                  <label for="property-description">Descripción</label>
-                  <textarea id="property-description" v-model="newProperty.description" class="form-textarea" rows="4" required></textarea>
-                </div>
-                
-                <div class="form-group">
-                  <label>Fotos</label>
-                  <div class="photo-upload" @click="$refs.imageInput.click()">
-                    <div class="upload-placeholder" v-if="!newProperty.image">
-                      <UploadIcon class="upload-icon" />
-                      <span>Subir foto</span>
-                    </div>
-                    <img v-else :src="newProperty.image" class="uploaded-image-preview" />
-                    <input
-                      ref="imageInput"
-                      type="file"
-                      accept="image/*"
-                      @change="handleImageUpload"
-                      style="display: none"
-                    />
-                  </div>
-                </div>
-                
-                <div class="form-group">
-                  <label>Servicios</label>
-                  <div class="amenities-grid">
-                    <div v-for="(amenity, index) in amenities" :key="index" class="amenity-checkbox">
-                      <input :id="`amenity-${index}`" type="checkbox" v-model="newProperty.amenities" :value="amenity.id" />
-                      <label :for="`amenity-${index}`">{{ amenity.name }}</label>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="form-actions">
-                  <button type="button" class="cancel-button" @click="showAddPropertyModal = false">Cancelar</button>
-                  <button type="submit" class="submit-button">Guardar Propiedad</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
       
       <!-- Bookings -->
       <section v-if="activeTab === 'bookings'" class="bookings-section">
@@ -780,9 +774,23 @@ const route = useRoute();
 const userStore = useUserStore();
 const showPropertyModal = ref(false)
 const isEditMode = ref(false)
-const currentProperty = ref({})
+const currentProperty = ref({
+  id: null,
+  name: '',
+  location: '',
+  bedrooms: 1,
+  capacity: 1,
+  price: 0,
+  image: null,
+  description: '',
+  amenities: [],
+  status: 'active',
+  statusText: 'Activo'
+})
 const avatarInput = ref(null);
 const previewImage = ref(null);
+const showEditPropertyModal = ref(false)
+const propertyToEdit = ref(null)
 
 // Función para configurar headers con el token
 const apiHeaders = () => ({
@@ -790,6 +798,15 @@ const apiHeaders = () => ({
     Authorization: `Bearer ${userStore.token}`,
   }
 });
+
+function saveEdit() {
+  // Busca la propiedad original por id y actualízala
+  const idx = properties.value.findIndex(p => p.id === propertyToEdit.value.id)
+  if (idx !== -1) {
+    properties.value[idx] = { ...propertyToEdit.value }
+  }
+  showEditPropertyModal.value = false
+}
 
 // Cargar datos al montar el componente
 onMounted(async () => {
@@ -978,24 +995,21 @@ const openAddModal = () => {
   showPropertyModal.value = true
 }
 
-const openEditModal = (id) => {
-  const property = properties.value.find(p => p.id === id)
-  if (property) {
-    isEditMode.value = true
-    currentProperty.value = { ...property }
-    showPropertyModal.value = true
-  }
+const openEditModal = (property) => {
+  isEditMode.value = true
+  currentProperty.value = { ...property }
+  showPropertyModal.value = true
 }
 
 const saveProperty = (data) => {
   if (isEditMode.value) {
     const index = properties.value.findIndex(p => p.id === data.id)
     if (index !== -1) {
-      properties.value[index] = data
+      properties.value[index] = { ...data }
     }
   } else {
     data.id = Date.now()
-    properties.value.push(data)
+    properties.value.push({ ...data })
   }
   showPropertyModal.value = false
 }
@@ -1011,7 +1025,6 @@ onMounted(() => {
 });
 
 // Properties data
-const properties = ref([]);
 
 // Bookings data
 const allBookings = ref([]);
@@ -1093,20 +1106,42 @@ const getPropertyById = (id) => {
 };
 
 // Add property modal
+const properties = ref([]);
+const isLoading = ref(false);
 const showAddPropertyModal = ref(false);
-  const newProperty = ref({
-    id: null,
-    name: '',
-    location: '',
-    bedrooms: 1,
-    capacity: 1,
-    price: 0,
-    image: null,
-    description: '',
-    amenities: [],
-    status: 'active',
-    statusText: 'Activo',
-  });
+
+const newProperty = ref({
+  id: null,
+  name: '',
+  location: '',
+  bedrooms: 1,
+  capacity: 1,
+  price: 0,
+  image: null,
+  description: '',
+  amenities: [],
+  status: 'active',
+  statusText: 'Activo',
+});
+
+
+
+const fetchProperties = async () => {
+  isLoading.value = true;
+  try {
+    const response = await fetch('http://localhost:8000/api/properties');
+    if (!response.ok) throw new Error('No se pudieron cargar las propiedades');
+    properties.value = await response.json();
+  } catch (error) {
+    alert('Error al cargar propiedades: ' + error.message);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchProperties();
+});
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -1118,6 +1153,7 @@ const showAddPropertyModal = ref(false);
       reader.readAsDataURL(file);
     }
   };
+  
 
 const addProperty = async () => {
   try {
@@ -1929,27 +1965,61 @@ const changeTab = (tabId) => {
   background-color: #005999;
 }
 
+/* Estilos base de tu grid y tarjetas, ya los tienes */
+
+.loading-properties {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+.spinner .path {
+  stroke: #0071c2;
+  stroke-linecap: round;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 1.1rem;
+  color: #003580;
+  font-weight: 500;
+}
+
 /* Modal styles */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
 }
 
 .modal-content {
-  background-color: white;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 600px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  min-width: 320px;
+  max-width: 95vw;
   max-height: 90vh;
   overflow-y: auto;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  position: relative;
+  z-index: 10000;
 }
 
 .modal-header {

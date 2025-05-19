@@ -20,6 +20,13 @@
           <p>Accede al portal para gestionar tus propiedades y reservas</p>
           <button class="option-button">Acceder al Portal</button>
         </div>
+        
+        <div class="portal-option renters" @click="goToRentersPortal">
+          <KeyIcon class="option-icon" />
+          <h2>Portal de Inquilinos</h2>
+          <p>Busca y reserva apartamentos, gestiona tus reservas y pagos</p>
+          <button class="option-button">Acceder como Inquilino</button>
+        </div>
       </div>
     </div>
   </div>
@@ -30,7 +37,8 @@ import { useRouter } from 'vue-router';
 import { 
   SunIcon, 
   HomeIcon, 
-  BuildingIcon
+  BuildingIcon,
+  KeyIcon
 } from 'lucide-vue-next';
 
 const router = useRouter();
@@ -43,6 +51,11 @@ const goToWebsite = () => {
 const goToPortal = () => {
   // Navigate directly to the main page
   router.push('/login');
+};
+
+const goToRentersPortal = () => {
+  // Navigate to the renters portal login
+  router.push('/renters/login');
 };
 </script>
 
@@ -144,6 +157,11 @@ const goToPortal = () => {
 
 .option-button:hover {
   background-color: var(--primary-light, #0071c2);
+}
+
+/* Specific styling for the renters portal option */
+.portal-option.renters .option-icon {
+  color: var(--secondary-color, #feba02);
 }
 
 @media (max-width: 768px) {

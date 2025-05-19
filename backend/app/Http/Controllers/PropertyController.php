@@ -12,4 +12,8 @@ class PropertyController extends Controller
         $property = Property::create($request->all());
         return response()->json($property, 201);
     }
+    public function index()
+    {
+    return response()->json(Property::all());
+    }
 }

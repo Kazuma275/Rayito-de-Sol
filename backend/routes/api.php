@@ -22,3 +22,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // routes/api.php
 Route::post('/properties', [PropertyController::class, 'store']);
+Route::get('/properties', [PropertyController::class, 'index']);

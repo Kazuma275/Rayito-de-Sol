@@ -1,18 +1,17 @@
 <template>
-  <div class="app-container">
+  <div class="app-wrapper">
     <Header v-if="isMainPage" :user="user" :activeTab="activeTab" @changeTab="changeTab" />
-    
-    <!-- Este es el espacio donde se mostrarán las rutas y sus componentes -->
-    <div class="main-content">
-      <router-view></router-view> <!-- Aquí se renderizan las páginas según la ruta -->
-    </div>
-    
+
+    <main class="main-content" role="main" tabindex="-1">
+      <router-view />
+    </main>
+
     <Footer v-if="isMainPage" @changeTab="changeTab" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'; 
+import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import Header from './components/layout/Header.vue';
 import Footer from './components/layout/Footer.vue';
@@ -38,55 +37,68 @@ const isMainPage = computed(() => route.path === '/main');
   --border-color: #eee;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 html, body {
-  width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;  /* Evita el desplazamiento horizontal */
+  background: var(--light-gray);
+  color: var(--text-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  scroll-behavior: smooth;
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: var(--text-color);
-  background-color: var(--light-gray);
-  line-height: 1.6;
-  min-height: 100vh; /* Hace que el body ocupe toda la altura disponible */
+  min-height: 100vh;
 }
 
-.app-container {
+.app-wrapper {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;  /* Asegura que el contenedor ocupe toda la altura */
-  width: 100%; /* Asegura que ocupe todo el ancho */
+  background: var(--light-gray);
 }
 
 .main-content {
-  flex-grow: 1;  /* Hace que el contenido ocupe todo el espacio restante */
-  width: 100%; /* Asegura que ocupe todo el ancho disponible */
-  max-width: 100%; /* Elimina cualquier limitación de ancho */
-  margin: 0;  /* Elimina márgenes no deseados */
-  box-sizing: border-box; /* Asegura que padding no afecte el tamaño del contenedor */
+  flex: 1 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* No padding/margin aquí: el padding debe estar en el contenido de cada página */
 }
 
-footer {
-  background-color: #333;
-  color: white;
-  padding: 1rem;
+footer, .Footer {
+  flex-shrink: 0;
+  background: #333;
+  color: #fff;
+  padding: 1rem 0;
   text-align: center;
   width: 100%;
-  position: relative;
-  bottom: 0;
+  box-sizing: border-box;
 }
 
-footer p {
-  margin: 0;
+header, .Header {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Asegura que el contenido tenga fondo blanco consistente */
+.properties-section {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  padding: 2rem;
+  min-height: 60vh; /* Ajusta según diseño para evitar fondo blanco "hueco" */
+  width: 100%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
 }
 
 section {
@@ -97,16 +109,17 @@ section {
 
 /* Responsive adjustments */
 @media (max-width: 1280px) {
-  .main-content {
-    padding: 1.5rem;  /* Ajuste de padding en pantallas más pequeñas */
+  .properties-section {
+    padding: 1.5rem;
+    margin: 1.5rem;
   }
 }
 
 @media (max-width: 768px) {
-  .main-content {
-    padding: 1rem;  /* Ajuste de padding en dispositivos móviles */
+  .properties-section {
+    padding: 1rem;
+    margin: 1rem;
   }
-  
   .section-title {
     font-size: 1.5rem;
   }

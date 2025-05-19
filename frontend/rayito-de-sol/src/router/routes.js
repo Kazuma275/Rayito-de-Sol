@@ -13,6 +13,7 @@ import BookingTest from "@/components/views/BookingTest.vue"
 import TermsConditions from "@/components/settings/TermsConditions.vue"
 import LoginForm from "@/components/views/LoginForm.vue"
 import RegisterForm from "@/components/views/RegisterForm.vue"
+import RendersPortal from "@/RendersPortal.vue"
 
 const routes = [
   {
@@ -48,6 +49,27 @@ const routes = [
   {
     path: "/help",
     name: "Help",
+    component: HelpSupportPage,
+  },
+  {
+    path: "/renters/login",
+    name: "RenterPortal",
+    component: RendersPortal,
+  },
+  // Añadir rutas adicionales para evitar errores 404
+  {
+    path: "/renters/dashboard",
+    name: "RentersDashboard",
+    component: RendersPortal,
+  },
+  {
+    path: "/renters/messages",
+    name: "RentersMessages",
+    component: RendersPortal,
+  },
+  {
+    path: "/manage/help",
+    name: "ManageHelp",
     component: HelpSupportPage,
   },
   {
@@ -93,9 +115,8 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory('/portal/'), 
+  history: createWebHistory("/portal/"),
   routes,
 })
 
 export default router
-
