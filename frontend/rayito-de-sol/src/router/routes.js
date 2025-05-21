@@ -11,6 +11,17 @@ import SettingsPage from "@/components/settings/SettingsPage.vue"
 import HelpSupportPage from "@/components/help/HelpSupportPage.vue"
 import BookingTest from "@/components/views/BookingTest.vue"
 import TermsConditions from "@/components/settings/TermsConditions.vue"
+import LoginForm from "@/components/views/LoginForm.vue"
+import RegisterForm from "@/components/views/RegisterForm.vue"
+import RentersPortal from "@/RentersPortal.vue"
+import RentersLogin from "@/components/pages/RentersLogin.vue"
+import RentersDashboard from "@/components/pages/RentersDashboard.vue"
+import RentersSearch from "@/components/pages/RentersSearch.vue"
+import RentersBookings from "@/components/pages/RentersBookings.vue"
+import RentersFavorites from "@/components/pages/RentersFavorites.vue"
+import RentersMessages from "@/components/pages/RentersMessages.vue"
+import RentersProfile from "@/components/pages/RentersProfile.vue"
+import RentersSettings from "@/components/pages/RentersSettings.vue"
 
 const routes = [
   {
@@ -24,6 +35,16 @@ const routes = [
     component: MainPage,
   },
   {
+    path: "/login",
+    name: "Form",
+    component: LoginForm,
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: RegisterForm,
+  },
+  {
     path: "/booking-test",
     name: "BookingTest",
     component: BookingTest,
@@ -33,7 +54,64 @@ const routes = [
     name: "Terms",
     component: TermsConditions,
   },
-  // Eliminamos la ruta independiente /help
+  {
+    path: "/help",
+    name: "Help",
+    component: HelpSupportPage,
+  },
+  // Portal de inquilinos (login individual)
+  {
+    path: "/renters/login",
+    name: "RentersLogin",
+    component: RentersLogin,
+  },
+  // Resto del portal de inquilinos con layout
+  {
+    path: "/renters",
+    component: RentersPortal,
+    children: [
+      {
+        path: "",
+        redirect: "/renters/dashboard",
+      },
+      {
+        path: "dashboard",
+        name: "RentersDashboard",
+        component: RentersDashboard,
+      },
+      {
+        path: "search",
+        name: "RentersSearch",
+        component: RentersSearch,
+      },
+      {
+        path: "bookings",
+        name: "RentersBookings",
+        component: RentersBookings,
+      },
+      {
+        path: "favorites",
+        name: "RentersFavorites",
+        component: RentersFavorites,
+      },
+      {
+        path: "messages",
+        name: "RentersMessages",
+        component: RentersMessages,
+      },
+      {
+        path: "profile",
+        name: "RentersProfile",
+        component: RentersProfile,
+      },
+      {
+        path: "settings",
+        name: "RentersSettings",
+        component: RentersSettings,
+      },
+    ],
+  },
+  // Rutas del portal de propietarios
   {
     path: "/manage",
     component: PropertyManagement,
@@ -74,7 +152,7 @@ const routes = [
       },
       {
         path: "help",
-        name: "Help",
+        name: "ManageHelp",
         component: HelpSupportPage,
       },
     ],
@@ -82,9 +160,8 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory('/portal/'), 
+  history: createWebHistory("/portal/"),
   routes,
 })
 
 export default router
-

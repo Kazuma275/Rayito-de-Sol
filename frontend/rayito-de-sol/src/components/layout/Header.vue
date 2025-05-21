@@ -22,20 +22,20 @@
     
     <div class="header-actions">
       <!-- Cambiamos la ruta de ayuda a /manage/help -->
-      <router-link to="/manage/help" class="help-button" @click="changeTab('help')">
+      <router-link to="/manage/help" class="help-button" @click="changeTab('/help')">
         <HelpCircleIcon class="help-icon" />
         <span class="help-link">Ayuda</span>
       </router-link>
 
       <div class="user-menu">
         <button class="user-button" @click="toggleUserMenu">
-          <div v-if="user && user.avatar" class="user-avatar">
-            <img :src="user.avatar" alt="User avatar" />
-          </div>
-          <div v-else class="user-avatar-placeholder">
-            {{ user && user.name ? user.name.charAt(0) : 'U' }}
-          </div>
-          <span class="user-name">{{ user && user.name ? user.name : 'Usuario' }}</span>
+        <div v-if="user && user.avatar" class="user-avatar">
+          <img :src="user.avatar" alt="User avatar" />
+        </div>
+        <div v-else class="user-avatar-placeholder">
+          {{ user && user.username ? user.username.charAt(0) : 'U' }}
+        </div>
+        <span class="user-name">{{ user && user.username ? user.username : 'Usuario' }}</span>
           <ChevronDownIcon class="user-icon" />
         </button>
         
@@ -57,37 +57,37 @@
 
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useUserStore } from '../../../stores/user'; // Ajusta la ruta si es necesario
 import { SunIcon, ChevronDownIcon, SettingsIcon, LogOutIcon, HelpCircleIcon } from 'lucide-vue-next';
 
-const props = defineProps({
-user: {
-  type: Object,
-  default: () => ({
-    name: 'Usuario',
-    email: 'usuario@example.com',
-    avatar: null
-  })
-},
-activeTab: {
-  type: String,
-  default: 'dashboard'
-}
-});
+const userStore = useUserStore();
+const user = computed(() => userStore.user);
 
+const props = defineProps({
+  activeTab: {
+    type: String,
+    default: 'dashboard'
+  }
+});
 const emit = defineEmits(['changeTab']);
 
 const userMenuOpen = ref(false);
 
 const toggleUserMenu = () => {
-userMenuOpen.value = !userMenuOpen.value;
+  userMenuOpen.value = !userMenuOpen.value;
 };
 
 const changeTab = (tab) => {
-emit('changeTab', tab);
-if (userMenuOpen.value) {
-  userMenuOpen.value = false;
-}
+  emit('changeTab', tab);
+  if (userMenuOpen.value) {
+    userMenuOpen.value = false;
+  }
+};
+
+const logout = () => {
+  userStore.logout();
+  window.location.href = '/login'; // O usa router.push si prefieres
 };
 </script>
 

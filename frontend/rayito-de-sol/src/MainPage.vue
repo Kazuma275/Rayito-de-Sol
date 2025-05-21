@@ -22,14 +22,6 @@ const hoverMain = ref(false);
 // Background image from the provided URL
 const backgroundImage = 'https://sjc.microlink.io/-p-fwojbjDvRwpePN2Z_l13ojz0jiDJ0JuUgMOruCd9nTT0ju4uWBG4DHcKkOsBswI98iuf-0pgLjtPXh49xnQ.jpeg';
 
-// Navigation functions
-const goToRentalManagement = () => {
-  router.push('/manage');
-};
-
-const goToMainSite = () => {
-  window.location.href = 'https://rayitodesol.es';
-};
 </script>
 
 <style scoped>

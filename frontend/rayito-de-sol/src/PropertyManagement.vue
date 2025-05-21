@@ -31,7 +31,7 @@
             <TrendingUpIcon class="stat-icon" />
             <div class="stat-content">
               <h3 class="stat-title">Tasa de Ocupación</h3>
-              <p class="stat-value">{{ occupancyRate }}%</p>
+              <p class="stat-value">{{ occupancyRate }}%</p> <!-- Dinámico -->
             </div>
           </div>
           
@@ -51,23 +51,25 @@
               <router-link to="/manage/bookings" class="view-all-button">Ver todas</router-link>
             </div>
             <div v-if="upcomingBookings.length > 0" class="upcoming-bookings">
-              <div v-for="(booking, index) in upcomingBookings" :key="index" class="booking-item">
-                <div class="booking-property">
-                  <img :src="getPropertyById(booking.propertyId).image" alt="Property" class="booking-image" />
-                  <div>
-                    <h4>{{ getPropertyById(booking.propertyId).name }}</h4>
-                    <p class="booking-dates">{{ booking.checkIn }} - {{ booking.checkOut }}</p>
-                  </div>
+            <div v-for="booking in upcomingBookings" :key="booking.id">
+              <div class="booking-property">
+                <img :src="getPropertyById(booking.property_id).image" alt="Property" class="booking-image" />
+                <div>
+                  <h4>{{ getPropertyById(booking.property_id).name }}</h4>
+                  <p class="booking-dates">
+                    {{ formatDate(booking.check_in) }} - {{ formatDate(booking.check_out) }}
+                  </p>
                 </div>
-                <div class="booking-guest">
-                  <UserIcon class="guest-icon" />
-                  <div>
-                    <p class="guest-name">{{ booking.guestName }}</p>
-                    <p class="guest-info">{{ booking.guests }} huéspedes</p>
-                  </div>
+              </div>
+              <div class="booking-guest">
+                <UserIcon class="guest-icon" />
+                <div>
+                  <p class="guest-name">{{ booking.guest_name }}</p>
+                  <p class="guest-info">{{ booking.guests }} huéspedes</p>
                 </div>
               </div>
             </div>
+          </div>
             <div v-else class="empty-state">
               <CalendarOffIcon class="empty-icon" />
               <p>No hay reservas próximas</p>
@@ -79,19 +81,19 @@
               <h3>Mensajes Recientes</h3>
               <router-link to="/manage/messages" class="view-all-button">Ver todos</router-link>
             </div>
-            <div v-if="messages.length > 0" class="messages-list">
-              <div v-for="(message, index) in messages" :key="index" class="message-item">
-                <div class="message-sender">
-                  <UserIcon class="message-icon" />
-                  <div>
-                    <h4>{{ message.sender }}</h4>
-                    <p class="message-property">{{ getPropertyById(message.propertyId).name }}</p>
-                  </div>
+            <div v-if="recentMessages.length > 0" class="messages-list">
+            <div v-for="message in recentMessages" :key="message.id" class="message-item">
+              <div class="message-sender">
+                <UserIcon class="message-icon" />
+                <div>
+                  <h4>{{ message.sender_name }}</h4>
+                  <p class="message-property">{{ getPropertyById(message.property_id).name }}</p>
                 </div>
-                <p class="message-preview">{{ message.text.substring(0, 60) }}{{ message.text.length > 60 ? '...' : '' }}</p>
-                <p class="message-time">{{ message.time }}</p>
               </div>
+              <p class="message-preview">{{ message.text.substring(0, 60) }}{{ message.text.length > 60 ? '...' : '' }}</p>
+              <p class="message-time">{{ formatDateTime(message.created_at) }}</p>
             </div>
+          </div>
             <div v-else class="empty-state">
               <MailIcon class="empty-icon" />
               <p>No hay mensajes nuevos</p>
@@ -99,140 +101,151 @@
           </div>
         </div>
       </section>
+
       
-      <!-- Properties -->
-      <section v-if="activeTab === 'properties'" class="properties-section">
-        <div class="section-header">
-          <h2 class="section-title">Mis Propiedades</h2>
-          <button class="add-button" @click="showAddPropertyModal = true">
-            <PlusIcon class="add-icon" />
-            Añadir Propiedad
-          </button>
-        </div>
+      <div v-if="isLoading" class="loading-message">
         
+      </div>
+      <div v-else>
         <div v-if="properties.length > 0" class="properties-grid">
-          <div v-for="(property, index) in properties" :key="index" class="property-card">
-            <div class="property-image-container">
-              <img :src="property.image" alt="Property" class="property-image" />
-              <div class="property-status" :class="property.status">
-                {{ property.statusText }}
-              </div>
-            </div>
-            <div class="property-content">
-              <h3 class="property-name">{{ property.name }}</h3>
-              <div class="property-location">
-                <MapPinIcon class="location-icon" />
-                <span>{{ property.location }}</span>
-              </div>
-              <div class="property-details">
-                <div class="property-detail">
-                  <BedIcon class="detail-icon" />
-                  <span>{{ property.bedrooms }} dormitorios</span>
-                </div>
-                <div class="property-detail">
-                  <UsersIcon class="detail-icon" />
-                  <span>{{ property.capacity }} huéspedes</span>
-                </div>
-                <div class="property-detail">
-                  <EuroIcon class="detail-icon" />
-                  <span>€{{ property.price }}/noche</span>
-                </div>
-              </div>
-            </div>
-            <div class="property-actions">
-              <button class="action-button edit" @click="editProperty(property.id)">
-                <EditIcon class="action-icon" />
-                Editar
-              </button>
-              <button class="action-button calendar" @click="viewCalendar(property.id)">
-                <CalendarIcon class="action-icon" />
-                Calendario
-              </button>
-            </div>
+          <!-- tu v-for y las tarjetas aquí -->
+        </div>
+      </div>
+      
+<!-- Properties -->
+<section v-if="activeTab === 'properties'" class="properties-section">
+  <div class="section-header">
+    <h2 class="section-title">Mis Propiedades</h2>
+    <button class="add-button" @click="openAddModal">
+      <PlusIcon class="add-icon" />
+      Añadir Propiedad
+    </button>
+  </div>
+
+  <!-- MENSAJE DE CARGA -->
+  <div v-if="isLoading" class="loading-properties">
+    <svg class="spinner" viewBox="0 0 50 50">
+      <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"/>
+    </svg>
+    <span class="loading-text">Esperando... Cargando propiedades</span>
+  </div>
+
+  <!-- GRID DE PROPIEDADES -->
+  <div v-else-if="properties.length > 0" class="properties-grid">
+    <div v-for="(property, index) in properties" :key="index" class="property-card">
+      <div class="property-image-container">
+        <img :src="property.image" alt="Property" class="property-image" />
+        <div class="property-status" :class="property.status">
+          {{ property.statusText }}
+        </div>
+      </div>
+      <div class="property-content">
+        <h3 class="property-name">{{ property.name }}</h3>
+        <div class="property-location">
+          <span>{{ property.location }}</span>
+        </div>
+        <div class="property-details">
+          <div class="property-detail">
+            <span>{{ property.bedrooms }} dormitorios</span>
+          </div>
+          <div class="property-detail">
+            <span>{{ property.capacity }} huéspedes</span>
+          </div>
+          <div class="property-detail">
+            <span>€{{ property.price }}/noche</span>
+          </div>
+          <div class="property-description">
+            <p>{{ property.description }}</p>
           </div>
         </div>
-        
-        <div v-else class="empty-properties">
-          <HomeIcon class="empty-icon" />
-          <h3>No tienes propiedades registradas</h3>
-          <p>Añade tu primera propiedad para empezar a recibir reservas</p>
-          <button class="add-property-button" @click="showAddPropertyModal = true">
-            Añadir Propiedad
-          </button>
+      </div>
+      <div class="property-actions">
+        <button class="action-button edit" @click="openEditModal(property)">
+          <EditIcon class="action-icon" />
+          Editar
+        </button>
+        <button class="action-button calendar" @click="viewCalendar(property.id)">
+          Calendario
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VACÍO, NO HAY PROPIEDADES -->
+  <div v-else class="empty-properties">
+    <HomeIcon class="empty-icon" />
+    <h3>No tienes propiedades registradas</h3>
+    <p>Añade tu primera propiedad para empezar a recibir reservas</p>
+    <button class="add-property-button" @click="openAddModal">
+      Añadir Propiedad
+    </button>
+  </div>
+</section>
+
+<!-- MODAL DE CREAR/EDITAR PROPIEDAD -->
+<div v-if="showPropertyModal" class="modal-overlay" @click="closeModal">
+  <div class="modal-content" @click.stop>
+    <h2>{{ isEditMode ? 'Editar' : 'Añadir' }} Propiedad</h2>
+    <form @submit.prevent="saveProperty">
+      <div class="form-group">
+        <label for="property-name">Nombre de la propiedad</label>
+        <input id="property-name" v-model="currentProperty.name" type="text" class="form-input" required />
+      </div>
+      <div class="form-group">
+        <label for="property-location">Ubicación</label>
+        <input id="property-location" v-model="currentProperty.location" type="text" class="form-input" required />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="property-bedrooms">Dormitorios</label>
+          <input id="property-bedrooms" v-model="currentProperty.bedrooms" type="number" min="1" class="form-input" required />
         </div>
-        
-        <!-- Add Property Modal -->
-        <div v-if="showAddPropertyModal" class="modal-overlay" @click="showAddPropertyModal = false">
-          <div class="modal-content" @click.stop>
-            <div class="modal-header">
-              <h3>Añadir Nueva Propiedad</h3>
-              <button class="close-button" @click="showAddPropertyModal = false">
-                <XIcon />
-              </button>
-            </div>
-            <div class="modal-body">
-              <form @submit.prevent="addProperty" class="property-form">
-                <div class="form-group">
-                  <label for="property-name">Nombre de la propiedad</label>
-                  <input id="property-name" v-model="newProperty.name" type="text" class="form-input" required />
-                </div>
-                
-                <div class="form-group">
-                  <label for="property-location">Ubicación</label>
-                  <input id="property-location" v-model="newProperty.location" type="text" class="form-input" required />
-                </div>
-                
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="property-bedrooms">Dormitorios</label>
-                    <input id="property-bedrooms" v-model="newProperty.bedrooms" type="number" min="1" class="form-input" required />
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="property-capacity">Capacidad (huéspedes)</label>
-                    <input id="property-capacity" v-model="newProperty.capacity" type="number" min="1" class="form-input" required />
-                  </div>
-                </div>
-                
-                <div class="form-group">
-                  <label for="property-price">Precio por noche (€)</label>
-                  <input id="property-price" v-model="newProperty.price" type="number" min="1" class="form-input" required />
-                </div>
-                
-                <div class="form-group">
-                  <label for="property-description">Descripción</label>
-                  <textarea id="property-description" v-model="newProperty.description" class="form-textarea" rows="4" required></textarea>
-                </div>
-                
-                <div class="form-group">
-                  <label>Fotos</label>
-                  <div class="photo-upload">
-                    <div class="upload-placeholder">
-                      <UploadIcon class="upload-icon" />
-                      <span>Subir fotos</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="form-group">
-                  <label>Servicios</label>
-                  <div class="amenities-grid">
-                    <div v-for="(amenity, index) in amenities" :key="index" class="amenity-checkbox">
-                      <input :id="`amenity-${index}`" type="checkbox" v-model="newProperty.amenities" :value="amenity.id" />
-                      <label :for="`amenity-${index}`">{{ amenity.name }}</label>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="form-actions">
-                  <button type="button" class="cancel-button" @click="showAddPropertyModal = false">Cancelar</button>
-                  <button type="submit" class="submit-button">Guardar Propiedad</button>
-                </div>
-              </form>
-            </div>
+        <div class="form-group">
+          <label for="property-capacity">Capacidad (huéspedes)</label>
+          <input id="property-capacity" v-model="currentProperty.capacity" type="number" min="1" class="form-input" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="property-price">Precio por noche (€)</label>
+        <input id="property-price" v-model="currentProperty.price" type="number" min="1" class="form-input" required />
+      </div>
+      <div class="form-group">
+        <label for="property-description">Descripción</label>
+        <textarea id="property-description" v-model="currentProperty.description" class="form-textarea" rows="4" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Fotos</label>
+        <div class="photo-upload" @click="$refs.imageInput.click()">
+          <div class="upload-placeholder" v-if="!currentProperty.image">
+            <UploadIcon class="upload-icon" />
+            <span>Subir foto</span>
+          </div>
+          <img v-else :src="currentProperty.image" class="uploaded-image-preview" />
+          <input
+            ref="imageInput"
+            type="file"
+            accept="image/*"
+            @change="handleImageUpload"
+            style="display: none"
+          />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Servicios</label>
+        <div class="amenities-grid">
+          <div v-for="(amenity, index) in amenities" :key="index" class="amenity-checkbox">
+            <input :id="`amenity-${index}`" type="checkbox" v-model="currentProperty.amenities" :value="amenity.id" />
+            <label :for="`amenity-${index}`">{{ amenity.name }}</label>
           </div>
         </div>
-      </section>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="cancel-button" @click="closeModal">Cancelar</button>
+        <button type="submit" class="submit-button">{{ isEditMode ? 'Guardar Cambios' : 'Guardar Propiedad' }}</button>
+      </div>
+    </form>
+  </div>
+</div>
       
       <!-- Bookings -->
       <section v-if="activeTab === 'bookings'" class="bookings-section">
@@ -339,49 +352,65 @@
         </div>
       </section>
       
-      <!-- Calendar -->
+      <!-- Calendar - VERSIÓN MEJORADA -->
       <section v-if="activeTab === 'calendar'" class="calendar-section">
         <div class="section-header">
           <h2 class="section-title">Calendario de Disponibilidad</h2>
-          <div class="calendar-property-select">
-            <label>Propiedad:</label>
+          <div class="property-selector">
             <select v-model="calendarPropertyId" class="property-select">
               <option v-for="property in properties" :key="property.id" :value="property.id">
                 {{ property.name }}
               </option>
             </select>
+            <ChevronDownIcon class="select-icon" />
           </div>
         </div>
         
-        <div class="calendar-controls">
-          <button class="calendar-nav" @click="previousMonth">
+        <div class="calendar-navigation">
+          <button class="nav-button" @click="previousMonth">
             <ChevronLeftIcon />
           </button>
-          <h3 class="calendar-month">{{ currentMonthName }} {{ currentYear }}</h3>
-          <button class="calendar-nav" @click="nextMonth">
+          <h3 class="current-month">{{ currentMonthName }} {{ currentYear }}</h3>
+          <button class="nav-button" @click="nextMonth">
             <ChevronRightIcon />
           </button>
         </div>
         
-        <div class="calendar-container">
-          <div class="calendar-grid">
-            <div v-for="day in weekDays" :key="day" class="calendar-day header">{{ day }}</div>
-            <div v-for="(day, index) in calendarDays" :key="index" 
-                 :class="['calendar-day', { 
-                   'empty': !day.date, 
-                   'available': day.available && day.date,
-                   'unavailable': !day.available && day.date,
-                   'booked': day.booked && day.date,
-                   'today': day.isToday
-                 }]"
-                 @click="day.date && toggleAvailability(day)">
-              <span v-if="day.date" class="day-number">{{ day.date }}</span>
-              <div v-if="day.date && day.booked" class="day-info">Reservado</div>
-              <div v-else-if="day.date && !day.available" class="day-info">No disponible</div>
-              <div v-else-if="day.date" class="day-info">Disponible</div>
+        <transition name="calendar-fade" mode="out-in">
+          <div :key="currentMonthKey" class="calendar-container">
+            <div class="weekdays-header">
+              <div v-for="day in weekDays" :key="day" class="weekday">{{ day }}</div>
+            </div>
+            <div class="calendar-grid">
+              <div 
+                v-for="(day, index) in calendarDays" 
+                :key="index" 
+                :class="[
+                  'calendar-day', 
+                  { 
+                    'empty': !day.date, 
+                    'available': day.available && day.date,
+                    'unavailable': !day.available && day.date,
+                    'booked': day.booked && day.date,
+                    'today': day.isToday,
+                    'in-selection': isInSelection(day)
+                  }
+                ]"
+                @click="day.date && handleDayClick(day)"
+                @mouseenter="day.date && handleDayHover(day)"
+              >
+                <span v-if="day.date" class="day-number">{{ day.date }}</span>
+                <transition name="status-fade">
+                  <div v-if="day.date" class="day-status">
+                    <span v-if="day.booked" class="status booked">Reservado</span>
+                    <span v-else-if="!day.available" class="status unavailable">No disponible</span>
+                    <span v-else class="status available">Disponible</span>
+                  </div>
+                </transition>
+              </div>
             </div>
           </div>
-        </div>
+        </transition>
         
         <div class="calendar-legend">
           <div class="legend-item">
@@ -399,20 +428,34 @@
         </div>
         
         <div class="bulk-actions">
-          <h4>Acciones en bloque</h4>
-          <div class="date-range">
-            <div class="date-input">
-              <label>Desde</label>
-              <input type="date" v-model="bulkStartDate" class="form-input" />
-            </div>
-            <div class="date-input">
-              <label>Hasta</label>
-              <input type="date" v-model="bulkEndDate" class="form-input" />
-            </div>
+          <div class="bulk-header">
+            <h4>Acciones en bloque</h4>
+            <button v-if="isSelecting" class="cancel-selection" @click="cancelSelection">
+              <XIcon class="icon" />
+              Cancelar selección
+            </button>
           </div>
-          <div class="action-buttons">
-            <button class="bulk-button available" @click="setBulkAvailability(true)">Marcar como disponible</button>
-            <button class="bulk-button unavailable" @click="setBulkAvailability(false)">Marcar como no disponible</button>
+          
+          <div v-if="!isSelecting" class="selection-prompt">
+            <p>Haz clic en una fecha para comenzar a seleccionar un rango</p>
+          </div>
+          
+          <div v-else class="selection-info">
+            <div class="date-range-display">
+              <CalendarIcon class="icon" />
+              <span>{{ formatDateRange(selectionStart, selectionEnd) }}</span>
+            </div>
+            
+            <div class="action-buttons">
+              <button class="action-button available" @click="applyBulkAction(true)">
+                <CheckIcon class="icon" />
+                Marcar como disponible
+              </button>
+              <button class="action-button unavailable" @click="applyBulkAction(false)">
+                <XIcon class="icon" />
+                Marcar como no disponible
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -506,149 +549,172 @@
           </div>
           
           <div class="settings-content">
-            <!-- Profile Settings -->
-            <div v-if="activeSettingsTab === 'profile'" class="settings-panel">
-              <h3 class="panel-title">Perfil</h3>
-              
-              <form class="settings-form">
-                <div class="profile-avatar">
-                  <div class="avatar-placeholder">
-                    <UserIcon class="avatar-icon" />
-                  </div>
-                  <button class="change-avatar-button">Cambiar foto</button>
-                </div>
-                
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="profile-name">Nombre</label>
-                    <input id="profile-name" type="text" v-model="settings.profile.name" class="form-input" />
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="profile-lastname">Apellidos</label>
-                    <input id="profile-lastname" type="text" v-model="settings.profile.lastname" class="form-input" />
-                  </div>
-                </div>
-                
-                <div class="form-group">
-                  <label for="profile-email">Email</label>
-                  <input id="profile-email" type="email" v-model="settings.profile.email" class="form-input" />
-                </div>
-                
-                <div class="form-group">
-                  <label for="profile-phone">Teléfono</label>
-                  <input id="profile-phone" type="tel" v-model="settings.profile.phone" class="form-input" />
-                </div>
-                
-                <div class="form-actions">
-                  <button type="submit" class="save-button">Guardar cambios</button>
-                </div>
-              </form>
-            </div>
-            
-            <!-- Notifications Settings -->
-            <div v-if="activeSettingsTab === 'notifications'" class="settings-panel">
-              <h3 class="panel-title">Notificaciones</h3>
-              
-              <div class="notification-settings">
-                <div class="notification-group">
-                  <h4>Email</h4>
-                  
-                  <div class="notification-option">
-                    <div>
-                      <h5>Nuevas reservas</h5>
-                      <p>Recibe un email cuando recibas una nueva reserva</p>
-                    </div>
-                    <label class="toggle">
-                      <input type="checkbox" v-model="settings.notifications.newBookingEmail" />
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="notification-option">
-                    <div>
-                      <h5>Mensajes</h5>
-                      <p>Recibe un email cuando recibas un nuevo mensaje</p>
-                    </div>
-                    <label class="toggle">
-                      <input type="checkbox" v-model="settings.notifications.newMessageEmail" />
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-                
-                <div class="notification-group">
-                  <h4>SMS</h4>
-                  
-                  <div class="notification-option">
-                    <div>
-                      <h5>Nuevas reservas</h5>
-                      <p>Recibe un SMS cuando recibas una nueva reserva</p>
-                    </div>
-                    <label class="toggle">
-                      <input type="checkbox" v-model="settings.notifications.newBookingSMS" />
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-                
-                <div class="form-actions">
-                  <button class="save-button">Guardar preferencias</button>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Payment Settings -->
-            <div v-if="activeSettingsTab === 'payment'" class="settings-panel">
-              <h3 class="panel-title">Pagos</h3>
-              
-              <div class="payment-methods">
-                <h4>Métodos de pago</h4>
-                
-                <div class="payment-method">
-                  <div class="payment-info">
-                    <CreditCardIcon class="payment-icon" />
-                    <div>
-                      <h5>Visa terminada en 4242</h5>
-                      <p>Expira 12/2025</p>
-                    </div>
-                  </div>
-                  <div class="payment-actions">
-                    <button class="edit-button">Editar</button>
-                    <button class="delete-button">Eliminar</button>
-                  </div>
-                </div>
-                
-                <button class="add-payment-button">
-                  <PlusIcon class="add-icon" />
-                  Añadir método de pago
-                </button>
-              </div>
-              
-              <div class="bank-account">
-                <h4>Cuenta bancaria</h4>
-                
-                <div class="form-group">
-                  <label for="bank-name">Nombre del banco</label>
-                  <input id="bank-name" type="text" v-model="settings.payment.bankName" class="form-input" />
-                </div>
-                
-                <div class="form-group">
-                  <label for="account-holder">Titular de la cuenta</label>
-                  <input id="account-holder" type="text" v-model="settings.payment.accountHolder" class="form-input" />
-                </div>
-                
-                <div class="form-group">
-                  <label for="iban">IBAN</label>
-                  <input id="iban" type="text" v-model="settings.payment.iban" class="form-input" />
-                </div>
-                
-                <div class="form-actions">
-                  <button class="save-button">Guardar información bancaria</button>
-                </div>
-              </div>
+  <!-- Profile Settings -->
+  <div v-if="activeSettingsTab === 'profile'" class="settings-panel">
+    <h3 class="panel-title">Perfil</h3>
+    <form class="settings-form" @submit.prevent="saveProfile">
+      <div class="profile-avatar">
+        <div class="avatar-placeholder">
+          <img v-if="previewImage" :src="previewImage" class="avatar-preview" />
+          <UserIcon v-else class="avatar-icon" />
+        </div>
+        <button type="button" class="change-avatar-button" @click="triggerFileInput">Cambiar foto</button>
+        <input
+          type="file"
+          ref="avatarInput"
+          accept="image/*"
+          @change="handleAvatarChange"
+          style="display: none"
+        />
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="profile-name">Nombre</label>
+          <input id="profile-name" type="text" v-model="localSettings.profile.name" class="form-input" />
+        </div>
+        
+        <div class="form-group">
+          <label for="profile-lastname">Apellidos</label>
+          <input id="profile-lastname" type="text" v-model="localSettings.profile.lastname" class="form-input" />
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="profile-email">Email</label>
+        <input id="profile-email" type="email" v-model="localSettings.profile.email" class="form-input" />
+      </div>
+      
+      <div class="form-group">
+        <label for="profile-phone">Teléfono</label>
+        <input id="profile-phone" type="tel" v-model="localSettings.profile.phone" class="form-input" />
+      </div>
+      
+      <div class="form-actions">
+        <button type="submit" class="save-button">Guardar cambios</button>
+      </div>
+    </form>
+  </div>
+  
+  <!-- Notifications Settings -->
+  <div v-if="activeSettingsTab === 'notifications'" class="settings-panel">
+    <h3 class="panel-title">Notificaciones</h3>
+    
+    <div class="notification-settings">
+      <div class="notification-group">
+        <h4>Email</h4>
+        
+        <div class="notification-option">
+          <div>
+            <h5>Nuevas reservas</h5>
+            <p>Recibe un email cuando recibas una nueva reserva</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" v-model="localSettings.notifications.newBookingEmail" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        
+        <div class="notification-option">
+          <div>
+            <h5>Mensajes</h5>
+            <p>Recibe un email cuando recibas un nuevo mensaje</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" v-model="localSettings.notifications.newMessageEmail" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="notification-group">
+        <h4>SMS</h4>
+        
+        <div class="notification-option">
+          <div>
+            <h5>Nuevas reservas</h5>
+            <p>Recibe un SMS cuando recibas una nueva reserva</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" v-model="localSettings.notifications.newBookingSMS" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button class="save-button">Guardar preferencias</button>
+      </div>
+    </div>
+  </div>
+  
+    <div>
+    <!-- Panel de configuración de pagos -->
+    <div v-if="activeSettingsTabPayment === 'payment'" class="settings-panel">
+      <h3 class="panel-title">Pagos</h3>
+
+      <div class="payment-methods">
+        <h4>Métodos de pago</h4>
+
+        <!-- Listado de métodos de pago -->
+        <div v-for="(payment, index) in paymentMethods" :key="index" class="payment-method">
+          <div class="payment-info">
+            <CreditCardIcon class="payment-icon" />
+            <div>
+              <h5>{{ payment.cardType }} terminada en {{ payment.last4 }}</h5>
+              <p>Expira {{ payment.expiryDate }}</p>
             </div>
           </div>
+          <div class="payment-actions">
+            <button class="edit-button" @click="showModal = true">Editar</button>
+            <EditPaymentModal v-if="showModal" @close="showModal = false" @update-payment="handlePaymentUpdate"/>
+            <button class="delete-button" @click="deletePayment(index)">Eliminar</button>
+          </div>
+        </div>
+
+        <!-- Botón para abrir el modal para añadir un nuevo método de pago -->
+        <button class="add-payment-button" @click="openModal">
+          <PlusIcon class="add-icon" />
+          Añadir método de pago
+        </button>
+
+        <!-- Modal PaymentSettings que solo se muestra cuando `isModalVisible` es `true` -->
+        <PaymentSettings
+          v-if="isModalVisible"
+          :visible="isModalVisible"
+          :isEditMode="false"
+          @close="closeModal"
+          @submit="handlePaymentSubmit"
+        />
+      </div>
+
+      <!-- Información de cuenta bancaria (esto es aparte) -->
+      <div class="bank-account">
+        <h4>Cuenta bancaria</h4>
+
+        <div class="form-group">
+          <label for="bank-name">Nombre del banco</label>
+          <input id="bank-name" type="text" v-model="localSettings.payment.bankName" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label for="account-holder">Titular de la cuenta</label>
+          <input id="account-holder" type="text" v-model="localSettings.payment.accountHolder" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label for="iban">IBAN</label>
+          <input id="iban" type="text" v-model="localSettings.payment.iban" class="form-input" />
+        </div>
+
+        <div class="form-actions">
+          <button class="save-button">Guardar información bancaria</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
         </div>
       </section>
     </main>
@@ -661,8 +727,11 @@
 <script setup>
 import Header from './components/layout/Header.vue';
 import Footer from './components/layout/Footer.vue';
+import EditPaymentModal from './components/settings/EditPaymentModal.vue';
+import PaymentSettings from './components/settings/PaymentSettings.vue' 
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import EditPropertyModal from './components/properties/EditPropertyModal.vue'
 import { 
   UserIcon, 
   CalendarIcon, 
@@ -686,12 +755,190 @@ import {
   SearchIcon,
   SendIcon,
   CreditCardIcon,
-  BellIcon
+  BellIcon,
+  CheckIcon,
+  ChevronDownIcon
 } from 'lucide-vue-next';
+
+// Obtén el token del store/user.js
+/* CAMBIAR */
+import { useUserStore } from '../stores/user'
+import axios from 'axios';
 
 // Get router and route
 const router = useRouter();
 const route = useRoute();
+const userStore = useUserStore();
+const showPropertyModal = ref(false)
+const isEditMode = ref(false)
+const currentProperty = ref({
+  id: null,
+  name: '',
+  location: '',
+  bedrooms: 1,
+  capacity: 1,
+  price: 0,
+  image: null,
+  description: '',
+  amenities: [],
+  status: 'active',
+  statusText: 'Activo'
+})
+const avatarInput = ref(null);
+const previewImage = ref(null);
+const showEditPropertyModal = ref(false)
+const propertyToEdit = ref(null)
+
+// Función para configurar headers con el token
+const apiHeaders = () => ({
+  headers: {
+    Authorization: `Bearer ${userStore.token}`,
+  }
+});
+
+function saveEdit() {
+  // Busca la propiedad original por id y actualízala
+  const idx = properties.value.findIndex(p => p.id === propertyToEdit.value.id)
+  if (idx !== -1) {
+    properties.value[idx] = { ...propertyToEdit.value }
+  }
+  showEditPropertyModal.value = false
+}
+
+// Cargar datos al montar el componente
+onMounted(async () => {
+  try {
+    const [propsRes, bookingsRes, messagesRes] = await Promise.all([
+      axios.get('/api/properties', apiHeaders()),
+      axios.get('/api/bookings', apiHeaders()),
+      axios.get('/api/messages', apiHeaders()),
+    ]);
+    properties.value = propsRes.data;
+    allBookings.value = bookingsRes.data;
+    messages.value = messagesRes.data;
+  } catch (err) {
+    // Maneja errores aquí
+    console.error('Error cargando datos del dashboard', err);
+  }
+});
+
+// Settings
+// Creamos un localSettings reactivo para edición en formularios
+const localSettings = ref({
+  profile: {
+    name: '',
+    lastname: '',
+    email: '',
+    phone: '',
+    avatar: null
+  },
+  notifications: {
+    newBookingEmail: false,
+    newMessageEmail: false,
+    newBookingSMS: false
+  },
+  payment: {
+    bankName: '',
+    accountHolder: '',
+    iban: ''
+  }
+});
+
+// Al montar, inicializamos con los datos reales del usuario
+onMounted(() => {
+  if (userStore.user) {
+    localSettings.value.profile = {
+      name: userStore.user.name || '',
+      lastname: userStore.user.lastname || '',
+      email: userStore.user.email || '',
+      phone: userStore.user.phone || '',
+      avatar: userStore.user.avatar || null
+    }
+    // Si tienes settings de notificaciones/pago en tu backend, rellénalos aquí también
+  }
+})
+
+
+function triggerFileInput() {
+  avatarInput.value.click();
+}
+
+function handleAvatarChange(event) {
+  const file = event.target.files[0];
+  if (file && file.type.startsWith('image/')) {
+    localSettings.value.profile.avatar = file;
+    previewImage.value = URL.createObjectURL(file);
+  }
+}
+
+// Esta función se llama cuando el usuario guarda el perfil
+const saveProfile = async () => {
+  try {
+    // Aquí 'localSettings.value.profile' son los datos a actualizar
+    const response = await axios.patch(
+      '/api/user/profile',
+      localSettings.value.profile,
+      {
+        headers: {
+          Authorization: `Bearer ${userStore.token}` // El token viene de tu store
+        }
+      }
+    )
+    // Actualiza el usuario en el store si quieres
+    userStore.setUser(response.data.user)
+    alert('¡Perfil guardado correctamente!')
+  } catch (err) {
+    alert('Ocurrió un error al guardar el perfil')
+    console.error(err)
+  }
+}
+
+// Payment
+
+const isModalVisible = ref(false)
+const activeSettingsTabPayment = ref('payment') // Para cambiar entre las pestañas si es necesario
+
+// Lista de métodos de pago
+const paymentMethods = ref([
+  { cardType: 'Visa', last4: '4242', expiryDate: '12/2025' },
+  { cardType: 'MasterCard', last4: '1234', expiryDate: '05/2024' }
+])
+
+// Función para abrir el modal
+const openModal = () => {
+  isModalVisible.value = true
+}
+
+// Función para cerrar el modal
+const closeModal = () => {
+  isModalVisible.value = false
+}
+
+// Función para manejar el envío del formulario del método de pago
+const handlePaymentSubmit = (paymentData) => {
+  // Añadir el nuevo método de pago al listado
+  paymentMethods.value.push(paymentData)
+  closeModal() // Cerrar el modal después de guardar
+}
+
+// Función para eliminar un método de pago
+const deletePayment = (index) => {
+  paymentMethods.value.splice(index, 1)
+}
+
+// Función para editar un método de pago
+const editPayment = (index) => {
+  // Aquí podrías poner la lógica para editar el método de pago si fuera necesario
+  console.log('Editar método de pago', index)
+}
+
+const showModal = ref(false);
+
+const handlePaymentUpdate = (updatedPayment) => {
+  console.log("Método de pago actualizado:", updatedPayment);
+  // Lógica para manejar la actualización del método de pago
+  showModal.value = false;  // Cerrar el modal después de la actualización
+};
 
 // Tabs with paths for router
 const tabs = [
@@ -727,6 +974,43 @@ const updateActiveTabFromRoute = () => {
   }
 };
 
+const openAddModal = () => {
+  isEditMode.value = false
+  currentProperty.value = {
+    id: null,
+    name: '',
+    location: '',
+    bedrooms: 1,
+    capacity: 1,
+    price: 0,
+    image: null,
+    description: '',
+    amenities: [],
+    status: 'active',
+    statusText: 'Activo'
+  }
+  showPropertyModal.value = true
+}
+
+const openEditModal = (property) => {
+  isEditMode.value = true
+  currentProperty.value = { ...property }
+  showPropertyModal.value = true
+}
+
+const saveProperty = (data) => {
+  if (isEditMode.value) {
+    const index = properties.value.findIndex(p => p.id === data.id)
+    if (index !== -1) {
+      properties.value[index] = { ...data }
+    }
+  } else {
+    data.id = Date.now()
+    properties.value.push({ ...data })
+  }
+  showPropertyModal.value = false
+}
+
 // Watch for route changes
 watch(() => route.path, () => {
   updateActiveTabFromRoute();
@@ -738,123 +1022,174 @@ onMounted(() => {
 });
 
 // Properties data
-const properties = ref([
-  {
-    id: 1,
-    name: 'Apartamento Vista al Mar',
-    location: 'Playa de Calahonda, Mijas Costa',
-    bedrooms: 2,
-    capacity: 4,
-    price: 120,
-    image: '/placeholder.svg?height=300&width=400',
-    description: 'Hermoso apartamento con vistas al mar Mediterráneo.',
-    status: 'active',
-    statusText: 'Activo',
-    amenities: ['wifi', 'pool', 'parking', 'ac']
-  },
-  {
-    id: 2,
-    name: 'Ático con Terraza',
-    location: 'Puerto Banús, Marbella',
-    bedrooms: 3,
-    capacity: 6,
-    price: 180,
-    image: '/placeholder.svg?height=300&width=400',
-    description: 'Lujoso ático con amplia terraza y vistas panorámicas.',
-    status: 'inactive',
-    statusText: 'Inactivo',
-    amenities: ['wifi', 'pool', 'parking', 'ac', 'gym']
-  }
-]);
 
 // Bookings data
-const allBookings = ref([
-  {
-    id: 'B1234',
-    propertyId: 1,
-    guestName: 'María García',
-    guests: 3,
-    checkIn: '15 Jun 2023',
-    checkOut: '22 Jun 2023',
-    total: 890,
-    status: 'completed',
-    statusText: 'Completada'
-  },
-  {
-    id: 'B5678',
-    propertyId: 1,
-    guestName: 'Juan Pérez',
-    guests: 2,
-    checkIn: '10 Aug 2023',
-    checkOut: '17 Aug 2023',
-    total: 980,
-    status: 'confirmed',
-    statusText: 'Confirmada'
-  },
-  {
-    id: 'B9012',
-    propertyId: 2,
-    guestName: 'Ana Martínez',
-    guests: 4,
-    checkIn: '5 Sep 2023',
-    checkOut: '12 Sep 2023',
-    total: 1260,
-    status: 'pending',
-    statusText: 'Pendiente'
-  }
-]);
+const allBookings = ref([]);
 
 // Dashboard stats
+// Reservas Activas (status === 'confirmed')
 const activeBookings = computed(() => {
   return allBookings.value.filter(booking => booking.status === 'confirmed').length;
 });
 
+// Tasa de Ocupación (%)
+// Supongamos que ocupación = noches reservadas / noches disponibles en los últimos 30 días
+function getDaysBetween(start, end) {
+  const msPerDay = 1000 * 60 * 60 * 24;
+  return Math.max(0, Math.ceil((new Date(end) - new Date(start)) / msPerDay));
+}
 const occupancyRate = computed(() => {
-  return 75; // This would be calculated based on actual data
+  const now = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(now.getDate() - 30);
+
+  // Total noches disponibles = propiedades * 30 días
+  const totalNights = properties.value.length * 30;
+  if (totalNights === 0) return 0;
+
+  // Noches reservadas en los últimos 30 días
+  let reservedNights = 0;
+  allBookings.value.forEach(booking => {
+    if (booking.status !== 'confirmed') return;
+    // Ajusta las fechas al rango de los últimos 30 días
+    const checkIn = new Date(booking.check_in);
+    const checkOut = new Date(booking.check_out);
+    const start = checkIn < thirtyDaysAgo ? thirtyDaysAgo : checkIn;
+    const end = checkOut > now ? now : checkOut;
+    reservedNights += getDaysBetween(start, end);
+  });
+  return Math.round((reservedNights / totalNights) * 100);
 });
 
+// Ingresos últimos 30 días
 const monthlyRevenue = computed(() => {
-  return 2130; // This would be calculated based on actual data
+  const now = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(now.getDate() - 30);
+
+  return allBookings.value
+    .filter(booking => booking.status === 'confirmed')
+    .filter(booking => {
+      // Si cualquier parte de la reserva cae en los últimos 30 días
+      const checkIn = new Date(booking.check_in);
+      const checkOut = new Date(booking.check_out);
+      return checkOut >= thirtyDaysAgo && checkIn <= now;
+    })
+    .reduce((sum, booking) => sum + Number(booking.total || 0), 0);
 });
 
 const upcomingBookings = computed(() => {
+  // Solo las próximas reservas confirmadas, ordenadas por fecha de check-in
+  const now = new Date();
   return allBookings.value
-    .filter(booking => booking.status === 'confirmed')
+    .filter(b => b.status === 'confirmed' && new Date(b.check_in) >= now)
+    .sort((a, b) => new Date(a.check_in) - new Date(b.check_in))
     .slice(0, 3);
 });
 
+const recentMessages = computed(() => {
+  return messages.value
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, 5);
+});
+
 // Messages data
-const messages = ref([
-  {
-    sender: 'Juan Pérez',
-    propertyId: 1,
-    text: '¿Podría hacer el check-in un poco antes? Llegaremos alrededor de las 13:00.',
-    time: 'Hace 2 horas'
-  },
-  {
-    sender: 'Ana Martínez',
-    propertyId: 2,
-    text: 'Gracias por aceptar mi reserva. ¿Hay algún restaurante que recomiende cerca del apartamento?',
-    time: 'Hace 1 día'
-  }
-]);
+const messages = ref([]);
 
 // Property functions
 const getPropertyById = (id) => {
-  return properties.value.find(property => property.id === id) || { name: 'Propiedad no encontrada', image: '/placeholder.svg?height=100&width=100' };
+  return properties.value.find(property => property.id === id)
+    || { name: 'Propiedad no encontrada', image: '/placeholder.svg?height=100&width=100' };
 };
 
 // Add property modal
+const properties = ref([]);
+const isLoading = ref(false);
 const showAddPropertyModal = ref(false);
+
 const newProperty = ref({
+  id: null,
   name: '',
   location: '',
-  bedrooms: 2,
-  capacity: 4,
-  price: 100,
+  bedrooms: 1,
+  capacity: 1,
+  price: 0,
+  image: null,
   description: '',
-  amenities: []
+  amenities: [],
+  status: 'active',
+  statusText: 'Activo',
 });
+
+
+
+const fetchProperties = async () => {
+  isLoading.value = true;
+  try {
+    const response = await fetch('http://localhost:8000/api/properties');
+    if (!response.ok) throw new Error('No se pudieron cargar las propiedades');
+    properties.value = await response.json();
+  } catch (error) {
+    alert('Error al cargar propiedades: ' + error.message);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchProperties();
+});
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        newProperty.value.image = e.target.result; // Base64 string
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
+
+const addProperty = async () => {
+  try {
+    const formData = new FormData();
+    Object.entries(newProperty.value).forEach(([key, val]) => {
+      // Solo agregamos la imagen si es un archivo, no en base64
+      // Si tienes la imagen como archivo, usa: formData.append('image', newProperty.value.imageFile)
+      if (val !== null) formData.append(key, val);
+    });
+
+    const response = await fetch('http://localhost:8000/api/properties', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) throw new Error('No se pudo guardar la propiedad');
+    const savedProperty = await response.json();
+
+    properties.value.push(savedProperty);
+
+    // Reset
+    newProperty.value = {
+      id: null,
+      name: '',
+      location: '',
+      bedrooms: 1,
+      capacity: 1,
+      price: 0,
+      image: null,
+      description: '',
+      amenities: [],
+      status: 'active',
+      statusText: 'Activo',
+    };
+    showAddPropertyModal.value = false;
+  } catch (error) {
+    alert('Error al guardar: ' + error.message);
+  }
+};
 
 const amenities = [
   { id: 'wifi', name: 'WiFi' },
@@ -866,31 +1201,6 @@ const amenities = [
   { id: 'tv', name: 'TV' },
   { id: 'washer', name: 'Lavadora' }
 ];
-
-const addProperty = () => {
-  const newId = properties.value.length > 0 ? Math.max(...properties.value.map(p => p.id)) + 1 : 1;
-  
-  properties.value.push({
-    id: newId,
-    ...newProperty.value,
-    image: '/placeholder.svg?height=300&width=400',
-    status: 'active',
-    statusText: 'Activo'
-  });
-  
-  showAddPropertyModal.value = false;
-  
-  // Reset form
-  newProperty.value = {
-    name: '',
-    location: '',
-    bedrooms: 2,
-    capacity: 4,
-    price: 100,
-    description: '',
-    amenities: []
-  };
-};
 
 const editProperty = (id) => {
   console.log('Edit property', id);
@@ -928,84 +1238,148 @@ const filteredBookings = computed(() => {
   return filtered;
 });
 
-// Calendar
+// Calendar - VERSIÓN MEJORADA CON ACTUALIZACIÓN DE DISPONIBILIDAD
+
 const calendarPropertyId = ref(properties.value.length > 0 ? properties.value[0].id : null);
-const currentMonth = ref(new Date().getMonth());
-const currentYear = ref(new Date().getFullYear());
-const bulkStartDate = ref('');
-const bulkEndDate = ref('');
+const currentDate = ref(new Date());
+const selectionStart = ref(null);
+const selectionEnd = ref(null);
+const isSelecting = ref(false);
+const hoverDate = ref(null);
 
-const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-
+// Datos computados
+const currentYear = computed(() => currentDate.value.getFullYear());
+const currentMonth = computed(() => currentDate.value.getMonth());
 const currentMonthName = computed(() => {
-  const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-  return months[currentMonth.value];
+  return new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(currentDate.value);
 });
+const currentMonthKey = computed(() => `${currentYear.value}-${currentMonth.value}`);
+const weekDays = computed(() => ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']);
 
-const calendarDays = computed(() => {
+// Días del calendario (ahora es un ref)
+const calendarDays = ref([]);
+
+const generateCalendarDays = () => {
   const days = [];
   const firstDay = new Date(currentYear.value, currentMonth.value, 1);
   const lastDay = new Date(currentYear.value, currentMonth.value + 1, 0);
-  
-  // Get the day of the week for the first day (0 = Sunday, 1 = Monday, etc.)
+
   let firstDayOfWeek = firstDay.getDay() - 1;
-  if (firstDayOfWeek < 0) firstDayOfWeek = 6; // Adjust for Monday as first day
-  
-  // Add empty days for the beginning of the month
+  if (firstDayOfWeek < 0) firstDayOfWeek = 6;
+
   for (let i = 0; i < firstDayOfWeek; i++) {
     days.push({ date: null });
   }
-  
-  // Add days of the month
+
   const today = new Date();
   for (let i = 1; i <= lastDay.getDate(); i++) {
-    const isToday = 
-      today.getDate() === i && 
-      today.getMonth() === currentMonth.value && 
-      today.getFullYear() === currentYear.value;
-    
-    // For demo purposes, randomly determine availability and bookings
-    const random = Math.random();
-    const available = random > 0.3;
-    const booked = random < 0.2;
-    
-    days.push({ 
-      date: i, 
-      available, 
-      booked,
-      isToday 
+    const date = new Date(currentYear.value, currentMonth.value, i);
+    days.push({
+      date: i,
+      fullDate: date,
+      available: Math.random() > 0.3, // Simulación
+      booked: Math.random() < 0.2, // Simulación
+      isToday: today.getDate() === i &&
+               today.getMonth() === currentMonth.value &&
+               today.getFullYear() === currentYear.value
     });
   }
-  
-  return days;
-});
+
+  calendarDays.value = days;
+};
+
+// Inicializar al cargar
+generateCalendarDays();
+
+// Navegación entre meses
+const nextMonth = () => {
+  currentDate.value = new Date(currentYear.value, currentMonth.value + 1, 1);
+  generateCalendarDays();
+  cancelSelection();
+};
 
 const previousMonth = () => {
-  if (currentMonth.value === 0) {
-    currentMonth.value = 11;
-    currentYear.value--;
+  currentDate.value = new Date(currentYear.value, currentMonth.value - 1, 1);
+  generateCalendarDays();
+  cancelSelection();
+};
+
+// Selección de días
+const handleDayClick = (day) => {
+  if (!day.date) return;
+
+  if (!isSelecting.value) {
+    selectionStart.value = new Date(currentYear.value, currentMonth.value, day.date);
+    selectionEnd.value = new Date(currentYear.value, currentMonth.value, day.date);
+    isSelecting.value = true;
   } else {
-    currentMonth.value--;
+    const clickedDate = new Date(currentYear.value, currentMonth.value, day.date);
+
+    if (clickedDate < selectionStart.value) {
+      selectionEnd.value = selectionStart.value;
+      selectionStart.value = clickedDate;
+    } else {
+      selectionEnd.value = clickedDate;
+    }
   }
 };
 
-const nextMonth = () => {
-  if (currentMonth.value === 11) {
-    currentMonth.value = 0;
-    currentYear.value++;
-  } else {
-    currentMonth.value++;
-  }
+const handleDayHover = (day) => {
+  if (!isSelecting.value || selectionEnd.value || !day.date) return;
+  hoverDate.value = new Date(currentYear.value, currentMonth.value, day.date);
 };
 
-const toggleAvailability = (day) => {
-  if (day.booked) return; // Can't change availability for booked days
-  day.available = !day.available;
+const isInSelection = (day) => {
+  if (!day.date || !isSelecting.value || !selectionStart.value) return false;
+
+  const dayDate = new Date(currentYear.value, currentMonth.value, day.date);
+  const endDate = hoverDate.value || selectionEnd.value;
+
+  return dayDate >= selectionStart.value && dayDate <= endDate;
 };
 
-const setBulkAvailability = (available) => {
-  console.log(`Set availability to ${available} from ${bulkStartDate.value} to ${bulkEndDate.value}`);
-  // This would update the availability for the selected date range
+const cancelSelection = () => {
+  isSelecting.value = false;
+  selectionStart.value = null;
+  selectionEnd.value = null;
+  hoverDate.value = null;
+};
+
+// Actualizar disponibilidad en el rango seleccionado
+const applyBulkAction = (makeAvailable) => {
+  if (!selectionStart.value || !selectionEnd.value) return;
+
+  const start = selectionStart.value;
+  const end = selectionEnd.value;
+
+  calendarDays.value = calendarDays.value.map(day => {
+    if (!day.fullDate) return day;
+
+    const date = new Date(day.fullDate);
+    if (date >= start && date <= end) {
+      return {
+        ...day,
+        available: makeAvailable
+      };
+    }
+    return day;
+  });
+
+  console.log(`Estableciendo disponibilidad a ${makeAvailable} desde ${start} hasta ${end}`);
+  cancelSelection();
+};
+
+const formatDateRange = (start, end) => {
+  if (!start || !end) return '';
+
+  const formatDate = (date) => {
+    return new Intl.DateTimeFormat('es-ES', {
+      day: 'numeric',
+      month: 'short'
+    }).format(date);
+  };
+
+  return `${formatDate(start)} - ${formatDate(end)}`;
 };
 
 // Messages
@@ -1085,6 +1459,15 @@ const settings = ref({
     iban: 'ES91 2100 0418 4502 0005 1332'
   }
 });
+
+// Función para cambiar de tab
+const changeTab = (tabId) => {
+  activeTab.value = tabId;
+  const tab = tabs.find(t => t.id === tabId);
+  if (tab) {
+    router.push(tab.path);
+  }
+};
 </script>
 
 <style scoped>
@@ -1579,27 +1962,61 @@ const settings = ref({
   background-color: #005999;
 }
 
+/* Estilos base de tu grid y tarjetas, ya los tienes */
+
+.loading-properties {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+.spinner .path {
+  stroke: #0071c2;
+  stroke-linecap: round;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 1.1rem;
+  color: #003580;
+  font-weight: 500;
+}
+
 /* Modal styles */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
 }
 
 .modal-content {
-  background-color: white;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 600px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  min-width: 320px;
+  max-width: 95vw;
   max-height: 90vh;
   overflow-y: auto;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  position: relative;
+  z-index: 10000;
 }
 
 .modal-header {
@@ -1970,195 +2387,334 @@ const settings = ref({
   padding: 3rem 0;
 }
 
-/* Calendar styles */
-.calendar-property-select {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+/* Calendar styles - VERSIÓN MEJORADA */
+.calendar-section {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.calendar-controls {
+.property-selector {
+  position: relative;
+  width: 200px;
+}
+
+.property-select {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e7ee;
+  background-color: #f8fafc;
+  font-size: 0.9rem;
+  color: #2b3a4a;
+  appearance: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.property-select:hover {
+  border-color: #0071c2;
+}
+
+.property-select:focus {
+  outline: none;
+  border-color: #0071c2;
+  box-shadow: 0 0 0 2px rgba(0, 113, 194, 0.2);
+}
+
+.select-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.calendar-navigation {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 16px;
 }
 
-.calendar-month {
+.current-month {
   font-size: 1.2rem;
-  color: #003580;
+  font-weight: 600;
+  color: #2b3a4a;
+  text-transform: capitalize;
   margin: 0;
 }
 
-.calendar-nav {
-  background: none;
-  border: none;
-  color: #0071c2;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 50%;
+.nav-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f1f5f9;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.calendar-nav:hover {
-  background-color: #f5f5f5;
+.nav-button:hover {
+  background-color: #e2e8f0;
+  color: #0071c2;
 }
 
 .calendar-container {
-  background-color: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
+}
+
+.weekdays-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 8px;
+}
+
+.weekday {
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #64748b;
+  padding: 8px 0;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0.5rem;
+  gap: 4px;
 }
 
 .calendar-day {
-  text-align: center;
-  padding: 0.75rem;
-  border-radius: 4px;
   position: relative;
-}
-
-.calendar-day.header {
-  font-weight: 600;
-  color: #003580;
+  height: 70px;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .calendar-day.empty {
-  background: none;
+  cursor: default;
+}
+
+.calendar-day:not(.empty):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .day-number {
-  font-weight: 500;
-  margin-bottom: 0.25rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
 }
 
-.day-info {
+.day-status {
   font-size: 0.7rem;
+  text-align: center;
 }
 
 .calendar-day.available {
   background-color: #e6f7ee;
-  color: #00703c;
-  cursor: pointer;
+  color: #0f766e;
 }
 
 .calendar-day.unavailable {
-  background-color: #fff2f0;
-  color: #e41c00;
-  cursor: pointer;
+  background-color: #fef2f2;
+  color: #b91c1c;
 }
 
 .calendar-day.booked {
-  background-color: #e6f0ff;
-  color: #0071c2;
+  background-color: #eff6ff;
+  color: #1e40af;
 }
 
 .calendar-day.today {
   border: 2px solid #0071c2;
-  font-weight: 600;
+}
+
+.calendar-day.in-selection {
+  background-color: #0071c2;
+  color: white;
+}
+
+.calendar-day.in-selection .status {
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .calendar-legend {
   display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  gap: 16px;
+  margin-bottom: 24px;
   justify-content: center;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #475569;
 }
 
 .legend-color {
   width: 16px;
   height: 16px;
   border-radius: 4px;
-  margin-right: 0.5rem;
 }
 
 .legend-color.available {
   background-color: #e6f7ee;
+  border: 1px solid #0f766e;
 }
 
 .legend-color.unavailable {
-  background-color: #fff2f0;
+  background-color: #fef2f2;
+  border: 1px solid #b91c1c;
 }
 
 .legend-color.booked {
-  background-color: #e6f0ff;
+  background-color: #eff6ff;
+  border: 1px solid #1e40af;
 }
 
 .bulk-actions {
-  background-color: white;
+  background-color: #f8fafc;
   border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
 }
 
-.bulk-actions h4 {
-  font-size: 1.1rem;
-  color: #003580;
-  margin: 0 0 1rem;
-}
-
-.date-range {
+.bulk-header {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
 }
 
-.date-input {
-  flex: 1;
+.bulk-header h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2b3a4a;
+  margin: 0;
 }
 
-.date-input label {
-  display: block;
+.cancel-selection {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.cancel-selection:hover {
+  background-color: #fee2e2;
+}
+
+.selection-prompt {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9rem;
+  padding: 16px 0;
+}
+
+.selection-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.date-range-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #e0e7ee;
+  color: #2b3a4a;
   font-weight: 500;
-  margin-bottom: 0.5rem;
 }
 
 .action-buttons {
   display: flex;
-  gap: 1rem;
+  gap: 12px;
 }
 
-.bulk-button {
+.action-button {
   flex: 1;
-  padding: 0.75rem;
-  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
-  border: none;
+  transition: all 0.2s ease;
 }
 
-.bulk-button.available {
-  background-color: #e6f7ee;
-  color: #00703c;
+.action-button.available {
+  background-color: #0071c2;
+  color: white;
 }
 
-.bulk-button.available:hover {
-  background-color: #d1f0e0;
+.action-button.available:hover {
+  background-color: #005a9c;
 }
 
-.bulk-button.unavailable {
-  background-color: #fff2f0;
-  color: #e41c00;
+.action-button.unavailable {
+  background-color: #f1f5f9;
+  color: #475569;
 }
 
-.bulk-button.unavailable:hover {
-  background-color: #ffe5e2;
+.action-button.unavailable:hover {
+  background-color: #e2e8f0;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Animaciones */
+.calendar-fade-enter-active,
+.calendar-fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.calendar-fade-enter-from,
+.calendar-fade-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.status-fade-enter-active,
+.status-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.status-fade-enter-from,
+.status-fade-leave-to {
+  opacity: 0;
 }
 
 /* Messages styles */
@@ -2835,6 +3391,29 @@ const settings = ref({
     flex-direction: column;
     gap: 1rem;
   }
+  
+  /* Responsive calendar */
+  .calendar-section {
+    padding: 16px;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .property-selector {
+    width: 100%;
+  }
+  
+  .calendar-day {
+    height: 60px;
+    padding: 4px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
 }
 </style>
-
