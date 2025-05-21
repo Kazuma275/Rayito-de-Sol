@@ -27,13 +27,13 @@ import {
 } from 'lucide-vue-next';
 import { ref } from 'vue';
 
-// Navigation tabs for mobile footer
+// Navigation tabs for mobile footer - ACTUALIZADO para apuntar al nuevo portal
 const navigationTabs = [
-  { id: 'dashboard', name: 'Inicio', path: '/renters/login', icon: HomeIcon },
-  { id: 'search', name: 'Buscar', path: '/renters/login', icon: SearchIcon },
-  { id: 'bookings', name: 'Reservas', path: '/renters/login', icon: CalendarIcon },
-  { id: 'favorites', name: 'Favoritos', path: '/renters/login', icon: HeartIcon },
-  { id: 'messages', name: 'Mensajes', path: '/renters/login', icon: MessageSquareIcon }
+  { id: 'dashboard', name: 'Inicio', path: '/renters/dashboard', icon: HomeIcon },
+  { id: 'search', name: 'Buscar', path: '/renters/search', icon: SearchIcon },
+  { id: 'bookings', name: 'Reservas', path: '/renters/bookings', icon: CalendarIcon },
+  { id: 'favorites', name: 'Favoritos', path: '/renters/favorites', icon: HeartIcon },
+  { id: 'messages', name: 'Mensajes', path: '/renters/messages', icon: MessageSquareIcon }
 ];
 
 const props = defineProps({

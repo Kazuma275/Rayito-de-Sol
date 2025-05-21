@@ -1,7 +1,7 @@
 <template>
   <div class="renters-portal">
     <!-- Header -->
-    <Header :user="user" :activeTab="activeTab" @changeTab="changeTab" />
+    <RentersHeader :user="user" :activeTab="activeTab" @changeTab="changeTab" />
 
     <!-- Main Content -->
     <main class="main-content">
@@ -870,7 +870,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import Header from './components/layout/Header.vue';
+import RentersHeader from './components/layout/RentersHeader.vue';
 import Footer from './components/layout/Footer.vue';
 import { 
   UserIcon, 

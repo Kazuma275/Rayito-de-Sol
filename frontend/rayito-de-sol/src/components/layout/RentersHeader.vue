@@ -28,11 +28,11 @@
           </button>
           
           <div class="dropdown-menu" v-if="userMenuOpen">
-            <a href="/renters/profile" class="dropdown-item">
+            <a href="/portal/renters/profile" class="dropdown-item">
               <UserIcon class="dropdown-icon" />
               <span>Mi Perfil</span>
             </a>
-            <a href="/renters/settings" class="dropdown-item">
+            <a href="/portal/renters/settings" class="dropdown-item">
               <SettingsIcon class="dropdown-icon" />
               <span>Configuración</span>
             </a>
@@ -66,12 +66,12 @@
       
       <div class="mobile-divider"></div>
       
-      <a href="/renters/profile" class="mobile-nav-link" @click="mobileMenuOpen = false">
+      <a href="/portal/renters/profile" class="mobile-nav-link" @click="mobileMenuOpen = false">
         <UserIcon class="nav-icon" />
         <span>Mi Perfil</span>
       </a>
       
-      <a href="/renters/settings" class="mobile-nav-link" @click="mobileMenuOpen = false">
+      <a href="/portal/renters/settings" class="mobile-nav-link" @click="mobileMenuOpen = false">
         <SettingsIcon class="nav-icon" />
         <span>Configuración</span>
       </a>
@@ -85,8 +85,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onUnmounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { ref, computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import { 
   SunIcon, 
   HomeIcon, 
@@ -102,7 +102,6 @@ import {
   ChevronDownIcon
 } from 'lucide-vue-next';
 
-const router = useRouter();
 const route = useRoute();
 
 // User state (would come from auth store in a real app)
@@ -110,13 +109,13 @@ const userName = ref('Usuario');
 const userMenuOpen = ref(false);
 const mobileMenuOpen = ref(false);
 
-// Navigation items
+// Navigation items - ACTUALIZADO para apuntar al nuevo portal
 const navItems = ref([
-  { label: 'Inicio', path: '/renters/login', icon: HomeIcon },
-  { label: 'Buscar', path: '/renters/login', icon: SearchIcon },
-  { label: 'Mis Reservas', path: '/renters/login', icon: CalendarIcon },
-  { label: 'Mensajes', path: '/renters/login', icon: MessageSquareIcon },
-  { label: 'Favoritos', path: '/renters/login', icon: HeartIcon }
+  { label: 'Inicio', path: '/portal/renters/dashboard', icon: HomeIcon },
+  { label: 'Buscar', path: '/portal/renters/search', icon: SearchIcon },
+  { label: 'Mis Reservas', path: '/portal/renters/bookings', icon: CalendarIcon },
+  { label: 'Mensajes', path: '/portal/renters/messages', icon: MessageSquareIcon },
+  { label: 'Favoritos', path: '/portal/renters/favorites', icon: HeartIcon }
 ]);
 
 // Check if a route is active
@@ -140,17 +139,18 @@ const toggleMobileMenu = () => {
   }
 };
 
-// Go to home page
+// Go to home page - ACTUALIZADO para apuntar al nuevo portal
 const goToHome = () => {
-  window.location.href = '/renters/login';
+  window.location.href = '/portal/renters/dashboard';
 };
 
-// Logout function
+// Logout function - ACTUALIZADO para apuntar al nuevo portal
 const logout = () => {
   // In a real app, this would call your auth service
+  localStorage.removeItem('renters_auth');
   userMenuOpen.value = false;
   mobileMenuOpen.value = false;
-  window.location.href = '/renters/login';
+  window.location.href = '/portal/renters/login';
 };
 
 // Close menus when clicking outside
@@ -161,15 +161,10 @@ const closeMenus = (event) => {
   }
 };
 
-// Add and remove event listeners
-if (typeof window !== 'undefined') {
+// Add event listener
+onMounted(() => {
   window.addEventListener('click', closeMenus);
-  
-  // Clean up on component unmount
-  onUnmounted(() => {
-    window.removeEventListener('click', closeMenus);
-  });
-}
+});
 </script>
 
 <style scoped>

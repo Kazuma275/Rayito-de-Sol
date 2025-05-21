@@ -13,7 +13,15 @@ import BookingTest from "@/components/views/BookingTest.vue"
 import TermsConditions from "@/components/settings/TermsConditions.vue"
 import LoginForm from "@/components/views/LoginForm.vue"
 import RegisterForm from "@/components/views/RegisterForm.vue"
-import RendersPortal from "@/RendersPortal.vue"
+import RentersPortal from "@/RentersPortal.vue"
+import RentersLogin from "@/components/pages/RentersLogin.vue"
+import RentersDashboard from "@/components/pages/RentersDashboard.vue"
+import RentersSearch from "@/components/pages/RentersSearch.vue"
+import RentersBookings from "@/components/pages/RentersBookings.vue"
+import RentersFavorites from "@/components/pages/RentersFavorites.vue"
+import RentersMessages from "@/components/pages/RentersMessages.vue"
+import RentersProfile from "@/components/pages/RentersProfile.vue"
+import RentersSettings from "@/components/pages/RentersSettings.vue"
 
 const routes = [
   {
@@ -51,27 +59,59 @@ const routes = [
     name: "Help",
     component: HelpSupportPage,
   },
+  // Portal de inquilinos (login individual)
   {
     path: "/renters/login",
-    name: "RenterPortal",
-    component: RendersPortal,
+    name: "RentersLogin",
+    component: RentersLogin,
   },
-  // Añadir rutas adicionales para evitar errores 404
+  // Resto del portal de inquilinos con layout
   {
-    path: "/renters/dashboard",
-    name: "RentersDashboard",
-    component: RendersPortal,
+    path: "/renters",
+    component: RentersPortal,
+    children: [
+      {
+        path: "",
+        redirect: "/renters/dashboard",
+      },
+      {
+        path: "dashboard",
+        name: "RentersDashboard",
+        component: RentersDashboard,
+      },
+      {
+        path: "search",
+        name: "RentersSearch",
+        component: RentersSearch,
+      },
+      {
+        path: "bookings",
+        name: "RentersBookings",
+        component: RentersBookings,
+      },
+      {
+        path: "favorites",
+        name: "RentersFavorites",
+        component: RentersFavorites,
+      },
+      {
+        path: "messages",
+        name: "RentersMessages",
+        component: RentersMessages,
+      },
+      {
+        path: "profile",
+        name: "RentersProfile",
+        component: RentersProfile,
+      },
+      {
+        path: "settings",
+        name: "RentersSettings",
+        component: RentersSettings,
+      },
+    ],
   },
-  {
-    path: "/renters/messages",
-    name: "RentersMessages",
-    component: RendersPortal,
-  },
-  {
-    path: "/manage/help",
-    name: "ManageHelp",
-    component: HelpSupportPage,
-  },
+  // Rutas del portal de propietarios
   {
     path: "/manage",
     component: PropertyManagement,
@@ -109,6 +149,11 @@ const routes = [
         path: "settings",
         name: "Settings",
         component: SettingsPage,
+      },
+      {
+        path: "help",
+        name: "ManageHelp",
+        component: HelpSupportPage,
       },
     ],
   },

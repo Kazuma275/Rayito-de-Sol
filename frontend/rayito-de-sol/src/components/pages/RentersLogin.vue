@@ -10,83 +10,90 @@
           </div>
           <h1 class="logo-text">Rayito de Sol</h1>
         </div>
-
-        <h2 class="login-title">Iniciar sesión</h2>
-        <p class="login-subtitle">Accede a tu cuenta para gestionar tus propiedades</p>
-
-        <form @submit.prevent="handleSubmit" class="login-form">
+        
+        <h2 class="login-title">Portal de Inquilinos</h2>
+        
+        <form class="login-form" @submit.prevent="handleLogin">
           <div class="form-group">
-            <label for="email">Correo electrónico</label>
+            <label for="email">Email</label>
             <div class="input-wrapper">
+              <MailIcon class="input-icon" />
               <input 
                 type="email" 
                 id="email" 
-                v-model="formData.email" 
+                v-model="email" 
+                placeholder="tu@email.com" 
                 required 
                 class="form-input"
-                :class="{ 'input-error': errors.email }"
-                placeholder="ejemplo@correo.com"
               />
               <div class="input-glow"></div>
             </div>
-            <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
           </div>
-
+          
           <div class="form-group">
-            <label for="password">Contraseña</label>
-            <div class="password-input-container">
-              <div class="input-wrapper">
-                <input 
-                  :type="showPassword ? 'text' : 'password'" 
-                  id="password" 
-                  v-model="formData.password" 
-                  required 
-                  class="form-input"
-                  :class="{ 'input-error': errors.password }"
-                  placeholder="Introduce tu contraseña"
-                />
-                <div class="input-glow"></div>
-              </div>
+            <div class="password-label">
+              <label for="password">Contraseña</label>
+              <a href="#" class="forgot-password" @click.prevent="forgotPassword">¿Olvidaste tu contraseña?</a>
+            </div>
+            <div class="input-wrapper">
+              <LockIcon class="input-icon" />
+              <input 
+                :type="showPassword ? 'text' : 'password'" 
+                id="password" 
+                v-model="password" 
+                placeholder="Tu contraseña" 
+                required 
+                class="form-input"
+              />
+              <div class="input-glow"></div>
               <button 
                 type="button" 
-                class="password-toggle" 
+                class="toggle-password" 
                 @click="showPassword = !showPassword"
-                aria-label="Mostrar contraseña"
               >
-                <EyeIcon v-if="!showPassword" class="icon" />
-                <EyeOffIcon v-else class="icon" />
+                <EyeIcon v-if="!showPassword" class="eye-icon" />
+                <EyeOffIcon v-else class="eye-icon" />
               </button>
             </div>
-            <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
           </div>
-
-          <div class="form-options">
-            <div class="form-group checkbox-group">
-              <input 
-                type="checkbox" 
-                id="remember" 
-                v-model="formData.remember"
-                class="custom-checkbox"
-              />
-              <label for="remember" class="checkbox-label">Recordar mi sesión</label>
-            </div>
-
-            <div class="forgot-password">
-              <a href="#" @click.prevent="forgotPassword">¿Olvidaste tu contraseña?</a>
-            </div>
+          
+          <div class="remember-me">
+            <label class="checkbox-container">
+              <input type="checkbox" v-model="rememberMe" class="custom-checkbox" />
+              <span class="checkbox-label">Recordarme</span>
+            </label>
           </div>
-
-          <button type="submit" class="submit-button" :disabled="isSubmitting">
-            <LoaderIcon v-if="isSubmitting" class="spinner" />
-            <span v-else>Iniciar sesión</span>
-            <div class="button-glow"></div>
+          
+          <button 
+            type="submit" 
+            class="login-button" 
+            :disabled="isLoading"
+          >
+            <LoaderIcon v-if="isLoading" class="spinner" />
+            <span v-else>Iniciar Sesión</span>
           </button>
         </form>
-
-        <div class="register-link">
-          ¿No tienes una cuenta? <a href="#" @click.prevent="goToRegister" class="link">Regístrate</a>
+        
+        <div class="login-divider">
+          <span>o</span>
         </div>
-
+        
+        <div class="social-login">
+          <button class="social-button google">
+            <div class="social-icon google-icon"></div>
+            Continuar con Google
+          </button>
+          
+          <button class="social-button facebook">
+            <div class="social-icon facebook-icon"></div>
+            Continuar con Facebook
+          </button>
+        </div>
+        
+        <div class="register-link">
+          ¿No tienes una cuenta? <a href="#" @click.prevent="goToRegister">Regístrate</a>
+        </div>
+        
         <div class="back-button-container">
           <a href="/" class="back-button">
             <ArrowLeftIcon class="back-icon" />
@@ -99,83 +106,46 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { EyeIcon, EyeOffIcon, LoaderIcon, SunIcon, ArrowLeftIcon } from 'lucide-vue-next';
-import axios from 'axios';
-import { useUserStore } from '../../../stores/user';
+import { 
+  SunIcon, 
+  MailIcon, 
+  LockIcon, 
+  EyeIcon, 
+  EyeOffIcon, 
+  LoaderIcon,
+  ArrowLeftIcon
+} from 'lucide-vue-next';
 
 const router = useRouter();
-const userStore = useUserStore();
-const formData = reactive({
-  email: '',
-  password: '',
-  remember: false
-});
 
-const errors = reactive({
-  email: '',
-  password: ''
-});
-
-const isSubmitting = ref(false);
+const email = ref('');
+const password = ref('');
+const rememberMe = ref(false);
 const showPassword = ref(false);
-const isValid = ref(true);
-
-const validateForm = () => {
-  isValid.value = true;
-  Object.keys(errors).forEach(key => errors[key] = '');
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(formData.email)) {
-    errors.email = 'Por favor, introduce un correo electrónico válido';
-    isValid.value = false;
-  }
-
-  if (formData.password.length < 1) {
-    errors.password = 'Por favor, introduce tu contraseña';
-    isValid.value = false;
-  }
-
-  return isValid.value;
-};
-
-const handleSubmit = async () => {
-  if (!validateForm()) return;
-
-  isSubmitting.value = true;
-
-  try {
-    const response = await axios.post('http://127.0.0.1:8000/api/login', {
-      email: formData.email,
-      password: formData.password,
-    });
-
-    localStorage.setItem('auth_token', response.data.token);  
-    localStorage.setItem('auth_user', JSON.stringify(response.data.user));
-    userStore.setUser(response.data.user);
-    userStore.setToken(response.data.token);
-
-    router.push('/main');
-  } catch (error) {
-    if (error.response) {
-      console.error('Error al iniciar sesión:', error.response.data.message);
-      alert(error.response.data.message || 'Correo electrónico o contraseña incorrectos.');
-    } else {
-      console.error('Error de red:', error);
-      alert('Hubo un problema con la conexión, por favor intenta más tarde.');
-    }
-  } finally {
-    isSubmitting.value = false;
-  }
-};
+const isLoading = ref(false);
 
 const forgotPassword = () => {
-  alert('Funcionalidad de recuperación de contraseña pendiente');
+  window.location.href = '/portal/renters/forgot-password';
 };
 
 const goToRegister = () => {
-  router.push('/register');
+  window.location.href = '/portal/renters/register';
+};
+
+const handleLogin = async () => {
+  isLoading.value = true;
+  
+  try {
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    localStorage.setItem('renters_auth', 'true');
+    window.location.href = '/portal/renters/dashboard';
+  } catch (error) {
+    console.error('Login error:', error);
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
 
@@ -285,15 +255,8 @@ const goToRegister = () => {
   font-size: 1.75rem;
   color: #1e3a8a;
   text-align: center;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-}
-
-.login-subtitle {
-  color: #64748b;
-  text-align: center;
   margin-bottom: 2rem;
-  font-size: 1rem;
+  font-weight: 600;
 }
 
 .login-form {
@@ -318,9 +281,20 @@ const goToRegister = () => {
   position: relative;
 }
 
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: #f59e0b;
+  z-index: 1;
+}
+
 .form-input {
   width: 100%;
-  padding: 0.875rem 1rem;
+  padding: 0.875rem 1rem 0.875rem 2.75rem;
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 12px;
   font-size: 1rem;
@@ -342,22 +316,36 @@ const goToRegister = () => {
 
 .form-input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #f59e0b;
 }
 
 .form-input:focus + .input-glow {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
 }
 
 .form-input::placeholder {
   color: #94a3b8;
 }
 
-.password-input-container {
-  position: relative;
+.password-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.password-toggle {
+.forgot-password {
+  color: #f59e0b;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.forgot-password:hover {
+  color: #d97706;
+  text-decoration: underline;
+}
+
+.toggle-password {
   position: absolute;
   right: 12px;
   top: 50%;
@@ -370,42 +358,40 @@ const goToRegister = () => {
   transition: all 0.3s ease;
 }
 
-.password-toggle:hover {
+.toggle-password:hover {
   color: #1e293b;
 }
 
-.icon {
+.eye-icon {
   width: 20px;
   height: 20px;
 }
 
-.form-options {
+.remember-me {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
 }
 
-.checkbox-group {
-  flex-direction: row;
+.checkbox-container {
+  display: flex;
   align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
 }
 
 .custom-checkbox {
   appearance: none;
   width: 18px;
   height: 18px;
-  border: 2px solid #3b82f6;
+  border: 2px solid #f59e0b;
   border-radius: 4px;
-  margin-right: 8px;
   position: relative;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .custom-checkbox:checked {
-  background-color: #3b82f6;
+  background-color: #f59e0b;
 }
 
 .custom-checkbox:checked::after {
@@ -421,37 +407,24 @@ const goToRegister = () => {
 .checkbox-label {
   color: #1e293b;
   font-size: 0.9rem;
-  cursor: pointer;
 }
 
-.forgot-password a {
-  color: #3b82f6;
-  font-size: 0.9rem;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.forgot-password a:hover {
-  color: #1d4ed8;
-  text-decoration: underline;
-}
-
-.submit-button {
-  position: relative;
+.login-button {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-  color: white;
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  color: #1e293b;
   border: none;
   border-radius: 12px;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  overflow: hidden;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.submit-button::before {
+.login-button::before {
   content: '';
   position: absolute;
   top: 0;
@@ -463,17 +436,17 @@ const goToRegister = () => {
   transition: transform 0s;
 }
 
-.submit-button:hover::before {
+.login-button:hover::before {
   transform: translateX(100%);
   transition: transform 0.6s ease;
 }
 
-.submit-button:hover {
+.login-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
-.submit-button:disabled {
+.login-button:disabled {
   background: linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%);
   cursor: not-allowed;
   transform: none;
@@ -487,6 +460,66 @@ const goToRegister = () => {
   to { transform: rotate(360deg); }
 }
 
+.login-divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  gap: 1rem;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(148, 163, 184, 0.2);
+}
+
+.login-divider span {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.social-login {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.social-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.875rem;
+  border-radius: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.social-button:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+}
+
+.social-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.google-icon {
+  background-color: #DB4437;
+}
+
+.facebook-icon {
+  background-color: #1877F2;
+}
+
 .register-link {
   margin-top: 1.5rem;
   text-align: center;
@@ -494,15 +527,15 @@ const goToRegister = () => {
   font-size: 0.95rem;
 }
 
-.register-link .link {
-  color: #3b82f6;
+.register-link a {
+  color: #f59e0b;
   font-weight: 500;
   text-decoration: none;
   transition: all 0.3s ease;
 }
 
-.register-link .link:hover {
-  color: #1d4ed8;
+.register-link a:hover {
+  color: #d97706;
   text-decoration: underline;
 }
 
@@ -515,32 +548,26 @@ const goToRegister = () => {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: #3b82f6;
+  color: #f59e0b;
   font-weight: 500;
   text-decoration: none;
   padding: 0.75rem 1.25rem;
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.2);
   border-radius: 12px;
   transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.5);
 }
 
 .back-button:hover {
-  background: #3b82f6;
+  background: #f59e0b;
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
 }
 
 .back-icon {
   width: 18px;
   height: 18px;
-}
-
-.error-message {
-  color: #ef4444;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
 }
 
 @keyframes pulse {
@@ -577,17 +604,18 @@ const goToRegister = () => {
     font-size: 1.5rem;
   }
 
-  .login-subtitle {
-    font-size: 0.9rem;
-  }
-
   .form-input {
     font-size: 0.95rem;
   }
 
-  .submit-button {
+  .login-button {
     padding: 0.875rem;
     font-size: 0.95rem;
+  }
+
+  .social-button {
+    padding: 0.75rem;
+    font-size: 0.9rem;
   }
 }
 </style>

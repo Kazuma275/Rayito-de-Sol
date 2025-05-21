@@ -110,9 +110,6 @@
         <div v-if="properties.length > 0" class="properties-grid">
           <!-- tu v-for y las tarjetas aquí -->
         </div>
-        <div v-else class="no-properties-message">
-          No hay propiedades para mostrar.
-        </div>
       </div>
       
 <!-- Properties -->
