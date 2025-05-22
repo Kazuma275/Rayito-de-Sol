@@ -95,6 +95,7 @@ const logout = () => {
   box-shadow: 0 4px 12px rgba(0, 53, 128, 0.15);
   position: relative;
   overflow: hidden;
+  z-index: 50; /* Increased z-index to ensure header stays above other content */
 }
 
 .header::before {
@@ -235,6 +236,7 @@ const logout = () => {
 
 .user-menu {
   position: relative;
+  z-index: 100; /* Higher z-index for the user menu */
 }
 
 .user-button {
@@ -306,7 +308,7 @@ const logout = () => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   width: 220px;
   overflow: hidden;
-  z-index: 10;
+  z-index: 1000; /* Very high z-index to ensure it's above all other content */
   animation: fadeInDown 0.3s ease;
 }
 
