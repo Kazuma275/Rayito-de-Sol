@@ -172,8 +172,8 @@ onMounted(() => {
 
 <style scoped>
 .renters-header {
-  background: linear-gradient(135deg, #003580 0%, #0071c2 100%);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -208,8 +208,8 @@ onMounted(() => {
 .logo-icon {
   width: 32px;
   height: 32px;
-  color: #facc15;
-  filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.5));
+  color: #ffffff;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
   position: relative;
   z-index: 1;
   animation: pulse 3s infinite ease-in-out;
@@ -221,7 +221,7 @@ onMounted(() => {
   height: 32px;
   top: 0;
   left: 0;
-  background: radial-gradient(circle, rgba(250, 204, 21, 0.3) 0%, rgba(250, 204, 21, 0) 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 70%);
   border-radius: 50%;
   animation: glow 3s infinite ease-in-out;
   z-index: 0;
@@ -232,9 +232,6 @@ onMounted(() => {
   font-weight: 700;
   color: white;
   margin: 0;
-  background: linear-gradient(135deg, #ffffff 0%, #fbbf24 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -251,7 +248,7 @@ onMounted(() => {
 .nav-link {
   display: flex;
   align-items: center;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(0, 0, 0, 0.7);
   text-decoration: none;
   font-weight: 500;
   transition: all 0.3s ease;
@@ -260,8 +257,8 @@ onMounted(() => {
 }
 
 .nav-link:hover, .nav-link.active {
-  color: white;
-  background-color: rgba(255, 255, 255, 0.1);
+  color: #1e293b;
+  background-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
 
@@ -279,17 +276,17 @@ onMounted(() => {
 .user-button {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.3);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   cursor: pointer;
-  color: white;
+  color: #1e293b;
   transition: all 0.3s ease;
 }
 
 .user-button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.4);
   transform: translateY(-2px);
 }
 
@@ -297,7 +294,7 @@ onMounted(() => {
   width: 20px;
   height: 20px;
   margin-right: 0.5rem;
-  color: #facc15;
+  color: #1e293b;
 }
 
 .user-name {
@@ -309,7 +306,7 @@ onMounted(() => {
   width: 16px;
   height: 16px;
   transition: transform 0.3s;
-  color: #facc15;
+  color: #1e293b;
 }
 
 .chevron-icon.rotate {
@@ -375,56 +372,56 @@ onMounted(() => {
 
 .mobile-menu-button {
   display: none;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.3);
   border: none;
   padding: 0.5rem;
   border-radius: 8px;
   cursor: pointer;
-  color: white;
+  color: #1e293b;
   transition: all 0.3s ease;
 }
 
 .mobile-menu-button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .menu-icon {
   width: 24px;
   height: 24px;
-  color: #facc15;
+  color: #1e293b;
 }
 
 .mobile-menu {
   display: none;
   flex-direction: column;
   padding: 1rem;
-  background: linear-gradient(135deg, #003580 0%, #0071c2 100%);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .mobile-nav-link {
   display: flex;
   align-items: center;
   padding: 1rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(0, 0, 0, 0.7);
   text-decoration: none;
   transition: all 0.3s ease;
   border-radius: 8px;
 }
 
 .mobile-nav-link:hover, .mobile-nav-link.active {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #1e293b;
 }
 
 .mobile-divider {
   height: 1px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.3);
   margin: 0.5rem 0;
 }
 
 .logout {
-  color: #fcd34d;
+  color: #7c2d12;
   background: none;
   border: none;
   font-size: 1rem;
@@ -434,7 +431,7 @@ onMounted(() => {
 }
 
 .logout:hover {
-  background-color: rgba(252, 211, 77, 0.1);
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 @keyframes pulse {
