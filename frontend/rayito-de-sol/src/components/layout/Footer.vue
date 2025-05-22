@@ -29,8 +29,6 @@
           <li><router-link to="/terms" @click.prevent="changeTab('/terms')">Términos y condiciones</router-link></li>
           <li><a href="#" @click.prevent="changeTab('settings')">Política de privacidad</a></li>
         </ul>
-      
-
       </div>
       
       <div class="footer-section">
@@ -83,17 +81,34 @@ const changeTab = (tab) => {
 
 <style scoped>
 .footer {
-  background-color: var(--primary-color);
+  background: linear-gradient(135deg, #003580 0%, #0071c2 100%);
   color: white;
   padding-top: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 150%, rgba(0, 113, 194, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 80% -50%, rgba(0, 53, 128, 0.3) 0%, transparent 60%);
+  z-index: 0;
 }
 
 .footer-container {
   display: flex;
   flex-wrap: wrap;
-  max-width: 1280px; /* Increased from previous value */
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .footer-section {
@@ -109,29 +124,54 @@ const changeTab = (tab) => {
 }
 
 .logo-icon {
-  width: 24px;
-  height: 24px;
-  color: var(--secondary-color);
-  margin-right: 0.5rem;
+  width: 28px;
+  height: 28px;
+  color: #feba02;
+  filter: drop-shadow(0 0 8px rgba(254, 186, 2, 0.6));
+  margin-right: 0.75rem;
+  animation: pulse 3s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
 }
 
 .logo-text {
   font-size: 1.5rem;
   font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .footer-description {
   color: rgba(255, 255, 255, 0.7);
   max-width: 300px;
+  line-height: 1.6;
 }
 
 .footer-title {
   font-size: 1.1rem;
   margin-bottom: 1.5rem;
+  color: white;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.footer-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background-color: #feba02;
 }
 
 .footer-links, .footer-contact {
   list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .footer-links li, .footer-contact li {
@@ -141,28 +181,53 @@ const changeTab = (tab) => {
 .footer-links a {
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
+  position: relative;
+  padding-left: 0;
+}
+
+.footer-links a::before {
+  content: '›';
+  position: absolute;
+  left: -12px;
+  top: 0;
+  opacity: 0;
+  transition: all 0.3s ease;
 }
 
 .footer-links a:hover {
   color: white;
+  padding-left: 12px;
+}
+
+.footer-links a:hover::before {
+  opacity: 1;
+  left: 0;
 }
 
 .footer-contact li {
   display: flex;
   align-items: center;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;
+}
+
+.footer-contact li:hover {
+  color: white;
 }
 
 .contact-icon {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   margin-right: 0.75rem;
-  color: var(--secondary-color);
+  color: #feba02;
 }
 
 .footer-bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 1.5rem 0;
+  position: relative;
+  z-index: 1;
 }
 
 .footer-bottom .footer-container {
@@ -173,6 +238,7 @@ const changeTab = (tab) => {
 
 .copyright {
   color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
 }
 
 .social-links {
@@ -188,17 +254,38 @@ const changeTab = (tab) => {
   height: 36px;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.1);
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.social-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(254, 186, 2, 0.8) 0%, rgba(254, 186, 2, 0.4) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .social-link:hover {
-  background-color: var(--secondary-color);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.social-link:hover::before {
+  opacity: 1;
 }
 
 .social-icon {
   width: 18px;
   height: 18px;
   color: white;
+  position: relative;
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
