@@ -50,12 +50,13 @@ const emit = defineEmits(['changeTab']);
 .portal-footer {
   display: none;
   background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-  box-shadow: 0 -2px 8px rgba(245, 158, 11, 0.2);
+  box-shadow: 0 -1px 4px rgba(245, 158, 11, 0.15);
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 100;
+  height: 56px; /* Reduced height */
   overflow: hidden;
 }
 
@@ -67,13 +68,13 @@ const emit = defineEmits(['changeTab']);
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 20% 150%, rgba(251, 191, 36, 0.4) 0%, transparent 50%),
-    radial-gradient(circle at 80% -50%, rgba(245, 158, 11, 0.3) 0%, transparent 60%);
+    radial-gradient(circle at 20% 150%, rgba(251, 191, 36, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% -50%, rgba(245, 158, 11, 0.2) 0%, transparent 60%);
   z-index: 0;
 }
 
 .footer-container {
-  padding: 0.5rem;
+  height: 100%;
   position: relative;
   z-index: 1;
 }
@@ -81,22 +82,24 @@ const emit = defineEmits(['changeTab']);
 .footer-nav {
   display: flex;
   justify-content: space-around;
+  height: 100%;
 }
 
 .footer-tab {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   background: none;
   border: none;
-  padding: 0.5rem;
+  padding: 0;
   color: rgba(31, 41, 55, 0.7);
   cursor: pointer;
   flex: 1;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   position: relative;
-  overflow: hidden;
+  height: 100%;
 }
 
 .footer-tab::before {
@@ -106,10 +109,9 @@ const emit = defineEmits(['changeTab']);
   left: 0;
   right: 0;
   height: 0;
-  background-color: rgba(255, 255, 255, 0.2);
-  transition: height 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.15);
+  transition: height 0.2s ease;
   z-index: -1;
-  border-radius: 0 0 8px 8px;
 }
 
 .footer-tab:hover::before {
@@ -124,37 +126,30 @@ const emit = defineEmits(['changeTab']);
 .footer-tab.active::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 40%;
+  width: 30%;
   height: 3px;
   background-color: #1e293b;
-  border-radius: 3px 3px 0 0;
+  border-radius: 0 0 3px 3px;
 }
 
 .tab-icon {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 0.25rem;
-  transition: transform 0.3s ease;
+  width: 20px; /* Smaller icons */
+  height: 20px;
+  margin-bottom: 2px; /* Reduced margin */
+  transition: transform 0.2s ease;
 }
 
 .footer-tab:hover .tab-icon {
-  transform: translateY(-2px);
-}
-
-.footer-tab.active .tab-icon {
-  filter: drop-shadow(0 2px 4px rgba(31, 41, 55, 0.2));
+  transform: translateY(-1px);
 }
 
 .tab-text {
-  font-size: 0.7rem;
-  transition: transform 0.3s ease;
-}
-
-.footer-tab:hover .tab-text {
-  transform: scale(1.05);
+  font-size: 0.65rem; /* Smaller text */
+  transition: transform 0.2s ease;
+  white-space: nowrap;
 }
 
 @media (max-width: 768px) {
@@ -164,7 +159,18 @@ const emit = defineEmits(['changeTab']);
   
   /* Add padding to main content to account for fixed footer */
   :deep(.main-content) {
-    padding-bottom: 70px;
+    padding-bottom: 56px; /* Match footer height */
+  }
+}
+
+@media (max-width: 360px) {
+  .tab-text {
+    font-size: 0.6rem;
+  }
+  
+  .tab-icon {
+    width: 18px;
+    height: 18px;
   }
 }
 </style>
