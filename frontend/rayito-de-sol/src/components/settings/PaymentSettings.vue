@@ -293,9 +293,11 @@ const savePaymentMethod = () => {
 }
 
 .panel-title {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: #003580;
   margin: 0 0 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e6f0ff;
 }
 
 .payment-methods {
@@ -312,14 +314,16 @@ const savePaymentMethod = () => {
 .payment-method-card {
   display: flex;
   align-items: center;
-  background-color: #f5f5f5;
+  background-color: #f8fafc;
   border-radius: 8px;
   padding: 1rem;
-  transition: background-color 0.3s;
+  border: 1px solid #e6f0ff;
+  transition: all 0.3s ease;
 }
 
 .payment-method-card:hover {
-  background-color: #eee;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 53, 128, 0.1);
 }
 
 .payment-method-icon {
@@ -330,6 +334,7 @@ const savePaymentMethod = () => {
   align-items: center;
   justify-content: center;
   margin-right: 1rem;
+  flex-shrink: 0;
 }
 
 .payment-method-icon.credit-card {
@@ -365,11 +370,12 @@ const savePaymentMethod = () => {
 .payment-method-details h4 {
   font-size: 1rem;
   margin: 0 0 0.25rem;
+  color: #1e293b;
 }
 
 .payment-method-details p {
   font-size: 0.9rem;
-  color: #666;
+  color: #64748b;
   margin: 0;
 }
 
@@ -388,7 +394,7 @@ const savePaymentMethod = () => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .edit-button {
@@ -415,15 +421,16 @@ const savePaymentMethod = () => {
 .empty-payment-methods {
   text-align: center;
   padding: 2rem;
-  background-color: #f5f5f5;
+  background-color: #f8fafc;
   border-radius: 8px;
+  border: 1px solid #e6f0ff;
   margin-bottom: 1.5rem;
 }
 
 .empty-icon {
   width: 48px;
   height: 48px;
-  color: #ccc;
+  color: #cce0ff;
   margin-bottom: 1rem;
 }
 
@@ -432,19 +439,21 @@ const savePaymentMethod = () => {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: #0071c2;
+  background: linear-gradient(135deg, #0071c2 0%, #003580 100%);
   color: white;
   border: none;
   padding: 0.75rem;
-  border-radius: 4px;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 53, 128, 0.1);
 }
 
 .add-payment-button:hover {
-  background-color: #005999;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 53, 128, 0.15);
 }
 
 .button-icon {
@@ -453,33 +462,45 @@ const savePaymentMethod = () => {
 }
 
 .payment-preferences {
-  background-color: #f5f5f5;
+  background-color: #f8fafc;
   border-radius: 8px;
   padding: 1.5rem;
+  border: 1px solid #e6f0ff;
 }
 
 .payment-preferences h4 {
   font-size: 1.1rem;
   color: #003580;
-  margin: 0 0 1rem;
+  margin: 0 0 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e6f0ff;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
+  color: #1e293b;
 }
 
 .form-select, .form-input {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #cce0ff;
+  border-radius: 8px;
   font-size: 1rem;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.form-select:focus, .form-input:focus {
+  outline: none;
+  border-color: #0071c2;
+  box-shadow: 0 0 0 3px rgba(0, 113, 194, 0.1);
 }
 
 .form-row {
@@ -500,22 +521,24 @@ const savePaymentMethod = () => {
 .checkbox-group input {
   width: 18px;
   height: 18px;
+  accent-color: #0071c2;
 }
 
 .save-preferences-button {
-  background-color: #0071c2;
+  background: linear-gradient(135deg, #0071c2 0%, #003580 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 53, 128, 0.1);
 }
 
 .save-preferences-button:hover {
-  background-color: #005999;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 53, 128, 0.15);
 }
 
 /* Modal styles */
@@ -525,43 +548,69 @@ const savePaymentMethod = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 53, 128, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  backdrop-filter: blur(4px);
 }
 
 .payment-modal {
   background-color: white;
-  border-radius: 8px;
+  border-radius: 12px;
   width: 90%;
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 53, 128, 0.2);
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #eee;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e6f0ff;
+  background: linear-gradient(135deg, #003580 0%, #0071c2 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
 }
 
 .modal-header h3 {
   font-size: 1.2rem;
   margin: 0;
+  font-weight: 600;
 }
 
 .close-modal-button {
-  background: none;
+  background: rgba(255, 255, 255, 0.2);
   border: none;
-  color: #666;
-  cursor: pointer;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.close-modal-button:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .close-icon {
@@ -576,7 +625,7 @@ const savePaymentMethod = () => {
 .payment-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .form-actions {
@@ -588,32 +637,35 @@ const savePaymentMethod = () => {
 
 .cancel-button {
   background-color: white;
-  color: #666;
-  border: 1px solid #ccc;
+  color: #64748b;
+  border: 1px solid #cce0ff;
   padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .cancel-button:hover {
-  background-color: #f5f5f5;
+  background-color: #f8fafc;
+  color: #1e293b;
 }
 
 .save-button {
-  background-color: #0071c2;
+  background: linear-gradient(135deg, #0071c2 0%, #003580 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 53, 128, 0.1);
 }
 
 .save-button:hover {
-  background-color: #005999;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 53, 128, 0.15);
 }
 
 @media (max-width: 576px) {

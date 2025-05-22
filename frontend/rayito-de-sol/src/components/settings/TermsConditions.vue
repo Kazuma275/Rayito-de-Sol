@@ -135,9 +135,11 @@ const privacyOptions = ref({
 }
 
 .panel-title {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: #003580;
   margin: 0 0 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e6f0ff;
 }
 
 .terms-container {
@@ -147,8 +149,8 @@ const privacyOptions = ref({
 }
 
 .terms-section {
-  border-bottom: 1px solid #eee;
-  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e6f0ff;
+  padding-bottom: 2rem;
 }
 
 .terms-section:last-child {
@@ -157,15 +159,15 @@ const privacyOptions = ref({
 }
 
 .terms-section h4 {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: #003580;
-  margin-bottom: 1rem;
+  margin: 0 0 1rem;
 }
 
 .terms-section p {
-  margin-bottom: 1rem;
+  margin: 0 0 1rem;
   line-height: 1.6;
-  color: #333;
+  color: #1e293b;
 }
 
 .cancellation-policy {
@@ -178,20 +180,23 @@ const privacyOptions = ref({
   display: flex;
   align-items: flex-start;
   padding: 1rem;
-  border: 1px solid #eee;
+  border: 1px solid #e6f0ff;
   border-radius: 8px;
   position: relative;
+  background-color: #f8fafc;
 }
 
 .policy-item h5 {
-  font-size: 1rem;
+  font-size: 1.1rem;
   margin: 0 0 0.5rem;
+  color: #1e293b;
 }
 
 .policy-item p {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   margin: 0;
   flex: 1;
+  color: #64748b;
 }
 
 .radio-container {
@@ -200,6 +205,8 @@ const privacyOptions = ref({
   cursor: pointer;
   user-select: none;
   margin-left: 1rem;
+  display: flex;
+  align-items: center;
 }
 
 .radio-container input {
@@ -214,16 +221,19 @@ const privacyOptions = ref({
   left: 0;
   height: 18px;
   width: 18px;
-  background-color: #eee;
+  background-color: #f1f5f9;
+  border: 1px solid #cce0ff;
   border-radius: 50%;
+  transition: all 0.3s ease;
 }
 
 .radio-container:hover input ~ .radio-checkmark {
-  background-color: #ccc;
+  background-color: #e6f0ff;
 }
 
 .radio-container input:checked ~ .radio-checkmark {
   background-color: #0071c2;
+  border-color: #0071c2;
 }
 
 .radio-checkmark:after {
@@ -237,8 +247,8 @@ const privacyOptions = ref({
 }
 
 .radio-container .radio-checkmark:after {
-  top: 6px;
-  left: 6px;
+  top: 5px;
+  left: 5px;
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -263,6 +273,7 @@ const privacyOptions = ref({
   user-select: none;
   display: flex;
   align-items: center;
+  color: #1e293b;
 }
 
 .checkbox-container input {
@@ -277,16 +288,19 @@ const privacyOptions = ref({
   left: 0;
   height: 20px;
   width: 20px;
-  background-color: #eee;
+  background-color: #f1f5f9;
+  border: 1px solid #cce0ff;
   border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
 .checkbox-container:hover input ~ .checkbox-checkmark {
-  background-color: #ccc;
+  background-color: #e6f0ff;
 }
 
 .checkbox-container input:checked ~ .checkbox-checkmark {
   background-color: #0071c2;
+  border-color: #0071c2;
 }
 
 .checkbox-checkmark:after {
@@ -317,24 +331,31 @@ const privacyOptions = ref({
 
 .add-rule .form-input {
   flex: 1;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #cce0ff;
+  border-radius: 8px;
   font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.add-rule .form-input:focus {
+  outline: none;
+  border-color: #0071c2;
+  box-shadow: 0 0 0 3px rgba(0, 113, 194, 0.1);
 }
 
 .add-rule .btn {
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
   font-size: 0.95rem;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .add-rule .btn-outline {
   background-color: transparent;
   border: 1px solid #0071c2;
   color: #0071c2;
-  transition: all 0.2s;
 }
 
 .add-rule .btn-outline:hover {
@@ -352,27 +373,30 @@ const privacyOptions = ref({
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
 }
 
 .save-button {
-  background-color: #0071c2;
+  background: linear-gradient(135deg, #0071c2 0%, #003580 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 53, 128, 0.1);
 }
 
 .save-button:hover {
-  background-color: #005999;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 53, 128, 0.15);
 }
 
 @media (max-width: 576px) {
   .add-rule {
     flex-direction: column;
+    gap: 0.5rem;
   }
   
   .form-actions {
