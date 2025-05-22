@@ -1,5 +1,4 @@
 <template>
-  <div class="settings-wrapper">
   <div class="settings-panel">
     <h3 class="panel-title">Términos y Condiciones</h3>
     
@@ -96,7 +95,6 @@
       </div>
     </div>
   </div>
-  </div>
 </template>
 
 <script setup>
@@ -132,46 +130,20 @@ const privacyOptions = ref({
 </script>
 
 <style scoped>
-.settings-wrapper {
-  background-color: #f5f7fa;
-  min-height: 100vh;
-  padding: 3rem 1rem;
-
-  display: flex;
-  justify-content: center;
-  align-items: center; 
-}
-
-.settings-wrapper {
-  background-color: #f5f7fa;
-  min-height: 100vh;
-  padding: 3rem 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
 .settings-panel {
   max-width: 700px;
-  width: 100%;
-  padding: 2rem;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .panel-title {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.2rem;
   color: #003580;
-  margin-bottom: 2rem;
-  text-align: center;
+  margin: 0 0 1.5rem;
 }
 
 .terms-container {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 2rem;
 }
 
 .terms-section {
@@ -185,7 +157,7 @@ const privacyOptions = ref({
 }
 
 .terms-section h4 {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #003580;
   margin-bottom: 1rem;
 }
@@ -209,7 +181,6 @@ const privacyOptions = ref({
   border: 1px solid #eee;
   border-radius: 8px;
   position: relative;
-  background-color: #f9f9f9;
 }
 
 .policy-item h5 {
@@ -221,7 +192,6 @@ const privacyOptions = ref({
   font-size: 0.9rem;
   margin: 0;
   flex: 1;
-  color: #555;
 }
 
 .radio-container {
@@ -349,22 +319,25 @@ const privacyOptions = ref({
   flex: 1;
   padding: 0.5rem 0.75rem;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 4px;
   font-size: 0.95rem;
 }
 
 .add-rule .btn {
   padding: 0.5rem 1rem;
   font-size: 0.95rem;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
+}
+
+.add-rule .btn-outline {
   background-color: transparent;
   border: 1px solid #0071c2;
   color: #0071c2;
   transition: all 0.2s;
 }
 
-.add-rule .btn:hover {
+.add-rule .btn-outline:hover {
   background-color: #0071c2;
   color: white;
 }
@@ -378,16 +351,16 @@ const privacyOptions = ref({
 
 .form-actions {
   display: flex;
-  justify-content: center;
-  margin-top: 2rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
 }
 
 .save-button {
   background-color: #0071c2;
   color: white;
   border: none;
-  padding: 0.75rem 2rem;
-  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s;
@@ -401,14 +374,13 @@ const privacyOptions = ref({
   .add-rule {
     flex-direction: column;
   }
-
+  
   .form-actions {
-    justify-content: stretch;
+    justify-content: center;
   }
-
+  
   .save-button {
     width: 100%;
   }
 }
-
 </style>

@@ -43,7 +43,7 @@
           </div>
         </div>
         
-        <div class="search-input-group">
+        <div class="search-input-group guests-group">
           <label>Huéspedes</label>
           <div class="input-wrapper">
             <UsersIcon class="input-icon" />
@@ -258,6 +258,13 @@ const clearFilters = () => {
   min-width: 200px;
 }
 
+/* Ajuste específico para el grupo de huéspedes */
+.guests-group {
+  flex: 0 0 auto;
+  min-width: 150px;
+  width: auto;
+}
+
 .search-input-group label {
   display: block;
   font-weight: 600;
@@ -326,6 +333,7 @@ const clearFilters = () => {
   box-shadow: 0 4px 6px rgba(0, 53, 128, 0.1);
   align-self: flex-end;
   height: 48px;
+  min-width: 120px;
 }
 
 .search-button:hover {
@@ -506,6 +514,10 @@ const clearFilters = () => {
   
   .date-separator {
     display: none;
+  }
+  
+  .guests-group {
+    width: 100%;
   }
 }
 

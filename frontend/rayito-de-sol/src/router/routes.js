@@ -8,7 +8,7 @@ import BookingsPage from "@/components/bookings/BookingsPage.vue"
 import CalendarPage from "@/components/calendar/CalendarPage.vue"
 import MessagesPage from "@/components/messages/MessagesPage.vue"
 import SettingsPage from "@/components/settings/SettingsPage.vue"
-import HelpSupportPage from "@/components/help/HelpSupportPage.vue"
+import HelpSupportSection from "@/components/help/HelpSupportSection.vue"
 import BookingTest from "@/components/views/BookingTest.vue"
 import TermsConditions from "@/components/settings/TermsConditions.vue"
 import LoginForm from "@/components/views/LoginForm.vue"
@@ -57,7 +57,7 @@ const routes = [
   {
     path: "/help",
     name: "Help",
-    component: HelpSupportPage,
+    component: HelpSupportSection,
   },
   // Portal de inquilinos (login individual)
   {
@@ -152,8 +152,8 @@ const routes = [
       },
       {
         path: "help",
-        name: "ManageHelp",
-        component: HelpSupportPage,
+        name: "Help",
+        component: HelpSupportSection,
       },
     ],
   },

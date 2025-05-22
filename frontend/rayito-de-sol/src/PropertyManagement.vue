@@ -70,6 +70,13 @@
         @select-conversation="selectConversation"
         @send-message="sendMessage"
       />
+
+      <HelpSupportSection
+        v-if="activeTab === 'help'"
+        @help-requested="handleHelpRequested"
+        @changeTab="changeTab"
+      />
+
       <SettingsSection
         v-if="activeTab === 'settings'"
         :settings-tabs="settingsTabs"
@@ -101,6 +108,7 @@ import PropertiesSection from './components/properties/PropertiesSection.vue'
 import BookingsSection from './components/bookings/BookingsSection.vue'
 import CalendarSection from './components/calendar/CalendarSection.vue'
 import MessagesSection from './components/messages/MessagesSection.vue'
+import HelpSupportSection from './components/help/HelpSupportSection.vue'
 import SettingsSection from './components/settings/SettingsSection.vue'
 import EditPaymentModal from './components/settings/EditPaymentModal.vue';
 import PaymentSettings from './components/settings/PaymentSettings.vue' 
