@@ -7,7 +7,7 @@
         <div v-for="(method, index) in paymentMethods" :key="index" class="payment-method-card">
           <div class="payment-method-icon" :class="method.type">
             <CreditCardIcon v-if="method.type === 'credit-card'" class="method-icon" />
-            <BankIcon v-else-if="method.type === 'bank'" class="method-icon" />
+            <BuildingIcon v-else-if="method.type === 'bank'" class="method-icon" />
             <SmartphoneIcon v-else class="method-icon" />
           </div>
           
@@ -161,7 +161,7 @@
 import { ref } from 'vue';
 import { 
   CreditCardIcon, 
-  BankIcon, 
+  BuildingIcon, 
   SmartphoneIcon, 
   EditIcon, 
   TrashIcon, 
