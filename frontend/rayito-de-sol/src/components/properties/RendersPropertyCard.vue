@@ -2,6 +2,7 @@
   <div class="property-card" @click="viewProperty">
     <div class="property-image-container">
       <img :src="property.image" alt="Property" class="property-image" />
+      <div class="property-badge" v-if="property.featured">Destacado</div>
       <button 
         class="favorite-button" 
         :class="{ active: isFavorite }"
@@ -100,16 +101,17 @@ onMounted(() => {
 <style scoped>
 .property-card {
   background-color: white;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 53, 128, 0.1);
   transition: transform 0.3s, box-shadow 0.3s;
   cursor: pointer;
+  border: 1px solid rgba(0, 53, 128, 0.05);
 }
 
 .property-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 24px rgba(0, 53, 128, 0.15);
 }
 
 .property-image-container {
@@ -118,8 +120,21 @@ onMounted(() => {
 
 .property-image {
   width: 100%;
-  height: 200px;
+  height: 220px;
   object-fit: cover;
+}
+
+.property-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: linear-gradient(135deg, #003580 0%, #0071c2 100%);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 53, 128, 0.2);
 }
 
 .favorite-button {
@@ -151,7 +166,7 @@ onMounted(() => {
 .favorite-icon {
   width: 20px;
   height: 20px;
-  color: #666;
+  color: #64748b;
 }
 
 .property-content {
@@ -161,20 +176,21 @@ onMounted(() => {
 .property-name {
   font-size: 1.2rem;
   margin: 0 0 0.5rem;
-  color: var(--primary-color, #003580);
+  color: #003580;
+  font-weight: 600;
 }
 
 .property-location {
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
-  color: #666;
+  color: #64748b;
 }
 
 .location-icon {
   width: 16px;
   height: 16px;
-  color: var(--primary-color, #003580);
+  color: #0071c2;
   margin-right: 0.5rem;
 }
 
@@ -188,16 +204,17 @@ onMounted(() => {
 .property-detail {
   display: flex;
   align-items: center;
-  background-color: #f5f5f5;
+  background-color: #e6f0ff;
   padding: 0.25rem 0.75rem;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 0.9rem;
+  color: #003580;
 }
 
 .detail-icon {
   width: 14px;
   height: 14px;
-  color: var(--primary-color, #003580);
+  color: #0071c2;
   margin-right: 0.5rem;
 }
 
@@ -212,18 +229,19 @@ onMounted(() => {
   display: flex;
   align-items: center;
   font-size: 0.85rem;
-  color: #666;
+  color: #64748b;
 }
 
 .amenity-icon {
   width: 14px;
   height: 14px;
-  color: var(--primary-color, #003580);
+  color: #0071c2;
   margin-right: 0.25rem;
 }
 
 .property-amenity.more {
-  color: var(--primary-color, #003580);
+  color: #0071c2;
+  font-weight: 500;
 }
 
 .property-price {
@@ -231,29 +249,32 @@ onMounted(() => {
 }
 
 .price-value {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 700;
-  color: var(--primary-color, #003580);
+  color: #003580;
 }
 
 .price-period {
   font-size: 0.9rem;
-  color: #666;
+  color: #64748b;
+  margin-left: 0.25rem;
 }
 
 .view-property-button {
   width: 100%;
-  background-color: var(--primary-color, #003580);
+  background: linear-gradient(135deg, #0071c2 0%, #003580 100%);
   color: white;
   border: none;
   padding: 0.75rem 0;
-  border-radius: 4px;
-  font-weight: 500;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 53, 128, 0.1);
 }
 
 .view-property-button:hover {
-  background-color: var(--primary-light, #0071c2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 53, 128, 0.15);
 }
 </style>

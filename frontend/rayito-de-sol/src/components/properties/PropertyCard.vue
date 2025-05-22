@@ -61,9 +61,16 @@ defineProps({
 <style scoped>
 .property-card {
   background-color: white;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 53, 128, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(0, 53, 128, 0.05);
+}
+
+.property-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 53, 128, 0.15);
 }
 
 .property-image-container {
@@ -85,14 +92,17 @@ defineProps({
   font-size: 0.8rem;
   font-weight: 500;
   background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .property-status.active {
   color: #00703c;
+  border: 1px solid rgba(0, 112, 60, 0.2);
 }
 
 .property-status.inactive {
   color: #e41c00;
+  border: 1px solid rgba(228, 28, 0, 0.2);
 }
 
 .property-content {
@@ -103,13 +113,14 @@ defineProps({
   font-size: 1.2rem;
   margin: 0 0 0.5rem;
   color: #003580;
+  font-weight: 600;
 }
 
 .property-location {
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
-  color: #666;
+  color: #64748b;
 }
 
 .location-icon {
@@ -129,10 +140,11 @@ defineProps({
 .property-detail {
   display: flex;
   align-items: center;
-  background-color: #f5f5f5;
+  background-color: #e6f0ff;
   padding: 0.25rem 0.75rem;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 0.9rem;
+  color: #003580;
 }
 
 .detail-icon {
@@ -144,7 +156,7 @@ defineProps({
 
 .property-actions {
   display: flex;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #e6f0ff;
 }
 
 .action-button {
@@ -161,7 +173,7 @@ defineProps({
 }
 
 .action-button:hover {
-  background-color: #f5f5f5;
+  background-color: #f5f9ff;
 }
 
 .action-button.edit {
@@ -169,8 +181,8 @@ defineProps({
 }
 
 .action-button.calendar {
-  color: #00703c;
-  border-left: 1px solid #eee;
+  color: #003580;
+  border-left: 1px solid #e6f0ff;
 }
 
 .action-icon {
