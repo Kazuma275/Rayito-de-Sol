@@ -57,15 +57,17 @@ const profile = ref({
 }
 
 .panel-title {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: #003580;
   margin: 0 0 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e6f0ff;
 }
 
 .profile-avatar {
   display: flex;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .avatar-placeholder {
@@ -77,6 +79,7 @@ const profile = ref({
   align-items: center;
   justify-content: center;
   margin-right: 1.5rem;
+  border: 2px solid #0071c2;
 }
 
 .avatar-icon {
@@ -86,49 +89,92 @@ const profile = ref({
 }
 
 .change-avatar-button {
-  background-color: #f5f5f5;
-  color: #333;
-  border: 1px solid #ccc;
+  background-color: #f0f7ff;
+  color: #0071c2;
+  border: 1px solid #0071c2;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .change-avatar-button:hover {
-  background-color: #eee;
+  background-color: #e6f0ff;
+  transform: translateY(-2px);
 }
 
 .form-row {
   display: flex;
   gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-row .form-group {
   flex: 1;
 }
 
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #cce0ff;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #0071c2;
+  box-shadow: 0 0 0 3px rgba(0, 113, 194, 0.1);
+}
+
+.form-actions {
+  margin-top: 2rem;
+}
+
 .save-button {
-  background-color: #0071c2;
+  background: linear-gradient(135deg, #0071c2 0%, #003580 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 53, 128, 0.1);
 }
 
 .save-button:hover {
-  background-color: #005999;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 53, 128, 0.15);
 }
 
 @media (max-width: 576px) {
   .form-row {
     flex-direction: column;
     gap: 1rem;
+  }
+  
+  .profile-avatar {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .avatar-placeholder {
+    margin-right: 0;
+    margin-bottom: 1rem;
   }
 }
 </style>
