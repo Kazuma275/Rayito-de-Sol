@@ -87,7 +87,7 @@ const notifications = ref({
 }
 
 .notification-group h4 {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: #003580;
   margin: 0 0 0.5rem;
   font-weight: 600;
@@ -152,11 +152,15 @@ const notifications = ref({
   border-radius: 50%;
 }
 
-.toggle input:checked + .toggle-slider {
+input:checked + .toggle-slider {
   background-color: #0071c2;
 }
 
-.toggle input:checked + .toggle-slider:before {
+input:focus + .toggle-slider {
+  box-shadow: 0 0 1px #0071c2;
+}
+
+input:checked + .toggle-slider:before {
   transform: translateX(26px);
 }
 
