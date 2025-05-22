@@ -1,732 +1,107 @@
 <template>
   <div class="property-management">
-    <!-- Header -->
-
     <Header :user="user" :activeTab="activeTab" @changeTab="changeTab" />
-
-    <!-- Main Content -->
     <main class="main-content">
-      <!-- Dashboard -->
-      <section v-if="activeTab === 'dashboard'" class="dashboard-section">
-        <h2 class="section-title">Panel de Control</h2>
-        
-        <div class="stats-grid">
-          <div class="stat-card">
-            <HomeIcon class="stat-icon" />
-            <div class="stat-content">
-              <h3 class="stat-title">Propiedades</h3>
-              <p class="stat-value">{{ properties.length }}</p>
-            </div>
-          </div>
-          
-          <div class="stat-card">
-            <CalendarIcon class="stat-icon" />
-            <div class="stat-content">
-              <h3 class="stat-title">Reservas Activas</h3>
-              <p class="stat-value">{{ activeBookings }}</p>
-            </div>
-          </div>
-          
-          <div class="stat-card">
-            <TrendingUpIcon class="stat-icon" />
-            <div class="stat-content">
-              <h3 class="stat-title">Tasa de Ocupación</h3>
-              <p class="stat-value">{{ occupancyRate }}%</p> <!-- Dinámico -->
-            </div>
-          </div>
-          
-          <div class="stat-card">
-            <EuroIcon class="stat-icon" />
-            <div class="stat-content">
-              <h3 class="stat-title">Ingresos (30 días)</h3>
-              <p class="stat-value">€{{ monthlyRevenue }}</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="dashboard-grid">
-          <div class="dashboard-card">
-            <div class="card-header">
-              <h3>Próximas Reservas</h3>
-              <router-link to="/manage/bookings" class="view-all-button">Ver todas</router-link>
-            </div>
-            <div v-if="upcomingBookings.length > 0" class="upcoming-bookings">
-            <div v-for="booking in upcomingBookings" :key="booking.id">
-              <div class="booking-property">
-                <img :src="getPropertyById(booking.property_id).image" alt="Property" class="booking-image" />
-                <div>
-                  <h4>{{ getPropertyById(booking.property_id).name }}</h4>
-                  <p class="booking-dates">
-                    {{ formatDate(booking.check_in) }} - {{ formatDate(booking.check_out) }}
-                  </p>
-                </div>
-              </div>
-              <div class="booking-guest">
-                <UserIcon class="guest-icon" />
-                <div>
-                  <p class="guest-name">{{ booking.guest_name }}</p>
-                  <p class="guest-info">{{ booking.guests }} huéspedes</p>
-                </div>
-              </div>
-            </div>
-          </div>
-            <div v-else class="empty-state">
-              <CalendarOffIcon class="empty-icon" />
-              <p>No hay reservas próximas</p>
-            </div>
-          </div>
-          
-          <div class="dashboard-card">
-            <div class="card-header">
-              <h3>Mensajes Recientes</h3>
-              <router-link to="/manage/messages" class="view-all-button">Ver todos</router-link>
-            </div>
-            <div v-if="recentMessages.length > 0" class="messages-list">
-            <div v-for="message in recentMessages" :key="message.id" class="message-item">
-              <div class="message-sender">
-                <UserIcon class="message-icon" />
-                <div>
-                  <h4>{{ message.sender_name }}</h4>
-                  <p class="message-property">{{ getPropertyById(message.property_id).name }}</p>
-                </div>
-              </div>
-              <p class="message-preview">{{ message.text.substring(0, 60) }}{{ message.text.length > 60 ? '...' : '' }}</p>
-              <p class="message-time">{{ formatDateTime(message.created_at) }}</p>
-            </div>
-          </div>
-            <div v-else class="empty-state">
-              <MailIcon class="empty-icon" />
-              <p>No hay mensajes nuevos</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      
-      <div v-if="isLoading" class="loading-message">
-        
-      </div>
-      <div v-else>
-        <div v-if="properties.length > 0" class="properties-grid">
-          <!-- tu v-for y las tarjetas aquí -->
-        </div>
-      </div>
-      
-<!-- Properties -->
-<section v-if="activeTab === 'properties'" class="properties-section">
-  <div class="section-header">
-    <h2 class="section-title">Mis Propiedades</h2>
-    <button class="add-button" @click="openAddModal">
-      <PlusIcon class="add-icon" />
-      Añadir Propiedad
-    </button>
-  </div>
-
-  <!-- MENSAJE DE CARGA -->
-  <div v-if="isLoading" class="loading-properties">
-    <svg class="spinner" viewBox="0 0 50 50">
-      <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"/>
-    </svg>
-    <span class="loading-text">Esperando... Cargando propiedades</span>
-  </div>
-
-  <!-- GRID DE PROPIEDADES -->
-  <div v-else-if="properties.length > 0" class="properties-grid">
-    <div v-for="(property, index) in properties" :key="index" class="property-card">
-      <div class="property-image-container">
-        <img :src="property.image" alt="Property" class="property-image" />
-        <div class="property-status" :class="property.status">
-          {{ property.statusText }}
-        </div>
-      </div>
-      <div class="property-content">
-        <h3 class="property-name">{{ property.name }}</h3>
-        <div class="property-location">
-          <span>{{ property.location }}</span>
-        </div>
-        <div class="property-details">
-          <div class="property-detail">
-            <span>{{ property.bedrooms }} dormitorios</span>
-          </div>
-          <div class="property-detail">
-            <span>{{ property.capacity }} huéspedes</span>
-          </div>
-          <div class="property-detail">
-            <span>€{{ property.price }}/noche</span>
-          </div>
-          <div class="property-description">
-            <p>{{ property.description }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="property-actions">
-        <button class="action-button edit" @click="openEditModal(property)">
-          <EditIcon class="action-icon" />
-          Editar
-        </button>
-        <button class="action-button calendar" @click="viewCalendar(property.id)">
-          Calendario
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- VACÍO, NO HAY PROPIEDADES -->
-  <div v-else class="empty-properties">
-    <HomeIcon class="empty-icon" />
-    <h3>No tienes propiedades registradas</h3>
-    <p>Añade tu primera propiedad para empezar a recibir reservas</p>
-    <button class="add-property-button" @click="openAddModal">
-      Añadir Propiedad
-    </button>
-  </div>
-</section>
-
-<!-- MODAL DE CREAR/EDITAR PROPIEDAD -->
-<div v-if="showPropertyModal" class="modal-overlay" @click="closeModal">
-  <div class="modal-content" @click.stop>
-    <h2>{{ isEditMode ? 'Editar' : 'Añadir' }} Propiedad</h2>
-    <form @submit.prevent="saveProperty">
-      <div class="form-group">
-        <label for="property-name">Nombre de la propiedad</label>
-        <input id="property-name" v-model="currentProperty.name" type="text" class="form-input" required />
-      </div>
-      <div class="form-group">
-        <label for="property-location">Ubicación</label>
-        <input id="property-location" v-model="currentProperty.location" type="text" class="form-input" required />
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="property-bedrooms">Dormitorios</label>
-          <input id="property-bedrooms" v-model="currentProperty.bedrooms" type="number" min="1" class="form-input" required />
-        </div>
-        <div class="form-group">
-          <label for="property-capacity">Capacidad (huéspedes)</label>
-          <input id="property-capacity" v-model="currentProperty.capacity" type="number" min="1" class="form-input" required />
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="property-price">Precio por noche (€)</label>
-        <input id="property-price" v-model="currentProperty.price" type="number" min="1" class="form-input" required />
-      </div>
-      <div class="form-group">
-        <label for="property-description">Descripción</label>
-        <textarea id="property-description" v-model="currentProperty.description" class="form-textarea" rows="4" required></textarea>
-      </div>
-      <div class="form-group">
-        <label>Fotos</label>
-        <div class="photo-upload" @click="$refs.imageInput.click()">
-          <div class="upload-placeholder" v-if="!currentProperty.image">
-            <UploadIcon class="upload-icon" />
-            <span>Subir foto</span>
-          </div>
-          <img v-else :src="currentProperty.image" class="uploaded-image-preview" />
-          <input
-            ref="imageInput"
-            type="file"
-            accept="image/*"
-            @change="handleImageUpload"
-            style="display: none"
-          />
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Servicios</label>
-        <div class="amenities-grid">
-          <div v-for="(amenity, index) in amenities" :key="index" class="amenity-checkbox">
-            <input :id="`amenity-${index}`" type="checkbox" v-model="currentProperty.amenities" :value="amenity.id" />
-            <label :for="`amenity-${index}`">{{ amenity.name }}</label>
-          </div>
-        </div>
-      </div>
-      <div class="form-actions">
-        <button type="button" class="cancel-button" @click="closeModal">Cancelar</button>
-        <button type="submit" class="submit-button">{{ isEditMode ? 'Guardar Cambios' : 'Guardar Propiedad' }}</button>
-      </div>
-    </form>
-  </div>
-</div>
-      
-      <!-- Bookings -->
-      <section v-if="activeTab === 'bookings'" class="bookings-section">
-        <h2 class="section-title">Reservas</h2>
-        
-        <div class="bookings-filter">
-          <div class="filter-tabs">
-            <button 
-              v-for="filter in bookingFilters" 
-              :key="filter.id" 
-              class="filter-tab" 
-              :class="{ active: activeBookingFilter === filter.id }"
-              @click="activeBookingFilter = filter.id"
-            >
-              {{ filter.name }}
-            </button>
-          </div>
-          
-          <div class="filter-property">
-            <label>Filtrar por propiedad:</label>
-            <select v-model="bookingPropertyFilter" class="property-select">
-              <option value="all">Todas las propiedades</option>
-              <option v-for="property in properties" :key="property.id" :value="property.id">
-                {{ property.name }}
-              </option>
-            </select>
-          </div>
-        </div>
-        
-        <div v-if="filteredBookings.length > 0" class="bookings-list">
-          <div v-for="(booking, index) in filteredBookings" :key="index" class="booking-card">
-            <div class="booking-header">
-              <div class="booking-property-info">
-                <img :src="getPropertyById(booking.propertyId).image" alt="Property" class="booking-property-image" />
-                <div>
-                  <h3>{{ getPropertyById(booking.propertyId).name }}</h3>
-                  <div class="booking-id">Reserva #{{ booking.id }}</div>
-                </div>
-              </div>
-              <div class="booking-status" :class="booking.status">
-                {{ booking.statusText }}
-              </div>
-            </div>
-            
-            <div class="booking-details">
-              <div class="booking-dates">
-                <div class="date-item">
-                  <CalendarIcon class="date-icon" />
-                  <div>
-                    <span class="date-label">Llegada</span>
-                    <span class="date-value">{{ booking.checkIn }}</span>
-                  </div>
-                </div>
-                <div class="date-item">
-                  <CalendarIcon class="date-icon" />
-                  <div>
-                    <span class="date-label">Salida</span>
-                    <span class="date-value">{{ booking.checkOut }}</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="booking-guest-info">
-                <UserIcon class="guest-icon" />
-                <div>
-                  <span class="guest-label">Huésped</span>
-                  <span class="guest-value">{{ booking.guestName }}</span>
-                </div>
-              </div>
-              
-              <div class="booking-guests">
-                <UsersIcon class="guests-icon" />
-                <div>
-                  <span class="guests-label">Huéspedes</span>
-                  <span class="guests-value">{{ booking.guests }}</span>
-                </div>
-              </div>
-              
-              <div class="booking-price">
-                <EuroIcon class="price-icon" />
-                <div>
-                  <span class="price-label">Total</span>
-                  <span class="price-value">€{{ booking.total }}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="booking-actions">
-              <button class="action-button view">Ver detalles</button>
-              <button v-if="booking.status === 'pending'" class="action-button accept">Aceptar</button>
-              <button v-if="booking.status === 'pending'" class="action-button reject">Rechazar</button>
-              <button v-if="booking.status === 'confirmed'" class="action-button message">
-                <MessageSquareIcon class="action-icon" />
-                Mensaje
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div v-else class="empty-bookings">
-          <CalendarOffIcon class="empty-icon" />
-          <h3>No hay reservas {{ activeBookingFilter === 'all' ? '' : 'en este estado' }}</h3>
-          <p v-if="activeBookingFilter !== 'all'">Prueba a seleccionar otro filtro</p>
-        </div>
-      </section>
-      
-      <!-- Calendar - VERSIÓN MEJORADA -->
-      <section v-if="activeTab === 'calendar'" class="calendar-section">
-        <div class="section-header">
-          <h2 class="section-title">Calendario de Disponibilidad</h2>
-          <div class="property-selector">
-            <select v-model="calendarPropertyId" class="property-select">
-              <option v-for="property in properties" :key="property.id" :value="property.id">
-                {{ property.name }}
-              </option>
-            </select>
-            <ChevronDownIcon class="select-icon" />
-          </div>
-        </div>
-        
-        <div class="calendar-navigation">
-          <button class="nav-button" @click="previousMonth">
-            <ChevronLeftIcon />
-          </button>
-          <h3 class="current-month">{{ currentMonthName }} {{ currentYear }}</h3>
-          <button class="nav-button" @click="nextMonth">
-            <ChevronRightIcon />
-          </button>
-        </div>
-        
-        <transition name="calendar-fade" mode="out-in">
-          <div :key="currentMonthKey" class="calendar-container">
-            <div class="weekdays-header">
-              <div v-for="day in weekDays" :key="day" class="weekday">{{ day }}</div>
-            </div>
-            <div class="calendar-grid">
-              <div 
-                v-for="(day, index) in calendarDays" 
-                :key="index" 
-                :class="[
-                  'calendar-day', 
-                  { 
-                    'empty': !day.date, 
-                    'available': day.available && day.date,
-                    'unavailable': !day.available && day.date,
-                    'booked': day.booked && day.date,
-                    'today': day.isToday,
-                    'in-selection': isInSelection(day)
-                  }
-                ]"
-                @click="day.date && handleDayClick(day)"
-                @mouseenter="day.date && handleDayHover(day)"
-              >
-                <span v-if="day.date" class="day-number">{{ day.date }}</span>
-                <transition name="status-fade">
-                  <div v-if="day.date" class="day-status">
-                    <span v-if="day.booked" class="status booked">Reservado</span>
-                    <span v-else-if="!day.available" class="status unavailable">No disponible</span>
-                    <span v-else class="status available">Disponible</span>
-                  </div>
-                </transition>
-              </div>
-            </div>
-          </div>
-        </transition>
-        
-        <div class="calendar-legend">
-          <div class="legend-item">
-            <div class="legend-color available"></div>
-            <span>Disponible</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color unavailable"></div>
-            <span>No disponible</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color booked"></div>
-            <span>Reservado</span>
-          </div>
-        </div>
-        
-        <div class="bulk-actions">
-          <div class="bulk-header">
-            <h4>Acciones en bloque</h4>
-            <button v-if="isSelecting" class="cancel-selection" @click="cancelSelection">
-              <XIcon class="icon" />
-              Cancelar selección
-            </button>
-          </div>
-          
-          <div v-if="!isSelecting" class="selection-prompt">
-            <p>Haz clic en una fecha para comenzar a seleccionar un rango</p>
-          </div>
-          
-          <div v-else class="selection-info">
-            <div class="date-range-display">
-              <CalendarIcon class="icon" />
-              <span>{{ formatDateRange(selectionStart, selectionEnd) }}</span>
-            </div>
-            
-            <div class="action-buttons">
-              <button class="action-button available" @click="applyBulkAction(true)">
-                <CheckIcon class="icon" />
-                Marcar como disponible
-              </button>
-              <button class="action-button unavailable" @click="applyBulkAction(false)">
-                <XIcon class="icon" />
-                Marcar como no disponible
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      <!-- Messages -->
-      <section v-if="activeTab === 'messages'" class="messages-section">
-        <h2 class="section-title">Mensajes</h2>
-        
-        <div class="messages-container">
-          <div class="messages-sidebar">
-            <div class="messages-search">
-              <SearchIcon class="search-icon" />
-              <input type="text" placeholder="Buscar mensajes..." class="search-input" />
-            </div>
-            
-            <div class="conversation-list">
-              <div v-for="(conversation, index) in conversations" :key="index" 
-                   class="conversation-item" 
-                   :class="{ active: activeConversation === index }"
-                   @click="activeConversation = index">
-                <div class="conversation-avatar">
-                  <UserIcon class="avatar-icon" />
-                </div>
-                <div class="conversation-info">
-                  <div class="conversation-header">
-                    <h4>{{ conversation.name }}</h4>
-                    <span class="conversation-time">{{ conversation.lastMessage.time }}</span>
-                  </div>
-                  <p class="conversation-preview">{{ conversation.lastMessage.text.substring(0, 40) }}{{ conversation.lastMessage.text.length > 40 ? '...' : '' }}</p>
-                  <div class="conversation-property">{{ getPropertyById(conversation.propertyId).name }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="messages-content">
-            <div v-if="activeConversation !== null" class="conversation-view">
-              <div class="conversation-header">
-                <div class="conversation-user">
-                  <UserIcon class="user-icon" />
-                  <div>
-                    <h3>{{ conversations[activeConversation].name }}</h3>
-                    <p class="conversation-booking">Reserva #{{ conversations[activeConversation].bookingId }}</p>
-                  </div>
-                </div>
-                <div class="conversation-property">
-                  {{ getPropertyById(conversations[activeConversation].propertyId).name }}
-                </div>
-              </div>
-              
-              <div class="message-list">
-                <div v-for="(message, index) in conversations[activeConversation].messages" :key="index" 
-                     class="message-bubble" 
-                     :class="{ 'message-sent': message.sent, 'message-received': !message.sent }">
-                  <div class="message-content">{{ message.text }}</div>
-                  <div class="message-time">{{ message.time }}</div>
-                </div>
-              </div>
-              
-              <div class="message-input">
-                <textarea placeholder="Escribe un mensaje..." class="input-textarea" rows="3"></textarea>
-                <button class="send-button">
-                  <SendIcon class="send-icon" />
-                  Enviar
-                </button>
-              </div>
-            </div>
-            
-            <div v-else class="empty-conversation">
-              <MessageSquareIcon class="empty-icon" />
-              <h3>Selecciona una conversación</h3>
-              <p>Elige una conversación de la lista para ver los mensajes</p>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      <!-- Settings -->
-      <section v-if="activeTab === 'settings'" class="settings-section">
-        <h2 class="section-title">Configuración</h2>
-        
-        <div class="settings-container">
-          <div class="settings-sidebar">
-            <div v-for="(setting, index) in settingsTabs" :key="index" 
-                 class="settings-tab" 
-                 :class="{ active: activeSettingsTab === setting.id }"
-                 @click="activeSettingsTab = setting.id">
-              <component :is="setting.icon" class="settings-icon" />
-              <span>{{ setting.name }}</span>
-            </div>
-          </div>
-          
-          <div class="settings-content">
-  <!-- Profile Settings -->
-  <div v-if="activeSettingsTab === 'profile'" class="settings-panel">
-    <h3 class="panel-title">Perfil</h3>
-    <form class="settings-form" @submit.prevent="saveProfile">
-      <div class="profile-avatar">
-        <div class="avatar-placeholder">
-          <img v-if="previewImage" :src="previewImage" class="avatar-preview" />
-          <UserIcon v-else class="avatar-icon" />
-        </div>
-        <button type="button" class="change-avatar-button" @click="triggerFileInput">Cambiar foto</button>
-        <input
-          type="file"
-          ref="avatarInput"
-          accept="image/*"
-          @change="handleAvatarChange"
-          style="display: none"
-        />
-      </div>
-      
-      <div class="form-row">
-        <div class="form-group">
-          <label for="profile-name">Nombre</label>
-          <input id="profile-name" type="text" v-model="localSettings.profile.name" class="form-input" />
-        </div>
-        
-        <div class="form-group">
-          <label for="profile-lastname">Apellidos</label>
-          <input id="profile-lastname" type="text" v-model="localSettings.profile.lastname" class="form-input" />
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <label for="profile-email">Email</label>
-        <input id="profile-email" type="email" v-model="localSettings.profile.email" class="form-input" />
-      </div>
-      
-      <div class="form-group">
-        <label for="profile-phone">Teléfono</label>
-        <input id="profile-phone" type="tel" v-model="localSettings.profile.phone" class="form-input" />
-      </div>
-      
-      <div class="form-actions">
-        <button type="submit" class="save-button">Guardar cambios</button>
-      </div>
-    </form>
-  </div>
-  
-  <!-- Notifications Settings -->
-  <div v-if="activeSettingsTab === 'notifications'" class="settings-panel">
-    <h3 class="panel-title">Notificaciones</h3>
-    
-    <div class="notification-settings">
-      <div class="notification-group">
-        <h4>Email</h4>
-        
-        <div class="notification-option">
-          <div>
-            <h5>Nuevas reservas</h5>
-            <p>Recibe un email cuando recibas una nueva reserva</p>
-          </div>
-          <label class="toggle">
-            <input type="checkbox" v-model="localSettings.notifications.newBookingEmail" />
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-        
-        <div class="notification-option">
-          <div>
-            <h5>Mensajes</h5>
-            <p>Recibe un email cuando recibas un nuevo mensaje</p>
-          </div>
-          <label class="toggle">
-            <input type="checkbox" v-model="localSettings.notifications.newMessageEmail" />
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-      </div>
-      
-      <div class="notification-group">
-        <h4>SMS</h4>
-        
-        <div class="notification-option">
-          <div>
-            <h5>Nuevas reservas</h5>
-            <p>Recibe un SMS cuando recibas una nueva reserva</p>
-          </div>
-          <label class="toggle">
-            <input type="checkbox" v-model="localSettings.notifications.newBookingSMS" />
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-      </div>
-      
-      <div class="form-actions">
-        <button class="save-button">Guardar preferencias</button>
-      </div>
-    </div>
-  </div>
-  
-    <div>
-    <!-- Panel de configuración de pagos -->
-    <div v-if="activeSettingsTabPayment === 'payment'" class="settings-panel">
-      <h3 class="panel-title">Pagos</h3>
-
-      <div class="payment-methods">
-        <h4>Métodos de pago</h4>
-
-        <!-- Listado de métodos de pago -->
-        <div v-for="(payment, index) in paymentMethods" :key="index" class="payment-method">
-          <div class="payment-info">
-            <CreditCardIcon class="payment-icon" />
-            <div>
-              <h5>{{ payment.cardType }} terminada en {{ payment.last4 }}</h5>
-              <p>Expira {{ payment.expiryDate }}</p>
-            </div>
-          </div>
-          <div class="payment-actions">
-            <button class="edit-button" @click="showModal = true">Editar</button>
-            <EditPaymentModal v-if="showModal" @close="showModal = false" @update-payment="handlePaymentUpdate"/>
-            <button class="delete-button" @click="deletePayment(index)">Eliminar</button>
-          </div>
-        </div>
-
-        <!-- Botón para abrir el modal para añadir un nuevo método de pago -->
-        <button class="add-payment-button" @click="openModal">
-          <PlusIcon class="add-icon" />
-          Añadir método de pago
-        </button>
-
-        <!-- Modal PaymentSettings que solo se muestra cuando `isModalVisible` es `true` -->
-        <PaymentSettings
-          v-if="isModalVisible"
-          :visible="isModalVisible"
-          :isEditMode="false"
-          @close="closeModal"
-          @submit="handlePaymentSubmit"
-        />
-      </div>
-
-      <!-- Información de cuenta bancaria (esto es aparte) -->
-      <div class="bank-account">
-        <h4>Cuenta bancaria</h4>
-
-        <div class="form-group">
-          <label for="bank-name">Nombre del banco</label>
-          <input id="bank-name" type="text" v-model="localSettings.payment.bankName" class="form-input" />
-        </div>
-
-        <div class="form-group">
-          <label for="account-holder">Titular de la cuenta</label>
-          <input id="account-holder" type="text" v-model="localSettings.payment.accountHolder" class="form-input" />
-        </div>
-
-        <div class="form-group">
-          <label for="iban">IBAN</label>
-          <input id="iban" type="text" v-model="localSettings.payment.iban" class="form-input" />
-        </div>
-
-        <div class="form-actions">
-          <button class="save-button">Guardar información bancaria</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-        </div>
-      </section>
+      <DashboardSection
+        v-if="activeTab === 'dashboard'"
+        :properties="properties"
+        :active-bookings="activeBookings"
+        :occupancy-rate="occupancyRate"
+        :monthly-revenue="monthlyRevenue"
+        :upcoming-bookings="upcomingBookings"
+        :recent-messages="recentMessages"
+        :get-property-by-id="getPropertyById"
+        :format-date="formatDate"
+        :format-date-time="formatDateTime"
+      />
+      <PropertiesSection
+        v-if="activeTab === 'properties'"
+        :properties="properties"
+        :is-loading="isLoading"
+        :amenities="amenities"
+        @add="openAddModal"
+        @edit="openEditModal"
+        @calendar="viewCalendar"
+        @save="saveProperty"
+        @close-modal="closeModal"
+      />
+      <BookingsSection
+        v-if="activeTab === 'bookings'"
+        :booking-filters="bookingFilters"
+        :active-booking-filter="activeBookingFilter"
+        :booking-property-filter="bookingPropertyFilter"
+        :properties="properties"
+        :filtered-bookings="filteredBookings"
+        :get-property-by-id="getPropertyById"
+        @change-filter="setActiveBookingFilter"
+        @change-property="setBookingPropertyFilter"
+        @view-details="viewBookingDetails"
+        @accept="acceptBooking"
+        @reject="rejectBooking"
+        @message="messageBooking"
+      />
+      <CalendarSection
+        v-if="activeTab === 'calendar'"
+        :properties="properties"
+        :selected-property-id="calendarPropertyId"
+        :current-month-name="currentMonthName"
+        :current-year="currentYear"
+        :week-days="weekDays"
+        :calendar-days="calendarDays"
+        :current-month-key="currentMonthKey"
+        :is-in-selection="isInSelection"
+        :is-selecting="isSelecting"
+        :selection-start="selectionStart"
+        :selection-end="selectionEnd"
+        :format-date-range="formatDateRange"
+        @change-property="changeCalendarProperty"
+        @prev-month="previousMonth"
+        @next-month="nextMonth"
+        @day-click="handleDayClick"
+        @day-hover="handleDayHover"
+        @cancel-selection="cancelSelection"
+        @bulk-action="applyBulkAction"
+      />
+      <MessagesSection
+        v-if="activeTab === 'messages'"
+        :conversations="conversations"
+        :active-conversation="activeConversation"
+        :get-property-by-id="getPropertyById"
+        @select-conversation="selectConversation"
+        @send-message="sendMessage"
+      />
+      <SettingsSection
+        v-if="activeTab === 'settings'"
+        :settings-tabs="settingsTabs"
+        :active-settings-tab="activeSettingsTab"
+        :profile="localSettings.profile"
+        :preview-image="previewImage"
+        :notifications="localSettings.notifications"
+        :payment-methods="paymentMethods"
+        :bank-account="localSettings.payment"
+        @change-tab="setActiveSettingsTab"
+        @change-avatar="handleAvatarChange"
+        @save-profile="saveProfile"
+        @save-notifications="saveNotifications"
+        @add-payment-method="addPaymentMethod"
+        @edit-payment-method="editPaymentMethod"
+        @delete-payment-method="deletePaymentMethod"
+        @save-bank="saveBankAccount"
+      />
     </main>
-    
     <Footer @changeTab="changeTab" />
-    
   </div>
 </template>
 
 <script setup>
 import Header from './components/layout/Header.vue';
 import Footer from './components/layout/Footer.vue';
+import DashboardSection from './components/dashboard/DashboardSection.vue'
+import PropertiesSection from './components/properties/PropertiesSection.vue'
+import BookingsSection from './components/bookings/BookingsSection.vue'
+import CalendarSection from './components/calendar/CalendarSection.vue'
+import MessagesSection from './components/messages/MessagesSection.vue'
+import SettingsSection from './components/settings/SettingsSection.vue'
 import EditPaymentModal from './components/settings/EditPaymentModal.vue';
 import PaymentSettings from './components/settings/PaymentSettings.vue' 
 import { ref, computed, watch, onMounted } from 'vue';

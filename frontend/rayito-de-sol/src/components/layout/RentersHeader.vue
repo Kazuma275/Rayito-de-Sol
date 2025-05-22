@@ -2,7 +2,10 @@
   <header class="renters-header">
     <div class="header-container">
       <div class="logo-container" @click="goToHome">
-        <SunIcon class="logo-icon" />
+        <div class="logo-icon-wrapper">
+          <SunIcon class="logo-icon" />
+          <div class="logo-icon-glow"></div>
+        </div>
         <h1 class="logo-text">Rayito de Sol</h1>
       </div>
       
@@ -169,18 +172,19 @@ onMounted(() => {
 
 <style scoped>
 .renters-header {
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
   position: sticky;
   top: 0;
   z-index: 100;
+  padding: 1rem 0;
 }
 
 .header-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 2rem;
+  padding: 0 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -189,20 +193,46 @@ onMounted(() => {
   display: flex;
   align-items: center;
   cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.logo-container:hover {
+  transform: translateY(-2px);
+}
+
+.logo-icon-wrapper {
+  position: relative;
+  margin-right: 1rem;
 }
 
 .logo-icon {
-  width: 28px;
-  height: 28px;
-  color: var(--secondary-color, #feba02);
-  margin-right: 0.5rem;
+  width: 32px;
+  height: 32px;
+  color: #ffffff;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+  position: relative;
+  z-index: 1;
+  animation: pulse 3s infinite ease-in-out;
+}
+
+.logo-icon-glow {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  top: 0;
+  left: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  animation: glow 3s infinite ease-in-out;
+  z-index: 0;
 }
 
 .logo-text {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: var(--primary-color, #003580);
+  color: white;
   margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .desktop-nav {
@@ -218,14 +248,18 @@ onMounted(() => {
 .nav-link {
   display: flex;
   align-items: center;
-  color: #666;
+  color: rgba(0, 0, 0, 0.7);
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
 }
 
 .nav-link:hover, .nav-link.active {
-  color: var(--primary-color, #003580);
+  color: #1e293b;
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
 }
 
 .nav-icon {
@@ -242,22 +276,25 @@ onMounted(() => {
 .user-button {
   display: flex;
   align-items: center;
-  background: none;
+  background: rgba(255, 255, 255, 0.3);
   border: none;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
   cursor: pointer;
-  color: #666;
-  transition: color 0.3s;
+  color: #1e293b;
+  transition: all 0.3s ease;
 }
 
 .user-button:hover {
-  color: var(--primary-color, #003580);
+  background: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
 }
 
 .user-icon {
   width: 20px;
   height: 20px;
   margin-right: 0.5rem;
+  color: #1e293b;
 }
 
 .user-name {
@@ -269,6 +306,7 @@ onMounted(() => {
   width: 16px;
   height: 16px;
   transition: transform 0.3s;
+  color: #1e293b;
 }
 
 .chevron-icon.rotate {
@@ -280,19 +318,30 @@ onMounted(() => {
   top: 100%;
   right: 0;
   background-color: white;
-  border-radius: 4px;
+  border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 200px;
+  width: 220px;
   padding: 0.5rem 0;
   margin-top: 0.5rem;
   z-index: 10;
+  transform: translateY(10px);
+  opacity: 0;
+  animation: fadeInUp 0.3s ease forwards;
+  overflow: hidden;
+}
+
+@keyframes fadeInUp {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .dropdown-item {
   display: flex;
   align-items: center;
   padding: 0.75rem 1rem;
-  color: #666;
+  color: #333;
   text-decoration: none;
   transition: background-color 0.3s;
   cursor: pointer;
@@ -305,13 +354,14 @@ onMounted(() => {
 
 .dropdown-item:hover {
   background-color: #f5f5f5;
-  color: var(--primary-color, #003580);
+  color: #f59e0b;
 }
 
 .dropdown-icon {
   width: 16px;
   height: 16px;
   margin-right: 0.75rem;
+  color: #f59e0b;
 }
 
 .dropdown-divider {
@@ -322,49 +372,56 @@ onMounted(() => {
 
 .mobile-menu-button {
   display: none;
-  background: none;
+  background: rgba(255, 255, 255, 0.3);
   border: none;
   padding: 0.5rem;
+  border-radius: 8px;
   cursor: pointer;
-  color: #666;
+  color: #1e293b;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-button:hover {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .menu-icon {
   width: 24px;
   height: 24px;
+  color: #1e293b;
 }
 
 .mobile-menu {
   display: none;
   flex-direction: column;
   padding: 1rem;
-  background-color: white;
-  border-top: 1px solid #eee;
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .mobile-nav-link {
   display: flex;
   align-items: center;
   padding: 1rem;
-  color: #666;
+  color: rgba(0, 0, 0, 0.7);
   text-decoration: none;
-  transition: background-color 0.3s;
-  border-radius: 4px;
+  transition: all 0.3s ease;
+  border-radius: 8px;
 }
 
 .mobile-nav-link:hover, .mobile-nav-link.active {
-  background-color: #f5f5f5;
-  color: var(--primary-color, #003580);
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #1e293b;
 }
 
 .mobile-divider {
   height: 1px;
-  background-color: #eee;
+  background-color: rgba(255, 255, 255, 0.3);
   margin: 0.5rem 0;
 }
 
 .logout {
-  color: #e41c00;
+  color: #7c2d12;
   background: none;
   border: none;
   font-size: 1rem;
@@ -373,9 +430,29 @@ onMounted(() => {
   cursor: pointer;
 }
 
+.logout:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes glow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.8;
+  }
+}
+
 @media (max-width: 768px) {
   .header-container {
-    padding: 1rem;
+    padding: 0.75rem 1rem;
   }
   
   .desktop-nav {
@@ -388,6 +465,21 @@ onMounted(() => {
   
   .mobile-menu {
     display: flex;
+  }
+  
+  .logo-text {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-text {
+    display: none;
+  }
+  
+  .logo-icon {
+    width: 28px;
+    height: 28px;
   }
 }
 </style>

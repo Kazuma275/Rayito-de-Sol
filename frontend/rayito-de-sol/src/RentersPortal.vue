@@ -863,7 +863,7 @@
       </section>
     </main>
     
-    <Footer @changeTab="changeTab" />
+    <RentersFooter @changeTab="changeTab" />
   </div>
 </template>
 
@@ -871,7 +871,7 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import RentersHeader from './components/layout/RentersHeader.vue';
-import Footer from './components/layout/Footer.vue';
+import RentersFooter from './components/layout/RentersFooter.vue';
 import { 
   UserIcon, 
   CalendarIcon, 
