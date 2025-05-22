@@ -83,7 +83,7 @@ const changeTab = (tab) => {
 
 const logout = () => {
   userStore.logout();
-  window.location.href = '/login';
+  window.location.href = '/portal/';
 };
 </script>
 
