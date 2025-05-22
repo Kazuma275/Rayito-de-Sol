@@ -49,6 +49,7 @@ const handleTabChange = (tabId) => {
   display: flex;
   flex-direction: column;
   background-color: #f5f5f5;
+  background-image: linear-gradient(to bottom, #f0f7ff, #f5f9ff);
 }
 
 .main-content {
@@ -61,9 +62,9 @@ const handleTabChange = (tabId) => {
   --primary-light: #0071c2;
   --secondary-color: #feba02;
   --text-color: #333;
-  --text-light: #666;
-  --border-color: #eee;
-  --background-color: #f5f5f5;
+  --text-light: #64748b;
+  --border-color: #e6f0ff;
+  --background-color: #f5f9ff;
   --card-background: white;
   --success-color: #00703c;
   --warning-color: #b27b00;
