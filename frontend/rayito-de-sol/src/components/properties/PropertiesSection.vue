@@ -2,10 +2,10 @@
   <div class="properties-section">
     <div class="section-header">
       <h2 class="section-title">Mis Propiedades</h2>
-      <button class="add-button" @click="showAddPropertyModal = true">
-        <PlusIcon class="add-icon" />
-        Añadir Propiedad
-      </button>
+        <button class="add-button" @click="openAddModal">
+          <PlusIcon class="add-icon" />
+          Añadir Propiedad
+        </button>
     </div>
     
     <PropertySearch 
@@ -113,6 +113,7 @@ const bookings = ref([
   }
 ]);
 
+
 const favorites = ref([1, 3]);
 const showStatistics = ref(true);
 const showAddPropertyModal = ref(false);
@@ -176,26 +177,45 @@ const viewProperty = (propertyId) => {
   console.log(`Viewing property ${propertyId}`);
 };
 
+const openAddModal = () => {
+  selectedProperty.value = {};
+  isEditMode.value = false;
+  showEditModal.value = true;
+};
+
+const openEditModal = (property) => {
+  selectedProperty.value = { ...property };
+  isEditMode.value = true;
+  showEditModal.value = true;
+};
+
 const closeEditModal = () => {
   showEditModal.value = false;
 };
 
-const handlePropertySubmit = (propertyData) => {
+const handlePropertySubmit = async (propertyData) => {
   if (isEditMode.value) {
-    // Actualizar propiedad existente
-    const index = properties.value.findIndex(p => p.id === propertyData.id);
-    if (index !== -1) {
-      properties.value[index] = { ...propertyData };
+    // Actualizar propiedad 
+    try {
+      await axios.put(`/api/properties/${propertyData.id}`, propertyData);
+      const index = properties.value.findIndex(p => p.id === propertyData.id);
+      if (index !== -1) {
+        properties.value[index] = { ...propertyData };
+      }
+    } catch (error) {
+      alert('Error al actualizar la propiedad');
+      return;
     }
   } else {
-    // Añadir nueva propiedad
-    const newId = Math.max(0, ...properties.value.map(p => p.id)) + 1;
-    properties.value.push({
-      ...propertyData,
-      id: newId
-    });
+    // Crear propiedad
+    try {
+      const response = await axios.post('/api/properties', propertyData);
+      properties.value.push(response.data);
+    } catch (error) {
+      alert('Error al crear la propiedad');
+      return;
+    }
   }
-  
   showEditModal.value = false;
 };
 </script>

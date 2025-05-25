@@ -104,6 +104,10 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { XIcon, MapPinIcon, BedIcon, UsersIcon, EuroIcon, ImageIcon, CheckIcon, XCircleIcon } from 'lucide-vue-next'
+import axios from 'axios'
+
+// Usa variable de entorno si tienes VITE_API_URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
 const props = defineProps({
   visible: Boolean,
@@ -111,14 +115,21 @@ const props = defineProps({
   isEditMode: Boolean
 })
 
-const emit = defineEmits(['submit', 'close'])
+const emit = defineEmits(['submit', 'close', 'error'])
 
 const localProperty = ref({})
+const formError = ref('')
+const validationErrors = ref({})
 
 watch(
   () => props.property,
   (newVal) => {
-    localProperty.value = { ...newVal }
+    localProperty.value = { 
+      name: '', location: '', bedrooms: 1, capacity: 1, price: 1, description: '', image: '', status: 'active', statusText: 'Activo', 
+      ...newVal 
+    }
+    formError.value = ''
+    validationErrors.value = {}
   },
   { immediate: true }
 )
@@ -134,8 +145,28 @@ const handleImageUpload = (event) => {
   }
 }
 
-const handleSubmit = () => {
-  emit('submit', { ...localProperty.value })
+const handleSubmit = async () => {
+  formError.value = ''
+  validationErrors.value = {}
+  try {
+    if (props.isEditMode) {
+      await axios.put(`${API_BASE_URL}/properties/${localProperty.value.id}`, localProperty.value)
+    } else {
+      await axios.post(`${API_BASE_URL}/properties`, localProperty.value)
+    }
+    emit('submit', { ...localProperty.value })
+  } catch (error) {
+    // Laravel validation
+    if (error.response && error.response.status === 422) {
+      validationErrors.value = error.response.data.errors || {}
+      formError.value = 'Hay errores en el formulario'
+    } else if (error.response && error.response.data && error.response.data.message) {
+      formError.value = error.response.data.message
+    } else {
+      formError.value = 'Error al crear la propiedad'
+    }
+    emit('error', formError.value)
+  }
 }
 </script>
 

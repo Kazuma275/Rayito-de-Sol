@@ -25,6 +25,7 @@
         @save="saveProperty"
         @close-modal="closeModal"
       />
+      
       <BookingsSection
         v-if="activeTab === 'bookings'"
         :booking-filters="bookingFilters"

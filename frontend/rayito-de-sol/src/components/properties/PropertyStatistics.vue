@@ -13,7 +13,6 @@
           <h3 class="stat-title">Propiedades</h3>
         </div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-icon-wrapper">
           <CalendarIcon class="stat-icon" />
@@ -24,7 +23,6 @@
           <h3 class="stat-title">Reservas</h3>
         </div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-icon-wrapper">
           <TrendingUpIcon class="stat-icon" />
@@ -35,7 +33,6 @@
           <h3 class="stat-title">Ocupación</h3>
         </div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-icon-wrapper">
           <EuroIcon class="stat-icon" />
@@ -90,62 +87,75 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { HomeIcon, CalendarIcon, TrendingUpIcon, EuroIcon } from 'lucide-vue-next';
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
+import { HomeIcon, CalendarIcon, TrendingUpIcon, EuroIcon } from 'lucide-vue-next'
 
-const props = defineProps({
-  properties: {
-    type: Array,
-    required: true
-  },
-  bookings: {
-    type: Array,
-    required: true
-  }
-});
+// Estado dinámico de propiedades y reservas
+const properties = ref([])
+const bookings = ref([])
 
-// Computed statistics
-const totalProperties = computed(() => props.properties.length);
+// Cargar datos desde el backend Laravel
+async function fetchData() {
+  const [propRes, bookRes] = await Promise.all([
+    axios.get('/api/properties'),
+    axios.get('/api/bookings'),
+  ])
+  properties.value = propRes.data
+  bookings.value = bookRes.data
+}
+onMounted(fetchData)
 
-const totalBookings = computed(() => props.bookings.length);
+// Estadísticas computadas
+const totalProperties = computed(() => properties.value.length)
+const totalBookings = computed(() => bookings.value.length)
 
 const occupancyRate = computed(() => {
-  if (props.properties.length === 0) return 0;
-  
-  // This is a placeholder calculation
-  // In a real app, you would calculate this based on actual booking data
-  return Math.round(Math.random() * 40 + 60); // Random value between 60-100%
-});
+  if (!properties.value.length) return 0
+  // Calcular ocupación real a partir de reservas
+  const totalNights = properties.value.reduce((acc, property) => {
+    const propertyBookings = bookings.value.filter(b => b.propertyId === property.id)
+    return acc + propertyBookings.reduce((sum, booking) => {
+      const nights = (new Date(booking.checkOut) - new Date(booking.checkIn)) / (1000 * 60 * 60 * 24)
+      return sum + nights
+    }, 0)
+  }, 0)
+  // Supón 365 noches por propiedad
+  const maxNights = properties.value.length * 365
+  return maxNights > 0 ? Math.round((totalNights / maxNights) * 100) : 0
+})
 
 const totalRevenue = computed(() => {
-  return props.bookings.reduce((sum, booking) => sum + (booking.total || 0), 0);
-});
+  return bookings.value.reduce((sum, booking) => sum + (booking.total || 0), 0)
+})
 
-// Sample data for charts
-const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+// Reservas agrupadas por mes
+const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+const bookingsByMonth = computed(() => {
+  const counts = Object.fromEntries(months.map(m => [m, 0]))
+  bookings.value.forEach(booking => {
+    const date = new Date(booking.checkIn)
+    const m = date.getMonth()
+    counts[months[m]]++
+  })
+  return counts
+})
 
-const bookingsByMonth = {
-  'Ene': 5,
-  'Feb': 7,
-  'Mar': 10,
-  'Abr': 8,
-  'May': 12,
-  'Jun': 15,
-  'Jul': 20,
-  'Ago': 25,
-  'Sep': 18,
-  'Oct': 14,
-  'Nov': 9,
-  'Dic': 12
-};
-
-const topProperties = [
-  { name: 'Apartamento Vista Mar', revenue: 12500 },
-  { name: 'Villa con Piscina', revenue: 9800 },
-  { name: 'Ático de Lujo', revenue: 7200 },
-  { name: 'Estudio Centro', revenue: 5400 },
-  { name: 'Casa Rural', revenue: 3800 }
-];
+// Top propiedades por ingresos
+const topProperties = computed(() => {
+  // Agrupar ingresos por propiedad
+  const revenueMap = {}
+  properties.value.forEach(p => {
+    revenueMap[p.id] = { name: p.name, revenue: 0 }
+  })
+  bookings.value.forEach(b => {
+    if (revenueMap[b.propertyId]) {
+      revenueMap[b.propertyId].revenue += b.total || 0
+    }
+  })
+  // Ordenar por ingresos y tomar las primeras 5
+  return Object.values(revenueMap).sort((a, b) => b.revenue - a.revenue).slice(0, 5)
+})
 </script>
 
 <style scoped>

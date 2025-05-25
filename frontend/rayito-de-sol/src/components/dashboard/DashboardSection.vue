@@ -210,14 +210,15 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { 
-  HomeIcon, 
-  CalendarIcon, 
-  TrendingUpIcon, 
-  EuroIcon, 
-  UserIcon, 
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import {
+  HomeIcon,
+  CalendarIcon,
+  TrendingUpIcon,
+  EuroIcon,
+  UserIcon,
   CalendarOffIcon,
   MailIcon,
   MessageSquareIcon,
@@ -226,188 +227,82 @@ import {
   CheckIcon,
   AlertCircleIcon,
   BellIcon,
-  ChevronRightIcon
-} from 'lucide-vue-next';
+  ChevronRightIcon,
+} from 'lucide-vue-next'
 
-const router = useRouter();
+const router = useRouter()
 
-// Datos de ejemplo del usuario
-const user = ref({
-  name: 'Carlos Rodríguez',
-  email: 'carlos@example.com',
-  lastLogin: new Date(Date.now() - 24 * 60 * 60 * 1000) // Ayer
-});
+// Datos reactivos
+const user = ref({ name: '', email: '', lastLogin: '' })
+const properties = ref([])
+const bookings = ref([])
+const recentMessages = ref([])
+const recentActivity = ref([])
 
-// Datos de ejemplo para propiedades
-const properties = ref([
-  {
-    id: 1,
-    name: 'Apartamento Vista Mar',
-    location: 'Calahonda, Málaga',
-    bedrooms: 2,
-    capacity: 4,
-    price: 120,
-    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80',
-    occupancy: 85,
-    revenue: 3200
-  },
-  {
-    id: 2,
-    name: 'Villa con Piscina',
-    location: 'Marbella, Málaga',
-    bedrooms: 3,
-    capacity: 6,
-    price: 180,
-    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80',
-    occupancy: 72,
-    revenue: 2800
-  },
-  {
-    id: 3,
-    name: 'Ático de Lujo',
-    location: 'Fuengirola, Málaga',
-    bedrooms: 2,
-    capacity: 4,
-    price: 150,
-    image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80',
-    occupancy: 65,
-    revenue: 2100
-  }
-]);
+// Fetch dinámico desde Laravel API
+onMounted(async () => {
+  // Ajusta las rutas según tus endpoints Laravel
+  const [userRes, propRes, bookRes, msgRes, actRes] = await Promise.all([
+    axios.get('/api/user'),
+    axios.get('/api/properties'),
+    axios.get('/api/bookings'),
+    axios.get('/api/messages/recent'),
+    axios.get('/api/activity/recent'),
+  ])
+  user.value = userRes.data
+  properties.value = propRes.data
+  bookings.value = bookRes.data
+  recentMessages.value = msgRes.data
+  recentActivity.value = actRes.data
+})
 
-// Datos de ejemplo para reservas
-const bookings = ref([
-  {
-    id: 1,
-    propertyId: 1,
-    guestName: 'Juan Pérez',
-    guests: 3,
-    checkIn: '2023-08-15',
-    checkOut: '2023-08-22',
-    total: 890,
-    status: 'confirmed'
-  },
-  {
-    id: 2,
-    propertyId: 2,
-    guestName: 'María García',
-    guests: 5,
-    checkIn: '2023-09-05',
-    checkOut: '2023-09-12',
-    total: 1260,
-    status: 'pending'
-  },
-  {
-    id: 3,
-    propertyId: 3,
-    guestName: 'Pedro Sánchez',
-    guests: 2,
-    checkIn: '2023-07-20',
-    checkOut: '2023-07-27',
-    total: 1050,
-    status: 'completed'
-  }
-]);
-
-// Datos de ejemplo para mensajes
-const recentMessages = ref([
-  {
-    id: 1,
-    sender: 'Juan Pérez',
-    propertyId: 1,
-    text: '¿Podría hacer el check-in un poco antes? Llegaremos alrededor de las 13:00.',
-    time: 'Hace 2 horas'
-  },
-  {
-    id: 2,
-    sender: 'Ana Martínez',
-    propertyId: 2,
-    text: 'Gracias por aceptar mi reserva. ¿Hay algún restaurante que recomiende cerca del apartamento?',
-    time: 'Hace 1 día'
-  }
-]);
-
-// Datos de ejemplo para actividad reciente
-const recentActivity = ref([
-  {
-    type: 'booking',
-    text: '<strong>Nueva reserva</strong> para Apartamento Vista Mar',
-    time: 'Hace 2 horas'
-  },
-  {
-    type: 'message',
-    text: '<strong>Nuevo mensaje</strong> de Juan Pérez',
-    time: 'Hace 3 horas'
-  },
-  {
-    type: 'alert',
-    text: '<strong>Alerta de mantenimiento</strong> programada para Villa con Piscina',
-    time: 'Hace 1 día'
-  },
-  {
-    type: 'update',
-    text: '<strong>Actualización de precio</strong> para Ático de Lujo',
-    time: 'Hace 2 días'
-  }
-]);
-
-// Propiedades computadas
+// Computed
 const upcomingBookings = computed(() => {
-  const today = new Date();
+  const today = new Date()
   return bookings.value
-    .filter(booking => new Date(booking.checkIn) > today)
+    .filter(b => new Date(b.checkIn) > today)
     .sort((a, b) => new Date(a.checkIn) - new Date(b.checkIn))
-    .slice(0, 3);
-});
+    .slice(0, 3)
+})
 
 const occupancyRate = computed(() => {
-  if (properties.value.length === 0) return 0;
-  
-  const totalOccupancy = properties.value.reduce((sum, property) => {
-    return sum + property.occupancy;
-  }, 0);
-  
-  return Math.round(totalOccupancy / properties.value.length);
-});
+  if (!properties.value.length) return 0
+  const total = properties.value.reduce((sum, p) => sum + (p.occupancy || 0), 0)
+  return Math.round(total / properties.value.length)
+})
 
 const totalRevenue = computed(() => {
-  return properties.value.reduce((sum, property) => {
-    return sum + property.revenue;
-  }, 0);
-});
+  return properties.value.reduce((sum, p) => sum + (p.revenue || 0), 0)
+})
 
 const topProperties = computed(() => {
-  return [...properties.value]
-    .sort((a, b) => b.revenue - a.revenue)
-    .slice(0, 3);
-});
+  return [...properties.value].sort((a, b) => (b.revenue || 0) - (a.revenue || 0)).slice(0, 3)
+})
 
 // Métodos
-const formatDate = (dateString) => {
-  const options = { day: 'numeric', month: 'short', year: 'numeric' };
-  return new Date(dateString).toLocaleDateString('es-ES', options);
-};
+const formatDate = dateString => {
+  if (!dateString) return ''
+  const options = { day: 'numeric', month: 'short', year: 'numeric' }
+  return new Date(dateString).toLocaleDateString('es-ES', options)
+}
 
-const getPropertyById = (id) => {
-  return properties.value.find(property => property.id === id) || { 
-    name: 'Propiedad no encontrada', 
-    image: '/placeholder.svg?height=100&width=100' 
-  };
-};
+const getPropertyById = id => {
+  return properties.value.find(p => p.id === id) || { name: 'Propiedad no encontrada', image: '/placeholder.svg?height=100&width=100' }
+}
 
-const getActivityIcon = (type) => {
+const getActivityIcon = type => {
   const icons = {
-    'booking': CalendarIcon,
-    'message': MessageSquareIcon,
-    'alert': AlertCircleIcon,
-    'update': BellIcon
-  };
-  return icons[type] || BellIcon;
-};
+    booking: CalendarIcon,
+    message: MessageSquareIcon,
+    alert: AlertCircleIcon,
+    update: BellIcon,
+  }
+  return icons[type] || BellIcon
+}
 
-const navigateTo = (route) => {
-  router.push(`/manage/${route}`);
-};
+const navigateTo = route => {
+  router.push(`/manage/${route}`)
+}
 </script>
 
 <style scoped>

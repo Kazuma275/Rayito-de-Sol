@@ -292,11 +292,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { 
-  RefreshCwIcon, 
-  ChevronLeftIcon, 
-  ChevronRightIcon, 
+import { ref, computed, onMounted, watch } from 'vue'
+import axios from 'axios'
+import {
+  RefreshCwIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   CalendarIcon,
   CheckIcon,
   XIcon,
@@ -305,58 +306,58 @@ import {
   CreditCardIcon,
   EyeIcon,
   MessageSquareIcon,
-  EuroIcon
-} from 'lucide-vue-next';
+  EuroIcon,
+} from 'lucide-vue-next'
 
-const props = defineProps({
-  properties: {
-    type: Array,
-    required: true
-  },
-  bookings: {
-    type: Array,
-    required: true
-  }
-});
+// Estado dinámico para propiedades y reservas
+const properties = ref([])
+const bookings = ref([])
+
+// Cargar datos desde el backend Laravel
+async function fetchCalendarData() {
+  // Ajusta los endpoints según tu API
+  const [propertiesRes, bookingsRes] = await Promise.all([
+    axios.get('/api/properties'),
+    axios.get('/api/bookings'),
+  ])
+  properties.value = propertiesRes.data
+  bookings.value = bookingsRes.data
+}
+onMounted(fetchCalendarData)
 
 // Estado del calendario
-const selectedPropertyId = ref(props.properties.length > 0 ? props.properties[0].id : null);
-const activeView = ref('month');
-const currentMonth = ref(new Date().getMonth());
-const currentYear = ref(new Date().getFullYear());
-const currentWeekStart = ref(getStartOfWeek(new Date()));
+const selectedPropertyId = ref(null)
+watch(properties, (newVal) => {
+  if (newVal.length && !selectedPropertyId.value) selectedPropertyId.value = newVal[0].id
+}, { immediate: true })
 
-function isCheckOutDate(dateString) {
-  if (!Array.isArray(props.bookings)) return false;
-  return props.bookings.some(booking => booking.checkOut === dateString);
-}
+const activeView = ref('month')
+const currentMonth = ref(new Date().getMonth())
+const currentYear = ref(new Date().getFullYear())
+const currentWeekStart = ref(getStartOfWeek(new Date()))
 
 // Estado para acciones en bloque
-const bulkStartDate = ref('');
-const bulkEndDate = ref('');
+const bulkStartDate = ref('')
+const bulkEndDate = ref('')
 
 // Estado para el modal de edición de día
-const showDayModal = ref(false);
-const selectedDate = ref(null);
-const selectedDayStatus = ref('available');
-const selectedDayPrice = ref(100);
-const selectedDayNotes = ref('');
-const selectedDayBooking = ref(null);
+const showDayModal = ref(false)
+const selectedDate = ref(null)
+const selectedDayStatus = ref('available')
+const selectedDayPrice = ref(100)
+const selectedDayNotes = ref('')
+const selectedDayBooking = ref(null)
 
 // Opciones de precios rápidos
-const quickPrices = [80, 100, 120, 150, 180, 200];
+const quickPrices = [80, 100, 120, 150, 180, 200]
 
 // Vistas disponibles del calendario
 const calendarViews = [
   { id: 'month', name: 'Mes' },
   { id: 'week', name: 'Semana' }
-];
-
-// Días de la semana
-const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-
-// Horas para la vista semanal (de 8:00 a 22:00)
-const hours = Array.from({ length: 15 }, (_, i) => i + 8);
+]
+const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
+const hours = Array.from({ length: 15 }, (_, i) => i + 8)
 
 // Etiqueta del período actual
 const currentPeriodLabel = computed(() => {
@@ -364,246 +365,220 @@ const currentPeriodLabel = computed(() => {
     const months = [
       'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
       'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
-    return `${months[currentMonth.value]} ${currentYear.value}`;
+    ]
+    return `${months[currentMonth.value]} ${currentYear.value}`
   } else {
-    const startDate = new Date(currentWeekStart.value);
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 6);
-    
-    const formatOptions = { day: 'numeric', month: 'short' };
-    return `${startDate.toLocaleDateString('es-ES', formatOptions)} - ${endDate.toLocaleDateString('es-ES', formatOptions)}`;
+    const startDate = new Date(currentWeekStart.value)
+    const endDate = new Date(startDate)
+    endDate.setDate(endDate.getDate() + 6)
+    const formatOptions = { day: 'numeric', month: 'short' }
+    return `${startDate.toLocaleDateString('es-ES', formatOptions)} - ${endDate.toLocaleDateString('es-ES', formatOptions)}`
   }
-});
+})
 
 // Días del calendario para la vista mensual
 const calendarDays = computed(() => {
-  const days = [];
-  const firstDay = new Date(currentYear.value, currentMonth.value, 1);
-  const lastDay = new Date(currentYear.value, currentMonth.value + 1, 0);
-  
-  // Obtener el día de la semana para el primer día (0 = Domingo, 1 = Lunes, etc.)
-  let firstDayOfWeek = firstDay.getDay() - 1;
-  if (firstDayOfWeek < 0) firstDayOfWeek = 6; // Ajustar para que el lunes sea el primer día
-  
-  // Añadir días vacíos para el comienzo del mes
+  const days = []
+  const firstDay = new Date(currentYear.value, currentMonth.value, 1)
+  const lastDay = new Date(currentYear.value, currentMonth.value + 1, 0)
+  let firstDayOfWeek = firstDay.getDay() - 1
+  if (firstDayOfWeek < 0) firstDayOfWeek = 6
+
   for (let i = 0; i < firstDayOfWeek; i++) {
-    days.push({ date: null });
+    days.push({ date: null })
   }
-  
-  // Añadir los días del mes
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
   for (let i = 1; i <= lastDay.getDate(); i++) {
-    const date = new Date(currentYear.value, currentMonth.value, i);
-    const dateString = date.toISOString().split('T')[0];
-    
-    // Comprobar si el día está reservado
-    const booking = findBookingForDate(dateString);
-    const isCheckIn = isCheckInDate(dateString);
-    const isCheckOut = isCheckOutDate(dateString);
-    
-    // Determinar si el día está parcialmente reservado (check-in o check-out)
-    const partiallyBooked = (isCheckIn || isCheckOut) && !booking;
-    
-    days.push({ 
-      date: i, 
+    const date = new Date(currentYear.value, currentMonth.value, i)
+    const dateString = date.toISOString().split('T')[0]
+    // Solo mostrar reservas de la propiedad seleccionada
+    const relevantBookings = bookings.value.filter(b => b.propertyId == selectedPropertyId.value)
+
+    const booking = findBookingForDate(dateString, relevantBookings)
+    const isCheckIn = isCheckInDate(dateString, relevantBookings)
+    const isCheckOut = isCheckOutDate(dateString, relevantBookings)
+    const partiallyBooked = (isCheckIn || isCheckOut) && !booking
+
+    days.push({
+      date: i,
       dateObj: date,
       dateString,
       isToday: date.toDateString() === today.toDateString(),
-      available: !booking && Math.random() > 0.3, // Simulación de disponibilidad
+      available: !booking,
       booked: !!booking,
       partiallyBooked,
       checkIn: isCheckIn,
       checkOut: isCheckOut,
       bookingInfo: booking
-    });
+    })
   }
-  
-  return days;
-});
+  return days
+})
 
 // Días para la vista semanal
 const weekViewDays = computed(() => {
-  const days = [];
-  const startDate = new Date(currentWeekStart.value);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  
+  const days = []
+  const startDate = new Date(currentWeekStart.value)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
   for (let i = 0; i < 7; i++) {
-    const date = new Date(startDate);
-    date.setDate(date.getDate() + i);
-    const dateString = date.toISOString().split('T')[0];
-    
+    const date = new Date(startDate)
+    date.setDate(date.getDate() + i)
+    const dateString = date.toISOString().split('T')[0]
     days.push({
       date: dateString,
       isToday: date.toDateString() === today.toDateString()
-    });
+    })
   }
-  
-  return days;
-});
+  return days
+})
 
 // Funciones auxiliares
 function getStartOfWeek(date) {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Ajustar cuando el día es domingo
-  d.setDate(diff);
-  return d.toISOString().split('T')[0];
+  const d = new Date(date)
+  const day = d.getDay()
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1)
+  d.setDate(diff)
+  return d.toISOString().split('T')[0]
 }
 
-function findBookingForDate(dateString) {
-  // Defensive check: bookings must be a non-empty array
-  if (!Array.isArray(props.bookings)) return undefined;
-
-  return props.bookings.find(booking => {
-    const checkIn = new Date(booking.checkIn);
-    const checkOut = new Date(booking.checkOut);
-    const date = new Date(dateString);
-
-    // Comprobar si la fecha está dentro del rango de la reserva
-    return date >= checkIn && date < checkOut;
-  });
+function findBookingForDate(dateString, bks = bookings.value) {
+  if (!Array.isArray(bks)) return undefined
+  return bks.find(booking => {
+    const checkIn = new Date(booking.checkIn)
+    const checkOut = new Date(booking.checkOut)
+    const date = new Date(dateString)
+    return date >= checkIn && date < checkOut
+  })
 }
 
-function isCheckInDate(dateString) {
-  if (!Array.isArray(props.bookings)) return false;
-  return props.bookings.some(booking => {
-    return booking.checkIn === dateString;
-  });
+function isCheckInDate(dateString, bks = bookings.value) {
+  if (!Array.isArray(bks)) return false
+  return bks.some(booking => booking.checkIn === dateString)
+}
+
+function isCheckOutDate(dateString, bks = bookings.value) {
+  if (!Array.isArray(bks)) return false
+  return bks.some(booking => booking.checkOut === dateString)
 }
 
 function isHourBooked(dateString, hour) {
-  // Simulación: algunas horas están reservadas aleatoriamente
-  return Math.random() < 0.2;
+  // Para hacerlo real, deberías buscar reservas por hora en tu backend
+  return false // Por defecto desactivado
 }
 
 function getBookingAtHour(dateString, hour) {
-  if (isHourBooked(dateString, hour)) {
-    // Simulación: devolver información de reserva
-    return {
-      id: Math.floor(Math.random() * 1000),
-      guestName: 'Reserva'
-    };
-  }
-  return null;
+  // Para hacerlo real, deberías buscar reservas por hora en tu backend
+  return null
 }
 
 function formatDate(dateString) {
-  if (!dateString) return '';
-  
-  const options = { day: 'numeric', month: 'short', year: 'numeric' };
-  return new Date(dateString).toLocaleDateString('es-ES', options);
+  if (!dateString) return ''
+  const options = { day: 'numeric', month: 'short', year: 'numeric' }
+  return new Date(dateString).toLocaleDateString('es-ES', options)
 }
 
 function formatSelectedDate(date) {
-  if (!date) return '';
-  
-  const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-  return new Date(date).toLocaleDateString('es-ES', options).replace(/^\w/, c => c.toUpperCase());
+  if (!date) return ''
+  const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }
+  return new Date(date).toLocaleDateString('es-ES', options).replace(/^\w/, c => c.toUpperCase())
 }
 
 function getDayName(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('es-ES', { weekday: 'short' });
+  const date = new Date(dateString)
+  return date.toLocaleDateString('es-ES', { weekday: 'short' })
 }
 
 function getDayNumber(dateString) {
-  const date = new Date(dateString);
-  return date.getDate();
+  const date = new Date(dateString)
+  return date.getDate()
 }
 
 function formatHour(hour) {
-  return `${hour}:00`;
+  return `${hour}:00`
 }
 
 // Navegación del calendario
 function previousPeriod() {
   if (activeView.value === 'month') {
     if (currentMonth.value === 0) {
-      currentMonth.value = 11;
-      currentYear.value--;
+      currentMonth.value = 11
+      currentYear.value--
     } else {
-      currentMonth.value--;
+      currentMonth.value--
     }
   } else {
-    const date = new Date(currentWeekStart.value);
-    date.setDate(date.getDate() - 7);
-    currentWeekStart.value = date.toISOString().split('T')[0];
+    const date = new Date(currentWeekStart.value)
+    date.setDate(date.getDate() - 7)
+    currentWeekStart.value = date.toISOString().split('T')[0]
   }
 }
-
 function nextPeriod() {
   if (activeView.value === 'month') {
     if (currentMonth.value === 11) {
-      currentMonth.value = 0;
-      currentYear.value++;
+      currentMonth.value = 0
+      currentYear.value++
     } else {
-      currentMonth.value++;
+      currentMonth.value++
     }
   } else {
-    const date = new Date(currentWeekStart.value);
-    date.setDate(date.getDate() + 7);
-    currentWeekStart.value = date.toISOString().split('T')[0];
+    const date = new Date(currentWeekStart.value)
+    date.setDate(date.getDate() + 7)
+    currentWeekStart.value = date.toISOString().split('T')[0]
   }
 }
 
 // Acciones en bloque
-function setBulkAvailability(available) {
-  if (!bulkStartDate.value || !bulkEndDate.value) {
-    alert('Por favor, selecciona un rango de fechas');
-    return;
+async function setBulkAvailability(available) {
+  if (!bulkStartDate.value || !bulkEndDate.value || !selectedPropertyId.value) {
+    alert('Por favor, selecciona una propiedad y un rango de fechas')
+    return
   }
-  
-  console.log(`Estableciendo disponibilidad a ${available ? 'disponible' : 'no disponible'} desde ${bulkStartDate.value} hasta ${bulkEndDate.value}`);
-  // Aquí iría la lógica para actualizar la disponibilidad en el backend
+  // Llama a tu backend para actualizar disponibilidad
+  await axios.post('/api/properties/set-availability', {
+    propertyId: selectedPropertyId.value,
+    from: bulkStartDate.value,
+    to: bulkEndDate.value,
+    available
+  })
+  await fetchCalendarData()
 }
 
 // Manejo de clics en el calendario
 function handleDayClick(day) {
-  if (!day.date) return;
-  
-  selectedDate.value = day.dateString;
-  selectedDayStatus.value = day.available ? 'available' : 'unavailable';
-  selectedDayPrice.value = 100; // Precio por defecto
-  selectedDayNotes.value = ''; // Notas vacías por defecto
-  selectedDayBooking.value = day.bookingInfo;
-  
-  showDayModal.value = true;
+  if (!day.date) return
+  selectedDate.value = day.dateString
+  selectedDayStatus.value = day.available ? 'available' : 'unavailable'
+  selectedDayPrice.value = 100 // Real: cargar precio desde backend si tienes esa info
+  selectedDayNotes.value = '' // Cargar nota si existe
+  selectedDayBooking.value = day.bookingInfo
+  showDayModal.value = true
 }
-
 function handleHourClick(dateString, hour) {
-  console.log(`Clic en ${dateString} a las ${hour}:00`);
   // Aquí iría la lógica para manejar el clic en una hora específica
 }
-
 function closeDayModal() {
-  showDayModal.value = false;
+  showDayModal.value = false
 }
-
-function saveDayChanges() {
-  console.log('Guardando cambios:', {
+async function saveDayChanges() {
+  // Guarda los cambios en el backend
+  if (!selectedPropertyId.value || !selectedDate.value) return
+  await axios.post('/api/properties/set-day', {
+    propertyId: selectedPropertyId.value,
     date: selectedDate.value,
     status: selectedDayStatus.value,
     price: selectedDayPrice.value,
     notes: selectedDayNotes.value
-  });
-  
-  // Aquí iría la lógica para guardar los cambios en el backend
-  
-  closeDayModal();
+  })
+  await fetchCalendarData()
+  closeDayModal()
 }
-
 function viewBookingDetails(bookingId) {
-  console.log(`Ver detalles de la reserva ${bookingId}`);
-  // Aquí iría la lógica para ver los detalles de la reserva
+  // Redirige o abre modal de detalles para la reserva
 }
-
 function sendMessage(bookingId) {
-  console.log(`Enviar mensaje para la reserva ${bookingId}`);
-  // Aquí iría la lógica para enviar un mensaje
+  // Abre modal para enviar mensaje
 }
 </script>
 

@@ -84,19 +84,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { HomeIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-vue-next';
-import RendersPropertyCard from './RendersPropertyCard.vue';
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
+import { HomeIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-vue-next'
+import RendersPropertyCard from './RendersPropertyCard.vue'
 
 const props = defineProps({
-  properties: {
-    type: Array,
-    required: true
-  },
-  favorites: {
-    type: Array,
-    default: () => []
-  },
   title: {
     type: String,
     default: 'Propiedades'
@@ -113,24 +106,26 @@ const props = defineProps({
     type: Number,
     default: 6
   }
-});
+})
 
-const emit = defineEmits(['toggleFavorite', 'viewProperty', 'changePage']);
+const emit = defineEmits(['toggleFavorite', 'viewProperty', 'changePage'])
 
-// Filter and sort options
-const sortBy = ref('price_asc');
-const activeFilters = ref([]);
-const currentPage = ref(1);
+// Estado dinámico
+const properties = ref([])
+const favorites = ref([])
 
-// Sample filter options
+// Estado de filtros, orden y paginación
+const sortBy = ref('price_asc')
+const activeFilters = ref([])
+const currentPage = ref(1)
+
+// Opciones de filtro y amenidades (puedes cargarlas dinámicamente también)
 const filterOptions = [
   { id: 'pool', name: 'Piscina' },
   { id: 'beach', name: 'Playa' },
   { id: 'wifi', name: 'Wi-Fi' },
   { id: 'parking', name: 'Parking' }
-];
-
-// Sample amenities for the property cards
+]
 const amenities = [
   { id: 1, name: 'Wi-Fi' },
   { id: 2, name: 'Piscina' },
@@ -140,101 +135,91 @@ const amenities = [
   { id: 6, name: 'TV' },
   { id: 7, name: 'Terraza' },
   { id: 8, name: 'Parking' }
-];
+]
+
+// Cargar propiedades y favoritos desde el backend Laravel
+async function fetchProperties() {
+  const [propRes, favRes] = await Promise.all([
+    axios.get('/api/properties'),
+    axios.get('/api/user/favorites')
+  ])
+  properties.value = propRes.data
+  favorites.value = favRes.data
+}
+onMounted(fetchProperties)
 
 // Computed properties
 const filteredProperties = computed(() => {
-  let result = [...props.properties];
-  
-  // Apply filters (in a real app, this would be more sophisticated)
+  let result = [...properties.value]
+  // Filtrar por amenidades
   if (activeFilters.value.length > 0) {
-    // This is just a placeholder. In a real app, you'd filter based on property amenities
-    result = result.filter(property => 
-      activeFilters.value.some(filter => 
+    result = result.filter(property =>
+      activeFilters.value.some(filter =>
         property.amenities && property.amenities.includes(filter)
       )
-    );
+    )
   }
-  
-  // Apply sorting
+  // Ordenar
   result.sort((a, b) => {
     switch (sortBy.value) {
-      case 'price_asc':
-        return a.price - b.price;
-      case 'price_desc':
-        return b.price - a.price;
-      case 'rating':
-        return (b.rating || 0) - (a.rating || 0);
-      case 'newest':
-        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-      default:
-        return 0;
+      case 'price_asc': return a.price - b.price
+      case 'price_desc': return b.price - a.price
+      case 'rating': return (b.rating || 0) - (a.rating || 0)
+      case 'newest': return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+      default: return 0
     }
-  });
-  
-  // Apply pagination
-  const startIndex = (currentPage.value - 1) * props.itemsPerPage;
-  const endIndex = startIndex + props.itemsPerPage;
-  
-  return result.slice(startIndex, endIndex);
-});
+  })
+  // Paginación
+  const startIndex = (currentPage.value - 1) * props.itemsPerPage
+  const endIndex = startIndex + props.itemsPerPage
+  return result.slice(startIndex, endIndex)
+})
 
 const totalPages = computed(() => {
-  return Math.ceil(props.properties.length / props.itemsPerPage);
-});
+  return Math.ceil(properties.value.length / props.itemsPerPage)
+})
 
 const paginationPages = computed(() => {
-  const pages = [];
-  const maxVisiblePages = 5;
-  
+  const pages = []
+  const maxVisiblePages = 5
   if (totalPages.value <= maxVisiblePages) {
-    // Show all pages if there are few
-    for (let i = 1; i <= totalPages.value; i++) {
-      pages.push(i);
-    }
+    for (let i = 1; i <= totalPages.value; i++) pages.push(i)
   } else {
-    // Show a subset of pages with current page in the middle
-    let startPage = Math.max(1, currentPage.value - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages.value, startPage + maxVisiblePages - 1);
-    
-    // Adjust if we're near the end
+    let startPage = Math.max(1, currentPage.value - Math.floor(maxVisiblePages / 2))
+    let endPage = Math.min(totalPages.value, startPage + maxVisiblePages - 1)
     if (endPage === totalPages.value) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+      startPage = Math.max(1, endPage - maxVisiblePages + 1)
     }
-    
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
+    for (let i = startPage; i <= endPage; i++) pages.push(i)
   }
-  
-  return pages;
-});
+  return pages
+})
 
-// Methods
+// Métodos
 const toggleFilter = (filterId) => {
-  const index = activeFilters.value.indexOf(filterId);
+  const index = activeFilters.value.indexOf(filterId)
   if (index === -1) {
-    activeFilters.value.push(filterId);
+    activeFilters.value.push(filterId)
   } else {
-    activeFilters.value.splice(index, 1);
+    activeFilters.value.splice(index, 1)
   }
-  
-  // Reset to first page when filters change
-  currentPage.value = 1;
-};
+  currentPage.value = 1
+}
 
-const toggleFavorite = (propertyId) => {
-  emit('toggleFavorite', propertyId);
-};
+const toggleFavorite = async (propertyId) => {
+  await axios.post('/api/user/toggle-favorite', { propertyId })
+  await fetchProperties()
+  emit('toggleFavorite', propertyId)
+}
 
 const viewProperty = (propertyId) => {
-  emit('viewProperty', propertyId);
-};
+  emit('viewProperty', propertyId)
+}
 
 const changePage = (page) => {
-  currentPage.value = page;
-  emit('changePage', page);
-};
+  currentPage.value = page
+  emit('changePage', page)
+}
 </script>
 
 <style scoped>
