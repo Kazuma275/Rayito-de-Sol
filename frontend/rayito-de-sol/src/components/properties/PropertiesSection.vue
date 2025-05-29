@@ -1,17 +1,11 @@
 <template>
   <div class="properties-section">
     <div class="section-header">
-      <h2 class="section-title">Mis Propiedades</h2>
         <button class="add-button" @click="openAddModal">
           <PlusIcon class="add-icon" />
           Añadir Propiedad
         </button>
     </div>
-    
-    <PropertySearch 
-      @search="handleSearch" 
-      @applyFilters="handleFilters"
-    />
     
     <PropertyList 
       :properties="filteredProperties" 
@@ -42,7 +36,6 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { PlusIcon } from 'lucide-vue-next';
-import PropertySearch from './PropertySearch.vue';
 import PropertyList from './PropertyList.vue';
 import PropertyStatistics from './PropertyStatistics.vue';
 import EditPropertyModal from './EditPropertyModal.vue';
@@ -272,7 +265,9 @@ const handlePropertySubmit = async (propertyData) => {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 53, 128, 0.1);
+  margin-left: auto; 
 }
+
 
 .add-button:hover {
   transform: translateY(-2px);

@@ -313,9 +313,7 @@ import {
 const properties = ref([])
 const bookings = ref([])
 
-// Cargar datos desde el backend Laravel
 async function fetchCalendarData() {
-  // Ajusta los endpoints según tu API
   const [propertiesRes, bookingsRes] = await Promise.all([
     axios.get('/api/properties'),
     axios.get('/api/bookings'),
@@ -347,6 +345,7 @@ const selectedDayStatus = ref('available')
 const selectedDayPrice = ref(100)
 const selectedDayNotes = ref('')
 const selectedDayBooking = ref(null)
+const selectedDayTime = ref('12:00:00') // por si necesitas hora
 
 // Opciones de precios rápidos
 const quickPrices = [80, 100, 120, 150, 180, 200]
@@ -376,7 +375,7 @@ const currentPeriodLabel = computed(() => {
   }
 })
 
-// Días del calendario para la vista mensual
+// Días del calendario para la vista mensual (MAPPING CORRECTO)
 const calendarDays = computed(() => {
   const days = []
   const firstDay = new Date(currentYear.value, currentMonth.value, 1)
@@ -384,21 +383,25 @@ const calendarDays = computed(() => {
   let firstDayOfWeek = firstDay.getDay() - 1
   if (firstDayOfWeek < 0) firstDayOfWeek = 6
 
+  // Días vacíos al principio para cuadrar el calendario
   for (let i = 0; i < firstDayOfWeek; i++) {
     days.push({ date: null })
   }
+
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   for (let i = 1; i <= lastDay.getDate(); i++) {
     const date = new Date(currentYear.value, currentMonth.value, i)
     const dateString = date.toISOString().split('T')[0]
     // Solo mostrar reservas de la propiedad seleccionada
-    const relevantBookings = bookings.value.filter(b => b.propertyId == selectedPropertyId.value)
+    const relevantBookings = bookings.value.filter(
+      b => (b.property_id || b.propertyId) == selectedPropertyId.value
+    )
 
-    const booking = findBookingForDate(dateString, relevantBookings)
-    const isCheckIn = isCheckInDate(dateString, relevantBookings)
-    const isCheckOut = isCheckOutDate(dateString, relevantBookings)
-    const partiallyBooked = (isCheckIn || isCheckOut) && !booking
+    // Busca si hay reserva para el día exacto
+    const booking = relevantBookings.find(
+      b => (b.reservation_date || b.reservationDate) === dateString
+    )
 
     days.push({
       date: i,
@@ -407,9 +410,9 @@ const calendarDays = computed(() => {
       isToday: date.toDateString() === today.toDateString(),
       available: !booking,
       booked: !!booking,
-      partiallyBooked,
-      checkIn: isCheckIn,
-      checkOut: isCheckOut,
+      partiallyBooked: false, // Si tienes lógica de parcial, cámbialo
+      checkIn: false,
+      checkOut: false,
       bookingInfo: booking
     })
   }
@@ -443,26 +446,8 @@ function getStartOfWeek(date) {
   return d.toISOString().split('T')[0]
 }
 
-function findBookingForDate(dateString, bks = bookings.value) {
-  if (!Array.isArray(bks)) return undefined
-  return bks.find(booking => {
-    const checkIn = new Date(booking.checkIn)
-    const checkOut = new Date(booking.checkOut)
-    const date = new Date(dateString)
-    return date >= checkIn && date < checkOut
-  })
-}
-
-function isCheckInDate(dateString, bks = bookings.value) {
-  if (!Array.isArray(bks)) return false
-  return bks.some(booking => booking.checkIn === dateString)
-}
-
-function isCheckOutDate(dateString, bks = bookings.value) {
-  if (!Array.isArray(bks)) return false
-  return bks.some(booking => booking.checkOut === dateString)
-}
-
+// Estas funciones ya no son necesarias si no tienes checkIn/checkOut por rango
+// Si algún día tienes reservas por rango, adáptalas
 function isHourBooked(dateString, hour) {
   // Para hacerlo real, deberías buscar reservas por hora en tu backend
   return false // Por defecto desactivado
@@ -562,15 +547,16 @@ function closeDayModal() {
   showDayModal.value = false
 }
 async function saveDayChanges() {
-  // Guarda los cambios en el backend
+  console.log("Intentando guardar reserva"); 
   if (!selectedPropertyId.value || !selectedDate.value) return
-  await axios.post('/api/properties/set-day', {
-    propertyId: selectedPropertyId.value,
-    date: selectedDate.value,
-    status: selectedDayStatus.value,
-    price: selectedDayPrice.value,
-    notes: selectedDayNotes.value
+
+  await axios.post('/api/reservations', {
+    property_id: selectedPropertyId.value,
+    reservation_date: selectedDate.value,
+    reservation_time: selectedDayTime.value ?? '12:00:00', 
+    details: selectedDayNotes.value
   })
+
   await fetchCalendarData()
   closeDayModal()
 }

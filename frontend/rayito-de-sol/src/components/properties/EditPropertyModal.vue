@@ -148,15 +148,19 @@ const handleImageUpload = (event) => {
 const handleSubmit = async () => {
   formError.value = ''
   validationErrors.value = {}
+  // Clona el objeto y elimina statusText y campos vacíos innecesarios
+  const payload = { ...localProperty.value }
+  delete payload.statusText
+  if (!payload.image) delete payload.image
+  if (!payload.description) delete payload.description // Si es opcional
   try {
     if (props.isEditMode) {
-      await axios.put(`${API_BASE_URL}/properties/${localProperty.value.id}`, localProperty.value)
+      await axios.put(`${API_BASE_URL}/properties/${localProperty.value.id}`, payload)
     } else {
-      await axios.post(`${API_BASE_URL}/properties`, localProperty.value)
+      await axios.post(`${API_BASE_URL}/properties`, payload)
     }
     emit('submit', { ...localProperty.value })
   } catch (error) {
-    // Laravel validation
     if (error.response && error.response.status === 422) {
       validationErrors.value = error.response.data.errors || {}
       formError.value = 'Hay errores en el formulario'

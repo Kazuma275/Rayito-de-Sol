@@ -9,11 +9,24 @@ class PropertyController extends Controller
 {
     public function store(Request $request)
     {
-        $property = Property::create($request->all());
+        $data = $request->validate([
+            'name' => 'required|string',
+            'location' => 'required|string',
+            'bedrooms' => 'required|integer',
+            'capacity' => 'required|integer',
+            'price' => 'required|numeric',
+            'image' => 'nullable|string',
+            'description' => 'required|string',
+            'amenities' => 'nullable|array',
+            'status' => 'required|in:active,inactive',
+        ]);
+
+        $property = Property::create($data);
         return response()->json($property, 201);
     }
+
     public function index()
     {
-    return response()->json(Property::all());
+        return response()->json(Property::all());
     }
 }

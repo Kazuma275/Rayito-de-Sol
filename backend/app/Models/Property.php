@@ -16,7 +16,6 @@ class Property extends Model
         'description',
         'amenities',
         'status',
-        'statusText',
     ];
 
     protected $casts = [
