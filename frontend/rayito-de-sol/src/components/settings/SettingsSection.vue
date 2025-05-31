@@ -887,7 +887,6 @@ const deleteAccount = async () => {
   max-width: 1200px;
   margin: 2rem auto;
   position: relative;
-  overflow: hidden;
 }
 
 .settings-section::before {

@@ -22,6 +22,7 @@ import RentersFavorites from "@/components/pages/RentersFavorites.vue"
 import RentersMessages from "@/components/pages/RentersMessages.vue"
 import RentersProfile from "@/components/pages/RentersProfile.vue"
 import RentersSettings from "@/components/pages/RentersSettings.vue"
+import RentersPropertyDetail from "@/components/properties/RentersPropertyDetail.vue"
 
 const routes = [
   {
@@ -108,6 +109,11 @@ const routes = [
         path: "settings",
         name: "RentersSettings",
         component: RentersSettings,
+      },
+      {
+        path: "property/:id",
+        name: "RentersPropertyDetail",
+        component: RentersPropertyDetail,
       },
     ],
   },

@@ -1,93 +1,10 @@
-<template>
-  <div class="property-list-container">
-    <div class="list-header">
-      <h2 class="list-title">{{ title }}</h2>
-      <div class="list-filters" v-if="showFilters">
-        <div class="filter-group">
-          <label>Ordenar por:</label>
-          <select v-model="sortBy" class="filter-select">
-            <option value="price_asc">Precio: menor a mayor</option>
-            <option value="price_desc">Precio: mayor a menor</option>
-            <option value="rating">Mejor valorados</option>
-            <option value="newest">Más recientes</option>
-          </select>
-        </div>
-        
-        <div class="filter-group">
-          <label>Filtrar por:</label>
-          <div class="filter-buttons">
-            <button 
-              v-for="filter in filterOptions" 
-              :key="filter.id" 
-              class="filter-button" 
-              :class="{ active: activeFilters.includes(filter.id) }"
-              @click="toggleFilter(filter.id)"
-            >
-              {{ filter.name }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div v-if="filteredProperties.length > 0" class="properties-grid">
-      <RendersPropertyCard 
-        v-for="property in filteredProperties" 
-        :key="property.id" 
-        :property="property" 
-        :favorites="favorites"
-        :amenities="amenities"
-        @toggle-favorite="toggleFavorite"
-        @view-property="viewProperty"
-      />
-    </div>
-    
-    <div v-else class="empty-state">
-      <div class="empty-illustration">
-        <HomeIcon class="empty-icon" />
-        <div class="empty-waves"></div>
-      </div>
-      <h3>No se encontraron propiedades</h3>
-      <p>Intenta cambiar los filtros o busca en otra ubicación</p>
-    </div>
-    
-    <div v-if="showPagination && totalPages > 1" class="pagination">
-      <button 
-        class="pagination-button" 
-        :disabled="currentPage === 1"
-        @click="changePage(currentPage - 1)"
-      >
-        <ChevronLeftIcon class="pagination-icon" />
-      </button>
-      
-      <div class="pagination-pages">
-        <button 
-          v-for="page in paginationPages" 
-          :key="page" 
-          class="page-button" 
-          :class="{ active: currentPage === page }"
-          @click="changePage(page)"
-        >
-          {{ page }}
-        </button>
-      </div>
-      
-      <button 
-        class="pagination-button" 
-        :disabled="currentPage === totalPages"
-        @click="changePage(currentPage + 1)"
-      >
-        <ChevronRightIcon class="pagination-icon" />
-      </button>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { HomeIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-vue-next'
 import RendersPropertyCard from './RendersPropertyCard.vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const props = defineProps({
   title: {
@@ -110,16 +27,14 @@ const props = defineProps({
 
 const emit = defineEmits(['toggleFavorite', 'viewProperty', 'changePage'])
 
-// Estado dinámico
 const properties = ref([])
 const favorites = ref([])
 
-// Estado de filtros, orden y paginación
 const sortBy = ref('price_asc')
 const activeFilters = ref([])
 const currentPage = ref(1)
 
-// Opciones de filtro y amenidades (puedes cargarlas dinámicamente también)
+// Filtros y amenidades (adapta los ids a los que usa tu backend)
 const filterOptions = [
   { id: 'pool', name: 'Piscina' },
   { id: 'beach', name: 'Playa' },
@@ -127,31 +42,53 @@ const filterOptions = [
   { id: 'parking', name: 'Parking' }
 ]
 const amenities = [
-  { id: 1, name: 'Wi-Fi' },
-  { id: 2, name: 'Piscina' },
-  { id: 3, name: 'Aire acondicionado' },
-  { id: 4, name: 'Cocina equipada' },
-  { id: 5, name: 'Lavadora' },
-  { id: 6, name: 'TV' },
-  { id: 7, name: 'Terraza' },
-  { id: 8, name: 'Parking' }
+  { id: 'wifi', name: 'Wi-Fi' },
+  { id: 'pool', name: 'Piscina' },
+  { id: 'ac', name: 'Aire acondicionado' },
+  { id: 'kitchen', name: 'Cocina equipada' },
+  { id: 'washer', name: 'Lavadora' },
+  { id: 'tv', name: 'TV' },
+  { id: 'terrace', name: 'Terraza' },
+  { id: 'parking', name: 'Parking' }
 ]
 
-// Cargar propiedades y favoritos desde el backend Laravel
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+
 async function fetchProperties() {
-  const [propRes, favRes] = await Promise.all([
-    axios.get('/api/properties'),
-    axios.get('/api/user/favorites')
-  ])
-  properties.value = propRes.data
-  favorites.value = favRes.data
+  try {
+    const [propRes, favRes] = await Promise.all([
+      axios.get(`${API_BASE_URL}/properties`),
+      axios.get(`${API_BASE_URL}/user/favorites`)
+    ])
+    properties.value = propRes.data
+    favorites.value = favRes.data
+  } catch (e) {
+    console.error('Error al cargar propiedades:', e)
+    properties.value = []
+    favorites.value = []
+  }
 }
+
 onMounted(fetchProperties)
 
-// Computed properties
+// Filtra correctamente por amenities: soporta tanto array de ids como de objetos con id
+function propertyHasAmenity(property, filterId) {
+  // Si amenities está vacío, nunca pasa el filtro
+  if (!property.amenities || property.amenities.length === 0) return false;
+  // Si amenities es array de string ids
+  if (typeof property.amenities[0] === 'string') {
+    return property.amenities.includes(filterId)
+  }
+  // Si amenities es array de objetos
+  if (typeof property.amenities[0] === 'object') {
+    return property.amenities.some(a => a.id === filterId)
+  }
+  return false
+}
+
+// Computed para filtrar y paginar
 const filteredProperties = computed(() => {
   let result = [...properties.value]
-  // Filtrar por amenidades
   if (activeFilters.value.length > 0) {
     result = result.filter(property =>
       activeFilters.value.some(filter =>
@@ -159,7 +96,6 @@ const filteredProperties = computed(() => {
       )
     )
   }
-  // Ordenar
   result.sort((a, b) => {
     switch (sortBy.value) {
       case 'price_asc': return a.price - b.price
@@ -169,14 +105,21 @@ const filteredProperties = computed(() => {
       default: return 0
     }
   })
-  // Paginación
   const startIndex = (currentPage.value - 1) * props.itemsPerPage
   const endIndex = startIndex + props.itemsPerPage
   return result.slice(startIndex, endIndex)
 })
 
 const totalPages = computed(() => {
-  return Math.ceil(properties.value.length / props.itemsPerPage)
+  let result = [...properties.value]
+  if (activeFilters.value.length > 0) {
+    result = result.filter(property =>
+      activeFilters.value.every(filter =>
+        propertyHasAmenity(property, filter)
+      )
+    )
+  }
+  return Math.max(1, Math.ceil(result.length / props.itemsPerPage))
 })
 
 const paginationPages = computed(() => {
@@ -207,13 +150,22 @@ const toggleFilter = (filterId) => {
 }
 
 const toggleFavorite = async (propertyId) => {
-  await axios.post('/api/user/toggle-favorite', { propertyId })
-  await fetchProperties()
-  emit('toggleFavorite', propertyId)
+  try {
+    await axios.post(`${API_BASE_URL}/user/toggle-favorite`, { propertyId })
+    await fetchProperties()
+    emit('toggleFavorite', propertyId)
+  } catch (e) {
+    console.error('Error al cambiar favorito:', e)
+  }
 }
 
 const viewProperty = (propertyId) => {
   emit('viewProperty', propertyId)
+  router.push(`/renters/property/${propertyId}`)
+}
+
+function updateActiveTabFromRoute() {
+  viewProperty();
 }
 
 const changePage = (page) => {
@@ -222,22 +174,97 @@ const changePage = (page) => {
 }
 </script>
 
+<template>
+  <div class="property-list-container">
+    <div class="list-header">
+      <h2 class="list-title">{{ title }}</h2>
+      <div class="list-filters" v-if="showFilters">
+        <div class="filter-group">
+          <label>Ordenar por:</label>
+          <select v-model="sortBy" class="filter-select">
+            <option value="price_asc">Precio: menor a mayor</option>
+            <option value="price_desc">Precio: mayor a menor</option>
+            <option value="rating">Mejor valorados</option>
+            <option value="newest">Más recientes</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Filtrar por:</label>
+          <div class="filter-buttons">
+            <button 
+              v-for="filter in filterOptions" 
+              :key="filter.id" 
+              class="filter-button" 
+              :class="{ active: activeFilters.includes(filter.id) }"
+              @click="toggleFilter(filter.id)"
+            >
+              {{ filter.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="filteredProperties.length > 0" class="properties-grid">
+    <RendersPropertyCard
+      v-for="property in filteredProperties"
+      :key="property.id"
+      :property="property"
+      :favorite="favorites.includes(property.id)"
+      @view="() => viewProperty(property.id)"
+      @toggleFavorite="() => toggleFavorite(property.id)"
+    />
+    </div>
+    <div v-else class="empty-state">
+      <div class="empty-illustration">
+        <HomeIcon class="empty-icon" />
+        <div class="empty-waves"></div>
+      </div>
+      <h3>No se encontraron propiedades</h3>
+      <p>Intenta cambiar los filtros o busca en otra ubicación</p>
+    </div>
+    <div v-if="showPagination && totalPages > 1" class="pagination">
+      <button 
+        class="pagination-button" 
+        :disabled="currentPage === 1"
+        @click="changePage(currentPage - 1)"
+      >
+        <ChevronLeftIcon class="pagination-icon" />
+      </button>
+      <div class="pagination-pages">
+        <button 
+          v-for="page in paginationPages" 
+          :key="page" 
+          class="page-button" 
+          :class="{ active: currentPage === page }"
+          @click="changePage(page)"
+        >
+          {{ page }}
+        </button>
+      </div>
+      <button 
+        class="pagination-button" 
+        :disabled="currentPage === totalPages"
+        @click="changePage(currentPage + 1)"
+      >
+        <ChevronRightIcon class="pagination-icon" />
+      </button>
+    </div>
+  </div>
+</template>
+
 <style scoped>
 .property-list-container {
   margin-bottom: 3rem;
 }
-
 .list-header {
   margin-bottom: 2rem;
 }
-
 .list-title {
   font-size: 1.8rem;
   color: #003580;
   margin: 0 0 1.5rem;
   position: relative;
 }
-
 .list-title::after {
   content: '';
   position: absolute;
@@ -248,25 +275,21 @@ const changePage = (page) => {
   background: linear-gradient(90deg, #0071c2, #003580);
   border-radius: 3px;
 }
-
 .list-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
   align-items: center;
 }
-
 .filter-group {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
-
 .filter-group label {
   font-weight: 600;
   color: #003580;
 }
-
 .filter-select {
   padding: 0.5rem 1rem;
   border: 1px solid #cce0ff;
@@ -277,19 +300,16 @@ const changePage = (page) => {
   cursor: pointer;
   transition: all 0.3s;
 }
-
 .filter-select:focus {
   outline: none;
   border-color: #0071c2;
   box-shadow: 0 0 0 3px rgba(0, 113, 194, 0.1);
 }
-
 .filter-buttons {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
-
 .filter-button {
   padding: 0.5rem 1rem;
   border: 1px solid #cce0ff;
@@ -300,25 +320,21 @@ const changePage = (page) => {
   cursor: pointer;
   transition: all 0.3s;
 }
-
 .filter-button:hover {
   background-color: #f0f7ff;
   color: #0071c2;
 }
-
 .filter-button.active {
   background-color: #e6f0ff;
   color: #0071c2;
   border-color: #0071c2;
 }
-
 .properties-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
-
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
@@ -327,14 +343,12 @@ const changePage = (page) => {
   box-shadow: 0 4px 12px rgba(0, 53, 128, 0.05);
   border: 1px solid rgba(0, 53, 128, 0.05);
 }
-
 .empty-illustration {
   position: relative;
   width: 120px;
   height: 120px;
   margin: 0 auto 2rem;
 }
-
 .empty-icon {
   width: 80px;
   height: 80px;
@@ -343,7 +357,6 @@ const changePage = (page) => {
   z-index: 2;
   animation: float 3s ease-in-out infinite;
 }
-
 .empty-waves {
   position: absolute;
   bottom: 0;
@@ -356,7 +369,6 @@ const changePage = (page) => {
   opacity: 0.7;
   animation: wave 3s ease-in-out infinite;
 }
-
 @keyframes float {
   0%, 100% {
     transform: translateY(0);
@@ -365,7 +377,6 @@ const changePage = (page) => {
     transform: translateY(-10px);
   }
 }
-
 @keyframes wave {
   0%, 100% {
     transform: scale(1);
@@ -374,13 +385,11 @@ const changePage = (page) => {
     transform: scale(1.1);
   }
 }
-
 .empty-state h3 {
   font-size: 1.4rem;
   margin-bottom: 0.5rem;
   color: #003580;
 }
-
 .empty-state p {
   color: #64748b;
   margin-bottom: 0;
@@ -388,14 +397,12 @@ const changePage = (page) => {
   margin-left: auto;
   margin-right: auto;
 }
-
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
 }
-
 .pagination-button {
   width: 40px;
   height: 40px;
@@ -409,26 +416,21 @@ const changePage = (page) => {
   cursor: pointer;
   transition: all 0.3s;
 }
-
 .pagination-button:hover:not(:disabled) {
   background-color: #f0f7ff;
 }
-
 .pagination-button:disabled {
   color: #94a3b8;
   cursor: not-allowed;
 }
-
 .pagination-icon {
   width: 18px;
   height: 18px;
 }
-
 .pagination-pages {
   display: flex;
   gap: 0.5rem;
 }
-
 .page-button {
   width: 40px;
   height: 40px;
@@ -443,32 +445,26 @@ const changePage = (page) => {
   cursor: pointer;
   transition: all 0.3s;
 }
-
 .page-button:hover {
   background-color: #f0f7ff;
 }
-
 .page-button.active {
   background-color: #0071c2;
   color: white;
   border-color: #0071c2;
 }
-
 @media (max-width: 768px) {
   .list-filters {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-  
   .filter-group {
     width: 100%;
   }
-  
   .filter-select {
     width: 100%;
   }
-  
   .properties-grid {
     grid-template-columns: 1fr;
   }

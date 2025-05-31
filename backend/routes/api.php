@@ -8,6 +8,8 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\FavoriteController;
 
 // Rutas de la API
 Route::post('/register', [AuthenticatedSessionController::class, 'store']);
@@ -31,3 +33,9 @@ use App\Models\Reservation;
 Route::get('/bookings', function () {
     return Reservation::all();
 });
+
+Route::get('/properties', [PropertyController::class, 'index']);
+/* Route::get('/messages', [MessageController::class, 'index']); */
+Route::get('/user/favorites', [FavoriteController::class, 'index']);
+Route::get('/properties', [PropertyController::class, 'index']);
+Route::get('/properties/{id}', [PropertyController::class, 'show']);

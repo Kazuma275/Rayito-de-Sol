@@ -927,6 +927,37 @@ const tabs = [
 // Active tab state
 const activeTab = ref('dashboard');
 
+const viewProperty = (id) => {
+  const property = properties.value.find(p => p.id === id);
+  if (property) {
+    selectedProperty.value = property;
+    activeTab.value = 'property-detail';
+    router.push(`/renters/property/${id}`);
+  }
+};
+
+
+// Initialize on mount
+onMounted(() => {
+  updateActiveTabFromRoute();
+  fetchProperties();
+  fetchBookings();
+});
+
+
+// Change tab function
+const changeTab = (tabId) => {
+  activeTab.value = tabId;
+  const tab = tabs.find(t => t.id === tabId);
+  if (tab) {
+    router.push(tab.path);
+  }
+};
+
+// Properties data
+const properties = ref([]);
+const isLoading = ref(false);
+
 // Update active tab based on route
 const updateActiveTabFromRoute = () => {
   const path = route.path;
@@ -951,31 +982,6 @@ const updateActiveTabFromRoute = () => {
     }
   }
 };
-
-// Watch for route changes
-watch(() => route.path, () => {
-  updateActiveTabFromRoute();
-}, { immediate: true });
-
-// Initialize on mount
-onMounted(() => {
-  updateActiveTabFromRoute();
-  fetchProperties();
-  fetchBookings();
-});
-
-// Change tab function
-const changeTab = (tabId) => {
-  activeTab.value = tabId;
-  const tab = tabs.find(t => t.id === tabId);
-  if (tab) {
-    router.push(tab.path);
-  }
-};
-
-// Properties data
-const properties = ref([]);
-const isLoading = ref(false);
 
 // Mock properties data
 const fetchProperties = async () => {
@@ -1176,15 +1182,6 @@ const bookingData = ref({
   checkOut: '',
   guests: 2
 });
-
-const viewProperty = (id) => {
-  const property = properties.value.find(p => p.id === id);
-  if (property) {
-    selectedProperty.value = property;
-    activeTab.value = 'property-detail';
-    router.push(`/renters/property/${id}`);
-  }
-};
 
 const goBack = () => {
   router.back();
@@ -1646,6 +1643,14 @@ const formatDateTime = (dateString) => {
   
   return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
 };
+
+
+// Watch for route changes
+watch(() => route.path, () => {
+  updateActiveTabFromRoute();
+}, { immediate: true });
+
+
 </script>
 
 <style scoped>
