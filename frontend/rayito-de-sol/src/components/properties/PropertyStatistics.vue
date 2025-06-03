@@ -87,53 +87,39 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
+import { computed } from 'vue'
 import { HomeIcon, CalendarIcon, TrendingUpIcon, EuroIcon } from 'lucide-vue-next'
 
-// Estado dinámico de propiedades y reservas
-const properties = ref([])
-const bookings = ref([])
+const props = defineProps({
+  properties: { type: Array, required: true },
+  bookings: { type: Array, required: true }
+})
 
-// Cargar datos desde el backend Laravel
-async function fetchData() {
-  const [propRes, bookRes] = await Promise.all([
-    axios.get('/api/properties'),
-    axios.get('/api/bookings'),
-  ])
-  properties.value = propRes.data
-  bookings.value = bookRes.data
-}
-onMounted(fetchData)
-
-// Estadísticas computadas
-const totalProperties = computed(() => properties.value.length)
-const totalBookings = computed(() => bookings.value.length)
+const totalProperties = computed(() => props.properties.length)
+const totalBookings = computed(() => props.bookings.length)
 
 const occupancyRate = computed(() => {
-  if (!properties.value.length) return 0
-  // Calcular ocupación real a partir de reservas
-  const totalNights = properties.value.reduce((acc, property) => {
-    const propertyBookings = bookings.value.filter(b => b.propertyId === property.id)
+  if (!props.properties.length) return 0
+  const totalNights = props.properties.reduce((acc, property) => {
+    const propertyBookings = props.bookings.filter(b => b.propertyId === property.id)
     return acc + propertyBookings.reduce((sum, booking) => {
       const nights = (new Date(booking.checkOut) - new Date(booking.checkIn)) / (1000 * 60 * 60 * 24)
       return sum + nights
     }, 0)
   }, 0)
-  // Supón 365 noches por propiedad
-  const maxNights = properties.value.length * 365
+  const maxNights = props.properties.length * 365
   return maxNights > 0 ? Math.round((totalNights / maxNights) * 100) : 0
 })
 
 const totalRevenue = computed(() => {
-  return bookings.value.reduce((sum, booking) => sum + (booking.total || 0), 0)
+  return props.bookings.reduce((sum, booking) => sum + (booking.total || 0), 0)
 })
 
-// Reservas agrupadas por mes
 const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+
 const bookingsByMonth = computed(() => {
   const counts = Object.fromEntries(months.map(m => [m, 0]))
-  bookings.value.forEach(booking => {
+  props.bookings.forEach(booking => {
     const date = new Date(booking.checkIn)
     const m = date.getMonth()
     counts[months[m]]++
@@ -141,19 +127,16 @@ const bookingsByMonth = computed(() => {
   return counts
 })
 
-// Top propiedades por ingresos
 const topProperties = computed(() => {
-  // Agrupar ingresos por propiedad
   const revenueMap = {}
-  properties.value.forEach(p => {
+  props.properties.forEach(p => {
     revenueMap[p.id] = { name: p.name, revenue: 0 }
   })
-  bookings.value.forEach(b => {
+  props.bookings.forEach(b => {
     if (revenueMap[b.propertyId]) {
       revenueMap[b.propertyId].revenue += b.total || 0
     }
   })
-  // Ordenar por ingresos y tomar las primeras 5
   return Object.values(revenueMap).sort((a, b) => b.revenue - a.revenue).slice(0, 5)
 })
 </script>

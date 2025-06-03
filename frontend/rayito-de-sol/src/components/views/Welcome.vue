@@ -1,59 +1,103 @@
 <script setup>
-import { ref } from 'vue';
-import { HomeIcon, KeyIcon, BarChartIcon, CalendarIcon } from 'lucide-vue-next';
+import { computed } from 'vue'
+import { HomeIcon, KeyIcon, BarChartIcon, CalendarIcon } from 'lucide-vue-next'
 
-const title = ref('¡Bienvenido al Portal de Propietarios!');
+const props = defineProps({
+  properties: { type: Array, required: true },
+  bookings: { type: Array, required: true }
+})
+
+const activeBookings = computed(() =>
+  props.bookings.filter(b => b.status === 'confirmed')
+)
+
+const now = new Date()
+const currentMonth = now.getMonth()
+const currentYear = now.getFullYear()
+
+const occupancyRate = computed(() => {
+  if (!props.properties.length) return 0
+  const totalNights = props.properties.reduce((acc, property) => {
+    const propertyBookings = props.bookings.filter(
+      b => b.propertyId === property.id &&
+        b.status === 'confirmed' &&
+        (new Date(b.checkIn).getMonth() === currentMonth) &&
+        (new Date(b.checkIn).getFullYear() === currentYear)
+    )
+    return acc + propertyBookings.reduce((sum, booking) => {
+      const nights =
+        (new Date(booking.checkOut) - new Date(booking.checkIn)) /
+        (1000 * 60 * 60 * 24)
+      return sum + nights
+    }, 0)
+  }, 0)
+  const maxNights = props.properties.length * 30 // 30 días del mes
+  return maxNights > 0 ? Math.round((totalNights / maxNights) * 100) : 0
+})
+
+const monthlyRevenue = computed(() => {
+  return props.bookings
+    .filter(b => {
+      const date = new Date(b.checkIn)
+      return (
+        b.status === 'confirmed' &&
+        date.getMonth() === currentMonth &&
+        date.getFullYear() === currentYear
+      )
+    })
+    .reduce((sum, b) => sum + (b.total || 0), 0)
+})
 </script>
 
 <template>
   <div class="welcome-container">
     <div class="welcome-header">
-      <h1>{{ title }}</h1>
-      <p class="welcome-subtitle">Gestiona tus propiedades, reservas y ganancias desde un solo lugar</p>
+      <h1>¡Bienvenido al Portal de Propietarios!</h1>
+      <p class="welcome-subtitle">
+        Gestiona tus propiedades, reservas y ganancias desde un solo lugar
+      </p>
     </div>
-    
+
     <div class="stats-overview">
       <div class="stat-card">
         <div class="stat-icon">
           <HomeIcon />
         </div>
         <div class="stat-content">
-          <h3>3</h3>
+          <h3>{{ props.properties.length }}</h3>
           <p>Propiedades</p>
         </div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-icon">
           <CalendarIcon />
         </div>
         <div class="stat-content">
-          <h3>5</h3>
+          <h3>{{ activeBookings.length }}</h3>
           <p>Reservas Activas</p>
         </div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-icon">
           <BarChartIcon />
         </div>
         <div class="stat-content">
-          <h3>74%</h3>
-          <p>Ocupación</p>
+          <h3>{{ occupancyRate }}%</h3>
+          <p>Ocupación este mes</p>
         </div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-icon">
           <KeyIcon />
         </div>
         <div class="stat-content">
-          <h3>€8,150</h3>
+          <h3>€{{ monthlyRevenue.toLocaleString() }}</h3>
           <p>Ingresos Mensuales</p>
         </div>
       </div>
     </div>
-    
+
+    <!-- Acciones rápidas -->
     <div class="quick-actions">
       <h2>Acciones Rápidas</h2>
       <div class="action-buttons">
@@ -71,10 +115,14 @@ const title = ref('¡Bienvenido al Portal de Propietarios!');
         </button>
       </div>
     </div>
-    
+
     <div class="welcome-message">
-      <p>Gracias por utilizar nuestro portal de gestión de propiedades. Estamos aquí para ayudarte a maximizar tus ingresos y simplificar la gestión de tus alquileres vacacionales.</p>
-      <p>Si necesitas ayuda, no dudes en contactar con nuestro equipo de soporte.</p>
+      <p>
+        Gracias por utilizar nuestro portal de gestión de propiedades. Estamos aquí para ayudarte a maximizar tus ingresos y simplificar la gestión de tus alquileres vacacionales.
+      </p>
+      <p>
+        Si necesitas ayuda, no dudes en contactar con nuestro equipo de soporte.
+      </p>
     </div>
   </div>
 </template>

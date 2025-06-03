@@ -12,8 +12,9 @@
         </div>
         
         <h2 class="login-title">Portal de Inquilinos</h2>
+        <p class="login-subtitle">Accede a tu cuenta para gestionar tus reservas</p>
         
-        <form class="login-form" @submit.prevent="handleLogin">
+        <form class="login-form" @submit.prevent="handleSubmit">
           <div class="form-group">
             <label for="email">Email</label>
             <div class="input-wrapper">
@@ -21,13 +22,15 @@
               <input 
                 type="email" 
                 id="email" 
-                v-model="email" 
+                v-model="formData.email" 
                 placeholder="tu@email.com" 
                 required 
                 class="form-input"
+                :class="{ 'input-error': errors.email }"
               />
               <div class="input-glow"></div>
             </div>
+            <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
           </div>
           
           <div class="form-group">
@@ -40,26 +43,29 @@
               <input 
                 :type="showPassword ? 'text' : 'password'" 
                 id="password" 
-                v-model="password" 
+                v-model="formData.password" 
                 placeholder="Tu contraseña" 
                 required 
                 class="form-input"
+                :class="{ 'input-error': errors.password }"
               />
               <div class="input-glow"></div>
               <button 
                 type="button" 
                 class="toggle-password" 
                 @click="showPassword = !showPassword"
+                aria-label="Mostrar contraseña"
               >
                 <EyeIcon v-if="!showPassword" class="eye-icon" />
                 <EyeOffIcon v-else class="eye-icon" />
               </button>
             </div>
+            <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
           </div>
           
           <div class="remember-me">
             <label class="checkbox-container">
-              <input type="checkbox" v-model="rememberMe" class="custom-checkbox" />
+              <input type="checkbox" v-model="formData.remember" class="custom-checkbox" />
               <span class="checkbox-label">Recordarme</span>
             </label>
           </div>
@@ -67,28 +73,12 @@
           <button 
             type="submit" 
             class="login-button" 
-            :disabled="isLoading"
+            :disabled="isSubmitting"
           >
-            <LoaderIcon v-if="isLoading" class="spinner" />
+            <LoaderIcon v-if="isSubmitting" class="spinner" />
             <span v-else>Iniciar Sesión</span>
           </button>
         </form>
-        
-        <div class="login-divider">
-          <span>o</span>
-        </div>
-        
-        <div class="social-login">
-          <button class="social-button google">
-            <div class="social-icon google-icon"></div>
-            Continuar con Google
-          </button>
-          
-          <button class="social-button facebook">
-            <div class="social-icon facebook-icon"></div>
-            Continuar con Facebook
-          </button>
-        </div>
         
         <div class="register-link">
           ¿No tienes una cuenta? <a href="#" @click.prevent="goToRegister">Regístrate</a>
@@ -106,8 +96,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, reactive } from 'vue';
 import { 
   SunIcon, 
   MailIcon, 
@@ -117,14 +106,73 @@ import {
   LoaderIcon,
   ArrowLeftIcon
 } from 'lucide-vue-next';
+import axios from 'axios';
+// Si tienes un store de usuario, puedes importarlo aquí
+// import { useUserStore } from '../../../stores/user';
 
-const router = useRouter();
+const formData = reactive({
+  email: '',
+  password: '',
+  remember: false
+});
 
-const email = ref('');
-const password = ref('');
-const rememberMe = ref(false);
+const errors = reactive({
+  email: '',
+  password: ''
+});
+
+const isSubmitting = ref(false);
 const showPassword = ref(false);
-const isLoading = ref(false);
+const isValid = ref(true);
+
+const validateForm = () => {
+  isValid.value = true;
+  Object.keys(errors).forEach(key => errors[key] = '');
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.email)) {
+    errors.email = 'Por favor, introduce un correo electrónico válido';
+    isValid.value = false;
+  }
+
+  if (formData.password.length < 1) {
+    errors.password = 'Por favor, introduce tu contraseña';
+    isValid.value = false;
+  }
+
+  return isValid.value;
+};
+
+const handleSubmit = async () => {
+  if (!validateForm()) return;
+
+  isSubmitting.value = true;
+
+  try {
+    // Cambia la URL al endpoint real de tu backend
+    const response = await axios.post('http://127.0.0.1:8000/api/login', {
+      email: formData.email,
+      password: formData.password,
+    });
+
+    localStorage.setItem('renters_auth_token', response.data.token);  
+    localStorage.setItem('renters_auth_user', JSON.stringify(response.data.user));
+    // Si usas Pinia/Vuex: userStore.setUser(response.data.user); userStore.setToken(response.data.token);
+
+    // Redirige al dashboard de inquilinos usando window.location.href (como antes)
+    window.location.href = '/portal/renters/dashboard';
+  } catch (error) {
+    if (error.response) {
+      console.error('Error al iniciar sesión:', error.response.data.message);
+      alert(error.response.data.message || 'Correo electrónico o contraseña incorrectos.');
+    } else {
+      console.error('Error de red:', error);
+      alert('Hubo un problema con la conexión, por favor intenta más tarde.');
+    }
+  } finally {
+    isSubmitting.value = false;
+  }
+};
 
 const forgotPassword = () => {
   window.location.href = '/portal/renters/forgot-password';
@@ -132,20 +180,6 @@ const forgotPassword = () => {
 
 const goToRegister = () => {
   window.location.href = '/portal/renters/register';
-};
-
-const handleLogin = async () => {
-  isLoading.value = true;
-  
-  try {
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    localStorage.setItem('renters_auth', 'true');
-    window.location.href = '/portal/renters/dashboard';
-  } catch (error) {
-    console.error('Login error:', error);
-  } finally {
-    isLoading.value = false;
-  }
 };
 </script>
 

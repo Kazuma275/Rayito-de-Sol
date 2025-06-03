@@ -3,7 +3,7 @@
     <div class="section-header">
       <h2 class="section-title">Panel de Control</h2>
       <div class="welcome-message">
-        <p>Bienvenido, <span class="user-name">{{ user.name }}</span></p>
+        <p>Bienvenido, <span class="user-name">{{ user && user.username }}</span></p>
         <p class="last-login">Último acceso: {{ formatDate(user.lastLogin) }}</p>
       </div>
     </div>
@@ -26,7 +26,7 @@
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ bookings.length }}</p>
+          <p class="stat-value">{{ activeBookings.length }}</p>
           <h3 class="stat-title">Reservas</h3>
         </div>
       </div>
@@ -48,7 +48,7 @@
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ totalRevenue }}€</p>
+          <p class="stat-value">{{ monthlyRevenue }}€</p>
           <h3 class="stat-title">Ingresos</h3>
         </div>
       </div>
@@ -210,9 +210,6 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import axios from 'axios'
 import {
   HomeIcon,
   CalendarIcon,
@@ -224,72 +221,88 @@ import {
   MessageSquareIcon,
   SettingsIcon,
   PlusIcon,
-  CheckIcon,
   AlertCircleIcon,
   BellIcon,
   ChevronRightIcon,
 } from 'lucide-vue-next'
-
-const router = useRouter()
-
-// Datos reactivos
-const user = ref({ name: '', email: '', lastLogin: '' })
-const properties = ref([])
-const bookings = ref([])
-const recentMessages = ref([])
-const recentActivity = ref([])
-
-// Fetch dinámico desde Laravel API
-onMounted(async () => {
-  // Ajusta las rutas según tus endpoints Laravel
-  const [userRes, propRes, bookRes, msgRes, actRes] = await Promise.all([
-    axios.get('/api/user'),
-    axios.get('/api/properties'),
-    axios.get('/api/bookings'),
-    axios.get('/api/messages/recent'),
-    axios.get('/api/activity/recent'),
-  ])
-  user.value = userRes.data
-  properties.value = propRes.data
-  bookings.value = bookRes.data
-  recentMessages.value = msgRes.data
-  recentActivity.value = actRes.data
+import { useRouter } from 'vue-router'
+import { computed, toRefs } from 'vue'
+import { useUserStore } from '../../../stores/user';
+const userStore = useUserStore();
+// Recibe los datos del padre como props
+const props = defineProps({
+  user: {
+    type: Object,
+    required: true,
+    default: () => ({ name: '', email: '', lastLogin: '' })
+  },
+  properties: {
+    type: Array,
+    required: true,
+    default: () => []
+  },
+  activeBookings: {
+    type: Array,
+    required: true,
+    default: () => []
+  },
+  occupancyRate: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  monthlyRevenue: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  upcomingBookings: {
+    type: Array,
+    required: true,
+    default: () => []
+  },
+  recentMessages: {
+    type: Array,
+    required: true,
+    default: () => []
+  },
+  recentActivity: {
+    type: Array,
+    required: false,
+    default: () => []
+  },
+  topProperties: {
+    type: Array,
+    required: false,
+    default: () => []
+  },
+  getPropertyById: {
+    type: Function,
+    required: true,
+    default: () => () => ({ name: 'Propiedad no encontrada', image: '/placeholder.svg?height=100&width=100' })
+  },
+  formatDate: {
+    type: Function,
+    required: true,
+    default: () => (d) => d
+  }
 })
 
-// Computed
-const upcomingBookings = computed(() => {
-  const today = new Date()
-  return bookings.value
-    .filter(b => new Date(b.checkIn) > today)
-    .sort((a, b) => new Date(a.checkIn) - new Date(b.checkIn))
-    .slice(0, 3)
-})
+const {
+  user,
+  properties,
+  activeBookings,
+  occupancyRate,
+  monthlyRevenue,
+  upcomingBookings,
+  recentMessages,
+  recentActivity,
+  topProperties,
+  getPropertyById,
+  formatDate
+} = toRefs(props)
 
-const occupancyRate = computed(() => {
-  if (!properties.value.length) return 0
-  const total = properties.value.reduce((sum, p) => sum + (p.occupancy || 0), 0)
-  return Math.round(total / properties.value.length)
-})
-
-const totalRevenue = computed(() => {
-  return properties.value.reduce((sum, p) => sum + (p.revenue || 0), 0)
-})
-
-const topProperties = computed(() => {
-  return [...properties.value].sort((a, b) => (b.revenue || 0) - (a.revenue || 0)).slice(0, 3)
-})
-
-// Métodos
-const formatDate = dateString => {
-  if (!dateString) return ''
-  const options = { day: 'numeric', month: 'short', year: 'numeric' }
-  return new Date(dateString).toLocaleDateString('es-ES', options)
-}
-
-const getPropertyById = id => {
-  return properties.value.find(p => p.id === id) || { name: 'Propiedad no encontrada', image: '/placeholder.svg?height=100&width=100' }
-}
-
+// Icono para actividades recientes
 const getActivityIcon = type => {
   const icons = {
     booking: CalendarIcon,
@@ -300,6 +313,7 @@ const getActivityIcon = type => {
   return icons[type] || BellIcon
 }
 
+const router = useRouter()
 const navigateTo = route => {
   router.push(`/manage/${route}`)
 }

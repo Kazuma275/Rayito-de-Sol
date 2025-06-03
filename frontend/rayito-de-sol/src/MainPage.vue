@@ -1,28 +1,25 @@
-<template>
-  <div class="mt-4">
-
-    <Welcome/>
-
-  </div>
-</template>
-
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { CalendarIcon, HomeIcon } from 'lucide-vue-next';
 import Welcome from './components/views/Welcome.vue';
 
-// Get router instance
-const router = useRouter();
-
-// State for hover effects
-const hoverRental = ref(false);
-const hoverMain = ref(false);
-
-// Background image from the provided URL
-const backgroundImage = 'https://sjc.microlink.io/-p-fwojbjDvRwpePN2Z_l13ojz0jiDJ0JuUgMOruCd9nTT0ju4uWBG4DHcKkOsBswI98iuf-0pgLjtPXh49xnQ.jpeg';
-
+// Ejemplo de datos (reemplaza por fetch a tu backend si quieres)
+const properties = ref([
+  { id: 1, name: 'Apartamento Vista Mar' },
+  { id: 2, name: 'Villa con Piscina' },
+  { id: 3, name: 'Ático de Lujo' }
+]);
+const bookings = ref([
+  { id: 1, propertyId: 1, checkIn: '2025-05-02', checkOut: '2025-05-07', total: 850, status: 'confirmed' },
+  { id: 2, propertyId: 2, checkIn: '2025-05-10', checkOut: '2025-05-12', total: 350, status: 'pending' },
+  { id: 3, propertyId: 1, checkIn: '2025-05-20', checkOut: '2025-05-25', total: 750, status: 'confirmed' }
+]);
 </script>
+
+<template>
+  <div class="mt-4">
+    <Welcome :properties="properties" :bookings="bookings" />
+  </div>
+</template>
 
 <style scoped>
 .landing-page {

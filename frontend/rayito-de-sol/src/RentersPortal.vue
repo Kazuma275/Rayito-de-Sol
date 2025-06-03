@@ -6,319 +6,142 @@
     <!-- Main Content -->
     <main class="main-content">
       <!-- Dashboard -->
-      <section v-if="activeTab === 'dashboard'" class="dashboard-section">
-        <h2 class="section-title">Panel de Control</h2>
-        
-        <div class="stats-grid">
-          <div class="stat-card">
-            <CalendarIcon class="stat-icon" />
-            <div class="stat-content">
-              <h3 class="stat-title">Reservas Activas</h3>
-              <p class="stat-value">{{ activeBookings.length }}</p>
+      <!-- Dashboard para Inquilino -->
+  <section v-if="activeTab === 'dashboard'" class="dashboard-section renters-dashboard">
+    <h2 class="section-title">Panel de Control</h2>
+    
+    <!-- Stats Grid -->
+    <div class="stats-grid renters-stats">
+      <div class="stat-card renters-stat-card">
+        <CalendarIcon class="stat-icon renters-stat-icon" />
+        <div class="stat-content">
+          <h3 class="stat-title">Reservas Activas</h3>
+          <p class="stat-value">{{ activeBookings.length }}</p>
+        </div>
+      </div>
+      
+      <div class="stat-card renters-stat-card">
+        <ClockIcon class="stat-icon renters-stat-icon" />
+        <div class="stat-content">
+          <h3 class="stat-title">Próxima Reserva</h3>
+          <p class="stat-value">{{ nextBookingDate }}</p>
+        </div>
+      </div>
+      
+      <div class="stat-card renters-stat-card">
+        <MessageSquareIcon class="stat-icon renters-stat-icon" />
+        <div class="stat-content">
+          <h3 class="stat-title">Mensajes Nuevos</h3>
+          <p class="stat-value">{{ unreadMessages }}</p>
+        </div>
+      </div>
+      
+      <div class="stat-card renters-stat-card">
+        <HeartIcon class="stat-icon renters-stat-icon" />
+        <div class="stat-content">
+          <h3 class="stat-title">Favoritos</h3>
+          <p class="stat-value">{{ favorites.length }}</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dashboard-grid renters-dashboard-grid">
+      <!-- Mis Reservas -->
+      <div class="dashboard-card renters-dashboard-card">
+        <div class="card-header">
+          <h3>Mis Reservas</h3>
+          <button class="view-all-button" @click="changeTab('bookings')">Ver todas</button>
+        </div>
+        <div v-if="activeBookings.length > 0" class="upcoming-bookings">
+          <div v-for="booking in activeBookings.slice(0, 3)" :key="booking.id" class="booking-item renters-booking-item">
+            <div class="booking-property">
+              <img :src="booking.property.image" alt="Property" class="booking-image renters-booking-image" />
+              <div>
+                <h4>{{ booking.property.name }}</h4>
+                <p class="booking-dates">
+                  {{ formatDate(booking.checkIn) }} - {{ formatDate(booking.checkOut) }}
+                </p>
+              </div>
             </div>
-          </div>
-          
-          <div class="stat-card">
-            <ClockIcon class="stat-icon" />
-            <div class="stat-content">
-              <h3 class="stat-title">Próxima Reserva</h3>
-              <p class="stat-value">{{ nextBookingDate }}</p>
-            </div>
-          </div>
-          
-          <div class="stat-card">
-            <MessageSquareIcon class="stat-icon" />
-            <div class="stat-content">
-              <h3 class="stat-title">Mensajes Nuevos</h3>
-              <p class="stat-value">{{ unreadMessages }}</p>
-            </div>
-          </div>
-          
-          <div class="stat-card">
-            <HeartIcon class="stat-icon" />
-            <div class="stat-content">
-              <h3 class="stat-title">Favoritos</h3>
-              <p class="stat-value">{{ favorites.length }}</p>
+            <div class="booking-status" :class="booking.status">
+              {{ getStatusText(booking.status) }}
             </div>
           </div>
         </div>
-        
-        <div class="dashboard-grid">
-          <div class="dashboard-card">
-            <div class="card-header">
-              <h3>Mis Reservas</h3>
-              <button class="view-all-button" @click="changeTab('bookings')">Ver todas</button>
-            </div>
-            <div v-if="activeBookings.length > 0" class="upcoming-bookings">
-              <div v-for="booking in activeBookings.slice(0, 3)" :key="booking.id" class="booking-item">
-                <div class="booking-property">
-                  <img :src="booking.property.image" alt="Property" class="booking-image" />
-                  <div>
-                    <h4>{{ booking.property.name }}</h4>
-                    <p class="booking-dates">
-                      {{ formatDate(booking.checkIn) }} - {{ formatDate(booking.checkOut) }}
-                    </p>
-                  </div>
-                </div>
-                <div class="booking-status" :class="booking.status">
-                  {{ getStatusText(booking.status) }}
-                </div>
+        <div v-else class="empty-state renters-empty-state">
+          <CalendarOffIcon class="empty-icon renters-empty-icon" />
+          <p>No tienes reservas activas</p>
+          <button class="action-button search" @click="changeTab('search')">Buscar Alojamiento</button>
+        </div>
+      </div>
+      
+      <!-- Mensajes Recientes -->
+      <div class="dashboard-card renters-dashboard-card">
+        <div class="card-header">
+          <h3>Mensajes Recientes</h3>
+          <button class="view-all-button" @click="changeTab('messages')">Ver todos</button>
+        </div>
+        <div v-if="recentMessages.length > 0" class="messages-list">
+          <div v-for="message in recentMessages" :key="message.id" class="message-item renters-message-item">
+            <div class="message-sender">
+              <UserIcon class="message-icon renters-message-icon" />
+              <div>
+                <h4>{{ message.sender }}</h4>
+                <p class="message-property">{{ message.property.name }}</p>
               </div>
             </div>
-            <div v-else class="empty-state">
-              <CalendarOffIcon class="empty-icon" />
-              <p>No tienes reservas activas</p>
-              <button class="action-button search" @click="changeTab('search')">Buscar Alojamiento</button>
-            </div>
-          </div>
-          
-          <div class="dashboard-card">
-            <div class="card-header">
-              <h3>Mensajes Recientes</h3>
-              <button class="view-all-button" @click="changeTab('messages')">Ver todos</button>
-            </div>
-            <div v-if="recentMessages.length > 0" class="messages-list">
-              <div v-for="message in recentMessages" :key="message.id" class="message-item">
-                <div class="message-sender">
-                  <UserIcon class="message-icon" />
-                  <div>
-                    <h4>{{ message.sender }}</h4>
-                    <p class="message-property">{{ message.property.name }}</p>
-                  </div>
-                </div>
-                <p class="message-preview">{{ message.text.substring(0, 60) }}{{ message.text.length > 60 ? '...' : '' }}</p>
-                <p class="message-time">{{ formatDateTime(message.createdAt) }}</p>
-              </div>
-            </div>
-            <div v-else class="empty-state">
-              <MailIcon class="empty-icon" />
-              <p>No hay mensajes nuevos</p>
-            </div>
+            <p class="message-preview">{{ message.text.substring(0, 60) }}{{ message.text.length > 60 ? '...' : '' }}</p>
+            <p class="message-time">{{ formatDateTime(message.createdAt) }}</p>
           </div>
         </div>
-        
-        <div class="recommended-section">
-          <h3 class="section-subtitle">Recomendados para ti</h3>
-          <div class="properties-grid">
-            <div v-for="property in recommendedProperties" :key="property.id" class="property-card">
-              <div class="property-image-container">
-                <img :src="property.image" alt="Property" class="property-image" />
-                <button 
-                  class="favorite-button" 
-                  :class="{ active: isFavorite(property.id) }"
-                  @click.stop="toggleFavorite(property.id)"
-                >
-                  <HeartIcon class="favorite-icon" />
-                </button>
+        <div v-else class="empty-state renters-empty-state">
+          <MailIcon class="empty-icon renters-empty-icon" />
+          <p>No hay mensajes nuevos</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Recomendados -->
+    <div class="recommended-section renters-recommended-section">
+      <h3 class="section-subtitle">Recomendados para ti</h3>
+      <div class="properties-grid renters-properties-grid">
+        <div v-for="property in recommendedProperties" :key="property.id" class="property-card renters-property-card">
+          <div class="property-image-container">
+            <img :src="property.image" alt="Property" class="property-image renters-property-image" />
+            <button 
+              class="favorite-button" 
+              :class="{ active: isFavorite(property.id) }"
+              @click.stop="toggleFavorite(property.id)"
+            >
+              <HeartIcon class="favorite-icon" />
+            </button>
+          </div>
+          <div class="property-content">
+            <h3 class="property-name">{{ property.name }}</h3>
+            <div class="property-location">
+              <MapPinIcon class="location-icon" />
+              <span>{{ property.location }}</span>
+            </div>
+            <div class="property-details">
+              <div class="property-detail">
+                <BedIcon class="detail-icon" />
+                <span>{{ property.bedrooms }} dormitorios</span>
               </div>
-              <div class="property-content">
-                <h3 class="property-name">{{ property.name }}</h3>
-                <div class="property-location">
-                  <MapPinIcon class="location-icon" />
-                  <span>{{ property.location }}</span>
-                </div>
-                <div class="property-details">
-                  <div class="property-detail">
-                    <BedIcon class="detail-icon" />
-                    <span>{{ property.bedrooms }} dormitorios</span>
-                  </div>
-                  <div class="property-detail">
-                    <UsersIcon class="detail-icon" />
-                    <span>{{ property.capacity }} huéspedes</span>
-                  </div>
-                </div>
-                <div class="property-price">
-                  <span class="price-value">€{{ property.price }}</span>
-                  <span class="price-period">noche</span>
-                </div>
-                <button class="view-property-button" @click="viewProperty(property.id)">Ver Detalles</button>
+              <div class="property-detail">
+                <UsersIcon class="detail-icon" />
+                <span>{{ property.capacity }} huéspedes</span>
               </div>
             </div>
+            <div class="property-price">
+              <span class="price-value">€{{ property.price }}</span>
+              <span class="price-period">noche</span>
+            </div>
+            <button class="view-property-button" @click="viewProperty(property.id)">Ver Detalles</button>
           </div>
         </div>
-      </section>
-
-      <!-- Search -->
-      <section v-if="activeTab === 'search'" class="search-section">
-        <div class="search-header">
-          <h2 class="section-title">Buscar Alojamiento</h2>
-          <div class="search-filters">
-            <div class="search-bar">
-              <SearchIcon class="search-icon" />
-              <input 
-                type="text" 
-                v-model="searchQuery" 
-                placeholder="Buscar por ubicación o nombre..." 
-                class="search-input"
-                @keyup.enter="searchProperties"
-              />
-              <button class="search-button" @click="searchProperties">Buscar</button>
-            </div>
-            
-            <div class="filter-group">
-              <div class="filter-item">
-                <label>Fechas</label>
-                <div class="date-picker">
-                  <input 
-                    type="date" 
-                    v-model="filters.checkIn" 
-                    class="date-input"
-                    :min="today"
-                  />
-                  <span class="date-separator">-</span>
-                  <input 
-                    type="date" 
-                    v-model="filters.checkOut" 
-                    class="date-input"
-                    :min="filters.checkIn || today"
-                  />
-                </div>
-              </div>
-              
-              <div class="filter-item">
-                <label>Huéspedes</label>
-                <div class="guests-selector">
-                  <button 
-                    class="guest-button" 
-                    @click="filters.guests > 1 && filters.guests--"
-                    :disabled="filters.guests <= 1"
-                  >
-                    <MinusIcon class="guest-icon" />
-                  </button>
-                  <span class="guests-count">{{ filters.guests }}</span>
-                  <button 
-                    class="guest-button" 
-                    @click="filters.guests++"
-                  >
-                    <PlusIcon class="guest-icon" />
-                  </button>
-                </div>
-              </div>
-              
-              <div class="filter-item">
-                <label>Precio máximo</label>
-                <div class="price-selector">
-                  <input 
-                    type="range" 
-                    v-model="filters.maxPrice" 
-                    min="0" 
-                    max="500" 
-                    step="10" 
-                    class="price-range"
-                  />
-                  <span class="price-value">€{{ filters.maxPrice }}</span>
-                </div>
-              </div>
-              
-              <button class="filter-button" @click="toggleAdvancedFilters">
-                <SlidersIcon class="filter-icon" />
-                Más filtros
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div v-if="showAdvancedFilters" class="advanced-filters">
-          <div class="filter-row">
-            <div class="filter-group">
-              <h4>Dormitorios</h4>
-              <div class="checkbox-group">
-                <label class="checkbox-label" v-for="n in 5" :key="`bed-${n}`">
-                  <input 
-                    type="checkbox" 
-                    :value="n" 
-                    v-model="filters.bedrooms"
-                  />
-                  {{ n === 5 ? '5+' : n }}
-                </label>
-              </div>
-            </div>
-            
-            <div class="filter-group">
-              <h4>Servicios</h4>
-              <div class="checkbox-group">
-                <label class="checkbox-label" v-for="amenity in amenities" :key="amenity.id">
-                  <input 
-                    type="checkbox" 
-                    :value="amenity.id" 
-                    v-model="filters.amenities"
-                  />
-                  {{ amenity.name }}
-                </label>
-              </div>
-            </div>
-          </div>
-          
-          <div class="filter-actions">
-            <button class="clear-button" @click="clearFilters">Limpiar filtros</button>
-            <button class="apply-button" @click="applyFilters">Aplicar filtros</button>
-          </div>
-        </div>
-        
-        <div v-if="isLoading" class="loading-properties">
-          <svg class="spinner" viewBox="0 0 50 50">
-            <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"/>
-          </svg>
-          <span class="loading-text">Buscando propiedades...</span>
-        </div>
-        
-        <div v-else-if="filteredProperties.length > 0" class="search-results">
-          <p class="results-count">{{ filteredProperties.length }} propiedades encontradas</p>
-          
-          <div class="properties-grid">
-            <div v-for="property in filteredProperties" :key="property.id" class="property-card">
-              <div class="property-image-container">
-                <img :src="property.image" alt="Property" class="property-image" />
-                <button 
-                  class="favorite-button" 
-                  :class="{ active: isFavorite(property.id) }"
-                  @click.stop="toggleFavorite(property.id)"
-                >
-                  <HeartIcon class="favorite-icon" />
-                </button>
-              </div>
-              <div class="property-content">
-                <h3 class="property-name">{{ property.name }}</h3>
-                <div class="property-location">
-                  <MapPinIcon class="location-icon" />
-                  <span>{{ property.location }}</span>
-                </div>
-                <div class="property-details">
-                  <div class="property-detail">
-                    <BedIcon class="detail-icon" />
-                    <span>{{ property.bedrooms }} dormitorios</span>
-                  </div>
-                  <div class="property-detail">
-                    <UsersIcon class="detail-icon" />
-                    <span>{{ property.capacity }} huéspedes</span>
-                  </div>
-                </div>
-                <div class="property-amenities">
-                  <div v-for="amenityId in property.amenities.slice(0, 3)" :key="amenityId" class="property-amenity">
-                    <CheckIcon class="amenity-icon" />
-                    <span>{{ getAmenityName(amenityId) }}</span>
-                  </div>
-                  <div v-if="property.amenities.length > 3" class="property-amenity more">
-                    <span>+{{ property.amenities.length - 3 }} más</span>
-                  </div>
-                </div>
-                <div class="property-price">
-                  <span class="price-value">€{{ property.price }}</span>
-                  <span class="price-period">noche</span>
-                </div>
-                <button class="view-property-button" @click="viewProperty(property.id)">Ver Detalles</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div v-else class="empty-search">
-          <SearchXIcon class="empty-icon" />
-          <h3>No se encontraron propiedades</h3>
-          <p>Intenta ajustar los filtros de búsqueda</p>
-          <button class="clear-button" @click="clearFilters">Limpiar filtros</button>
-        </div>
-      </section>
+      </div>
+    </div>
+  </section>
 
       <!-- Property Detail -->
       <section v-if="activeTab === 'property-detail'" class="property-detail-section">
@@ -480,152 +303,259 @@
         </div>
       </section>
 
-      <!-- Bookings -->
-      <section v-if="activeTab === 'bookings'" class="bookings-section">
+    <section v-if="activeTab === 'bookings'" class="bookings-section renters-bookings-section">
+  <transition name="fade">
+    <div v-if="isLoading" class="loading-solar-container">
+      <div class="solar-spinner"></div>
+      <div class="loading-text">Cargando reservas y propiedades…</div>
+    </div>
+    <div v-else>
+      <div class="section-header">
         <h2 class="section-title">Mis Reservas</h2>
-        
-        <div class="bookings-filter">
-          <div class="filter-tabs">
-            <button 
-              v-for="filter in bookingFilters" 
-              :key="filter.id" 
-              class="filter-tab" 
-              :class="{ active: activeBookingFilter === filter.id }"
-              @click="activeBookingFilter = filter.id"
+        <div class="header-actions">
+          <button class="yellow-button export-button">
+            <DownloadIcon class="button-icon" />
+            Exportar Reservas
+          </button>
+        </div>
+      </div>
+
+      <div class="bookings-filter">
+        <div class="filter-tabs">
+          <button
+            v-for="filter in bookingFilters"
+            :key="filter.id"
+            class="filter-tab"
+            :class="{ active: activeBookingFilter === filter.id }"
+            @click="activeBookingFilter = filter.id"
+          >
+            {{ filter.name }}
+          </button>
+        </div>
+      </div>
+
+      <div v-if="filteredBookings.length > 0" class="bookings-list">
+        <div
+          v-for="booking in filteredBookings"
+          :key="booking.id"
+          class="booking-card renters-booking-card"
+        >
+          <div class="booking-header">
+            <div class="booking-property-info">
+              <img
+                v-if="booking.property.image"
+                :src="booking.property.image"
+                alt="Propiedad"
+                class="booking-property-image"
+              />
+              <div>
+                <h3>{{ booking.property.name }}</h3>
+                <div class="booking-id">Reserva #{{ booking.id }}</div>
+              </div>
+            </div>
+            <div class="booking-status" :class="booking.status">
+              {{ getStatusText(booking.status) }}
+            </div>
+          </div>
+          <div class="booking-details">
+            <div class="booking-dates">
+              <div class="date-item">
+                <CalendarIcon class="date-icon" />
+                <div>
+                  <span class="date-label">Llegada</span>
+                  <span class="date-value">{{ formatDate(booking.checkIn) }}</span>
+                </div>
+              </div>
+              <div class="date-item">
+                <CalendarIcon class="date-icon" />
+                <div>
+                  <span class="date-label">Salida</span>
+                  <span class="date-value">{{ formatDate(booking.checkOut) }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="booking-guests">
+              <UsersIcon class="guests-icon" />
+              <div>
+                <span class="guests-label">Huéspedes</span>
+                <span class="guests-value">{{ booking.guests }}</span>
+              </div>
+            </div>
+            <div class="booking-price">
+              <EuroIcon class="price-icon" />
+              <div>
+                <span class="price-label">Total</span>
+                <span class="price-value">€{{ booking.total }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="booking-actions">
+            <button class="yellow-button" @click="viewBookingDetails(booking.id)">Ver detalles</button>
+            <button
+              v-if="booking.status === 'confirmed' && canCancel(booking)"
+              class="yellow-button"
+              @click="cancelBooking(booking.id)"
             >
-              {{ filter.name }}
+              Cancelar reserva
+            </button>
+            <button
+              v-if="booking.status === 'confirmed'"
+              class="yellow-button"
+              @click="contactOwnerForBooking(booking.id)"
+            >
+              <MessageSquareIcon class="action-icon" />
+              Mensaje
             </button>
           </div>
         </div>
-        
-        <div v-if="filteredBookings.length > 0" class="bookings-list">
-          <div v-for="booking in filteredBookings" :key="booking.id" class="booking-card">
-            <div class="booking-header">
-              <div class="booking-property-info">
-                <img :src="booking.property.image" alt="Property" class="booking-property-image" />
-                <div>
-                  <h3>{{ booking.property.name }}</h3>
-                  <div class="booking-id">Reserva #{{ booking.id }}</div>
+      </div>
+
+      <div v-else class="empty-bookings">
+        <CalendarOffIcon class="empty-icon" />
+        <h3>No hay reservas {{ activeBookingFilter === 'all' ? '' : 'en este estado' }}</h3>
+        <p v-if="activeBookingFilter !== 'all'">Prueba a seleccionar otro filtro</p>
+        <p v-else>Cuando hagas reservas, aparecerán aquí</p>
+
+        <div v-if="availableProperties.length > 0" class="available-properties-list">
+          <h4>Propiedades disponibles para reservar</h4>
+          <div class="properties-grid renters-properties-grid">
+            <div v-for="property in availableProperties" :key="property.id" class="property-card renters-property-card">
+              <div class="property-image-container">
+                <img
+                  v-if="property.image"
+                  :src="property.image"
+                  alt="Propiedad"
+                  class="property-image"
+                />
+              </div>
+              <div class="property-content">
+                <h3 class="property-name">{{ property.name }}</h3>
+                <div class="property-location">
+                  <MapPinIcon class="location-icon" />
+                  <span>{{ property.location }}</span>
                 </div>
-              </div>
-              <div class="booking-status" :class="booking.status">
-                {{ getStatusText(booking.status) }}
-              </div>
-            </div>
-            
-            <div class="booking-details">
-              <div class="booking-dates">
-                <div class="date-item">
-                  <CalendarIcon class="date-icon" />
-                  <div>
-                    <span class="date-label">Llegada</span>
-                    <span class="date-value">{{ formatDate(booking.checkIn) }}</span>
+                <div class="property-details">
+                  <div class="property-detail">
+                    <BedIcon class="detail-icon" />
+                    <span>{{ property.bedrooms }} dormitorios</span>
+                  </div>
+                  <div class="property-detail">
+                    <UsersIcon class="detail-icon" />
+                    <span>{{ property.capacity }} huéspedes</span>
                   </div>
                 </div>
-                <div class="date-item">
-                  <CalendarIcon class="date-icon" />
+                <div class="property-price">
+                  <span class="price-value">€{{ property.price }}</span>
+                  <span class="price-period">noche</span>
+                </div>
+                <button class="yellow-button view-property-button" @click="viewProperty(property.id)">Ver Detalles</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <p>No hay propiedades disponibles para reservar en este momento.</p>
+        </div>
+        <button v-if="activeBookingFilter === 'all'" class="yellow-button search" @click="changeTab('search')">
+          Buscar Alojamiento
+        </button>
+      </div>
+
+      <!-- Modal de detalles de reserva -->
+      <div v-if="showBookingDetails" class="booking-details-modal" @click="closeBookingDetails">
+        <div class="modal-content" @click.stop>
+          <div class="modal-header">
+            <h3>Detalles de la Reserva #{{ selectedBooking.id }}</h3>
+            <button class="close-button" @click="closeBookingDetails">
+              <XIcon class="close-icon" />
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="booking-property-details">
+              <img
+                v-if="selectedBooking.property.image"
+                :src="selectedBooking.property.image"
+                alt="Propiedad"
+                class="property-image"
+              />
+              <div class="property-info">
+                <h4>{{ selectedBooking.property.name }}</h4>
+                <p class="property-location">
+                  <MapPinIcon class="info-icon" />
+                  {{ selectedBooking.property.location }}
+                </p>
+              </div>
+            </div>
+            <div class="booking-info-grid">
+              <div class="booking-info-item">
+                <h5>Fechas</h5>
+                <div class="info-content">
+                  <CalendarIcon class="info-icon" />
                   <div>
-                    <span class="date-label">Salida</span>
-                    <span class="date-value">{{ formatDate(booking.checkOut) }}</span>
+                    <p><strong>Llegada:</strong> {{ formatDate(selectedBooking.checkIn) }}</p>
+                    <p><strong>Salida:</strong> {{ formatDate(selectedBooking.checkOut) }}</p>
+                    <p><strong>Noches:</strong> {{ calculateNights(selectedBooking) }}</p>
                   </div>
                 </div>
               </div>
-              
-              <div class="booking-guests">
-                <UsersIcon class="guests-icon" />
-                <div>
-                  <span class="guests-label">Huéspedes</span>
-                  <span class="guests-value">{{ booking.guests }}</span>
+              <div class="booking-info-item">
+                <h5>Detalles</h5>
+                <div class="info-content">
+                  <UsersIcon class="info-icon" />
+                  <div>
+                    <p><strong>Huéspedes:</strong> {{ selectedBooking.guests }}</p>
+                    <p><strong>Estado:</strong>
+                      <span :class="['status-badge', selectedBooking.status]">{{ getStatusText(selectedBooking.status) }}</span>
+                    </p>
+                    <p><strong>Fecha de reserva:</strong> {{ formatDate(selectedBooking.bookingDate) }}</p>
+                  </div>
                 </div>
               </div>
-              
-              <div class="booking-price">
-                <EuroIcon class="price-icon" />
-                <div>
-                  <span class="price-label">Total</span>
-                  <span class="price-value">€{{ booking.total }}</span>
+              <div class="booking-info-item">
+                <h5>Pago</h5>
+                <div class="info-content">
+                  <EuroIcon class="info-icon" />
+                  <div>
+                    <p><strong>Total:</strong> €{{ selectedBooking.total }}</p>
+                    <p><strong>Método de pago:</strong> {{ selectedBooking.paymentMethod || 'No especificado' }}</p>
+                  </div>
                 </div>
               </div>
             </div>
-            
-            <div class="booking-actions">
-              <button class="action-button view" @click="viewBookingDetails(booking.id)">Ver detalles</button>
-              <button 
-                v-if="booking.status === 'confirmed' && canCancel(booking)" 
-                class="action-button cancel"
-                @click="cancelBooking(booking.id)"
-              >
-                Cancelar reserva
+            <div class="booking-notes" v-if="selectedBooking.notes">
+              <h5>Notas</h5>
+              <p>{{ selectedBooking.notes }}</p>
+            </div>
+            <div class="booking-timeline" v-if="selectedBooking.history && selectedBooking.history.length">
+              <h5>Historial</h5>
+              <div class="timeline">
+                <div class="timeline-item" v-for="(event, index) in selectedBooking.history" :key="index">
+                  <div class="timeline-icon" :class="event.type">
+                    <component :is="getEventIcon(event.type)" class="event-icon" />
+                  </div>
+                  <div class="timeline-content">
+                    <p class="event-text">{{ event.text }}</p>
+                    <p class="event-date">{{ formatDateTime(event.date) }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button v-if="selectedBooking.status === 'confirmed' && canCancel(selectedBooking)" class="yellow-button" @click="cancelBooking(selectedBooking.id)">
+                <XIcon class="action-icon" />
+                Cancelar Reserva
               </button>
-              <button 
-                v-if="booking.status === 'confirmed'" 
-                class="action-button message"
-                @click="contactOwnerForBooking(booking.id)"
-              >
+              <button class="yellow-button" @click="contactOwnerForBooking(selectedBooking.id)">
                 <MessageSquareIcon class="action-icon" />
                 Mensaje
               </button>
             </div>
           </div>
         </div>
-        
-        <div v-else class="empty-bookings">
-          <CalendarOffIcon class="empty-icon" />
-          <h3>No hay reservas {{ activeBookingFilter === 'all' ? '' : 'en este estado' }}</h3>
-          <p v-if="activeBookingFilter !== 'all'">Prueba a seleccionar otro filtro</p>
-          <button v-if="activeBookingFilter === 'all'" class="action-button search" @click="changeTab('search')">
-            Buscar Alojamiento
-          </button>
-        </div>
-      </section>
-      
-      <!-- Favorites -->
-      <section v-if="activeTab === 'favorites'" class="favorites-section">
-        <h2 class="section-title">Mis Favoritos</h2>
-        
-        <div v-if="favoriteProperties.length > 0" class="properties-grid">
-          <div v-for="property in favoriteProperties" :key="property.id" class="property-card">
-            <div class="property-image-container">
-              <img :src="property.image" alt="Property" class="property-image" />
-              <button 
-                class="favorite-button active" 
-                @click.stop="toggleFavorite(property.id)"
-              >
-                <HeartIcon class="favorite-icon" />
-              </button>
-            </div>
-            <div class="property-content">
-              <h3 class="property-name">{{ property.name }}</h3>
-              <div class="property-location">
-                <MapPinIcon class="location-icon" />
-                <span>{{ property.location }}</span>
-              </div>
-              <div class="property-details">
-                <div class="property-detail">
-                  <BedIcon class="detail-icon" />
-                  <span>{{ property.bedrooms }} dormitorios</span>
-                </div>
-                <div class="property-detail">
-                  <UsersIcon class="detail-icon" />
-                  <span>{{ property.capacity }} huéspedes</span>
-                </div>
-              </div>
-              <div class="property-price">
-                <span class="price-value">€{{ property.price }}</span>
-                <span class="price-period">noche</span>
-              </div>
-              <button class="view-property-button" @click="viewProperty(property.id)">Ver Detalles</button>
-            </div>
-          </div>
-        </div>
-        
-        <div v-else class="empty-favorites">
-          <HeartOffIcon class="empty-icon" />
-          <h3>No tienes propiedades guardadas</h3>
-          <p>Guarda tus propiedades favoritas para encontrarlas fácilmente</p>
-          <button class="action-button search" @click="changeTab('search')">Buscar Alojamiento</button>
-        </div>
-      </section>
+      </div>
+    </div>
+  </transition>
+</section>
       
       <!-- Messages -->
       <section v-if="activeTab === 'messages'" class="messages-section">
@@ -936,14 +866,19 @@ const viewProperty = (id) => {
   }
 };
 
-
-// Initialize on mount
-onMounted(() => {
-  updateActiveTabFromRoute();
-  fetchProperties();
-  fetchBookings();
+const availableProperties = computed(() => {
+  const reservedIds = bookings.value.map(b => b.propertyId);
+  return properties.value.filter(p => !reservedIds.includes(p.id));
 });
 
+// Initialize on mount
+onMounted(async () => {
+  updateActiveTabFromRoute();
+  isLoading.value = true;
+  await fetchProperties();
+  await fetchBookings();
+  isLoading.value = false;
+});
 
 // Change tab function
 const changeTab = (tabId) => {
@@ -956,7 +891,7 @@ const changeTab = (tabId) => {
 
 // Properties data
 const properties = ref([]);
-const isLoading = ref(false);
+const isLoading = ref(true);
 
 // Update active tab based on route
 const updateActiveTabFromRoute = () => {
@@ -984,88 +919,59 @@ const updateActiveTabFromRoute = () => {
 };
 
 // Mock properties data
+import axios from 'axios';
+
 const fetchProperties = async () => {
   isLoading.value = true;
-  
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  properties.value = [
-    {
-      id: 1,
-      name: 'Apartamento con vistas al mar',
-      location: 'Málaga, España',
-      bedrooms: 2,
-      capacity: 4,
-      price: 85,
-      size: 75,
-      image: '/placeholder.svg?height=300&width=500',
-      description: 'Hermoso apartamento con vistas panorámicas al mar Mediterráneo. Completamente renovado, con dos dormitorios, cocina equipada y amplio balcón. A solo 5 minutos a pie de la playa y cerca de restaurantes y tiendas.',
-      amenities: ['wifi', 'pool', 'ac', 'kitchen', 'tv', 'washer']
-    },
-    {
-      id: 2,
-      name: 'Ático en el centro histórico',
-      location: 'Sevilla, España',
-      bedrooms: 1,
-      capacity: 2,
-      price: 65,
-      size: 60,
-      image: '/placeholder.svg?height=300&width=500',
-      description: 'Acogedor ático en pleno centro histórico de Sevilla. Terraza privada con vistas a la Giralda. Ideal para parejas que quieran disfrutar de la ciudad a pie.',
-      amenities: ['wifi', 'ac', 'kitchen', 'tv']
-    },
-    {
-      id: 3,
-      name: 'Villa con piscina privada',
-      location: 'Marbella, España',
-      bedrooms: 3,
-      capacity: 6,
-      price: 150,
-      size: 120,
-      image: '/placeholder.svg?height=300&width=500',
-      description: 'Espectacular villa con piscina privada y jardín. Tres dormitorios, amplio salón y cocina totalmente equipada. Perfecta para familias o grupos de amigos.',
-      amenities: ['wifi', 'pool', 'parking', 'ac', 'kitchen', 'tv', 'washer']
-    },
-    {
-      id: 4,
-      name: 'Apartamento cerca de la playa',
-      location: 'Valencia, España',
-      bedrooms: 2,
-      capacity: 4,
-      price: 75,
-      size: 70,
-      image: '/placeholder.svg?height=300&width=500',
-      description: 'Moderno apartamento a solo 200 metros de la playa. Dos dormitorios, salón luminoso y cocina equipada. Ideal para disfrutar de la playa y la ciudad.',
-      amenities: ['wifi', 'ac', 'kitchen', 'tv', 'washer']
-    },
-    {
-      id: 5,
-      name: 'Estudio en zona céntrica',
-      location: 'Madrid, España',
-      bedrooms: 1,
-      capacity: 2,
-      price: 60,
-      size: 45,
-      image: '/placeholder.svg?height=300&width=500',
-      description: 'Estudio moderno y funcional en pleno centro de Madrid. Perfecto para viajeros de negocios o turistas que quieran estar cerca de los principales puntos de interés.',
-      amenities: ['wifi', 'ac', 'kitchen', 'tv']
-    },
-    {
-      id: 6,
-      name: 'Casa rural con jardín',
-      location: 'Granada, España',
-      bedrooms: 3,
-      capacity: 5,
-      price: 95,
-      size: 110,
-      image: '/placeholder.svg?height=300&width=500',
-      description: 'Encantadora casa rural con jardín y barbacoa. Vistas a Sierra Nevada. Ideal para familias que quieran disfrutar de la naturaleza sin renunciar a la cercanía de la ciudad.',
-      amenities: ['wifi', 'parking', 'kitchen', 'tv', 'washer']
-    }
-  ];
-  
-  isLoading.value = false;
+  try {
+    const response = await axios.get('http://localhost:8000/api/properties');
+    properties.value = response.data.map(prop => {
+      // Imagen: base64 o placeholder si es null
+      let image = prop.image;
+      if (!image) {
+        image = '/placeholder.svg?height=300&width=500';
+      }
+
+      // Amenities: asegúrate de que siempre sea array
+      let amenities = [];
+      if (Array.isArray(prop.amenities)) {
+        amenities = prop.amenities;
+      } else if (typeof prop.amenities === "string" && prop.amenities.length > 0) {
+        // Si tu backend envía amenities como string tipo JSON
+        try {
+          amenities = JSON.parse(prop.amenities);
+        } catch (e) {
+          // Si solo es texto separado por comas
+          amenities = prop.amenities.split(',').map(a => a.trim());
+        }
+      }
+
+      // Precio: asegúrate que siempre sea número
+      let price = Number(prop.price);
+      if (isNaN(price)) price = 0;
+
+      return {
+        id: prop.id,
+        name: prop.name || 'Sin nombre',
+        location: prop.location || '',
+        bedrooms: Number(prop.bedrooms) || 0,
+        capacity: Number(prop.capacity) || 0,
+        price,
+        image,
+        description: prop.description || '',
+        amenities,
+        status: prop.status || '',
+        statusText: prop.statusText || '',
+        created_at: prop.created_at,
+        updated_at: prop.updated_at,
+      };
+    });
+  } catch (error) {
+    console.error('Error cargando propiedades:', error);
+    properties.value = [];
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 // Amenities
@@ -1285,54 +1191,29 @@ const contactOwner = () => {
 const bookings = ref([]);
 const activeBookingFilter = ref('all');
 
-// Mock bookings data
 const fetchBookings = async () => {
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  bookings.value = [
-    {
-      id: 'B1234',
-      propertyId: 1,
-      property: null, // Will be populated
-      checkIn: '2023-08-15',
-      checkOut: '2023-08-20',
-      guests: 2,
-      total: 455,
-      status: 'confirmed',
-      createdAt: '2023-07-20T10:30:00Z'
-    },
-    {
-      id: 'B5678',
-      propertyId: 3,
-      property: null, // Will be populated
-      checkIn: '2023-09-10',
-      checkOut: '2023-09-17',
-      guests: 4,
-      total: 1080,
-      status: 'pending',
-      createdAt: '2023-07-25T14:45:00Z'
-    },
-    {
-      id: 'B9012',
-      propertyId: 2,
-      property: null, // Will be populated
-      checkIn: '2023-06-05',
-      checkOut: '2023-06-10',
-      guests: 2,
-      total: 355,
-      status: 'completed',
-      createdAt: '2023-05-15T09:20:00Z'
-    }
-  ];
-  
-  // Populate property data
-  bookings.value.forEach(booking => {
-    booking.property = properties.value.find(p => p.id === booking.propertyId) || {
-      name: 'Propiedad no encontrada',
-      image: '/placeholder.svg?height=100&width=100'
-    };
-  });
+  isLoading.value = true;
+  try {
+    const response = await axios.get('http://localhost:8000/api/bookings');
+    bookings.value = response.data.map(booking => ({
+      ...booking,
+      property: properties.value.find(p => p.id === booking.propertyId) || {
+        name: 'Propiedad no encontrada',
+        image: '/placeholder.svg?height=100&width=100',
+        price: 0,
+        bedrooms: 0,
+        capacity: 0,
+        location: '',
+        description: '',
+        amenities: []
+      }
+    }));
+  } catch (error) {
+    console.error('Error al cargar reservas:', error);
+    bookings.value = [];
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 const bookingFilters = [
@@ -1344,10 +1225,10 @@ const bookingFilters = [
 ];
 
 const filteredBookings = computed(() => {
-  if (activeBookingFilter.value === 'all') {
-    return bookings.value;
-  }
-  return bookings.value.filter(booking => booking.status === activeBookingFilter.value);
+  if (activeBookingFilter.value === 'all') return bookings.value;
+  return bookings.value.filter(
+    booking => booking.status === activeBookingFilter.value
+  );
 });
 
 const getStatusText = (status) => {
@@ -1660,6 +1541,1175 @@ watch(() => route.path, () => {
   color: #333;
   background-color: #f5f5f5;
   min-height: 100vh;
+}
+/* Bookings */
+
+.renters-bookings-section {
+  max-width: 1150px;
+  margin: 0 auto;
+  padding: 2rem 0 4rem 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f59e0b;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.header-actions .export-button {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.3rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 12px 0 rgba(245, 158, 11, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.18s, box-shadow 0.18s;
+}
+
+.header-actions .export-button:hover {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  box-shadow: 0 4px 16px 0 rgba(245, 158, 11, 0.16);
+}
+
+.bookings-filter {
+  margin-bottom: 2rem;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 1.2rem;
+  margin-bottom: 1.4rem;
+}
+
+.filter-tab {
+  background: none;
+  border: none;
+  color: #a16207;
+  font-weight: 600;
+  font-size: 1.07rem;
+  padding: 0.45rem 1.2rem;
+  border-radius: 999px;
+  transition: background 0.17s, color 0.17s;
+  cursor: pointer;
+  position: relative;
+}
+
+.filter-tab.active {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  color: #fff;
+  box-shadow: 0 2px 10px 0 rgba(245, 158, 11, 0.08);
+}
+
+.filter-count {
+  margin-left: 0.5em;
+  background: #fbbf24;
+  color: #fff;
+  border-radius: 50%;
+  padding: 0.15em 0.5em;
+  font-size: 0.85em;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.renters-booking-card {
+  background: #fffbe6;
+  border-radius: 18px;
+  box-shadow: 0 4px 16px 0 rgba(245, 158, 11, 0.09);
+  padding: 1.65rem 2rem 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  border: 1.5px solid #fde68a;
+}
+
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.booking-property-info {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.booking-property-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 2.5px solid #fbbf24;
+  background: #fff;
+}
+
+.booking-status {
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 16px;
+  background: #fef3c7;
+  color: #d97706;
+  text-transform: capitalize;
+}
+
+.booking-status.confirmed {
+  background: #fbbf24;
+  color: #fff;
+}
+.booking-status.pending {
+  background: #fef9c3;
+  color: #f59e0b;
+}
+.booking-status.cancelled {
+  background: #f87171;
+  color: #fff;
+}
+.booking-status.completed {
+  background: #34d399;
+  color: #fff;
+}
+
+.booking-details {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.booking-dates, .booking-guests, .booking-price {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.date-icon, .guests-icon, .price-icon {
+  color: #fbbf24;
+  width: 1.4em;
+  height: 1.4em;
+}
+
+.date-label, .guests-label, .price-label {
+  font-size: 0.98rem;
+  color: #a16207;
+  font-weight: 600;
+}
+.date-value, .guests-value, .price-value {
+  font-size: 1.03rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.booking-actions {
+  display: flex;
+  gap: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+.action-button {
+  background: linear-gradient(90deg, #fbbf24 60%, #f59e0b 100%);
+  color: #fff;
+  border: none;
+  padding: 0.48rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: background 0.17s;
+}
+.action-button.cancel {
+  background: linear-gradient(90deg, #f87171 75%, #fbbf24 100%);
+}
+.action-button.message {
+  background: linear-gradient(90deg, #fbbf24 70%, #f59e0b 100%);
+}
+.action-button.view {
+  background: linear-gradient(90deg, #a16207 75%, #fbbf24 100%);
+}
+.action-button:hover {
+  opacity: 0.93;
+}
+
+.empty-bookings {
+  text-align: center;
+  margin: 4rem 0 2.5rem 0;
+  color: #b45309;
+}
+
+.empty-icon {
+  font-size: 3.5rem;
+  color: #fbbf24;
+  margin-bottom: 1rem;
+}
+
+.available-properties-list {
+  margin-top: 2.5rem;
+}
+
+.properties-grid {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.renters-property-card {
+  background: #fffbe6;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px 0 rgba(245, 158, 11, 0.13);
+  padding: 1.2rem 1.5rem 1.2rem 1.5rem;
+  min-width: 260px;
+  max-width: 330px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 1.5px solid #fde68a;
+}
+
+.property-image-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.property-image {
+  width: 90%;
+  max-width: 230px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 15px;
+  border: 2px solid #fbbf24;
+  background: #fff;
+}
+
+.property-content {
+  width: 100%;
+}
+
+.property-name {
+  font-size: 1.13rem;
+  font-weight: 700;
+  color: #a16207;
+  margin-bottom: 0.4rem;
+}
+
+.property-location {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.99rem;
+  color: #f59e0b;
+  margin-bottom: 0.5rem;
+}
+
+.property-details {
+  display: flex;
+  gap: 1.1rem;
+  font-size: 0.96rem;
+  margin-bottom: 0.5rem;
+}
+
+.property-detail {
+  display: flex;
+  align-items: center;
+  gap: 0.22rem;
+  background: #fbbf24;
+  color: #fff;
+  border-radius: 7px;
+  padding: 0.18rem 0.7rem;
+  font-size: 0.97em;
+}
+
+.property-price {
+  font-size: 1.14rem;
+  font-weight: 700;
+  color: #a16207;
+  margin-bottom: 0.7rem;
+}
+
+.price-period {
+  font-size: 0.93rem;
+  font-weight: 400;
+  color: #b45309;
+  margin-left: 0.2rem;
+}
+
+.view-property-button {
+  background: linear-gradient(90deg, #fde68a 50%, #fbbf24 100%);
+  color: #a16207;
+  border: none;
+  border-radius: 8px;
+  padding: 0.45rem 1.2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 0.7rem;
+  transition: background 0.17s;
+}
+.view-property-button:hover {
+  background: linear-gradient(90deg, #fbbf24 60%, #fde68a 100%);
+}
+
+.booking-details-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(245, 158, 11, 0.18);
+  z-index: 200;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2.5rem 0;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 12px 32px 0 rgba(245, 158, 11, 0.16);
+  width: 95%;
+  max-width: 570px;
+  padding: 2.5rem 2.3rem 2rem 2.3rem;
+  position: relative;
+  animation: fadeInModal 0.19s cubic-bezier(.8,-0.01,.29,1.07);
+}
+@keyframes fadeInModal {
+  from { transform: scale(0.93); opacity: 0.2; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #fbbf24;
+  font-size: 1.5rem;
+}
+
+.close-icon {
+  width: 1.7em;
+  height: 1.7em;
+}
+
+.modal-body {
+  margin-top: 1.5rem;
+}
+
+.booking-property-details {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.booking-property-details .property-image {
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  border: 2px solid #fbbf24;
+}
+
+.property-info h4 {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #a16207;
+  margin-bottom: 0.3rem;
+}
+.property-location {
+  color: #f59e0b;
+}
+
+.booking-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.3rem;
+  margin: 1.5rem 0;
+}
+
+.booking-info-item {
+  background: #fffbe6;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.05);
+  color: #a16207;
+}
+.booking-info-item h5 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #f59e0b;
+}
+.info-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+.info-icon {
+  color: #fbbf24;
+  font-size: 1.15em;
+  margin-top: 0.1em;
+}
+
+.status-badge {
+  padding: 0.12em 0.8em;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.98em;
+  background: #fde68a;
+  color: #a16207;
+  margin-left: 0.5em;
+}
+.status-badge.confirmed {
+  background: #fbbf24;
+  color: #fff;
+}
+.status-badge.pending {
+  background: #fef9c3;
+  color: #f59e0b;
+}
+.status-badge.cancelled {
+  background: #f87171;
+  color: #fff;
+}
+.status-badge.completed {
+  background: #34d399;
+  color: #fff;
+}
+
+.booking-notes {
+  background: #fef3c7;
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  margin-bottom: 1.1rem;
+  color: #a16207;
+}
+.booking-notes h5 {
+  color: #f59e0b;
+  margin-bottom: 0.3rem;
+}
+
+.booking-timeline {
+  margin-bottom: 1.2rem;
+}
+.timeline {
+  margin-top: 0.6rem;
+}
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+.timeline-icon {
+  width: 2.1em;
+  height: 2.1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fbbf24;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 1.15em;
+}
+.timeline-content {
+  flex: 1;
+}
+.event-text {
+  font-weight: 500;
+  color: #a16207;
+  margin-bottom: 0.1em;
+}
+.event-date {
+  font-size: 0.93em;
+  color: #b45309;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1.2rem;
+  margin-top: 1.6rem;
+  justify-content: flex-end;
+}
+.modal-actions .action-button {
+  box-shadow: 0 2px 8px 0 rgba(245, 158, 11, 0.07);
+}
+
+@media (max-width: 900px) {
+  .bookings-list, .properties-grid {
+    flex-direction: column;
+    gap: 1.3rem;
+  }
+  .renters-property-card, .renters-booking-card {
+    max-width: 100%;
+    min-width: 0;
+    width: 100%;
+  }
+  .modal-content {
+    padding: 1.3rem 0.7rem;
+  }
+  .booking-info-grid {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+}
+
+/* Booking */
+
+/* Animación de entrada suave */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.45s cubic-bezier(.4,0,.2,1);
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+/* Loader solar animado */
+.loading-solar-container {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 340px; margin: 2.5rem 0;
+}
+.solar-spinner {
+  width: 70px; height: 70px; border-radius: 50%;
+  border: 7px solid #fde68a;
+  border-top: 7px solid #fbbf24;
+  border-right: 7px solid #f59e0b;
+  animation: spin 1.2s linear infinite;
+  margin-bottom: 1.4rem;
+  position: relative;
+}
+.solar-spinner::after {
+  content: '';
+  position: absolute; left: 50%; top: 50%;
+  width: 16px; height: 16px;
+  background: #fffbe6;
+  border-radius: 50%;
+  box-shadow: 0 0 8px 2px #fde68a;
+  transform: translate(-50%, -50%);
+}
+@keyframes spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+.loading-text {
+  color: #a16207; font-weight: 700; font-size: 1.13rem;
+  text-shadow: 0 2px 12px #fde68a73;
+}
+
+
+/* Dashboard */
+
+.dashboard-section.renters-dashboard {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, #f0f4f8 0%, #f8fafc 100%);
+  border-radius: 24px;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.04);
+  margin: 0 auto;
+  max-width: 1400px;
+  position: relative;
+  overflow: hidden;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.stats-grid.renters-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Siempre dos columnas */
+  grid-template-rows: repeat(2, 1fr);    /* Siempre dos filas */
+  gap: 2rem;
+  margin: 0 auto 2rem auto;
+  max-width: 680px; /* Ajusta si quieres cards más grandes/pequeñas */
+  background: #f6fbff;
+  padding: 2.5rem 2rem 2rem 2rem;
+  border-radius: 24px;
+  box-shadow: 0 4px 24px rgba(245, 158, 11, 0.04);
+}
+
+.stat-card.renters-stat-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 1.5rem 1.25rem;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  border: 1px solid rgba(245, 158, 11, 0.12);
+  transition: box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card.renters-stat-card:hover {
+  box-shadow: 0 6px 24px rgba(245, 158, 11, 0.17);
+}
+
+.stat-icon.renters-stat-icon {
+  width: 38px;
+  height: 38px;
+  color: #f59e0b;
+  filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.2));
+  flex-shrink: 0;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-title {
+  font-size: 1.1rem;
+  color: #b45309;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Dashboard Grid adaptado */
+
+.renters-dashboard {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.stats-grid.renters-stats {
+  margin: 0 auto 2rem auto;
+  max-width: 680px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 2rem;
+  background: #f6fbff;
+  padding: 2.5rem 2rem 2rem 2rem;
+  border-radius: 24px;
+  box-shadow: 0 4px 24px rgba(245, 158, 11, 0.04);
+}
+
+.dashboard-grid.renters-dashboard-grid {
+  margin: 0 auto 2.5rem auto;
+  max-width: 900px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.dashboard-card.renters-dashboard-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.04);
+  border: 1px solid #fff7e6;
+  overflow: hidden;
+  transition: box-shadow 0.3s;
+  margin-bottom: 0;
+}
+
+.recommended-section.renters-recommended-section {
+  margin: 0 auto 2.5rem auto;
+  max-width: 1000px;
+  padding: 2rem 0 2.5rem 0;
+}
+
+
+.dashboard-grid.renters-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-card.renters-dashboard-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.04);
+  border: 1px solid rgba(245, 158, 11, 0.10);
+  overflow: hidden;
+  transition: box-shadow 0.3s;
+  margin-bottom: 0;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: rgba(245, 158, 11, 0.06);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.13);
+}
+
+.card-header h3 {
+  font-size: 1.1rem;
+  color: #b45309;
+  margin: 0;
+  font-weight: 700;
+}
+
+.view-all-button {
+  background: none;
+  border: none;
+  color: #f59e0b;
+  font-size: 0.97rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.3rem 0.8rem;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.view-all-button:hover {
+  background: rgba(245, 158, 11, 0.11);
+  color: #b45309;
+}
+
+/* Reservas */
+.upcoming-bookings {
+  padding: 1.2rem 1.5rem;
+}
+
+.booking-item.renters-booking-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.2rem;
+  padding-bottom: 1.1rem;
+  margin-bottom: 1.1rem;
+  border-bottom: 1px solid #fde68a;
+}
+
+.booking-item.renters-booking-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.booking-property {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.booking-image.renters-booking-image {
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.booking-property h4 {
+  font-size: 1.08rem;
+  color: #f59e0b;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+
+.booking-dates {
+  font-size: 0.93rem;
+  color: #b45309;
+}
+
+.booking-status {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: #fffbe6;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.booking-status.approved {
+  background: #e6f7ee;
+  color: #047857;
+  border-color: #bbf7d0;
+}
+
+.booking-status.pending {
+  background: #fffbe6;
+  color: #b45309;
+  border-color: #fde68a;
+}
+
+.booking-status.cancelled {
+  background: #fff2f0;
+  color: #e41c00;
+  border-color: #fecaca;
+}
+
+/* Empty State renter */
+.empty-state.renters-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+}
+
+.empty-icon.renters-empty-icon {
+  width: 42px;
+  height: 42px;
+  color: #fbbf24;
+  margin-bottom: 1.1rem;
+}
+
+.empty-state.renters-empty-state p {
+  color: #b45309;
+  margin-bottom: 1.2rem;
+}
+
+.empty-state.renters-empty-state .action-button {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 9px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.07);
+  transition: background 0.2s, color 0.2s;
+}
+
+.empty-state.renters-empty-state .action-button:hover {
+  background: #fbbf24;
+  color: #b45309;
+}
+
+/* Mensajes recientes */
+.messages-list {
+  padding: 1.1rem 1.5rem;
+}
+
+.message-item.renters-message-item {
+  margin-bottom: 1.2rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid #fde68a;
+}
+
+.message-item.renters-message-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.message-sender {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
+.message-icon.renters-message-icon {
+  width: 20px;
+  height: 20px;
+  color: #f59e0b;
+}
+
+.message-sender h4 {
+  font-size: 1.02rem;
+  color: #b45309;
+  margin: 0;
+  margin-bottom: 0.23rem;
+  font-weight: 600;
+}
+
+.message-property {
+  font-size: 0.9rem;
+  color: #b45309;
+}
+
+.message-preview {
+  font-size: 0.97rem;
+  color: #1e293b;
+  margin: 0 0 0.4rem;
+}
+
+.message-time {
+  font-size: 0.85rem;
+  color: #fbbf24;
+  text-align: right;
+  margin: 0;
+}
+
+/* Recomendados para ti */
+.recommended-section.renters-recommended-section {
+  margin-top: 2.5rem;
+}
+
+.section-subtitle {
+  font-size: 1.3rem;
+  color: #f59e0b;
+  font-weight: 700;
+  margin-bottom: 1.3rem;
+}
+
+.properties-grid.renters-properties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.property-card.renters-property-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.12);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s;
+}
+
+.property-card.renters-property-card:hover {
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.13);
+}
+
+.property-image-container {
+  position: relative;
+  width: 100%;
+  height: 175px;
+  overflow: hidden;
+}
+
+.property-image.renters-property-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.favorite-button {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: rgba(255,255,255,0.95);
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.09);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.favorite-button.active,
+.favorite-button:hover {
+  background: #fbbf24;
+}
+
+.favorite-icon {
+  width: 20px;
+  height: 20px;
+  color: #f59e0b;
+}
+
+.favorite-button.active .favorite-icon,
+.favorite-button:hover .favorite-icon {
+  color: #fff;
+}
+
+.property-content {
+  padding: 1.1rem 1rem 1.3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.property-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #b45309;
+}
+
+.property-location {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #b45309;
+  font-size: 0.95rem;
+}
+
+.location-icon {
+  width: 16px;
+  height: 16px;
+  color: #fbbf24;
+}
+
+.property-details {
+  display: flex;
+  gap: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.property-detail {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #b45309;
+  font-size: 0.93rem;
+}
+
+.detail-icon {
+  width: 16px;
+  height: 16px;
+  color: #fbbf24;
+}
+
+.property-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.price-value {
+  font-size: 1.14rem;
+  font-weight: 700;
+  color: #f59e0b;
+}
+
+.price-period {
+  font-size: 0.95rem;
+  color: #b45309;
+}
+
+.yellow-button {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  color: #1e293b;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.48rem 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(245, 158, 11, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: background 0.18s, box-shadow 0.18s, transform 0.13s;
+  min-width: 120px;
+}
+
+.yellow-button::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  transform: translateX(-100%);
+  transition: transform 0s;
+  z-index: 1;
+}
+
+.yellow-button:hover::before {
+  transform: translateX(100%);
+  transition: transform 0.6s cubic-bezier(.4,0,.2,1);
+}
+
+.yellow-button:hover {
+  background: linear-gradient(135deg, #f59e0b 0%, #fcd34d 100%);
+  box-shadow: 0 4px 16px rgba(251, 191, 36, 0.12);
+  transform: translateY(-2px);
+}
+
+.yellow-button:active {
+  transform: translateY(1px);
+}
+
+.yellow-button .button-icon {
+  font-size: 1.2em;
+  color: #fbbf24;
+  margin-right: 0.36em;
+  z-index: 2;
+}
+
+.yellow-button:disabled,
+.yellow-button[disabled] {
+  opacity: 0.54;
+  cursor: not-allowed;
+  box-shadow: none;
+  background: linear-gradient(135deg, #fde68a 0%, #fbbf24 100%);
+}
+
+.view-property-button {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  padding: 0.65rem 1.2rem;
+  margin-top: 0.7rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.view-property-button:hover {
+  background: #fbbf24;
+  color: #b45309;
+}
+
+@media (max-width: 900px) {
+  .dashboard-grid.renters-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-section.renters-dashboard {
+    padding: 1rem 0.25rem;
+    border-radius: 0;
+  }
+  .dashboard-card.renters-dashboard-card {
+    border-radius: 8px;
+  }
+  .properties-grid.renters-properties-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Main content styles */

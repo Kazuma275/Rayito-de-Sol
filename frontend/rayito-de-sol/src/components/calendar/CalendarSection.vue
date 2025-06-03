@@ -58,7 +58,7 @@
             'empty': !day.date, 
             'today': day.isToday,
             'available': day.available && !day.booked,
-            'unavailable': !day.available && !day.booked,
+            'unavailable': day.unavailable && !day.booked,
             'booked': day.booked,
             'partially-booked': day.partiallyBooked,
             'check-in': day.checkIn,
@@ -312,23 +312,10 @@ import {
 // Estado dinámico para propiedades y reservas
 const properties = ref([])
 const bookings = ref([])
-
-async function fetchCalendarData() {
-  const [propertiesRes, bookingsRes] = await Promise.all([
-    axios.get('/api/properties'),
-    axios.get('/api/bookings'),
-  ])
-  properties.value = propertiesRes.data
-  bookings.value = bookingsRes.data
-}
-onMounted(fetchCalendarData)
+const unavailableDates = ref([])
 
 // Estado del calendario
 const selectedPropertyId = ref(null)
-watch(properties, (newVal) => {
-  if (newVal.length && !selectedPropertyId.value) selectedPropertyId.value = newVal[0].id
-}, { immediate: true })
-
 const activeView = ref('month')
 const currentMonth = ref(new Date().getMonth())
 const currentYear = ref(new Date().getFullYear())
@@ -345,7 +332,7 @@ const selectedDayStatus = ref('available')
 const selectedDayPrice = ref(100)
 const selectedDayNotes = ref('')
 const selectedDayBooking = ref(null)
-const selectedDayTime = ref('12:00:00') // por si necesitas hora
+const selectedDayTime = ref('12:00:00')
 
 // Opciones de precios rápidos
 const quickPrices = [80, 100, 120, 150, 180, 200]
@@ -375,7 +362,7 @@ const currentPeriodLabel = computed(() => {
   }
 })
 
-// Días del calendario para la vista mensual (MAPPING CORRECTO)
+// Días del calendario para la vista mensual (INCLUYE unavailableDates)
 const calendarDays = computed(() => {
   const days = []
   const firstDay = new Date(currentYear.value, currentMonth.value, 1)
@@ -383,7 +370,6 @@ const calendarDays = computed(() => {
   let firstDayOfWeek = firstDay.getDay() - 1
   if (firstDayOfWeek < 0) firstDayOfWeek = 6
 
-  // Días vacíos al principio para cuadrar el calendario
   for (let i = 0; i < firstDayOfWeek; i++) {
     days.push({ date: null })
   }
@@ -402,15 +388,17 @@ const calendarDays = computed(() => {
     const booking = relevantBookings.find(
       b => (b.reservation_date || b.reservationDate) === dateString
     )
+    const isUnavailable = unavailableDates.value.includes(dateString)
 
     days.push({
       date: i,
       dateObj: date,
       dateString,
       isToday: date.toDateString() === today.toDateString(),
-      available: !booking,
+      available: !booking && !isUnavailable,
       booked: !!booking,
-      partiallyBooked: false, // Si tienes lógica de parcial, cámbialo
+      unavailable: isUnavailable,
+      partiallyBooked: false,
       checkIn: false,
       checkOut: false,
       bookingInfo: booking
@@ -445,41 +433,30 @@ function getStartOfWeek(date) {
   d.setDate(diff)
   return d.toISOString().split('T')[0]
 }
-
-// Estas funciones ya no son necesarias si no tienes checkIn/checkOut por rango
-// Si algún día tienes reservas por rango, adáptalas
 function isHourBooked(dateString, hour) {
-  // Para hacerlo real, deberías buscar reservas por hora en tu backend
-  return false // Por defecto desactivado
+  return false
 }
-
 function getBookingAtHour(dateString, hour) {
-  // Para hacerlo real, deberías buscar reservas por hora en tu backend
   return null
 }
-
 function formatDate(dateString) {
   if (!dateString) return ''
   const options = { day: 'numeric', month: 'short', year: 'numeric' }
   return new Date(dateString).toLocaleDateString('es-ES', options)
 }
-
 function formatSelectedDate(date) {
   if (!date) return ''
   const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }
   return new Date(date).toLocaleDateString('es-ES', options).replace(/^\w/, c => c.toUpperCase())
 }
-
 function getDayName(dateString) {
   const date = new Date(dateString)
   return date.toLocaleDateString('es-ES', { weekday: 'short' })
 }
-
 function getDayNumber(dateString) {
   const date = new Date(dateString)
   return date.getDate()
 }
-
 function formatHour(hour) {
   return `${hour}:00`
 }
@@ -498,6 +475,7 @@ function previousPeriod() {
     date.setDate(date.getDate() - 7)
     currentWeekStart.value = date.toISOString().split('T')[0]
   }
+  // Recarga datos relevantes si hace falta (opcional)
 }
 function nextPeriod() {
   if (activeView.value === 'month') {
@@ -512,31 +490,73 @@ function nextPeriod() {
     date.setDate(date.getDate() + 7)
     currentWeekStart.value = date.toISOString().split('T')[0]
   }
+  // Recarga datos relevantes si hace falta (opcional)
 }
 
-// Acciones en bloque
+// Carga de datos centralizada
+async function fetchProperties() {
+  const res = await axios.get('/api/properties')
+  properties.value = res.data
+  // Selecciona la primera propiedad por defecto si no hay una seleccionada
+  if (properties.value.length > 0 && !selectedPropertyId.value) {
+    selectedPropertyId.value = properties.value[0].id
+  }
+}
+
+// Cargar reservas y unavailable dates para la propiedad seleccionada
+async function fetchCalendarDataForProperty(propertyId) {
+  if (!propertyId) return
+  const [bookingsRes, unavailableRes] = await Promise.all([
+    axios.get(`/api/properties/${propertyId}/bookings`),
+    axios.get(`/api/properties/${propertyId}/unavailable-dates`)
+  ])
+  bookings.value = bookingsRes.data
+  unavailableDates.value = unavailableRes.data
+}
+
+// Primera carga
+onMounted(async () => {
+  await fetchProperties()
+  // Si se selecciona una propiedad, se dispara el watch de selectedPropertyId
+})
+
+// Cargar datos cada vez que cambia la propiedad seleccionada
+watch(selectedPropertyId, async (newId) => {
+  if (newId) {
+    await fetchCalendarDataForProperty(newId)
+  }
+}, { immediate: true })
+
+// Acciones en bloque (marcar como disponible/no disponible)
 async function setBulkAvailability(available) {
   if (!bulkStartDate.value || !bulkEndDate.value || !selectedPropertyId.value) {
-    alert('Por favor, selecciona una propiedad y un rango de fechas')
-    return
+    alert('Por favor, selecciona una propiedad y un rango de fechas');
+    return;
   }
-  // Llama a tu backend para actualizar disponibilidad
-  await axios.post('/api/properties/set-availability', {
-    propertyId: selectedPropertyId.value,
-    from: bulkStartDate.value,
-    to: bulkEndDate.value,
-    available
-  })
-  await fetchCalendarData()
+  const start = new Date(bulkStartDate.value);
+  const end = new Date(bulkEndDate.value);
+
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const dateString = d.toISOString().split('T')[0];
+    if (available) {
+      await axios.delete(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
+        data: { date: dateString }
+      });
+    } else {
+      await axios.post(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, { date: dateString });
+    }
+  }
+  // Refresca todo el calendario
+  await fetchCalendarDataForProperty(selectedPropertyId.value)
 }
 
 // Manejo de clics en el calendario
 function handleDayClick(day) {
   if (!day.date) return
   selectedDate.value = day.dateString
-  selectedDayStatus.value = day.available ? 'available' : 'unavailable'
-  selectedDayPrice.value = 100 // Real: cargar precio desde backend si tienes esa info
-  selectedDayNotes.value = '' // Cargar nota si existe
+  selectedDayStatus.value = day.unavailable ? 'unavailable' : 'available'
+  selectedDayPrice.value = 100
+  selectedDayNotes.value = ''
   selectedDayBooking.value = day.bookingInfo
   showDayModal.value = true
 }
@@ -547,18 +567,29 @@ function closeDayModal() {
   showDayModal.value = false
 }
 async function saveDayChanges() {
-  console.log("Intentando guardar reserva"); 
-  if (!selectedPropertyId.value || !selectedDate.value) return
+  if (!selectedPropertyId.value || !selectedDate.value) return;
 
-  await axios.post('/api/reservations', {
-    property_id: selectedPropertyId.value,
-    reservation_date: selectedDate.value,
-    reservation_time: selectedDayTime.value ?? '12:00:00', 
-    details: selectedDayNotes.value
-  })
+  // Si hay reserva, no permitas modificar disponibilidad ni precio (opcional)
+  if (selectedDayBooking.value) {
+    closeDayModal();
+    return;
+  }
 
-  await fetchCalendarData()
-  closeDayModal()
+  // Cambia estado de disponibilidad
+  if (selectedDayStatus.value === 'unavailable') {
+    await axios.post(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
+      date: selectedDate.value
+    });
+  } else if (selectedDayStatus.value === 'available') {
+    await axios.delete(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
+      data: { date: selectedDate.value }
+    });
+  }
+
+  // Refresca todo el calendario
+  await fetchCalendarDataForProperty(selectedPropertyId.value);
+
+  closeDayModal();
 }
 function viewBookingDetails(bookingId) {
   // Redirige o abre modal de detalles para la reserva

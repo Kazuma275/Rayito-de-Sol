@@ -4,6 +4,7 @@
     <main class="main-content">
       <DashboardSection
         v-if="activeTab === 'dashboard'"
+        :user="user"
         :properties="properties"
         :active-bookings="activeBookings"
         :occupancy-rate="occupancyRate"
