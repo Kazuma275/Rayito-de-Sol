@@ -21,8 +21,14 @@ class Reservation extends Model
         'updated_at',
     ];
 
+    public function property()
+    {
+        return $this->belongsTo(\App\Models\Property::class, 'property_id');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
 }

@@ -26,15 +26,11 @@
         @save="saveProperty"
         @close-modal="closeModal"
       />
-      
+
       <BookingsSection
         v-if="activeTab === 'bookings'"
-        :booking-filters="bookingFilters"
-        :active-booking-filter="activeBookingFilter"
-        :booking-property-filter="bookingPropertyFilter"
+        :bookings="filteredBookings"
         :properties="properties"
-        :filtered-bookings="filteredBookings"
-        :get-property-by-id="getPropertyById"
         @change-filter="setActiveBookingFilter"
         @change-property="setBookingPropertyFilter"
         @view-details="viewBookingDetails"
@@ -42,6 +38,7 @@
         @reject="rejectBooking"
         @message="messageBooking"
       />
+
       <CalendarSection
         v-if="activeTab === 'calendar'"
         :properties="properties"
@@ -177,7 +174,7 @@ const propertyToEdit = ref(null)
 // Función para configurar headers con el token
 const apiHeaders = () => ({
   headers: {
-    Authorization: `Bearer ${userStore.token}`,
+    Authorization: `Bearer ${userStore.token || localStorage.getItem('auth_token')}`,
   }
 });
 
@@ -190,25 +187,37 @@ function saveEdit() {
   showEditPropertyModal.value = false
 }
 
-// Cargar datos al montar el componente
+// --- Cargar datos al montar el componente ---
 onMounted(async () => {
   try {
+    console.log("Iniciando carga de bookings...");
     const [propsRes, bookingsRes, messagesRes] = await Promise.all([
       axios.get('/api/properties', apiHeaders()),
-      axios.get('/api/bookings', apiHeaders()),
+      axios.get('/api/bookings', {
+        headers: {
+          Authorization: `Bearer ${userStore.token || localStorage.getItem('auth_token')}`
+        }
+      }),
       axios.get('/api/messages', apiHeaders()),
     ]);
     properties.value = propsRes.data;
+
     allBookings.value = bookingsRes.data;
+    console.log('Bookings cargados:', allBookings.value);
+
     messages.value = messagesRes.data;
   } catch (err) {
-    // Maneja errores aquí
     console.error('Error cargando datos del dashboard', err);
+    if (err.response) {
+      console.error("RESPONSE ERROR:", err.response);
+    }
+    if (err.request) {
+      console.error("REQUEST ERROR:", err.request);
+    }
   }
 });
 
 // Settings
-// Creamos un localSettings reactivo para edición en formularios
 const localSettings = ref({
   profile: {
     name: '',
@@ -242,7 +251,6 @@ onMounted(() => {
     // Si tienes settings de notificaciones/pago en tu backend, rellénalos aquí también
   }
 })
-
 
 function triggerFileInput() {
   avatarInput.value.click();
@@ -418,7 +426,6 @@ const activeBookings = computed(() => {
 });
 
 // Tasa de Ocupación (%)
-// Supongamos que ocupación = noches reservadas / noches disponibles en los últimos 30 días
 function getDaysBetween(start, end) {
   const msPerDay = 1000 * 60 * 60 * 24;
   return Math.max(0, Math.ceil((new Date(end) - new Date(start)) / msPerDay));
@@ -436,7 +443,6 @@ const occupancyRate = computed(() => {
   let reservedNights = 0;
   allBookings.value.forEach(booking => {
     if (booking.status !== 'confirmed') return;
-    // Ajusta las fechas al rango de los últimos 30 días
     const checkIn = new Date(booking.check_in);
     const checkOut = new Date(booking.check_out);
     const start = checkIn < thirtyDaysAgo ? thirtyDaysAgo : checkIn;
@@ -506,8 +512,6 @@ const newProperty = ref({
   statusText: 'Activo',
 });
 
-
-
 const fetchProperties = async () => {
   isLoading.value = true;
   try {
@@ -525,24 +529,21 @@ onMounted(() => {
   fetchProperties();
 });
 
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        newProperty.value.image = e.target.result; // Base64 string
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-  
+const handleImageUpload = (event) => {
+  const file = event.target.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      newProperty.value.image = e.target.result; // Base64 string
+    };
+    reader.readAsDataURL(file);
+  }
+};
 
 const addProperty = async () => {
   try {
     const formData = new FormData();
     Object.entries(newProperty.value).forEach(([key, val]) => {
-      // Solo agregamos la imagen si es un archivo, no en base64
-      // Si tienes la imagen como archivo, usa: formData.append('image', newProperty.value.imageFile)
       if (val !== null) formData.append(key, val);
     });
 
@@ -556,7 +557,6 @@ const addProperty = async () => {
 
     properties.value.push(savedProperty);
 
-    // Reset
     newProperty.value = {
       id: null,
       name: '',
@@ -589,7 +589,6 @@ const amenities = [
 
 const editProperty = (id) => {
   console.log('Edit property', id);
-  // This would open the edit modal with the property data
 };
 
 const viewCalendar = (id) => {
@@ -611,17 +610,28 @@ const bookingPropertyFilter = ref('all');
 
 const filteredBookings = computed(() => {
   let filtered = allBookings.value;
-  
+
+  console.log("ANTES DE FILTROS, bookings:", filtered);
+
   if (activeBookingFilter.value !== 'all') {
+    console.log("Filtro de estado activo:", activeBookingFilter.value);
     filtered = filtered.filter(booking => booking.status === activeBookingFilter.value);
+    console.log("Después de filtrar status:", filtered);
   }
-  
+
   if (bookingPropertyFilter.value !== 'all') {
-    filtered = filtered.filter(booking => booking.propertyId === parseInt(bookingPropertyFilter.value));
+    console.log("Filtro de propiedad activo:", bookingPropertyFilter.value);
+    filtered = filtered.filter(booking => booking.propertyId === Number(bookingPropertyFilter.value));
+    console.log("Después de filtrar propertyId:", filtered);
   }
-  
+
+  console.log("filteredBookings FINAL:", filtered);
   return filtered;
 });
+
+// 🔽 LOG AQUÍ 🔽
+console.log("PADRE - filteredBookings (computed):", filteredBookings.value);
+console.log("PADRE - properties:", properties.value);
 
 // Calendar - VERSIÓN MEJORADA CON ACTUALIZACIÓN DE DISPONIBILIDAD
 
@@ -632,7 +642,6 @@ const selectionEnd = ref(null);
 const isSelecting = ref(false);
 const hoverDate = ref(null);
 
-// Datos computados
 const currentYear = computed(() => currentDate.value.getFullYear());
 const currentMonth = computed(() => currentDate.value.getMonth());
 const currentMonthName = computed(() => {
@@ -641,7 +650,6 @@ const currentMonthName = computed(() => {
 const currentMonthKey = computed(() => `${currentYear.value}-${currentMonth.value}`);
 const weekDays = computed(() => ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']);
 
-// Días del calendario (ahora es un ref)
 const calendarDays = ref([]);
 
 const generateCalendarDays = () => {
@@ -662,8 +670,8 @@ const generateCalendarDays = () => {
     days.push({
       date: i,
       fullDate: date,
-      available: Math.random() > 0.3, // Simulación
-      booked: Math.random() < 0.2, // Simulación
+      available: Math.random() > 0.3,
+      booked: Math.random() < 0.2,
       isToday: today.getDate() === i &&
                today.getMonth() === currentMonth.value &&
                today.getFullYear() === currentYear.value
@@ -673,10 +681,8 @@ const generateCalendarDays = () => {
   calendarDays.value = days;
 };
 
-// Inicializar al cargar
 generateCalendarDays();
 
-// Navegación entre meses
 const nextMonth = () => {
   currentDate.value = new Date(currentYear.value, currentMonth.value + 1, 1);
   generateCalendarDays();
@@ -689,7 +695,6 @@ const previousMonth = () => {
   cancelSelection();
 };
 
-// Selección de días
 const handleDayClick = (day) => {
   if (!day.date) return;
 
@@ -730,7 +735,6 @@ const cancelSelection = () => {
   hoverDate.value = null;
 };
 
-// Actualizar disponibilidad en el rango seleccionado
 const applyBulkAction = (makeAvailable) => {
   if (!selectionStart.value || !selectionEnd.value) return;
 
@@ -817,7 +821,6 @@ const conversations = ref([
 
 const activeConversation = ref(null);
 
-// Settings
 const settingsTabs = [
   { id: 'profile', name: 'Perfil', icon: UserIcon },
   { id: 'notifications', name: 'Notificaciones', icon: BellIcon },
@@ -845,7 +848,6 @@ const settings = ref({
   }
 });
 
-// Función para cambiar de tab
 const changeTab = (tabId) => {
   activeTab.value = tabId;
   const tab = tabs.find(t => t.id === tabId);
@@ -853,7 +855,7 @@ const changeTab = (tabId) => {
     router.push(tab.path);
   }
 };
-</script>
+</script> 
 
 <style scoped>
 /* Global styles */

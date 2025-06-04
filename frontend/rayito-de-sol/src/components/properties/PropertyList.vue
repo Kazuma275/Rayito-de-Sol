@@ -7,22 +7,10 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const props = defineProps({
-  title: {
-    type: String,
-    default: 'Propiedades'
-  },
-  showFilters: {
-    type: Boolean,
-    default: true
-  },
-  showPagination: {
-    type: Boolean,
-    default: true
-  },
-  itemsPerPage: {
-    type: Number,
-    default: 6
-  }
+  title: { type: String, default: 'Propiedades' },
+  showFilters: { type: Boolean, default: true },
+  showPagination: { type: Boolean, default: true },
+  itemsPerPage: { type: Number, default: 6 }
 })
 
 const emit = defineEmits(['toggleFavorite', 'viewProperty', 'changePage'])
@@ -34,7 +22,6 @@ const sortBy = ref('price_asc')
 const activeFilters = ref([])
 const currentPage = ref(1)
 
-// Filtros y amenidades (adapta los ids a los que usa tu backend)
 const filterOptions = [
   { id: 'pool', name: 'Piscina' },
   { id: 'beach', name: 'Playa' },
@@ -55,38 +42,45 @@ const amenities = [
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
 async function fetchProperties() {
+  // SIEMPRE carga propiedades
   try {
-    const [propRes, favRes] = await Promise.all([
-      axios.get(`${API_BASE_URL}/properties`),
-      axios.get(`${API_BASE_URL}/user/favorites`)
-    ])
+    const propRes = await axios.get(`${API_BASE_URL}/properties`)
     properties.value = propRes.data
-    favorites.value = favRes.data
   } catch (e) {
     console.error('Error al cargar propiedades:', e)
     properties.value = []
+  }
+
+  // Solo favoritos si hay token (usuario logueado)
+  const token = localStorage.getItem('auth_token')
+  if (token) {
+    try {
+      const favRes = await axios.get(`${API_BASE_URL}/user/favorites`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      favorites.value = favRes.data
+    } catch (e) {
+      console.error('Error al cargar favoritos:', e)
+      favorites.value = []
+    }
+  } else {
     favorites.value = []
   }
 }
 
 onMounted(fetchProperties)
 
-// Filtra correctamente por amenities: soporta tanto array de ids como de objetos con id
 function propertyHasAmenity(property, filterId) {
-  // Si amenities está vacío, nunca pasa el filtro
   if (!property.amenities || property.amenities.length === 0) return false;
-  // Si amenities es array de string ids
   if (typeof property.amenities[0] === 'string') {
     return property.amenities.includes(filterId)
   }
-  // Si amenities es array de objetos
   if (typeof property.amenities[0] === 'object') {
     return property.amenities.some(a => a.id === filterId)
   }
   return false
 }
 
-// Computed para filtrar y paginar
 const filteredProperties = computed(() => {
   let result = [...properties.value]
   if (activeFilters.value.length > 0) {
@@ -138,7 +132,6 @@ const paginationPages = computed(() => {
   return pages
 })
 
-// Métodos
 const toggleFilter = (filterId) => {
   const index = activeFilters.value.indexOf(filterId)
   if (index === -1) {
@@ -150,8 +143,12 @@ const toggleFilter = (filterId) => {
 }
 
 const toggleFavorite = async (propertyId) => {
+  const token = localStorage.getItem('auth_token')
+  if (!token) return // No permitir si no está logueado
   try {
-    await axios.post(`${API_BASE_URL}/user/toggle-favorite`, { propertyId })
+    await axios.post(`${API_BASE_URL}/user/toggle-favorite`, { propertyId }, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
     await fetchProperties()
     emit('toggleFavorite', propertyId)
   } catch (e) {
@@ -162,10 +159,6 @@ const toggleFavorite = async (propertyId) => {
 const viewProperty = (propertyId) => {
   emit('viewProperty', propertyId)
   router.push(`/renters/property/${propertyId}`)
-}
-
-function updateActiveTabFromRoute() {
-  viewProperty();
 }
 
 const changePage = (page) => {

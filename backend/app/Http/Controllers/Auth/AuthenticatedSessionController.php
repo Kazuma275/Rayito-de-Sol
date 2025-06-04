@@ -87,4 +87,37 @@ class AuthenticatedSessionController extends Controller
             ], 500); // 500 Internal Server Error
         }
     }
+    public function login(Request $request)
+{
+    // Validar entrada
+    $validator = Validator::make($request->all(), [
+        'email' => 'required|email',
+        'password' => 'required|string',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'message' => 'Error de validación',
+            'errors' => $validator->errors(),
+        ], 422);
+    }
+
+    // Buscar usuario
+    $user = User::where('email', $request->email)->first();
+
+    // Verificar credenciales
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'Credenciales incorrectas'], 401);
+    }
+
+    // Crear token (requiere Laravel Sanctum o Passport)
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    // Devolver el usuario y el token
+    return response()->json([
+        'message' => 'Inicio de sesión exitoso',
+        'user' => $user,
+        'token' => $token,
+    ]);
+}
 }

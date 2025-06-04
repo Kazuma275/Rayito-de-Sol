@@ -155,6 +155,7 @@ const handleSubmit = async () => {
     localStorage.setItem('auth_user', JSON.stringify(response.data.user));
     userStore.setUser(response.data.user);
     userStore.setToken(response.data.token);
+    console.log("TOKEN recibido:", response.data.token);
 
     router.push('/main');
   } catch (error) {
@@ -177,6 +178,7 @@ const forgotPassword = () => {
 const goToRegister = () => {
   router.push('/register');
 };
+
 </script>
 
 <style scoped>
