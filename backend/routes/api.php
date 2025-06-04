@@ -12,6 +12,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\UnavailableDateController;
 use App\Models\Reservation;
+use App\Http\Controllers\PropertyDayPriceController;
 
 Route::post('/register', [AuthenticatedSessionController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
@@ -49,3 +50,9 @@ Route::post('/properties/{id}/unavailable-dates', [UnavailableDateController::cl
 Route::delete('/properties/{id}/unavailable-dates', [UnavailableDateController::class, 'destroy']);
 
 // Route::get('/messages', [MessageController::class, 'index']);
+
+
+Route::get('/properties/{id}/day-prices', [PropertyDayPriceController::class, 'index']);
+Route::post('/properties/{id}/day-prices', [PropertyDayPriceController::class, 'store']);
+Route::delete('/properties/{id}/day-prices', [PropertyDayPriceController::class, 'destroy']);
+Route::get('/properties/{id}/bookings', [ReservationController::class, 'propertyBookings']);

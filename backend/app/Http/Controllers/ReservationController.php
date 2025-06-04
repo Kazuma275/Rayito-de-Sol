@@ -7,20 +7,10 @@ use App\Models\Reservation;
 
 class ReservationController extends Controller
 {
-    public function store(Request $request)
+    public function propertyBookings($id)
     {
-        $validated = $request->validate([
-            'user_id' => 'required|integer|exists:users,id',
-            'reservation_date' => 'required|date',
-            'reservation_time' => 'required',
-            'details' => 'nullable|string',
-        ]);
-
-        $reservation = Reservation::create($validated);
-
-        return response()->json([
-            'success' => true,
-            'reservation' => $reservation,
-        ], 201);
+        return response()->json(
+            \App\Models\Reservation::where('property_id', $id)->get()
+        );
     }
 }

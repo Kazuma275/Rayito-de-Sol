@@ -3,7 +3,7 @@
     <div class="section-header">
       <h2 class="section-title">Calendario de Disponibilidad</h2>
       <div class="header-actions">
-        <button class="sync-button">
+        <button class="sync-button" @click="syncCalendar">
           <RefreshCwIcon class="button-icon" />
           Sincronizar Calendario
         </button>
@@ -68,6 +68,7 @@
         >
           <div class="day-content">
             <span v-if="day.date" class="day-number">{{ day.date }}</span>
+            <div v-if="day.date" class="day-price">€{{ day.price }}</div> <!-- MOSTRAR PRECIO DEL DÍA -->
             <div v-if="day.date" class="day-status">
               <span v-if="day.booked" class="status-indicator booked">Reservado</span>
               <span v-else-if="day.partiallyBooked" class="status-indicator partial">Parcial</span>
@@ -309,10 +310,11 @@ import {
   EuroIcon,
 } from 'lucide-vue-next'
 
-// Estado dinámico para propiedades y reservas
+// Estado dinámico para propiedades, reservas, fechas no disponibles y precios diarios
 const properties = ref([])
 const bookings = ref([])
 const unavailableDates = ref([])
+const dayPrices = ref({}) // NUEVO: precios personalizados por día
 
 // Estado del calendario
 const selectedPropertyId = ref(null)
@@ -362,7 +364,7 @@ const currentPeriodLabel = computed(() => {
   }
 })
 
-// Días del calendario para la vista mensual (INCLUYE unavailableDates)
+// Días del calendario para la vista mensual (INCLUYE unavailableDates y precios diarios)
 const calendarDays = computed(() => {
   const days = []
   const firstDay = new Date(currentYear.value, currentMonth.value, 1)
@@ -401,7 +403,8 @@ const calendarDays = computed(() => {
       partiallyBooked: false,
       checkIn: false,
       checkOut: false,
-      bookingInfo: booking
+      bookingInfo: booking,
+      price: dayPrices.value[dateString] ?? 100 // NUEVO: muestra el precio real o 100
     })
   }
   return days
@@ -475,7 +478,8 @@ function previousPeriod() {
     date.setDate(date.getDate() - 7)
     currentWeekStart.value = date.toISOString().split('T')[0]
   }
-  // Recarga datos relevantes si hace falta (opcional)
+  // Recarga datos relevantes si hace falta
+  if (selectedPropertyId.value) fetchCalendarDataForProperty(selectedPropertyId.value)
 }
 function nextPeriod() {
   if (activeView.value === 'month') {
@@ -490,7 +494,8 @@ function nextPeriod() {
     date.setDate(date.getDate() + 7)
     currentWeekStart.value = date.toISOString().split('T')[0]
   }
-  // Recarga datos relevantes si hace falta (opcional)
+  // Recarga datos relevantes si hace falta
+  if (selectedPropertyId.value) fetchCalendarDataForProperty(selectedPropertyId.value)
 }
 
 // Carga de datos centralizada
@@ -503,21 +508,36 @@ async function fetchProperties() {
   }
 }
 
-// Cargar reservas y unavailable dates para la propiedad seleccionada
+function syncCalendar() {
+  // Ejemplo: recargar los datos del calendario para la propiedad seleccionada
+  if (selectedPropertyId.value) {
+    fetchCalendarDataForProperty(selectedPropertyId.value)
+  }
+  // Puedes mostrar un mensaje o notificación si lo deseas
+  alert("Calendario sincronizado.");
+}
+
+// Cargar reservas, unavailable dates y precios diarios para la propiedad seleccionada y mes/año actual
 async function fetchCalendarDataForProperty(propertyId) {
   if (!propertyId) return
-  const [bookingsRes, unavailableRes] = await Promise.all([
+  // Cargar precios del mes actual
+  const [bookingsRes, unavailableRes, pricesRes] = await Promise.all([
     axios.get(`/api/properties/${propertyId}/bookings`),
-    axios.get(`/api/properties/${propertyId}/unavailable-dates`)
+    axios.get(`/api/properties/${propertyId}/unavailable-dates`),
+    axios.get(`/api/properties/${propertyId}/day-prices?year=${currentYear.value}&month=${currentMonth.value + 1}`)
   ])
   bookings.value = bookingsRes.data
   unavailableDates.value = unavailableRes.data
+  // El backend devuelve: { "YYYY-MM-DD": { price: 120, notes: "..." } }
+  // Solo nos interesa el precio aquí
+  dayPrices.value = Object.fromEntries(
+    Object.entries(pricesRes.data).map(([date, obj]) => [date, Number(obj.price)])
+  )
 }
 
 // Primera carga
 onMounted(async () => {
   await fetchProperties()
-  // Si se selecciona una propiedad, se dispara el watch de selectedPropertyId
 })
 
 // Cargar datos cada vez que cambia la propiedad seleccionada
@@ -542,8 +562,13 @@ async function setBulkAvailability(available) {
       await axios.delete(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
         data: { date: dateString }
       });
+      // (Opcional) Eliminar precio si lo deseas cuando se marque como disponible
     } else {
       await axios.post(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, { date: dateString });
+      // (Opcional) Eliminar precio si lo deseas cuando se marque como no disponible
+      await axios.delete(`/api/properties/${selectedPropertyId.value}/day-prices`, {
+        data: { date: dateString }
+      });
     }
   }
   // Refresca todo el calendario
@@ -555,8 +580,8 @@ function handleDayClick(day) {
   if (!day.date) return
   selectedDate.value = day.dateString
   selectedDayStatus.value = day.unavailable ? 'unavailable' : 'available'
-  selectedDayPrice.value = 100
-  selectedDayNotes.value = ''
+  selectedDayPrice.value = dayPrices.value[day.dateString] ?? 100
+  selectedDayNotes.value = '' // Si gestionas notas, aquí puedes cargarlas
   selectedDayBooking.value = day.bookingInfo
   showDayModal.value = true
 }
@@ -575,14 +600,23 @@ async function saveDayChanges() {
     return;
   }
 
-  // Cambia estado de disponibilidad
   if (selectedDayStatus.value === 'unavailable') {
     await axios.post(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
       date: selectedDate.value
     });
+    // Opcional: elimina el precio si ese día se marca como no disponible
+    await axios.delete(`/api/properties/${selectedPropertyId.value}/day-prices`, {
+      data: { date: selectedDate.value }
+    });
   } else if (selectedDayStatus.value === 'available') {
     await axios.delete(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
       data: { date: selectedDate.value }
+    });
+    // Guarda el precio solo si está disponible
+    await axios.post(`/api/properties/${selectedPropertyId.value}/day-prices`, {
+      date: selectedDate.value,
+      price: selectedDayPrice.value
+      // Puedes agregar notes: selectedDayNotes.value si lo usas en backend
     });
   }
 
