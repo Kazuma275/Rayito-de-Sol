@@ -220,7 +220,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { 
   CalendarIcon, 
   CalendarOffIcon, 
@@ -251,6 +251,8 @@ const props = defineProps({
   }
 });
 
+const emit = defineEmits(['change-filter', 'change-property', 'view-details', 'accept', 'reject', 'message']);
+
 // Estado de filtros y paginación
 const activeBookingFilter = ref('all');
 const bookingPropertyFilter = ref('all');
@@ -271,6 +273,15 @@ const bookingFilters = [
   { id: 'completed', name: 'Completadas' },
   { id: 'cancelled', name: 'Canceladas' }
 ];
+
+// Observar cambios en los filtros para emitir eventos
+watch(activeBookingFilter, (newValue) => {
+  emit('change-filter', newValue);
+});
+
+watch(bookingPropertyFilter, (newValue) => {
+  emit('change-property', newValue);
+});
 
 // Reservas filtradas
 const filteredBookings = computed(() => {
@@ -467,6 +478,7 @@ const viewBookingDetails = (bookingId) => {
     selectedBooking.value = booking;
     showBookingDetails.value = true;
   }
+  emit('view-details', bookingId);
 };
 
 const closeBookingDetails = () => {
@@ -474,19 +486,15 @@ const closeBookingDetails = () => {
 };
 
 const acceptBooking = (bookingId) => {
-  console.log(`Aceptando reserva ${bookingId}`);
-  // Aquí iría la lógica para aceptar la reserva
-  // En una aplicación real, esto enviaría una solicitud al backend
+  emit('accept', bookingId);
 };
 
 const rejectBooking = (bookingId) => {
-  console.log(`Rechazando reserva ${bookingId}`);
-  // Aquí iría la lógica para rechazar la reserva
+  emit('reject', bookingId);
 };
 
 const sendMessage = (bookingId) => {
-  console.log(`Enviando mensaje para la reserva ${bookingId}`);
-  // Aquí iría la lógica para abrir el chat o enviar un mensaje
+  emit('message', bookingId);
 };
 </script>
 

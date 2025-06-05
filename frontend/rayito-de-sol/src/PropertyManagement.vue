@@ -5,7 +5,17 @@
     <main class="main-content" role="main" tabindex="-1">
       <DashboardSection v-if="activeTab === 'dashboard'" :properties="properties" :bookings="bookings" />
       <PropertiesSection v-if="activeTab === 'properties'" :properties="properties" :bookings="bookings" />
-      <BookingsSection v-if="activeTab === 'bookings'" :bookings="bookings" :properties="properties" />
+      <BookingsSection 
+        v-if="activeTab === 'bookings'" 
+        :bookings="bookings" 
+        :properties="properties"
+        @change-filter="setActiveBookingFilter"
+        @change-property="setBookingPropertyFilter"
+        @view-details="viewBookingDetails"
+        @accept="acceptBooking"
+        @reject="rejectBooking"
+        @message="messageBooking"
+      />
       <CalendarSection v-if="activeTab === 'calendar'" :properties="properties" />
       <MessagesSection v-if="activeTab === 'messages'" :properties="properties" />
       <SettingsPage v-if="activeTab === 'settings'" />
@@ -297,6 +307,54 @@ const bookings = ref([
     ]
   }
 ]);
+
+// Filtros para las reservas
+const activeBookingFilter = ref('all');
+const bookingPropertyFilter = ref('all');
+
+// Métodos para los filtros
+const setActiveBookingFilter = (filter) => {
+  activeBookingFilter.value = filter;
+};
+
+const setBookingPropertyFilter = (propertyId) => {
+  bookingPropertyFilter.value = propertyId;
+};
+
+// Métodos para acciones de reservas
+const viewBookingDetails = (bookingId) => {
+  console.log(`Ver detalles de la reserva ${bookingId}`);
+};
+
+const acceptBooking = (bookingId) => {
+  console.log(`Aceptar reserva ${bookingId}`);
+  const booking = bookings.value.find(b => b.id === bookingId);
+  if (booking) {
+    booking.status = 'confirmed';
+    booking.history.push({
+      type: 'confirmed',
+      text: 'Reserva confirmada por el propietario',
+      date: new Date().toISOString()
+    });
+  }
+};
+
+const rejectBooking = (bookingId) => {
+  console.log(`Rechazar reserva ${bookingId}`);
+  const booking = bookings.value.find(b => b.id === bookingId);
+  if (booking) {
+    booking.status = 'cancelled';
+    booking.history.push({
+      type: 'cancelled',
+      text: 'Reserva rechazada por el propietario',
+      date: new Date().toISOString()
+    });
+  }
+};
+
+const messageBooking = (bookingId) => {
+  console.log(`Enviar mensaje para la reserva ${bookingId}`);
+};
 
 // Method to change active tab
 const changeTab = (tab) => {
