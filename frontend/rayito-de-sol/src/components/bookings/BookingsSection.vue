@@ -53,15 +53,15 @@
       </div>
     </div>
     
-    <div v-if="filteredBookings.length > 0" class="bookings-list">
+    <div v-if="filteredBookings && filteredBookings.length > 0" class="bookings-list">
       <BookingCard 
         v-for="booking in filteredBookings" 
         :key="booking.id" 
         :booking="booking" 
         :property="getPropertyById(booking.propertyId)" 
+        @view-details="viewBookingDetails"
         @accept-booking="acceptBooking"
         @reject-booking="rejectBooking"
-        @view-details="viewBookingDetails"
         @send-message="sendMessage"
       />
     </div>
@@ -243,11 +243,11 @@ import BookingCard from './BookingCard.vue';
 const props = defineProps({
   bookings: {
     type: Array,
-    required: true
+    default: () => []
   },
   properties: {
     type: Array,
-    required: true
+    default: () => []
   }
 });
 
@@ -285,6 +285,11 @@ watch(bookingPropertyFilter, (newValue) => {
 
 // Reservas filtradas
 const filteredBookings = computed(() => {
+  if (!Array.isArray(props.bookings)) {
+    console.warn('props.bookings is not an array:', props.bookings);
+    return [];
+  }
+  
   let filtered = [...props.bookings];
   
   // Filtrar por estado
@@ -317,6 +322,10 @@ const filteredBookings = computed(() => {
 
 // Total de páginas para paginación
 const totalPages = computed(() => {
+  if (!Array.isArray(props.bookings)) {
+    return 0;
+  }
+  
   const filteredTotal = props.bookings.filter(booking => {
     // Aplicar filtros para calcular el total
     if (activeBookingFilter.value !== 'all' && booking.status !== activeBookingFilter.value) {
@@ -372,6 +381,10 @@ const paginationPages = computed(() => {
 
 // Obtener el conteo para cada filtro
 const getFilterCount = (filterId) => {
+  if (!Array.isArray(props.bookings)) {
+    return 0;
+  }
+  
   if (filterId === 'all') {
     return props.bookings.length;
   }
@@ -412,7 +425,7 @@ const formatDateTime = (dateTimeString) => {
 
 // Calcular noches
 const calculateNights = (booking) => {
-  if (!booking.checkIn || !booking.checkOut) return 0;
+  if (!booking || !booking.checkIn || !booking.checkOut) return 0;
   
   const checkIn = new Date(booking.checkIn);
   const checkOut = new Date(booking.checkOut);
