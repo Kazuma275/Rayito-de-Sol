@@ -27,9 +27,9 @@
         @close-modal="closeModal"
       />
 
-      <BookingsSection
-        v-if="activeTab === 'bookings'"
-        :bookings="filteredBookings"
+      <BookingsSection 
+        v-if="activeTab === 'bookings'" 
+        :bookings="allBookings"        
         :properties="properties"
         @change-filter="setActiveBookingFilter"
         @change-property="setBookingPropertyFilter"
@@ -112,6 +112,7 @@ import SettingsSection from './components/settings/SettingsSection.vue'
 import EditPaymentModal from './components/settings/EditPaymentModal.vue';
 import PaymentSettings from './components/settings/PaymentSettings.vue' 
 import { ref, computed, watch, onMounted } from 'vue';
+import { apiHeaders } from '@/../utils/api';
 import { useRouter, useRoute } from 'vue-router';
 import EditPropertyModal from './components/properties/EditPropertyModal.vue'
 import { 
@@ -142,12 +143,9 @@ import {
   ChevronDownIcon
 } from 'lucide-vue-next';
 
-// Obtén el token del store/user.js
-/* CAMBIAR */
-import { useUserStore } from '../stores/user'
+import { useUserStore } from '@/stores/userStore'
 import axios from 'axios';
 
-// Get router and route
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
@@ -171,169 +169,104 @@ const previewImage = ref(null);
 const showEditPropertyModal = ref(false)
 const propertyToEdit = ref(null)
 
-// Función para configurar headers con el token
-const apiHeaders = () => ({
-  headers: {
-    Authorization: `Bearer ${userStore.token || localStorage.getItem('auth_token')}`,
-  }
-});
-
-function saveEdit() {
-  // Busca la propiedad original por id y actualízala
-  const idx = properties.value.findIndex(p => p.id === propertyToEdit.value.id)
-  if (idx !== -1) {
-    properties.value[idx] = { ...propertyToEdit.value }
-  }
-  showEditPropertyModal.value = false
-}
-
-// --- Cargar datos al montar el componente ---
-onMounted(async () => {
-  try {
-    console.log("Iniciando carga de bookings...");
-    const [propsRes, bookingsRes, messagesRes] = await Promise.all([
-      axios.get('/api/properties', apiHeaders()),
-      axios.get('/api/bookings', {
-        headers: {
-          Authorization: `Bearer ${userStore.token || localStorage.getItem('auth_token')}`
-        }
-      }),
-      axios.get('/api/messages', apiHeaders()),
-    ]);
-    properties.value = propsRes.data;
-
-    allBookings.value = bookingsRes.data;
-    console.log('Bookings cargados:', allBookings.value);
-
-    messages.value = messagesRes.data;
-  } catch (err) {
-    console.error('Error cargando datos del dashboard', err);
-    if (err.response) {
-      console.error("RESPONSE ERROR:", err.response);
-    }
-    if (err.request) {
-      console.error("REQUEST ERROR:", err.request);
-    }
-  }
-});
-
-// Settings
-const localSettings = ref({
-  profile: {
-    name: '',
-    lastname: '',
-    email: '',
-    phone: '',
-    avatar: null
-  },
-  notifications: {
-    newBookingEmail: false,
-    newMessageEmail: false,
-    newBookingSMS: false
-  },
-  payment: {
-    bankName: '',
-    accountHolder: '',
-    iban: ''
-  }
-});
-
-// Al montar, inicializamos con los datos reales del usuario
-onMounted(() => {
-  if (userStore.user) {
-    localSettings.value.profile = {
-      name: userStore.user.name || '',
-      lastname: userStore.user.lastname || '',
-      email: userStore.user.email || '',
-      phone: userStore.user.phone || '',
-      avatar: userStore.user.avatar || null
-    }
-    // Si tienes settings de notificaciones/pago en tu backend, rellénalos aquí también
-  }
-})
-
-function triggerFileInput() {
-  avatarInput.value.click();
-}
-
-function handleAvatarChange(event) {
-  const file = event.target.files[0];
-  if (file && file.type.startsWith('image/')) {
-    localSettings.value.profile.avatar = file;
-    previewImage.value = URL.createObjectURL(file);
-  }
-}
-
-// Esta función se llama cuando el usuario guarda el perfil
-const saveProfile = async () => {
-  try {
-    // Aquí 'localSettings.value.profile' son los datos a actualizar
-    const response = await axios.patch(
-      '/api/user/profile',
-      localSettings.value.profile,
-      {
-        headers: {
-          Authorization: `Bearer ${userStore.token}` // El token viene de tu store
-        }
-      }
-    )
-    // Actualiza el usuario en el store si quieres
-    userStore.setUser(response.data.user)
-    alert('¡Perfil guardado correctamente!')
-  } catch (err) {
-    alert('Ocurrió un error al guardar el perfil')
-    console.error(err)
-  }
-}
-
-// Payment
-
-const isModalVisible = ref(false)
-const activeSettingsTabPayment = ref('payment') // Para cambiar entre las pestañas si es necesario
-
-// Lista de métodos de pago
-const paymentMethods = ref([
-  { cardType: 'Visa', last4: '4242', expiryDate: '12/2025' },
-  { cardType: 'MasterCard', last4: '1234', expiryDate: '05/2024' }
-])
-
-// Función para abrir el modal
-const openModal = () => {
-  isModalVisible.value = true
-}
-
-// Función para cerrar el modal
-const closeModal = () => {
-  isModalVisible.value = false
-}
-
-// Función para manejar el envío del formulario del método de pago
-const handlePaymentSubmit = (paymentData) => {
-  // Añadir el nuevo método de pago al listado
-  paymentMethods.value.push(paymentData)
-  closeModal() // Cerrar el modal después de guardar
-}
-
-// Función para eliminar un método de pago
-const deletePayment = (index) => {
-  paymentMethods.value.splice(index, 1)
-}
-
-// Función para editar un método de pago
-const editPayment = (index) => {
-  // Aquí podrías poner la lógica para editar el método de pago si fuera necesario
-  console.log('Editar método de pago', index)
-}
-
-const showModal = ref(false);
-
-const handlePaymentUpdate = (updatedPayment) => {
-  console.log("Método de pago actualizado:", updatedPayment);
-  // Lógica para manejar la actualización del método de pago
-  showModal.value = false;  // Cerrar el modal después de la actualización
+const setActiveBookingFilter = (filter) => {
+  console.log('[PADRE] Cambio de filtro de estado:', filter);
+  activeBookingFilter.value = filter;
 };
 
-// Tabs with paths for router
+const setBookingPropertyFilter = (propertyId) => {
+  console.log('[PADRE] Cambio de filtro de propiedad:', propertyId);
+  bookingPropertyFilter.value = propertyId;
+};
+
+const viewBookingDetails = (bookingId) => {
+  console.log(`[PADRE] Ver detalles de la reserva ${bookingId}`);
+};
+
+const acceptBooking = (bookingId) => {
+  console.log(`[PADRE] Aceptar reserva ${bookingId}`);
+  const booking = allBookings.value.find(b => b.id === bookingId);
+  if (booking) {
+    booking.status = 'confirmed';
+    booking.history = booking.history || [];
+    booking.history.push({
+      type: 'confirmed',
+      text: 'Reserva confirmada por el propietario',
+      date: new Date().toISOString()
+    });
+    console.log('[PADRE] Reserva confirmada:', booking);
+  } else {
+    console.warn('[PADRE] Reserva no encontrada para confirmar:', bookingId);
+  }
+};
+
+const rejectBooking = (bookingId) => {
+  console.log(`[PADRE] Rechazar reserva ${bookingId}`);
+  const booking = allBookings.value.find(b => b.id === bookingId);
+  if (booking) {
+    booking.status = 'cancelled';
+    booking.history = booking.history || [];
+    booking.history.push({
+      type: 'cancelled',
+      text: 'Reserva rechazada por el propietario',
+      date: new Date().toISOString()
+    });
+    console.log('[PADRE] Reserva cancelada:', booking);
+  } else {
+    console.warn('[PADRE] Reserva no encontrada para cancelar:', bookingId);
+  }
+};
+
+const messageBooking = (bookingId) => {
+  console.log(`[PADRE] Enviar mensaje para la reserva ${bookingId}`);
+};
+
+onMounted(async () => {
+  try {
+    console.log('[PADRE] Iniciando carga de datos...');
+
+    const [userRes, propsRes, bookingsRes, messagesRes] = await Promise.allSettled([
+      axios.get('/api/user', apiHeaders()),
+      axios.get('/api/properties', apiHeaders()),
+      axios.get('/api/bookings', apiHeaders()),
+      axios.get('/api/messages', apiHeaders()),
+    ]);
+
+    if (userRes.status === 'fulfilled') {
+      userStore.setUser(userRes.value.data);
+      console.log('[PADRE] Usuario cargado:', userRes.value.data);
+    } else {
+      console.error('[PADRE] Error cargando usuario:', userRes.reason);
+    }
+
+    if (propsRes.status === 'fulfilled') {
+      properties.value = propsRes.value.data;
+      console.log('[PADRE] Propiedades cargadas:', properties.value);
+    } else {
+      console.error('[PADRE] Error cargando propiedades:', propsRes.reason);
+    }
+
+    if (bookingsRes.status === 'fulfilled') {
+      allBookings.value = bookingsRes.value.data;
+      console.log('[PADRE] Bookings cargadas:', allBookings.value);
+    } else {
+      console.error('[PADRE] Error cargando bookings:', bookingsRes.reason);
+    }
+
+    if (messagesRes.status === 'fulfilled') {
+      messages.value = messagesRes.value.data;
+      console.log('[PADRE] Mensajes cargados:', messages.value);
+    } else {
+      console.error('[PADRE] Error cargando mensajes:', messagesRes.reason);
+    }
+
+  } catch (error) {
+    console.error('[PADRE] Error al cargar datos:', error);
+  }
+});
+
+
+const activeTab = ref('dashboard');
 const tabs = [
   { id: 'dashboard', name: 'Panel', path: '/manage/dashboard' },
   { id: 'properties', name: 'Propiedades', path: '/manage/properties' },
@@ -343,296 +276,64 @@ const tabs = [
   { id: 'settings', name: 'Configuración', path: '/manage/settings' }
 ];
 
-// Active tab state
-const activeTab = ref('dashboard');
-
-// Update active tab based on route
 const updateActiveTabFromRoute = () => {
   const path = route.path;
-  
-  if (path.includes('/manage/dashboard')) {
-    activeTab.value = 'dashboard';
-  } else if (path.includes('/manage/properties')) {
-    activeTab.value = 'properties';
-  } else if (path.includes('/manage/bookings')) {
-    activeTab.value = 'bookings';
-  } else if (path.includes('/manage/calendar')) {
-    activeTab.value = 'calendar';
-  } else if (path.includes('/manage/messages')) {
-    activeTab.value = 'messages';
-  } else if (path.includes('/manage/settings')) {
-    activeTab.value = 'settings';
-  } else if (path.includes('/manage/help')) {
-    activeTab.value = 'help';
-  }
+  let tabId = 'dashboard';
+  if (path.includes('/manage/dashboard')) tabId = 'dashboard';
+  else if (path.includes('/manage/properties')) tabId = 'properties';
+  else if (path.includes('/manage/bookings')) tabId = 'bookings';
+  else if (path.includes('/manage/calendar')) tabId = 'calendar';
+  else if (path.includes('/manage/messages')) tabId = 'messages';
+  else if (path.includes('/manage/settings')) tabId = 'settings';
+  else if (path.includes('/manage/help')) tabId = 'help';
+  activeTab.value = tabId;
+  console.log('[PADRE] Tab activa:', activeTab.value);
 };
 
-const openAddModal = () => {
-  isEditMode.value = false
-  currentProperty.value = {
-    id: null,
-    name: '',
-    location: '',
-    bedrooms: 1,
-    capacity: 1,
-    price: 0,
-    image: null,
-    description: '',
-    amenities: [],
-    status: 'active',
-    statusText: 'Activo'
-  }
-  showPropertyModal.value = true
-}
-
-const openEditModal = (property) => {
-  isEditMode.value = true
-  currentProperty.value = { ...property }
-  showPropertyModal.value = true
-}
-
-const saveProperty = (data) => {
-  if (isEditMode.value) {
-    const index = properties.value.findIndex(p => p.id === data.id)
-    if (index !== -1) {
-      properties.value[index] = { ...data }
-    }
-  } else {
-    data.id = Date.now()
-    properties.value.push({ ...data })
-  }
-  showPropertyModal.value = false
-}
-
-// Watch for route changes
 watch(() => route.path, () => {
   updateActiveTabFromRoute();
 }, { immediate: true });
 
-// Initialize on mount
 onMounted(() => {
   updateActiveTabFromRoute();
 });
 
-// Properties data
-
-// Bookings data
+const properties = ref([]);
 const allBookings = ref([]);
-
-// Dashboard stats
-// Reservas Activas (status === 'confirmed')
-const activeBookings = computed(() => {
-  return allBookings.value.filter(booking => booking.status === 'confirmed').length;
-});
-
-// Tasa de Ocupación (%)
-function getDaysBetween(start, end) {
-  const msPerDay = 1000 * 60 * 60 * 24;
-  return Math.max(0, Math.ceil((new Date(end) - new Date(start)) / msPerDay));
-}
-const occupancyRate = computed(() => {
-  const now = new Date();
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(now.getDate() - 30);
-
-  // Total noches disponibles = propiedades * 30 días
-  const totalNights = properties.value.length * 30;
-  if (totalNights === 0) return 0;
-
-  // Noches reservadas en los últimos 30 días
-  let reservedNights = 0;
-  allBookings.value.forEach(booking => {
-    if (booking.status !== 'confirmed') return;
-    const checkIn = new Date(booking.check_in);
-    const checkOut = new Date(booking.check_out);
-    const start = checkIn < thirtyDaysAgo ? thirtyDaysAgo : checkIn;
-    const end = checkOut > now ? now : checkOut;
-    reservedNights += getDaysBetween(start, end);
-  });
-  return Math.round((reservedNights / totalNights) * 100);
-});
-
-// Ingresos últimos 30 días
-const monthlyRevenue = computed(() => {
-  const now = new Date();
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(now.getDate() - 30);
-
-  return allBookings.value
-    .filter(booking => booking.status === 'confirmed')
-    .filter(booking => {
-      // Si cualquier parte de la reserva cae en los últimos 30 días
-      const checkIn = new Date(booking.check_in);
-      const checkOut = new Date(booking.check_out);
-      return checkOut >= thirtyDaysAgo && checkIn <= now;
-    })
-    .reduce((sum, booking) => sum + Number(booking.total || 0), 0);
-});
-
-const upcomingBookings = computed(() => {
-  // Solo las próximas reservas confirmadas, ordenadas por fecha de check-in
-  const now = new Date();
-  return allBookings.value
-    .filter(b => b.status === 'confirmed' && new Date(b.check_in) >= now)
-    .sort((a, b) => new Date(a.check_in) - new Date(b.check_in))
-    .slice(0, 3);
-});
-
-const recentMessages = computed(() => {
-  return messages.value
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .slice(0, 5);
-});
-
-// Messages data
 const messages = ref([]);
 
-// Property functions
-const getPropertyById = (id) => {
-  return properties.value.find(property => property.id === id)
-    || { name: 'Propiedad no encontrada', image: '/placeholder.svg?height=100&width=100' };
-};
-
-// Add property modal
-const properties = ref([]);
-const isLoading = ref(false);
-const showAddPropertyModal = ref(false);
-
-const newProperty = ref({
-  id: null,
-  name: '',
-  location: '',
-  bedrooms: 1,
-  capacity: 1,
-  price: 0,
-  image: null,
-  description: '',
-  amenities: [],
-  status: 'active',
-  statusText: 'Activo',
+watch(allBookings, (newVal, oldVal) => {
+  console.log('[PADRE] Cambiaron las reservas:', newVal);
 });
 
-const fetchProperties = async () => {
-  isLoading.value = true;
-  try {
-    const response = await fetch('http://localhost:8000/api/properties');
-    if (!response.ok) throw new Error('No se pudieron cargar las propiedades');
-    properties.value = await response.json();
-  } catch (error) {
-    alert('Error al cargar propiedades: ' + error.message);
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-onMounted(() => {
-  fetchProperties();
+watch(properties, (newVal, oldVal) => {
+  console.log('[PADRE] Cambiaron las propiedades:', newVal);
 });
 
-const handleImageUpload = (event) => {
-  const file = event.target.files[0];
-  if (file && file.type.startsWith('image/')) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      newProperty.value.image = e.target.result; // Base64 string
-    };
-    reader.readAsDataURL(file);
-  }
-};
-
-const addProperty = async () => {
-  try {
-    const formData = new FormData();
-    Object.entries(newProperty.value).forEach(([key, val]) => {
-      if (val !== null) formData.append(key, val);
-    });
-
-    const response = await fetch('http://localhost:8000/api/properties', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!response.ok) throw new Error('No se pudo guardar la propiedad');
-    const savedProperty = await response.json();
-
-    properties.value.push(savedProperty);
-
-    newProperty.value = {
-      id: null,
-      name: '',
-      location: '',
-      bedrooms: 1,
-      capacity: 1,
-      price: 0,
-      image: null,
-      description: '',
-      amenities: [],
-      status: 'active',
-      statusText: 'Activo',
-    };
-    showAddPropertyModal.value = false;
-  } catch (error) {
-    alert('Error al guardar: ' + error.message);
-  }
-};
-
-const amenities = [
-  { id: 'wifi', name: 'WiFi' },
-  { id: 'pool', name: 'Piscina' },
-  { id: 'parking', name: 'Aparcamiento' },
-  { id: 'ac', name: 'Aire acondicionado' },
-  { id: 'gym', name: 'Gimnasio' },
-  { id: 'kitchen', name: 'Cocina equipada' },
-  { id: 'tv', name: 'TV' },
-  { id: 'washer', name: 'Lavadora' }
-];
-
-const editProperty = (id) => {
-  console.log('Edit property', id);
-};
-
-const viewCalendar = (id) => {
-  calendarPropertyId.value = id;
-  router.push('/manage/calendar');
-};
-
-// Bookings filters
-const bookingFilters = [
-  { id: 'all', name: 'Todas' },
-  { id: 'pending', name: 'Pendientes' },
-  { id: 'confirmed', name: 'Confirmadas' },
-  { id: 'completed', name: 'Completadas' },
-  { id: 'cancelled', name: 'Canceladas' }
-];
-
+// Filtros de bookings
 const activeBookingFilter = ref('all');
 const bookingPropertyFilter = ref('all');
 
 const filteredBookings = computed(() => {
   let filtered = allBookings.value;
-
-  console.log("ANTES DE FILTROS, bookings:", filtered);
+  console.log('[PADRE] [Filtrado] Antes de filtrar:', filtered);
 
   if (activeBookingFilter.value !== 'all') {
-    console.log("Filtro de estado activo:", activeBookingFilter.value);
     filtered = filtered.filter(booking => booking.status === activeBookingFilter.value);
-    console.log("Después de filtrar status:", filtered);
+    console.log('[PADRE] [Filtrado] Después de filtrar por estado:', filtered);
   }
-
   if (bookingPropertyFilter.value !== 'all') {
-    console.log("Filtro de propiedad activo:", bookingPropertyFilter.value);
     filtered = filtered.filter(booking => booking.propertyId === Number(bookingPropertyFilter.value));
-    console.log("Después de filtrar propertyId:", filtered);
+    console.log('[PADRE] [Filtrado] Después de filtrar por propiedad:', filtered);
   }
-
-  console.log("filteredBookings FINAL:", filtered);
+  console.log('[PADRE] [Filtrado] Final:', filtered);
   return filtered;
 });
 
-// 🔽 LOG AQUÍ 🔽
-console.log("PADRE - filteredBookings (computed):", filteredBookings.value);
-console.log("PADRE - properties:", properties.value);
-
+// Para depuración al pasar props
+watch([allBookings, properties], ([newBookings, newProperties]) => {
+  console.log('[PADRE] Props a pasar al hijo BookingsSection:', { bookings: newBookings, properties: newProperties });
+});
 // Calendar - VERSIÓN MEJORADA CON ACTUALIZACIÓN DE DISPONIBILIDAD
 
 const calendarPropertyId = ref(properties.value.length > 0 ? properties.value[0].id : null);
