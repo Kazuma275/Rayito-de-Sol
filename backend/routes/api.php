@@ -51,6 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Gestionar reservas por propiedad concreta
     Route::get('/properties/{id}/bookings', [ReservationController::class, 'propertyBookings']);
 
+    Route::get('/user/summary', [UserController::class, 'dashboardSummary']);
+
     // Acciones sobre reservas específicas (requiere métodos en el controller)
     Route::post('/reservations/{reservation}/accept', [ReservationController::class, 'accept']);
     Route::post('/reservations/{reservation}/reject', [ReservationController::class, 'reject']);
