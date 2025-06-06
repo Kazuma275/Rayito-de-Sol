@@ -13,12 +13,14 @@ class Reservation extends Model
 
     protected $fillable = [
         'user_id',
-        'username',
         'property_id',
         'reservation_date',
         'reservation_time',
-        'created_at',
-        'updated_at',
+        'details',
+    ];
+
+    protected $casts = [
+        'details' => 'array',
     ];
 
     public function property()
@@ -30,5 +32,4 @@ class Reservation extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-
 }

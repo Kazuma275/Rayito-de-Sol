@@ -16,9 +16,15 @@ class Property extends Model
         'description',
         'amenities',
         'status',
+        // 'user_id',
     ];
 
     protected $casts = [
         'amenities' => 'array',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

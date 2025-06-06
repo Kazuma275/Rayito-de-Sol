@@ -14,6 +14,7 @@ class User extends Authenticatable
     protected $table = 'users';
 
     protected $fillable = [
+        'name',
         'username',
         'email',
         'password',
@@ -51,5 +52,11 @@ class User extends Authenticatable
     public function services()
     {
         return $this->hasMany(Service::class, 'user_id');
+    }
+
+    // NUEVA RELACIÓN PARA DASHBOARD
+    public function properties()
+    {
+        return $this->hasMany(Property::class, 'user_id');
     }
 }
