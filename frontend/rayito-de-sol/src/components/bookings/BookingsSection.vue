@@ -17,7 +17,7 @@
           :key="filter.id" 
           class="filter-tab" 
           :class="{ active: activeBookingFilter === filter.id }"
-          @click="setFilter(filter.id)"
+          @click="activeBookingFilter = filter.id"
         >
           {{ filter.name }}
           <span class="filter-count">{{ getFilterCount(filter.id) }}</span>
@@ -27,12 +27,9 @@
       <div class="filter-controls">
         <div class="filter-property">
           <label>Filtrar por propiedad:</label>
-          <select
-            v-model="bookingPropertyFilter"
-            class="property-select"
-          >
+          <select v-model="bookingPropertyFilter" class="property-select">
             <option value="all">Todas las propiedades</option>
-            <option v-for="property in propertiesSafe" :key="property.id" :value="property.id">
+            <option v-for="property in properties" :key="property.id" :value="property.id">
               {{ property.name }}
             </option>
           </select>
@@ -56,12 +53,18 @@
       </div>
     </div>
     
-<div v-if="filteredBookings.length > 0" class="bookings-list">
-  <p>RESERVAS LISTA: {{ filteredBookings.length }}</p>
-  <div v-for="booking in filteredBookings" :key="booking.id">
-    <pre>{{ booking }}</pre>
-  </div>
-</div>
+    <div v-if="filteredBookings && filteredBookings.length > 0" class="bookings-list">
+      <BookingCard 
+        v-for="booking in filteredBookings" 
+        :key="booking.id" 
+        :booking="booking" 
+        :property="getPropertyById(booking.propertyId)" 
+        @view-details="viewBookingDetails"
+        @accept-booking="acceptBooking"
+        @reject-booking="rejectBooking"
+        @send-message="sendMessage"
+      />
+    </div>
     
     <div v-else class="empty-bookings">
       <CalendarOffIcon class="empty-icon" />
@@ -101,7 +104,7 @@
     </div>
     
     <!-- Modal de detalles de reserva -->
-    <div v-if="showBookingDetails && selectedBooking" class="booking-details-modal" @click="closeBookingDetails">
+    <div v-if="showBookingDetails" class="booking-details-modal" @click="closeBookingDetails">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
           <h3>Detalles de la Reserva #{{ selectedBooking.id }}</h3>
@@ -112,12 +115,12 @@
         
         <div class="modal-body">
           <div class="booking-property-details">
-            <img :src="getPropertyById(selectedBooking.propertyId)?.image || ''" alt="Property" class="property-image" />
+            <img :src="getPropertyById(selectedBooking.propertyId).image" alt="Property" class="property-image" />
             <div class="property-info">
-              <h4>{{ getPropertyById(selectedBooking.propertyId)?.name || 'Propiedad desconocida' }}</h4>
+              <h4>{{ getPropertyById(selectedBooking.propertyId).name }}</h4>
               <p class="property-location">
                 <MapPinIcon class="info-icon" />
-                {{ getPropertyById(selectedBooking.propertyId)?.location || 'Ubicación no disponible' }}
+                {{ getPropertyById(selectedBooking.propertyId).location }}
               </p>
             </div>
           </div>
@@ -140,9 +143,9 @@
               <div class="info-content">
                 <UserIcon class="info-icon" />
                 <div>
-                  <p><strong>Nombre:</strong> {{ selectedBooking.guestName || selectedBooking.user?.username || 'No disponible' }}</p>
-                  <p><strong>Email:</strong> {{ selectedBooking.guestEmail || selectedBooking.user?.email || 'No disponible' }}</p>
-                  <p><strong>Teléfono:</strong> {{ selectedBooking.guestPhone || 'No disponible' }}</p>
+                  <p><strong>Nombre:</strong> {{ selectedBooking.user?.username || 'No disponible' }}</p>
+                  <p><strong>Email:</strong> {{ selectedBooking.user?.email || 'No disponible' }}</p>
+                  <p><strong>Teléfono:</strong> {{ selectedBooking.user?.phone || 'No disponible' }}</p>
                 </div>
               </div>
             </div>
@@ -152,16 +155,9 @@
               <div class="info-content">
                 <InfoIcon class="info-icon" />
                 <div>
-                  <p><strong>Huéspedes:</strong> {{ selectedBooking.guests || 1 }}</p>
-                  <p>
-                    <strong>Estado:</strong>
-                    <span :class="['status-badge', selectedBooking.status || 'pendiente']">
-                      {{ getStatusText(selectedBooking.status) }}
-                    </span>
-                  </p>
-                  <p>
-                    <strong>Fecha de reserva:</strong> {{ formatDate(selectedBooking.bookingDate || selectedBooking.createdAt) }}
-                  </p>
+                  <p><strong>Huéspedes:</strong> {{ selectedBooking.guests }}</p>
+                  <p><strong>Estado:</strong> <span :class="['status-badge', selectedBooking.status]">{{ getStatusText(selectedBooking.status) }}</span></p>
+                  <p><strong>Fecha de reserva:</strong> {{ formatDate(selectedBooking.createdAt) }}</p>
                 </div>
               </div>
             </div>
@@ -171,13 +167,8 @@
               <div class="info-content">
                 <CreditCardIcon class="info-icon" />
                 <div>
-                  <p><strong>Total:</strong> €{{ selectedBooking.total || '0.00' }}</p>
-                  <p>
-                    <strong>Estado del pago:</strong>
-                    <span :class="['payment-status', selectedBooking.paymentStatus || 'no-info']">
-                      {{ getPaymentStatusText(selectedBooking.paymentStatus) }}
-                    </span>
-                  </p>
+                  <p><strong>Total:</strong> €{{ selectedBooking.total || getPropertyById(selectedBooking.propertyId).price }}</p>
+                  <p><strong>Estado del pago:</strong> <span :class="['payment-status', selectedBooking.paymentStatus || 'paid']">{{ getPaymentStatusText(selectedBooking.paymentStatus || 'paid') }}</span></p>
                   <p><strong>Método de pago:</strong> {{ selectedBooking.paymentMethod || 'No especificado' }}</p>
                 </div>
               </div>
@@ -229,7 +220,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import axios from 'axios';
 import { 
   CalendarIcon, 
   CalendarOffIcon, 
@@ -249,36 +241,19 @@ import {
 } from 'lucide-vue-next';
 import BookingCard from './BookingCard.vue';
 
-// --- PROPS ---
-const props = defineProps({
-  bookings: {
-    type: Array,
-    required: true
-  },
-  properties: {
-    type: Array,
-    required: true
-  }
-});
+const bookings = ref([]);
+const properties = ref([]);
 
-// LOG
-console.log("RESERVAS RECIBIDAS EN HIJO:", props.bookings)
-console.log("PROPIEDADES RECIBIDAS EN HIJO:", props.properties)
-
-// --- STATE ---
-const bookingsSafe = computed(() => Array.isArray(props.bookings) ? props.bookings : []);
-const propertiesSafe = computed(() => Array.isArray(props.properties) ? props.properties : []);
 const activeBookingFilter = ref('all');
 const bookingPropertyFilter = ref('all');
 const dateFilter = ref({ start: '', end: '' });
 const currentPage = ref(1);
 const itemsPerPage = ref(5);
+const showPagination = ref(true);
 
-// --- MODAL DETALLES ---
 const showBookingDetails = ref(false);
-const selectedBooking = ref(null);
+const selectedBooking = ref({});
 
-// --- FILTROS PREDEFINIDOS ---
 const bookingFilters = [
   { id: 'all', name: 'Todas' },
   { id: 'pending', name: 'Pendientes' },
@@ -287,21 +262,47 @@ const bookingFilters = [
   { id: 'cancelled', name: 'Canceladas' }
 ];
 
-// --- FILTRO Y PAGINACIÓN ---
-const filteredBookings = computed(() => {
-  let filtered = [...bookingsSafe.value];
+onMounted(async () => {
+  await loadData();
+});
 
-  // Estado
-  if (activeBookingFilter.value !== 'all') {
-    filtered = filtered.filter(booking => (booking.status || 'pending') === activeBookingFilter.value);
+async function loadData() {
+  try {
+    const [bookingsRes, propsRes] = await Promise.all([
+      axios.get('/api/bookings', apiHeaders()),
+      axios.get('/api/properties', apiHeaders())
+    ]);
+    bookings.value = Array.isArray(bookingsRes.data)
+      ? bookingsRes.data
+      : (bookingsRes.data.data || []);
+    properties.value = Array.isArray(propsRes.data)
+      ? propsRes.data
+      : (propsRes.data.data || []);
+  } catch (err) {
+    bookings.value = [];
+    properties.value = [];
   }
+}
 
-  // Propiedad
+function apiHeaders() {
+  const token = localStorage.getItem('auth_token');
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json'
+    }
+  }
+}
+
+const filteredBookings = computed(() => {
+  if (!Array.isArray(bookings.value)) return [];
+  let filtered = [...bookings.value];
+  if (activeBookingFilter.value !== 'all') {
+    filtered = filtered.filter(booking => booking.status === activeBookingFilter.value);
+  }
   if (bookingPropertyFilter.value !== 'all') {
     filtered = filtered.filter(booking => booking.propertyId === parseInt(bookingPropertyFilter.value));
   }
-
-  // Fecha
   if (dateFilter.value.start && dateFilter.value.end) {
     const startDate = new Date(dateFilter.value.start);
     const endDate = new Date(dateFilter.value.end);
@@ -310,20 +311,25 @@ const filteredBookings = computed(() => {
       return checkIn >= startDate && checkIn <= endDate;
     });
   }
-
-  return filtered;
-});
-
-const totalPages = computed(() => {
-  return Math.ceil(filteredBookings.value.length / itemsPerPage.value) || 1;
-});
-
-const paginatedBookings = computed(() => {
   const startIndex = (currentPage.value - 1) * itemsPerPage.value;
   const endIndex = startIndex + itemsPerPage.value;
-  return filteredBookings.value.slice(startIndex, endIndex);
+  return filtered.slice(startIndex, endIndex);
 });
-
+const totalPages = computed(() => {
+  if (!Array.isArray(bookings.value)) return 0;
+  const filteredTotal = bookings.value.filter(booking => {
+    if (activeBookingFilter.value !== 'all' && booking.status !== activeBookingFilter.value) return false;
+    if (bookingPropertyFilter.value !== 'all' && booking.propertyId !== parseInt(bookingPropertyFilter.value)) return false;
+    if (dateFilter.value.start && dateFilter.value.end) {
+      const startDate = new Date(dateFilter.value.start);
+      const endDate = new Date(dateFilter.value.end);
+      const checkIn = new Date(booking.checkIn);
+      if (!(checkIn >= startDate && checkIn <= endDate)) return false;
+    }
+    return true;
+  }).length;
+  return Math.ceil(filteredTotal / itemsPerPage.value) || 1;
+});
 const paginationPages = computed(() => {
   const pages = [];
   const maxVisiblePages = 5;
@@ -337,21 +343,19 @@ const paginationPages = computed(() => {
   }
   return pages;
 });
-
-// --- FILTER/CONTROL HELPERS ---
 const getFilterCount = (filterId) => {
-  if (filterId === 'all') return bookingsSafe.value.length;
-  return bookingsSafe.value.filter(booking => (booking.status || 'pending') === filterId).length;
+  if (!Array.isArray(bookings.value)) return 0;
+  if (filterId === 'all') return bookings.value.length;
+  return bookings.value.filter(booking => booking.status === filterId).length;
 };
 const getPropertyById = (id) => {
-  return propertiesSafe.value.find(property => property.id === id) || { 
+  return properties.value.find(property => property.id === id) || { 
     name: 'Propiedad no encontrada', 
     image: '/placeholder.svg?height=100&width=100',
-    location: 'Ubicación desconocida'
+    location: 'Ubicación desconocida',
+    price: '0.00'
   };
 };
-
-// --- FORMATO & UTILS ---
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
   const options = { day: 'numeric', month: 'short', year: 'numeric' };
@@ -360,16 +364,21 @@ const formatDate = (dateString) => {
 const formatDateTime = (dateTimeString) => {
   if (!dateTimeString) return 'N/A';
   const options = { 
-    day: 'numeric', month: 'short', year: 'numeric',
-    hour: '2-digit', minute: '2-digit'
+    day: 'numeric', 
+    month: 'short', 
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
   };
   return new Date(dateTimeString).toLocaleString('es-ES', options);
 };
 const calculateNights = (booking) => {
-  if (!booking.checkIn || !booking.checkOut) return 0;
+  if (!booking || !booking.checkIn || !booking.checkOut) return 0;
   const checkIn = new Date(booking.checkIn);
   const checkOut = new Date(booking.checkOut);
-  return Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+  const diffTime = checkOut - checkIn;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
 };
 const getStatusText = (status) => {
   const statusMap = {
@@ -378,7 +387,6 @@ const getStatusText = (status) => {
     'completed': 'Completada',
     'cancelled': 'Cancelada'
   };
-  if (!status) return 'Pendiente';
   return statusMap[status] || status;
 };
 const getPaymentStatusText = (status) => {
@@ -388,7 +396,6 @@ const getPaymentStatusText = (status) => {
     'refunded': 'Reembolsado',
     'failed': 'Fallido'
   };
-  if (!status) return 'N/A';
   return statusMap[status] || status;
 };
 const getEventIcon = (type) => {
@@ -403,42 +410,19 @@ const getEventIcon = (type) => {
   };
   return iconMap[type] || InfoIcon;
 };
-
-// --- ACCIONES ---
-const changePage = (page) => {
-  if (page < 1 || page > totalPages.value) return;
-  currentPage.value = page;
-};
-const applyDateFilter = () => {
-  currentPage.value = 1;
-};
+const changePage = (page) => { currentPage.value = page; };
+const applyDateFilter = () => { currentPage.value = 1; };
 const viewBookingDetails = (bookingId) => {
-  const booking = bookingsSafe.value.find(b => b.id === bookingId);
+  const booking = bookings.value.find(b => b.id === bookingId);
   if (booking) {
     selectedBooking.value = booking;
     showBookingDetails.value = true;
   }
 };
-const closeBookingDetails = () => {
-  showBookingDetails.value = false;
-  selectedBooking.value = null;
-};
-const acceptBooking = (bookingId) => {
-  console.log(`Aceptando reserva ${bookingId}`);
-  // Aquí iría la lógica para aceptar la reserva (ej: emitir evento o llamar API)
-};
-const rejectBooking = (bookingId) => {
-  console.log(`Rechazando reserva ${bookingId}`);
-  // Aquí iría la lógica para rechazar la reserva
-};
-const sendMessage = (bookingId) => {
-  console.log(`Enviando mensaje para la reserva ${bookingId}`);
-  // Aquí iría la lógica para abrir el chat o enviar un mensaje
-};
-
-// --- PAGINACIÓN CONTROL ---
-const showPagination = computed(() => totalPages.value > 1);
-
+const closeBookingDetails = () => { showBookingDetails.value = false; };
+const acceptBooking = (bookingId) => {};
+const rejectBooking = (bookingId) => {};
+const sendMessage = (bookingId) => {};
 </script>
 
 <style scoped>
@@ -457,7 +441,6 @@ const showPagination = computed(() => totalPages.value > 1);
   position: relative;
   overflow: hidden;
 }
-
 .bookings-section::before {
   content: '';
   position: absolute;

@@ -372,7 +372,7 @@ import {
   SmartphoneIcon,
   AlertTriangleIcon
 } from 'lucide-vue-next';
-import { useUserStore } from '../../../stores/user';
+import { useUserStore } from '@/stores/userStore.js';
 
 const userStore = useUserStore();
 
@@ -536,28 +536,38 @@ const fetchPaymentMethods = async () => {
 const saveUserData = async () => {
   isSaving.value = true;
   saveMessage.value = null;
-  
+
   try {
-    // En una aplicación real, esto sería una llamada a la API
-    // await axios.put('/api/user/profile', userData.value);
-    
-    // Simulamos una llamada a la API
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Actualizar el store si es necesario
+    // PATCH a la API real, asegurándote de enviar el token de autenticación
+    await axios.patch(
+      '/api/user/profile',
+      {
+        name: userData.value.name,
+        email: userData.value.email,
+        phone: userData.value.phone,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${userStore.token}`, // O usa el método que uses para auth
+        },
+      }
+    );
+
+    // Opcional: Actualiza el store
     if (userStore.user) {
       userStore.setUser({
         ...userStore.user,
-        email: userData.value.email
+        name: userData.value.name,
+        email: userData.value.email,
+        phone: userData.value.phone,
       });
     }
-    
+
     saveMessage.value = {
       type: 'success',
-      text: 'Datos guardados correctamente'
+      text: 'Datos guardados correctamente',
     };
-    
-    // Ocultar el mensaje después de 3 segundos
+
     setTimeout(() => {
       saveMessage.value = null;
     }, 3000);
@@ -565,7 +575,7 @@ const saveUserData = async () => {
     console.error('Error al guardar datos del usuario:', error);
     saveMessage.value = {
       type: 'error',
-      text: 'Error al guardar los datos. Inténtalo de nuevo.'
+      text: 'Error al guardar los datos. Inténtalo de nuevo.',
     };
   } finally {
     isSaving.value = false;

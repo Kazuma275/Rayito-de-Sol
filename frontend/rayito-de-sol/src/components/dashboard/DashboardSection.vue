@@ -3,11 +3,29 @@
     <div class="section-header">
       <h2 class="section-title">Panel de Control</h2>
       <div class="welcome-message">
-        <p>Bienvenido, <span class="user-name">{{ user && user.username }}</span></p>
-        <p class="last-login">Último acceso: {{ formatDate(user.lastLogin) }}</p>
+        <p>
+          Bienvenido,
+          <span class="user-name">{{ userSummary?.name || 'Usuario' }}</span>
+        </p>
+        <p class="last-login">
+          Último acceso: {{ userSummary?.lastLogin ? formatDate(userSummary.lastLogin) : '-' }}
+        </p>
       </div>
     </div>
-    
+
+    <!-- Resumen del usuario obtenido vía API -->
+    <div v-if="loadingUser" class="user-summary">Cargando resumen...</div>
+    <div v-else-if="userError" class="user-summary error">Error: {{ userError }}</div>
+    <div v-else class="user-summary">
+      <ul>
+        <li><strong>Email:</strong> {{ userSummary.email }}</li>
+        <li><strong>Propiedades:</strong> {{ userSummary.totalProperties }}</li>
+        <li><strong>Reservas totales:</strong> {{ userSummary.totalBookings }}</li>
+        <li><strong>Ingresos del mes:</strong> {{ userSummary.monthlyRevenue }} €</li>
+        <li><strong>Ocupación:</strong> {{ userSummary.occupancyRate }} %</li>
+      </ul>
+    </div>
+
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-icon-wrapper">
@@ -15,40 +33,40 @@
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ properties.length }}</p>
+          <p class="stat-value">{{ userSummary?.totalProperties ?? '-' }}</p>
           <h3 class="stat-title">Propiedades</h3>
         </div>
       </div>
-      
+
       <div class="stat-card">
         <div class="stat-icon-wrapper">
           <CalendarIcon class="stat-icon" />
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ activeBookings.length }}</p>
+          <p class="stat-value">{{ userSummary?.totalBookings ?? '-' }}</p>
           <h3 class="stat-title">Reservas</h3>
         </div>
       </div>
-      
+
       <div class="stat-card">
         <div class="stat-icon-wrapper">
           <TrendingUpIcon class="stat-icon" />
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ occupancyRate }}%</p>
+          <p class="stat-value">{{ userSummary?.occupancyRate ?? '-' }}%</p>
           <h3 class="stat-title">Ocupación</h3>
         </div>
       </div>
-      
+
       <div class="stat-card">
         <div class="stat-icon-wrapper">
           <EuroIcon class="stat-icon" />
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ monthlyRevenue }}€</p>
+          <p class="stat-value">{{ userSummary?.monthlyRevenue ?? '-' }}€</p>
           <h3 class="stat-title">Ingresos</h3>
         </div>
       </div>
@@ -68,22 +86,19 @@
           <div v-if="upcomingBookings.length > 0" class="upcoming-bookings">
             <div v-for="booking in upcomingBookings" :key="booking.id" class="booking-item">
               <div class="booking-property">
-                <img :src="getPropertyById(booking.propertyId).image" alt="Property" class="booking-image" />
-                <div>
-                  <h4>{{ getPropertyById(booking.propertyId).name }}</h4>
-                  <p class="booking-dates">{{ formatDate(booking.checkIn) }} - {{ formatDate(booking.checkOut) }}</p>
-                </div>
+                <img :src="getPropertyById(booking.property_id)?.image || '/img/placeholder.jpg'" />
+                <h4>{{ getPropertyById(booking.property_id)?.name || 'Propiedad' }}</h4>
+                <p class="booking-dates">{{ formatDate(booking.details?.check_in) }} - {{ formatDate(booking.details?.check_out) }}</p>
               </div>
               <div class="booking-guest">
                 <UserIcon class="guest-icon" />
                 <div>
-                  <p class="guest-name">{{ booking.guestName }}</p>
-                  <p class="guest-info">{{ booking.guests }} huéspedes</p>
+                  <p class="guest-name">{{ booking.guestName || 'Invitado' }}</p>
+                  <p class="guest-info">{{ booking.details?.guests || '-' }} huéspedes</p>
                 </div>
               </div>
             </div>
           </div>
-          
           <div v-else class="empty-state">
             <CalendarOffIcon class="empty-icon" />
             <p>No hay reservas próximas</p>
@@ -103,7 +118,7 @@
           </div>
           
           <div class="property-performance">
-            <div v-for="property in topProperties" :key="property.id" class="property-item">
+            <div v-for="property in properties.slice(0,3)" :key="property.id" class="property-item">
               <div class="property-info">
                 <img :src="property.image" alt="Property" class="property-thumbnail" />
                 <div>
@@ -145,11 +160,11 @@
                 <UserIcon class="message-icon" />
                 <div>
                   <h4>{{ message.sender }}</h4>
-                  <p class="message-property">{{ getPropertyById(message.propertyId).name }}</p>
+                  <p class="message-property">{{ getPropertyById(message.propertyId)?.name || 'Propiedad desconocida' }}</p>
                 </div>
               </div>
               <p class="message-preview">{{ message.text.substring(0, 60) }}{{ message.text.length > 60 ? '...' : '' }}</p>
-              <p class="message-time">{{ message.time }}</p>
+              <p class="message-time">{{ formatDateTime ? formatDateTime(message.time) : message.time }}</p>
             </div>
           </div>
           
@@ -210,113 +225,88 @@
 </template>
 
 <script setup>
-import {
-  HomeIcon,
-  CalendarIcon,
-  TrendingUpIcon,
-  EuroIcon,
-  UserIcon,
-  CalendarOffIcon,
-  MailIcon,
-  MessageSquareIcon,
-  SettingsIcon,
-  PlusIcon,
-  AlertCircleIcon,
-  BellIcon,
-  ChevronRightIcon,
-} from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
-import { computed, toRefs } from 'vue'
-import { useUserStore } from '../../../stores/user';
-const userStore = useUserStore();
-// Recibe los datos del padre como props
-const props = defineProps({
-  user: {
-    type: Object,
-    required: true,
-    default: () => ({ name: '', email: '', lastLogin: '' })
-  },
-  properties: {
-    type: Array,
-    required: true,
-    default: () => []
-  },
-  activeBookings: {
-    type: Array,
-    required: true,
-    default: () => []
-  },
-  occupancyRate: {
-    type: Number,
-    required: true,
-    default: 0
-  },
-  monthlyRevenue: {
-    type: Number,
-    required: true,
-    default: 0
-  },
-  upcomingBookings: {
-    type: Array,
-    required: true,
-    default: () => []
-  },
-  recentMessages: {
-    type: Array,
-    required: true,
-    default: () => []
-  },
-  recentActivity: {
-    type: Array,
-    required: false,
-    default: () => []
-  },
-  topProperties: {
-    type: Array,
-    required: false,
-    default: () => []
-  },
-  getPropertyById: {
-    type: Function,
-    required: true,
-    default: () => () => ({ name: 'Propiedad no encontrada', image: '/placeholder.svg?height=100&width=100' })
-  },
-  formatDate: {
-    type: Function,
-    required: true,
-    default: () => (d) => d
+import {
+  HomeIcon, CalendarIcon, TrendingUpIcon, EuroIcon, UserIcon, CalendarOffIcon,
+  MailIcon, MessageSquareIcon, SettingsIcon, PlusIcon, CheckIcon, AlertCircleIcon,
+  BellIcon, ChevronRightIcon
+} from 'lucide-vue-next'
+import { ref, onMounted, computed } from 'vue'
+import axios from 'axios'
+
+const router = useRouter()
+
+// Estado local para el resumen de usuario y manejo de carga/error
+const userSummary = ref(null)
+const loadingUser = ref(true)
+const userError = ref(null)
+
+// Propiedades de ejemplo (puedes cargar desde API real si lo necesitas)
+const properties = ref([]) // Array de propiedades [{ id, name, image, location, occupancy, revenue }]
+const recentMessages = ref([]) // Array de mensajes recientes
+const recentActivity = ref([]) // Array de actividad reciente
+
+// Cargar datos del usuario y las propiedades al montar
+onMounted(async () => {
+  loadingUser.value = true
+  userError.value = null
+  try {
+    const token = localStorage.getItem('auth_token')
+    const res = await axios.get('http://localhost:8000/api/user/summary', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    })
+    userSummary.value = res.data
+
+    // Si tu backend devuelve las propiedades y mensajes recientes, asígnalos aquí
+    // properties.value = res.data.properties || []
+    // recentMessages.value = res.data.recentMessages || []
+    // recentActivity.value = res.data.recentActivity || []
+
+  } catch (err) {
+    userError.value = err.response?.data?.message || err.message
+  } finally {
+    loadingUser.value = false
   }
 })
 
-const {
-  user,
-  properties,
-  activeBookings,
-  occupancyRate,
-  monthlyRevenue,
-  upcomingBookings,
-  recentMessages,
-  recentActivity,
-  topProperties,
-  getPropertyById,
-  formatDate
-} = toRefs(props)
+// Computed para próximas reservas y mensajes recientes
+const upcomingBookings = computed(() => userSummary.value?.upcomingBookings || [])
+// Si tu backend devuelve las propiedades, usa userSummary.value.properties o properties.value
+const getPropertyById = (id) => {
+  return properties.value.find(p => p.id === id)
+}
 
-// Icono para actividades recientes
-const getActivityIcon = type => {
+// Fechas
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-'
+  const d = new Date(dateStr)
+  return d.toLocaleDateString()
+}
+const formatDateTime = (dateStr) => {
+  if (!dateStr) return '-'
+  const d = new Date(dateStr)
+  return d.toLocaleString()
+}
+
+// Navegación
+const navigateTo = (route) => {
+  router.push(`/manage/${route}`)
+}
+
+// Icono de actividad
+const getActivityIcon = (type) => {
   const icons = {
-    booking: CalendarIcon,
-    message: MessageSquareIcon,
-    alert: AlertCircleIcon,
-    update: BellIcon,
+    'booking': CalendarIcon,
+    'message': MessageSquareIcon,
+    'alert': AlertCircleIcon,
+    'update': BellIcon
   }
   return icons[type] || BellIcon
 }
 
-const router = useRouter()
-const navigateTo = route => {
-  router.push(`/manage/${route}`)
-}
 </script>
 
 <style scoped>

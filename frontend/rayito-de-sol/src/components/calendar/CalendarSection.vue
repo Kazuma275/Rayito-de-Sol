@@ -68,7 +68,7 @@
         >
           <div class="day-content">
             <span v-if="day.date" class="day-number">{{ day.date }}</span>
-            <div v-if="day.date" class="day-price">€{{ day.price }}</div> <!-- MOSTRAR PRECIO DEL DÍA -->
+            <div v-if="day.date" class="day-price">€{{ day.price }}</div>
             <div v-if="day.date" class="day-status">
               <span v-if="day.booked" class="status-indicator booked">Reservado</span>
               <span v-else-if="day.partiallyBooked" class="status-indicator partial">Parcial</span>
@@ -87,24 +87,32 @@
     <div v-if="activeView === 'week'" class="calendar-week-view">
       <div class="week-header">
         <div class="time-column"></div>
-        <div v-for="day in weekViewDays" :key="day.date" class="day-column-header">
-          <div class="day-name">{{ getDayName(day.date) }}</div>
-          <div class="day-number" :class="{ 'today': day.isToday }">{{ getDayNumber(day.date) }}</div>
+        <div v-for="day in weekViewDaysDetailed" :key="day.dateString" class="day-column-header">
+          <div class="day-name">{{ getDayName(day.dateString) }}</div>
+          <div class="day-number" :class="{ 'today': day.isToday }">{{ getDayNumber(day.dateString) }}</div>
         </div>
       </div>
-      
       <div class="week-grid">
         <div v-for="hour in hours" :key="hour" class="hour-row">
           <div class="time-cell">{{ formatHour(hour) }}</div>
           <div 
-            v-for="day in weekViewDays" 
-            :key="`${day.date}-${hour}`" 
+            v-for="day in weekViewDaysDetailed" 
+            :key="`${day.dateString}-${hour}`" 
             class="day-cell"
-            :class="{ 'booked': isHourBooked(day.date, hour) }"
-            @click="handleHourClick(day.date, hour)"
+            :class="{
+              'unavailable': day.unavailable,
+              'booked': isHourBooked(day.dateString, hour),
+              'today': day.isToday
+            }"
+            @click="day.isReservable && handleHourClick(day.dateString, hour)"
+            :title="day.isReservable ? '' : 'No reservable'"
           >
-            <div v-if="getBookingAtHour(day.date, hour)" class="hour-booking-info">
-              {{ getBookingAtHour(day.date, hour).guestName }}
+            <!-- Mostrar precio de la noche solo para la hora de entrada (12:00) -->
+            <div v-if="hour === entryHour && day.isReservable">
+              €{{ day.price }}
+            </div>
+            <div v-if="getBookingAtHour(day.dateString, hour)" class="hour-booking-info">
+              {{ getBookingAtHour(day.dateString, hour).guestName }}
             </div>
           </div>
         </div>
@@ -134,7 +142,6 @@
     <!-- Acciones en bloque -->
     <div class="bulk-actions">
       <h3 class="bulk-title">Acciones en bloque</h3>
-      
       <div class="bulk-form">
         <div class="date-range">
           <div class="date-input">
@@ -152,7 +159,6 @@
             </div>
           </div>
         </div>
-        
         <div class="action-buttons">
           <button class="bulk-button available" @click="setBulkAvailability(true)">
             <CheckIcon class="button-icon" />
@@ -175,7 +181,6 @@
             <XIcon class="close-icon" />
           </button>
         </div>
-        
         <div class="modal-body">
           <div class="day-status-selector">
             <h4>Estado del día</h4>
@@ -200,7 +205,6 @@
               </label>
             </div>
           </div>
-          
           <div v-if="selectedDayBooking" class="day-booking-info">
             <h4>Información de la reserva</h4>
             <div class="booking-details">
@@ -233,7 +237,6 @@
                 </div>
               </div>
             </div>
-            
             <div class="booking-actions">
               <button class="action-button view" @click="viewBookingDetails(selectedDayBooking.id)">
                 <EyeIcon class="action-icon" />
@@ -245,7 +248,6 @@
               </button>
             </div>
           </div>
-          
           <div v-else class="day-price-editor">
             <h4>Precio para este día</h4>
             <div class="price-input">
@@ -271,7 +273,6 @@
               </button>
             </div>
           </div>
-          
           <div class="day-notes">
             <h4>Notas</h4>
             <textarea 
@@ -281,7 +282,6 @@
               rows="3"
             ></textarea>
           </div>
-          
           <div class="modal-actions">
             <button class="cancel-button" @click="closeDayModal">Cancelar</button>
             <button class="save-button" @click="saveDayChanges">Guardar cambios</button>
@@ -309,12 +309,14 @@ import {
   MessageSquareIcon,
   EuroIcon,
 } from 'lucide-vue-next'
+import { useUserStore } from '@/stores/userStore' 
 
-// Estado dinámico para propiedades, reservas, fechas no disponibles y precios diarios
+// Estado dinámico
 const properties = ref([])
 const bookings = ref([])
 const unavailableDates = ref([])
-const dayPrices = ref({}) // NUEVO: precios personalizados por día
+const dayPrices = ref({}) // precios personalizados por día
+const userStore = useUserStore()
 
 // Estado del calendario
 const selectedPropertyId = ref(null)
@@ -339,13 +341,24 @@ const selectedDayTime = ref('12:00:00')
 // Opciones de precios rápidos
 const quickPrices = [80, 100, 120, 150, 180, 200]
 
+// Variable para el precio más bajo de una noche
+const minNightPrice = ref(null)
+
 // Vistas disponibles del calendario
 const calendarViews = [
   { id: 'month', name: 'Mes' },
   { id: 'week', name: 'Semana' }
 ]
 const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
-const hours = Array.from({ length: 15 }, (_, i) => i + 8)
+const hours = Array.from({ length: 15 }, (_, i) => i + 8) // 8 a 22
+const entryHour = 12 // hora de entrada para mostrar el precio
+
+// Fecha mínima y máxima reservable
+const today = new Date()
+today.setHours(0, 0, 0, 0)
+const minReservableDate = today
+const maxReservableDate = new Date(today)
+maxReservableDate.setMonth(maxReservableDate.getMonth() + 6)
 
 // Etiqueta del período actual
 const currentPeriodLabel = computed(() => {
@@ -364,7 +377,7 @@ const currentPeriodLabel = computed(() => {
   }
 })
 
-// Días del calendario para la vista mensual (INCLUYE unavailableDates y precios diarios)
+// Días del calendario para la vista mensual (INCLUYE restricciones)
 const calendarDays = computed(() => {
   const days = []
   const firstDay = new Date(currentYear.value, currentMonth.value, 1)
@@ -376,11 +389,17 @@ const calendarDays = computed(() => {
     days.push({ date: null })
   }
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  let lowest = null
+
   for (let i = 1; i <= lastDay.getDate(); i++) {
     const date = new Date(currentYear.value, currentMonth.value, i)
+    date.setHours(0,0,0,0)
     const dateString = date.toISOString().split('T')[0]
+
+    // Restricción: no reservable si < hoy o > 6 meses
+    const isPast = date < minReservableDate
+    const isTooFuture = date > maxReservableDate
+
     // Solo mostrar reservas de la propiedad seleccionada
     const relevantBookings = bookings.value.filter(
       b => (b.property_id || b.propertyId) == selectedPropertyId.value
@@ -392,37 +411,69 @@ const calendarDays = computed(() => {
     )
     const isUnavailable = unavailableDates.value.includes(dateString)
 
+    // Obtén el precio real del día
+    const price = dayPrices.value[dateString] ?? 100
+
+    // Calcula el mínimo
+    if (!isPast && !isTooFuture && !isUnavailable && !booking) {
+      if (lowest === null || price < lowest) {
+        lowest = price
+      }
+    }
+
     days.push({
       date: i,
       dateObj: date,
       dateString,
       isToday: date.toDateString() === today.toDateString(),
-      available: !booking && !isUnavailable,
+      available: !booking && !isUnavailable && !isPast && !isTooFuture,
       booked: !!booking,
-      unavailable: isUnavailable,
+      unavailable: isUnavailable || isPast || isTooFuture,
       partiallyBooked: false,
       checkIn: false,
       checkOut: false,
       bookingInfo: booking,
-      price: dayPrices.value[dateString] ?? 100 // NUEVO: muestra el precio real o 100
+      price
     })
   }
+
+  // Guarda el precio más bajo de una noche de este mes
+  minNightPrice.value = lowest
+
   return days
 })
 
-// Días para la vista semanal
-const weekViewDays = computed(() => {
+// Vista semana con detalles de restricción y precio
+const weekViewDaysDetailed = computed(() => {
   const days = []
   const startDate = new Date(currentWeekStart.value)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
   for (let i = 0; i < 7; i++) {
     const date = new Date(startDate)
     date.setDate(date.getDate() + i)
+    date.setHours(0,0,0,0)
     const dateString = date.toISOString().split('T')[0]
+    // Restricción: solo reservable si >= hoy y <= 6 meses
+    const isPast = date < minReservableDate
+    const isTooFuture = date > maxReservableDate
+
+    // Solo mostrar reservas de la propiedad seleccionada
+    const relevantBookings = bookings.value.filter(
+      b => (b.property_id || b.propertyId) == selectedPropertyId.value
+    )
+    const booking = relevantBookings.find(
+      b => (b.reservation_date || b.reservationDate) === dateString
+    )
+    const isUnavailable = unavailableDates.value.includes(dateString)
+    const price = dayPrices.value[dateString] ?? 100
+
     days.push({
-      date: dateString,
-      isToday: date.toDateString() === today.toDateString()
+      date: date,
+      dateString,
+      isToday: date.toDateString() === today.toDateString(),
+      isReservable: !isPast && !isTooFuture && !isUnavailable && !booking,
+      booking,
+      price,
+      unavailable: isUnavailable || isPast || isTooFuture
     })
   }
   return days
@@ -436,11 +487,20 @@ function getStartOfWeek(date) {
   d.setDate(diff)
   return d.toISOString().split('T')[0]
 }
+
+// Marca la celda como reservada (puedes mejorar según tus bookings por hora)
 function isHourBooked(dateString, hour) {
-  return false
+  // Puedes mejorar esto si tienes reservas por hora
+  // Por defecto, devuelve true si el día está reservado completamente
+  const day = weekViewDaysDetailed.value.find(d => d.dateString === dateString)
+  return day && day.booking
 }
+
+// Retorna la info de la reserva por hora (puedes mejorar según tus bookings por hora)
 function getBookingAtHour(dateString, hour) {
-  return null
+  // Por defecto solo muestra booking si el día está reservado entero
+  const day = weekViewDaysDetailed.value.find(d => d.dateString === dateString)
+  return day && day.booking ? day.booking : null
 }
 function formatDate(dateString) {
   if (!dateString) return ''
@@ -478,7 +538,6 @@ function previousPeriod() {
     date.setDate(date.getDate() - 7)
     currentWeekStart.value = date.toISOString().split('T')[0]
   }
-  // Recarga datos relevantes si hace falta
   if (selectedPropertyId.value) fetchCalendarDataForProperty(selectedPropertyId.value)
 }
 function nextPeriod() {
@@ -494,42 +553,45 @@ function nextPeriod() {
     date.setDate(date.getDate() + 7)
     currentWeekStart.value = date.toISOString().split('T')[0]
   }
-  // Recarga datos relevantes si hace falta
   if (selectedPropertyId.value) fetchCalendarDataForProperty(selectedPropertyId.value)
 }
 
 // Carga de datos centralizada
 async function fetchProperties() {
-  const res = await axios.get('/api/properties')
+  const authHeaders = {
+    headers: {
+      Authorization: `Bearer ${userStore.token || localStorage.getItem('auth_token')}`
+    }
+  }
+  const res = await axios.get('/api/properties', authHeaders)
   properties.value = res.data
-  // Selecciona la primera propiedad por defecto si no hay una seleccionada
   if (properties.value.length > 0 && !selectedPropertyId.value) {
     selectedPropertyId.value = properties.value[0].id
   }
 }
 
 function syncCalendar() {
-  // Ejemplo: recargar los datos del calendario para la propiedad seleccionada
   if (selectedPropertyId.value) {
     fetchCalendarDataForProperty(selectedPropertyId.value)
   }
-  // Puedes mostrar un mensaje o notificación si lo deseas
   alert("Calendario sincronizado.");
 }
 
 // Cargar reservas, unavailable dates y precios diarios para la propiedad seleccionada y mes/año actual
 async function fetchCalendarDataForProperty(propertyId) {
   if (!propertyId) return
-  // Cargar precios del mes actual
+  const authHeaders = {
+    headers: {
+      Authorization: `Bearer ${userStore.token || localStorage.getItem('auth_token')}`
+    }
+  }
   const [bookingsRes, unavailableRes, pricesRes] = await Promise.all([
-    axios.get(`/api/properties/${propertyId}/bookings`),
-    axios.get(`/api/properties/${propertyId}/unavailable-dates`),
-    axios.get(`/api/properties/${propertyId}/day-prices?year=${currentYear.value}&month=${currentMonth.value + 1}`)
+    axios.get(`/api/properties/${propertyId}/bookings`, authHeaders),
+    axios.get(`/api/properties/${propertyId}/unavailable-dates`, authHeaders),
+    axios.get(`/api/properties/${propertyId}/day-prices?year=${currentYear.value}&month=${currentMonth.value + 1}`, authHeaders)
   ])
   bookings.value = bookingsRes.data
   unavailableDates.value = unavailableRes.data
-  // El backend devuelve: { "YYYY-MM-DD": { price: 120, notes: "..." } }
-  // Solo nos interesa el precio aquí
   dayPrices.value = Object.fromEntries(
     Object.entries(pricesRes.data).map(([date, obj]) => [date, Number(obj.price)])
   )
@@ -557,36 +619,43 @@ async function setBulkAvailability(available) {
   const end = new Date(bulkEndDate.value);
 
   for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    // Restricción: solo entre minReservableDate y maxReservableDate
+    if (d < minReservableDate || d > maxReservableDate) continue;
+
     const dateString = d.toISOString().split('T')[0];
     if (available) {
       await axios.delete(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
         data: { date: dateString }
       });
-      // (Opcional) Eliminar precio si lo deseas cuando se marque como disponible
     } else {
       await axios.post(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, { date: dateString });
-      // (Opcional) Eliminar precio si lo deseas cuando se marque como no disponible
       await axios.delete(`/api/properties/${selectedPropertyId.value}/day-prices`, {
         data: { date: dateString }
       });
     }
   }
-  // Refresca todo el calendario
   await fetchCalendarDataForProperty(selectedPropertyId.value)
 }
 
 // Manejo de clics en el calendario
 function handleDayClick(day) {
   if (!day.date) return
+  // No permitir seleccionar días fuera de rango reservable
+  const dateObj = day.dateObj
+  if (dateObj < minReservableDate || dateObj > maxReservableDate) return
+
   selectedDate.value = day.dateString
   selectedDayStatus.value = day.unavailable ? 'unavailable' : 'available'
   selectedDayPrice.value = dayPrices.value[day.dateString] ?? 100
-  selectedDayNotes.value = '' // Si gestionas notas, aquí puedes cargarlas
+  selectedDayNotes.value = ''
   selectedDayBooking.value = day.bookingInfo
   showDayModal.value = true
 }
 function handleHourClick(dateString, hour) {
-  // Aquí iría la lógica para manejar el clic en una hora específica
+  // No permitir reservar fuera de rango
+  const day = weekViewDaysDetailed.value.find(d => d.dateString === dateString)
+  if (!day || !day.isReservable) return
+  // Puedes abrir un modal o manejar reserva por hora aquí
 }
 function closeDayModal() {
   showDayModal.value = false
@@ -600,11 +669,18 @@ async function saveDayChanges() {
     return;
   }
 
+  // Restricción: solo entre minReservableDate y maxReservableDate
+  const dateObj = new Date(selectedDate.value)
+  dateObj.setHours(0,0,0,0)
+  if (dateObj < minReservableDate || dateObj > maxReservableDate) {
+    closeDayModal();
+    return;
+  }
+
   if (selectedDayStatus.value === 'unavailable') {
     await axios.post(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
       date: selectedDate.value
     });
-    // Opcional: elimina el precio si ese día se marca como no disponible
     await axios.delete(`/api/properties/${selectedPropertyId.value}/day-prices`, {
       data: { date: selectedDate.value }
     });
@@ -612,25 +688,16 @@ async function saveDayChanges() {
     await axios.delete(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
       data: { date: selectedDate.value }
     });
-    // Guarda el precio solo si está disponible
     await axios.post(`/api/properties/${selectedPropertyId.value}/day-prices`, {
       date: selectedDate.value,
       price: selectedDayPrice.value
-      // Puedes agregar notes: selectedDayNotes.value si lo usas en backend
     });
   }
-
-  // Refresca todo el calendario
   await fetchCalendarDataForProperty(selectedPropertyId.value);
-
   closeDayModal();
 }
-function viewBookingDetails(bookingId) {
-  // Redirige o abre modal de detalles para la reserva
-}
-function sendMessage(bookingId) {
-  // Abre modal para enviar mensaje
-}
+function viewBookingDetails(bookingId) {}
+function sendMessage(bookingId) {}
 </script>
 
 <style scoped>
