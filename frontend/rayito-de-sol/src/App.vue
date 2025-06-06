@@ -15,6 +15,7 @@ import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import Header from './components/layout/Header.vue';
 import Footer from './components/layout/Footer.vue';
+import { useUserStore } from '@/stores/userStore.js';
 
 // Sample user data
 const user = ref({
@@ -23,8 +24,13 @@ const user = ref({
   avatar: null
 });
 
+
+const userStore = useUserStore()
 const route = useRoute();
 const isMainPage = computed(() => route.path === '/main');
+
+userStore.hydrate()
+
 </script>
 
 <style>
