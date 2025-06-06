@@ -9,7 +9,7 @@
         </div>
       </div>
       <div class="booking-status" :class="booking.status">
-        {{ booking.statusText }}
+        {{ getStatusText(booking.status) }}
       </div>
     </div>
     
@@ -19,14 +19,14 @@
           <CalendarIcon class="date-icon" />
           <div>
             <span class="date-label">Llegada</span>
-            <span class="date-value">{{ booking.checkIn }}</span>
+            <span class="date-value">{{ formatDate(booking.checkIn) }}</span>
           </div>
         </div>
         <div class="date-item">
           <CalendarIcon class="date-icon" />
           <div>
             <span class="date-label">Salida</span>
-            <span class="date-value">{{ booking.checkOut }}</span>
+            <span class="date-value">{{ formatDate(booking.checkOut) }}</span>
           </div>
         </div>
       </div>
@@ -57,10 +57,10 @@
     </div>
     
     <div class="booking-actions">
-      <button class="action-button view">Ver detalles</button>
-      <button v-if="booking.status === 'pending'" class="action-button accept">Aceptar</button>
-      <button v-if="booking.status === 'pending'" class="action-button reject">Rechazar</button>
-      <button v-if="booking.status === 'confirmed'" class="action-button message">
+      <button class="action-button view" @click="$emit('view-details', booking.id)">Ver detalles</button>
+      <button v-if="booking.status === 'pending'" class="action-button accept" @click="$emit('accept-booking', booking.id)">Aceptar</button>
+      <button v-if="booking.status === 'pending'" class="action-button reject" @click="$emit('reject-booking', booking.id)">Rechazar</button>
+      <button v-if="booking.status === 'confirmed'" class="action-button message" @click="$emit('send-message', booking.id)">
         <MessageSquareIcon class="action-icon" />
         Mensaje
       </button>
@@ -77,7 +77,7 @@ import {
   MessageSquareIcon 
 } from 'lucide-vue-next';
 
-defineProps({
+const props = defineProps({
   booking: {
     type: Object,
     required: true
@@ -87,6 +87,26 @@ defineProps({
     required: true
   }
 });
+
+// Formatear fecha
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+  
+  const options = { day: 'numeric', month: 'short', year: 'numeric' };
+  return new Date(dateString).toLocaleDateString('es-ES', options);
+};
+
+// Obtener texto de estado
+const getStatusText = (status) => {
+  const statusMap = {
+    'pending': 'Pendiente',
+    'confirmed': 'Confirmada',
+    'completed': 'Completada',
+    'cancelled': 'Cancelada'
+  };
+  
+  return statusMap[status] || status;
+};
 </script>
 
 <style scoped>

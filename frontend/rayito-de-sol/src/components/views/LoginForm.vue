@@ -103,7 +103,7 @@ import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { EyeIcon, EyeOffIcon, LoaderIcon, SunIcon, ArrowLeftIcon } from 'lucide-vue-next';
 import axios from 'axios';
-import { useUserStore } from '../../../stores/user';
+import { useUserStore } from '@/stores/userStore.js';
 
 const router = useRouter();
 const userStore = useUserStore();
