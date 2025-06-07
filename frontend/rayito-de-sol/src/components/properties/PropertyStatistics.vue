@@ -9,7 +9,7 @@
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ totalProperties }}</p>
+          <p class="stat-value">{{ statistics?.totalProperties ?? '-' }}</p>
           <h3 class="stat-title">Propiedades</h3>
         </div>
       </div>
@@ -19,7 +19,7 @@
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ totalBookings }}</p>
+          <p class="stat-value">{{ statistics?.totalBookings ?? '-' }}</p>
           <h3 class="stat-title">Reservas</h3>
         </div>
       </div>
@@ -29,7 +29,7 @@
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ occupancyRate }}%</p>
+          <p class="stat-value">{{ statistics?.occupancyRate ?? '-' }}%</p>
           <h3 class="stat-title">Ocupación</h3>
         </div>
       </div>
@@ -39,7 +39,7 @@
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ totalRevenue }}€</p>
+          <p class="stat-value">{{ statistics?.totalRevenue ?? '-' }}€</p>
           <h3 class="stat-title">Ingresos</h3>
         </div>
       </div>
@@ -51,12 +51,12 @@
         <div class="chart-placeholder">
           <div class="chart-bars">
             <div 
-              v-for="(value, month) in bookingsByMonth" 
-              :key="month" 
+              v-for="(value, i) in months"
+              :key="i"
               class="chart-bar"
-              :style="{ height: `${(value / Math.max(...Object.values(bookingsByMonth))) * 100}%` }"
+              :style="{ height: `${maxBookings ? ((statistics?.bookingsByMonth?.[i+1] || 0) / maxBookings) * 100 : 0}%` }"
             >
-              <span class="bar-value">{{ value }}</span>
+              <span class="bar-value">{{ statistics?.bookingsByMonth?.[i+1] || 0 }}</span>
             </div>
           </div>
           <div class="chart-labels">
@@ -68,7 +68,7 @@
       <div class="chart-card">
         <h3 class="chart-title">Ingresos por propiedad</h3>
         <div class="chart-placeholder">
-          <div class="property-revenue" v-for="(property, index) in topProperties" :key="index">
+          <div class="property-revenue" v-for="property in statistics?.revenueByProperty || []" :key="property.id">
             <div class="property-info">
               <span class="property-name">{{ property.name }}</span>
               <span class="property-value">{{ property.revenue }}€</span>
@@ -76,68 +76,60 @@
             <div class="revenue-bar-container">
               <div 
                 class="revenue-bar" 
-                :style="{ width: `${(property.revenue / topProperties[0].revenue) * 100}%` }"
+                :style="{ width: `${maxRevenue ? (property.revenue / maxRevenue) * 100 : 0}%` }"
               ></div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <div v-if="loading" style="margin-top:2rem;text-align:center">Cargando estadísticas...</div>
+    <div v-if="error" style="color:red; margin-top:2rem;text-align:center">{{ error }}</div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import { HomeIcon, CalendarIcon, TrendingUpIcon, EuroIcon } from 'lucide-vue-next'
 
-const props = defineProps({
-  properties: { type: Array, required: true },
-  bookings: { type: Array, required: true }
-})
-
-const totalProperties = computed(() => props.properties.length)
-const totalBookings = computed(() => props.bookings.length)
-
-const occupancyRate = computed(() => {
-  if (!props.properties.length) return 0
-  const totalNights = props.properties.reduce((acc, property) => {
-    const propertyBookings = props.bookings.filter(b => b.propertyId === property.id)
-    return acc + propertyBookings.reduce((sum, booking) => {
-      const nights = (new Date(booking.checkOut) - new Date(booking.checkIn)) / (1000 * 60 * 60 * 24)
-      return sum + nights
-    }, 0)
-  }, 0)
-  const maxNights = props.properties.length * 365
-  return maxNights > 0 ? Math.round((totalNights / maxNights) * 100) : 0
-})
-
-const totalRevenue = computed(() => {
-  return props.bookings.reduce((sum, booking) => sum + (booking.total || 0), 0)
-})
+const statistics = ref(null)
+const loading = ref(false)
+const error = ref(null)
 
 const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
 
-const bookingsByMonth = computed(() => {
-  const counts = Object.fromEntries(months.map(m => [m, 0]))
-  props.bookings.forEach(booking => {
-    const date = new Date(booking.checkIn)
-    const m = date.getMonth()
-    counts[months[m]]++
-  })
-  return counts
+const maxBookings = computed(() => {
+  if (!statistics.value?.bookingsByMonth) return 0
+  return Math.max(...Object.values(statistics.value.bookingsByMonth))
 })
 
-const topProperties = computed(() => {
-  const revenueMap = {}
-  props.properties.forEach(p => {
-    revenueMap[p.id] = { name: p.name, revenue: 0 }
-  })
-  props.bookings.forEach(b => {
-    if (revenueMap[b.propertyId]) {
-      revenueMap[b.propertyId].revenue += b.total || 0
-    }
-  })
-  return Object.values(revenueMap).sort((a, b) => b.revenue - a.revenue).slice(0, 5)
+const maxRevenue = computed(() => {
+  if (!statistics.value?.revenueByProperty?.length) return 0
+  return Math.max(...statistics.value.revenueByProperty.map(p => p.revenue))
+})
+
+const fetchStatistics = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    const token = localStorage.getItem('auth_token')
+    const res = await axios.get('http://localhost:8000/api/statistics', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    })
+    statistics.value = res.data
+  } catch (err) {
+    error.value = err.response?.data?.message || err.message
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchStatistics()
 })
 </script>
 

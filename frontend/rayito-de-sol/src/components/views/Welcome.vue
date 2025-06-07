@@ -1,51 +1,92 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { HomeIcon, KeyIcon, BarChartIcon, CalendarIcon } from 'lucide-vue-next'
+import axios from 'axios'
 
-const props = defineProps({
-  properties: { type: Array, required: true },
-  bookings: { type: Array, required: true }
-})
-
-const activeBookings = computed(() =>
-  props.bookings.filter(b => b.status === 'confirmed')
-)
-
+const statistics = ref(null)
+const loading = ref(false)
+const error = ref(null)
+const router = useRouter()
 const now = new Date()
-const currentMonth = now.getMonth()
+const currentMonth = now.getMonth() + 1 // Enero=1 en backend, 0 en JS
 const currentYear = now.getFullYear()
 
+const activeBookings = computed(() =>
+  statistics.value?.bookings?.filter(b => b.status === 'confirmed') ?? []
+)
+
+// Ocupación este mes (%) calculada con reservas confirmadas del mes actual
 const occupancyRate = computed(() => {
-  if (!props.properties.length) return 0
-  const totalNights = props.properties.reduce((acc, property) => {
-    const propertyBookings = props.bookings.filter(
-      b => b.propertyId === property.id &&
-        b.status === 'confirmed' &&
-        (new Date(b.checkIn).getMonth() === currentMonth) &&
-        (new Date(b.checkIn).getFullYear() === currentYear)
-    )
-    return acc + propertyBookings.reduce((sum, booking) => {
+  if (!statistics.value?.bookings || !statistics.value?.revenueByProperty?.length) return 0
+  let totalNights = 0
+  let propertyCount = statistics.value.revenueByProperty.length
+
+  statistics.value.bookings.forEach(booking => {
+    if (
+      booking.status === 'confirmed' &&
+      booking.details?.check_in &&
+      new Date(booking.details.check_in).getMonth() + 1 === currentMonth &&
+      new Date(booking.details.check_in).getFullYear() === currentYear
+    ) {
       const nights =
-        (new Date(booking.checkOut) - new Date(booking.checkIn)) /
+        (new Date(booking.details.check_out) - new Date(booking.details.check_in)) /
         (1000 * 60 * 60 * 24)
-      return sum + nights
-    }, 0)
-  }, 0)
-  const maxNights = props.properties.length * 30 // 30 días del mes
+      totalNights += nights
+    }
+  })
+  const maxNights = propertyCount * 30 // 30 días del mes
   return maxNights > 0 ? Math.round((totalNights / maxNights) * 100) : 0
 })
 
+// Ingresos del mes actual (solo reservas confirmadas)
 const monthlyRevenue = computed(() => {
-  return props.bookings
+  if (!statistics.value?.bookings) return 0
+  return statistics.value.bookings
     .filter(b => {
-      const date = new Date(b.checkIn)
+      const date = new Date(b.details?.check_in)
       return (
         b.status === 'confirmed' &&
-        date.getMonth() === currentMonth &&
+        date.getMonth() + 1 === currentMonth &&
         date.getFullYear() === currentYear
       )
     })
-    .reduce((sum, b) => sum + (b.total || 0), 0)
+    .reduce((sum, b) => sum + (b.details?.total_price || 0), 0)
+})
+
+const fetchStatistics = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    const token = localStorage.getItem('auth_token')
+    const res = await axios.get('http://localhost:8000/api/statistics', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    })
+    statistics.value = res.data
+  } catch (err) {
+    error.value = err.response?.data?.message || err.message
+  } finally {
+    loading.value = false
+  }
+}
+
+// Funciones para redirección
+function goToProperties() {
+  router.push({ name: 'Properties' })
+}
+function goToBookings() {
+  router.push({ name: 'Bookings' })
+}
+function goToPayments() {
+  // Si tienes una ruta Payments mejor, cambia aquí el name
+  router.push({ name: 'Bookings' })
+}
+
+onMounted(() => {
+  fetchStatistics()
 })
 </script>
 
@@ -58,13 +99,16 @@ const monthlyRevenue = computed(() => {
       </p>
     </div>
 
-    <div class="stats-overview">
+    <div v-if="loading" style="margin:2rem 0;text-align:center">Cargando estadísticas...</div>
+    <div v-if="error" style="color:red; margin:2rem 0;text-align:center">{{ error }}</div>
+
+    <div v-if="statistics" class="stats-overview">
       <div class="stat-card">
         <div class="stat-icon">
           <HomeIcon />
         </div>
         <div class="stat-content">
-          <h3>{{ props.properties.length }}</h3>
+          <h3>{{ statistics.totalProperties ?? '-' }}</h3>
           <p>Propiedades</p>
         </div>
       </div>
@@ -73,7 +117,7 @@ const monthlyRevenue = computed(() => {
           <CalendarIcon />
         </div>
         <div class="stat-content">
-          <h3>{{ activeBookings.length }}</h3>
+          <h3>{{ statistics?.totalBookings ?? '-' }}</h3>
           <p>Reservas Activas</p>
         </div>
       </div>
@@ -82,7 +126,7 @@ const monthlyRevenue = computed(() => {
           <BarChartIcon />
         </div>
         <div class="stat-content">
-          <h3>{{ occupancyRate }}%</h3>
+          <h3>{{ statistics?.occupancyRate ?? '-' }}%</h3>
           <p>Ocupación este mes</p>
         </div>
       </div>
@@ -91,25 +135,25 @@ const monthlyRevenue = computed(() => {
           <KeyIcon />
         </div>
         <div class="stat-content">
-          <h3>€{{ monthlyRevenue.toLocaleString() }}</h3>
+          <h3>€{{ statistics?.monthlyRevenue.toLocaleString() ?? '-'}}</h3>
           <p>Ingresos Mensuales</p>
         </div>
       </div>
     </div>
 
-    <!-- Acciones rápidas -->
+    <!-- Acciones rápidas con navegación -->
     <div class="quick-actions">
       <h2>Acciones Rápidas</h2>
       <div class="action-buttons">
-        <button class="action-button">
+        <button class="action-button" @click="goToProperties">
           <HomeIcon class="action-icon" />
           <span>Añadir Propiedad</span>
         </button>
-        <button class="action-button">
+        <button class="action-button" @click="goToBookings">
           <CalendarIcon class="action-icon" />
           <span>Gestionar Reservas</span>
         </button>
-        <button class="action-button">
+        <button class="action-button" @click="goToPayments">
           <KeyIcon class="action-icon" />
           <span>Ver Pagos</span>
         </button>

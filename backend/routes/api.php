@@ -10,6 +10,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\UnavailableDateController;
 use App\Http\Controllers\PropertyDayPriceController;
+use App\Http\Controllers\StatisticsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,7 +57,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Acciones sobre reservas específicas (requiere métodos en el controller)
     Route::post('/reservations/{reservation}/accept', [ReservationController::class, 'accept']);
     Route::post('/reservations/{reservation}/reject', [ReservationController::class, 'reject']);
-    // Puedes añadir más: cancelar, completar, etc.
+
+    Route::middleware('auth:sanctum')->get('/statistics', [App\Http\Controllers\StatisticsController::class, 'statistics']);
+
 });
 
 // --- PROPIEDADES ---
