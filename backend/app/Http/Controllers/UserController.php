@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -26,6 +27,8 @@ class UserController extends Controller
         ]);
     }
 
+
+
     // Obtener el perfil del usuario autenticado
     public function profile(Request $request)
     {
@@ -34,9 +37,9 @@ class UserController extends Controller
 
     // NUEVO: Resumen para el dashboard del usuario autenticado
     public function dashboardSummary(Request $request)
-{
+    {
     $user = $request->user();
-    $reservations = $user->reservations;
+    $reservations = $user->propertyReservations;
 
     // Total de propiedades
     $totalProperties = $user->properties()->count();
@@ -63,23 +66,41 @@ class UserController extends Controller
     // Tasa de ocupación
     $occupancyRate = $totalProperties > 0 ? round(($activeBookings->count() / max(1, $totalProperties)) * 100) : 0;
 
-return response()->json([
-    'name' => $user->name,
-    'email' => $user->email,
-    'lastLogin' => $user->last_login_at,
-    'totalProperties' => $totalProperties,
-    'totalBookings' => $reservations->count(),
-    'monthlyRevenue' => $monthlyRevenue,
-    'occupancyRate' => $occupancyRate,
-    'upcomingBookings' => $reservations->filter(function($r) {
-        $details = $r->details ?? [];
-        // Asume que check_in está en details y es una fecha futura
-        if (isset($details['check_in'])) {
-            return \Carbon\Carbon::parse($details['check_in'])->isFuture();
+    return response()->json([
+        'name' => $user->name,
+        'email' => $user->email,
+        'lastLogin' => $user->last_login_at,
+        'totalProperties' => $totalProperties,
+        'totalBookings' => $reservations->count(),
+        'monthlyRevenue' => $monthlyRevenue,
+        'occupancyRate' => $occupancyRate,
+        'upcomingBookings' => $reservations->filter(function($r) {
+            $details = $r->details ?? [];
+            // Asume que check_in está en details y es una fecha futura
+            if (isset($details['check_in'])) {
+                return \Carbon\Carbon::parse($details['check_in'])->isFuture();
+            }
+            return false;
+        })->take(3)->values(),
+        // 'recentMessages' => ...
+    ]);
+    }
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8'
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json(['message' => 'La contraseña actual no es correcta'], 400);
         }
-        return false;
-    })->take(3)->values(),
-    // 'recentMessages' => ...
-]);
-}
+
+        $user->password = bcrypt($request->new_password);
+        $user->save();
+
+        return response()->json(['message' => 'Contraseña cambiada correctamente']);
+    }
 }

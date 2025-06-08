@@ -21,6 +21,9 @@ class PropertyController extends Controller
             'status' => 'required|in:active,inactive',
         ]);
 
+        // Agrega el user_id del usuario autenticado
+        $data['user_id'] = auth()->id();
+
         $property = Property::create($data);
         return response()->json($property, 201);
     }
