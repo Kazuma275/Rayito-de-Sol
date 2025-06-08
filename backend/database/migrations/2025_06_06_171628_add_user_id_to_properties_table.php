@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('properties', function (Blueprint $table) {
+/*         Schema::table('properties', function (Blueprint $table) {
             // Solo agrega la restricción si no existe
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
+        }); */
     }
 
     public function down()
