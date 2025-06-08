@@ -2,7 +2,7 @@
 
 return [
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],  // Asegura que CORS se aplica a todas las rutas de API
+    'paths' => ['api/*', 'broadcasting/auth', 'sanctum/csrf-cookie'],  // Asegura que CORS se aplica a todas las rutas de API
 
     'allowed_methods' => ['*'],  // Permite todos los métodos: GET, POST, PUT, DELETE, etc.
 
