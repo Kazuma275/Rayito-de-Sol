@@ -22,6 +22,8 @@ class User extends Authenticatable
         'verificado',
         'fecha_registro',
         'role',
+        'email_verified_at',
+        'remember_token',
     ];
 
     protected $hidden = [
@@ -58,5 +60,32 @@ class User extends Authenticatable
     public function properties()
     {
         return $this->hasMany(Property::class, 'user_id');
+    }
+
+    // Relación con conversaciones
+    public function conversationsAsOne()
+    {
+        return $this->hasMany(Conversation::class, 'user_one_id');
+    }
+
+    public function conversationsAsTwo()
+    {
+        return $this->hasMany(Conversation::class, 'user_two_id');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+    public function propertyReservations()
+    {
+        return $this->hasManyThrough(
+            \App\Models\Reservation::class,
+            \App\Models\Property::class,
+            'user_id',
+            'property_id',
+            'id',
+            'id'
+        );
     }
 }

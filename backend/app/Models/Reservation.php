@@ -2,14 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Reservation extends Model
 {
     use HasFactory;
-
-    protected $table = 'reservations';
 
     protected $fillable = [
         'user_id',
@@ -17,19 +15,35 @@ class Reservation extends Model
         'reservation_date',
         'reservation_time',
         'details',
+        // 'status', // Si decides agregarlo
     ];
 
     protected $casts = [
-        'details' => 'array',
+    'details' => 'array',
     ];
 
-    public function property()
+    // Huésped que realizó la reserva
+    public function guest()
     {
-        return $this->belongsTo(\App\Models\Property::class, 'property_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(\App\Models\User::class);
+    }
+
+    // Propiedad reservada
+    public function property()
+    {
+        return $this->belongsTo(Property::class);
+    }
+
+
+
+    // Conversación asociada a esta reserva (1 a 1)
+    public function conversation()
+    {
+        return $this->hasOne(Conversation::class);
     }
 }
