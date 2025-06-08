@@ -99,48 +99,6 @@ onMounted(() => {
       </p>
     </div>
 
-    <div v-if="loading" style="margin:2rem 0;text-align:center">Cargando estadísticas...</div>
-    <div v-if="error" style="color:red; margin:2rem 0;text-align:center">{{ error }}</div>
-
-    <div v-if="statistics" class="stats-overview">
-      <div class="stat-card">
-        <div class="stat-icon">
-          <HomeIcon />
-        </div>
-        <div class="stat-content">
-          <h3>{{ statistics.totalProperties ?? '-' }}</h3>
-          <p>Propiedades</p>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">
-          <CalendarIcon />
-        </div>
-        <div class="stat-content">
-          <h3>{{ statistics?.totalBookings ?? '-' }}</h3>
-          <p>Reservas Activas</p>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">
-          <BarChartIcon />
-        </div>
-        <div class="stat-content">
-          <h3>{{ statistics?.occupancyRate ?? '-' }}%</h3>
-          <p>Ocupación este mes</p>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">
-          <KeyIcon />
-        </div>
-        <div class="stat-content">
-          <h3>€{{ statistics?.monthlyRevenue.toLocaleString() ?? '-'}}</h3>
-          <p>Ingresos Mensuales</p>
-        </div>
-      </div>
-    </div>
-
     <!-- Acciones rápidas con navegación -->
     <div class="quick-actions">
       <h2>Acciones Rápidas</h2>
