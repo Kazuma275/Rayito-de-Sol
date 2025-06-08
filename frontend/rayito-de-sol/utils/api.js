@@ -1,10 +1,11 @@
-// utils/api.js
+import { getItem } from '@/helpers/storage';
+
 export function apiHeaders() {
-  const token = localStorage.getItem('auth_token');
+  const token = getItem('auth_token', true) || getItem('auth_token');
   return {
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: 'application/json'
     }
-  };
+  }
 }
