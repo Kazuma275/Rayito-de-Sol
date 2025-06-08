@@ -104,6 +104,8 @@ import { useRouter } from 'vue-router';
 import { EyeIcon, EyeOffIcon, LoaderIcon, SunIcon, ArrowLeftIcon } from 'lucide-vue-next';
 import axios from 'axios';
 import { useUserStore } from '@/stores/userStore.js';
+import { setItem } from '@/helpers/storage.js';
+
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -151,8 +153,9 @@ const handleSubmit = async () => {
       password: formData.password,
     });
 
-    localStorage.setItem('auth_token', response.data.token);  
-    localStorage.setItem('auth_user', JSON.stringify(response.data.user));
+    // Cambia este parámetro a true si quieres sessionStorage, o déjalo en false para localStorage
+    setItem('auth_token', response.data.token, !formData.remember);  
+    setItem('auth_user', response.data.user, !formData.remember);
     userStore.setUser(response.data.user);
     userStore.setToken(response.data.token);
     console.log("TOKEN recibido:", response.data.token);
