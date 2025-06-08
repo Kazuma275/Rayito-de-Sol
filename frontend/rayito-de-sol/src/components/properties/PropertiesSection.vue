@@ -16,11 +16,11 @@
       @viewProperty="viewProperty"
     />
     
-    <PropertyStatistics 
+<!--     <PropertyStatistics 
       v-if="showStatistics"
       :properties="properties" 
       :bookings="bookings"
-    />
+    /> -->
     
     <EditPropertyModal 
       v-if="showEditModal"

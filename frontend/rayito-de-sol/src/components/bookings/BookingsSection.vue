@@ -240,6 +240,8 @@ import {
   CheckCircleIcon
 } from 'lucide-vue-next';
 import BookingCard from './BookingCard.vue';
+import { getItem } from '@/helpers/storage';
+import { apiHeaders } from '@/../utils/api';
 
 const bookings = ref([]);
 const properties = ref([]);
@@ -284,16 +286,6 @@ async function loadData() {
   }
 }
 
-function apiHeaders() {
-  const token = localStorage.getItem('auth_token');
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json'
-    }
-  }
-}
-
 const filteredBookings = computed(() => {
   if (!Array.isArray(bookings.value)) return [];
   let filtered = [...bookings.value];
@@ -313,7 +305,22 @@ const filteredBookings = computed(() => {
   }
   const startIndex = (currentPage.value - 1) * itemsPerPage.value;
   const endIndex = startIndex + itemsPerPage.value;
-  return filtered.slice(startIndex, endIndex);
+  // <-- MAPEA guestName y total antes de devolver
+  return filtered.slice(startIndex, endIndex).map(booking => ({
+    ...booking,
+    guestName:
+      booking.guestName ||
+      booking.user?.username ||
+      booking.user?.name ||
+      booking.details?.guest_name ||
+      'No disponible',
+    total:
+      booking.total ||
+      booking.total_price ||
+      booking.details?.total_price ||
+      getPropertyById(booking.propertyId).price ||
+      0,
+  }));
 });
 const totalPages = computed(() => {
   if (!Array.isArray(bookings.value)) return 0;

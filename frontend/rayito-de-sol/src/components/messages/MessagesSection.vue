@@ -9,7 +9,6 @@
         </button>
       </div>
     </div>
-    
     <div class="messages-container">
       <div class="messages-sidebar">
         <div class="search-container">
@@ -26,7 +25,6 @@
             </button>
           </div>
         </div>
-        
         <div class="conversation-filters">
           <button 
             v-for="filter in conversationFilters" 
@@ -40,7 +38,6 @@
             <span class="filter-count">{{ getFilterCount(filter.id) }}</span>
           </button>
         </div>
-        
         <div class="conversations-list">
           <div 
             v-for="conversation in filteredConversations" 
@@ -62,34 +59,29 @@
               <div v-else class="avatar-placeholder">
                 {{ getInitials(conversation.name) }}
               </div>
-              <div v-if="conversation.online" class="online-indicator"></div>
+              <div v-if="isOnline(getOtherUserId(conversation))" class="online-indicator"></div>
             </div>
-            
             <div class="conversation-content">
               <div class="conversation-header">
                 <h3 class="conversation-name">{{ conversation.name }}</h3>
                 <span class="conversation-time">{{ formatMessageTime(conversation.lastMessage.timestamp) }}</span>
               </div>
-              
               <div class="conversation-property">
                 <HomeIcon class="property-icon" />
                 <span>{{ getPropertyName(conversation.propertyId) }}</span>
               </div>
-              
               <p class="conversation-preview">
                 <span v-if="conversation.lastMessage.isOwner">Tú: </span>
                 {{ conversation.lastMessage.text }}
               </p>
             </div>
           </div>
-          
           <div v-if="filteredConversations.length === 0" class="empty-conversations">
             <MessageSquareOffIcon class="empty-icon" />
             <p>No hay conversaciones que coincidan con tu búsqueda</p>
           </div>
         </div>
       </div>
-      
       <div class="messages-content">
         <div v-if="activeConversation" class="conversation-view">
           <div class="conversation-header">
@@ -104,36 +96,32 @@
                 <div v-else class="avatar-placeholder">
                   {{ getInitials(currentConversation.name) }}
                 </div>
+                <div v-if="isOnline(getOtherUserId(currentConversation))" class="online-indicator"></div>
               </div>
-              
               <div class="user-info">
                 <h3>{{ currentConversation.name }}</h3>
                 <div class="user-status">
-                  <span v-if="currentConversation.online" class="status online">En línea</span>
+                  <span v-if="isOnline(getOtherUserId(currentConversation))" class="status online">En línea</span>
                   <span v-else class="status offline">Última vez {{ formatLastSeen(currentConversation.lastSeen) }}</span>
                 </div>
               </div>
             </div>
-            
             <div class="conversation-actions">
               <button class="action-button" @click="showBookingDetails">
                 <CalendarIcon class="action-icon" />
                 <span class="action-text">Ver Reserva</span>
               </button>
-              
               <button class="action-button" @click="toggleInfoPanel">
                 <InfoIcon class="action-icon" />
                 <span class="action-text">Info</span>
               </button>
             </div>
           </div>
-          
           <div class="messages-list" ref="messagesList">
-            <div v-for="(message, index) in currentConversation.messages" :key="index" class="message-group">
+            <div v-for="(message, index) in currentMessages" :key="index" class="message-group">
               <div v-if="showDateDivider(message, index)" class="date-divider">
                 <span>{{ formatMessageDate(message.timestamp) }}</span>
               </div>
-              
               <div 
                 class="message-bubble" 
                 :class="{ 
@@ -154,7 +142,6 @@
                 </div>
               </div>
             </div>
-            
             <div v-if="isTyping" class="typing-indicator">
               <div class="typing-bubble">
                 <div class="typing-dot"></div>
@@ -164,7 +151,6 @@
               <span>{{ currentConversation.name }} está escribiendo...</span>
             </div>
           </div>
-          
           <div class="message-composer">
             <div class="composer-attachments" v-if="attachments.length > 0">
               <div v-for="(attachment, index) in attachments" :key="index" class="attachment-preview">
@@ -178,7 +164,6 @@
                 </button>
               </div>
             </div>
-            
             <div class="composer-input-container">
               <button class="attachment-button" @click="triggerFileInput">
                 <PaperclipIcon class="attachment-icon" />
@@ -190,36 +175,33 @@
                   style="display: none;" 
                 />
               </button>
-              
               <div class="composer-input">
                 <textarea 
                   v-model="newMessage" 
                   placeholder="Escribe un mensaje..." 
                   class="message-input"
-                  @keydown.enter.prevent="sendMessage"
+                  @keydown.enter.prevent="sendMessageHandler"
+                  @input="sendTyping"
                   ref="messageInput"
                   rows="1"
                 ></textarea>
               </div>
-              
               <button 
                 class="send-button" 
                 :disabled="!newMessage.trim() && attachments.length === 0"
-                @click="sendMessage"
+                @click="sendMessageHandler"
               >
                 <SendIcon class="send-icon" />
               </button>
             </div>
           </div>
         </div>
-        
         <div v-else class="no-conversation-selected">
           <MessageSquareIcon class="empty-icon" />
           <h3>Selecciona una conversación</h3>
           <p>Elige una conversación de la lista para ver los mensajes</p>
         </div>
       </div>
-      
       <div v-if="showInfoPanel" class="info-panel">
         <div class="info-panel-header">
           <h3>Información</h3>
@@ -227,7 +209,6 @@
             <XIcon class="close-icon" />
           </button>
         </div>
-        
         <div class="info-panel-content">
           <div class="info-section">
             <h4>Detalles del Huésped</h4>
@@ -253,7 +234,6 @@
               </div>
             </div>
           </div>
-          
           <div class="info-section">
             <h4>Detalles de la Reserva</h4>
             <div class="info-item">
@@ -287,7 +267,6 @@
               </div>
             </div>
           </div>
-          
           <div class="info-section">
             <h4>Acciones Rápidas</h4>
             <div class="quick-actions">
@@ -308,8 +287,6 @@
         </div>
       </div>
     </div>
-    
-    <!-- Modal de Nuevo Mensaje -->
     <div v-if="showComposeModal" class="compose-modal" @click="closeComposeModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
@@ -318,29 +295,17 @@
             <XIcon class="close-icon" />
           </button>
         </div>
-        
         <div class="modal-body">
           <form @submit.prevent="sendNewMessage" class="compose-form">
             <div class="form-group">
-              <label for="recipient">Destinatario</label>
-              <select id="recipient" v-model="newConversation.recipientId" class="form-input" required>
-                <option value="" disabled selected>Selecciona un destinatario</option>
-                <option v-for="guest in guests" :key="guest.id" :value="guest.id">
-                  {{ guest.name }}
+              <label for="reservation">Reserva</label>
+              <select id="reservation" v-model="newConversation.reservationId" class="form-input" required>
+                <option value="" disabled>Selecciona una reserva</option>
+                <option v-for="res in reservations" :key="res.id" :value="res.id">
+                  {{ getPropertyName(res.property_id) }} - {{ res.reservation_date }}
                 </option>
               </select>
             </div>
-            
-            <div class="form-group">
-              <label for="property">Propiedad</label>
-              <select id="property" v-model="newConversation.propertyId" class="form-input" required>
-                <option value="" disabled selected>Selecciona una propiedad</option>
-                <option v-for="property in properties" :key="property.id" :value="property.id">
-                  {{ property.name }}
-                </option>
-              </select>
-            </div>
-            
             <div class="form-group">
               <label for="message">Mensaje</label>
               <textarea 
@@ -352,7 +317,6 @@
                 placeholder="Escribe tu mensaje aquí..."
               ></textarea>
             </div>
-            
             <div class="form-actions">
               <button type="button" class="cancel-button" @click="closeComposeModal">Cancelar</button>
               <button type="submit" class="submit-button">Enviar Mensaje</button>
@@ -392,20 +356,17 @@ import {
   CreditCardIcon,
   FileTextIcon
 } from 'lucide-vue-next';
+import { getConversations, getMessages, sendMessage, createConversation } from '@/api/messages';
+import { useMessaging } from '@/../componsables/useMessaging';
+import axios from 'axios';
+import { apiHeaders } from '@/../utils/api';
 
-// Props
 const props = defineProps({
-  properties: {
-    type: Array,
-    default: () => []
-  },
-  guests: {
-    type: Array,
-    default: () => []
-  }
+  properties: { type: Array, default: () => [] },
+  reservations: { type: Array, default: () => [] },
+  userId: { type: Number, required: true }
 });
 
-// Estado
 const searchQuery = ref('');
 const activeFilter = ref('all');
 const activeConversation = ref(null);
@@ -415,17 +376,13 @@ const isTyping = ref(false);
 const attachments = ref([]);
 const showComposeModal = ref(false);
 const newConversation = ref({
-  recipientId: '',
-  propertyId: '',
+  reservationId: '',
   message: ''
 });
 
-// Referencias
 const messagesList = ref(null);
-const messageInput = ref(null);
 const fileInput = ref(null);
 
-// Filtros de conversación
 const conversationFilters = [
   { id: 'all', name: 'Todos', icon: MessageSquareIcon },
   { id: 'unread', name: 'No leídos', icon: InboxIcon },
@@ -434,515 +391,238 @@ const conversationFilters = [
   { id: 'starred', name: 'Destacados', icon: StarIcon }
 ];
 
-// Datos de ejemplo para conversaciones
-const conversations = ref([
-  {
-    id: 1,
-    name: 'Juan Pérez',
-    avatar: null,
-    online: true,
-    lastSeen: null,
-    email: 'juan.perez@example.com',
-    phone: '+34 612 345 678',
-    propertyId: 1,
-    unread: true,
-    starred: false,
-    archived: false,
-    booking: {
-      id: 'B1234',
-      checkIn: '2023-08-15',
-      checkOut: '2023-08-22',
-      guests: 3,
-      paymentStatus: 'paid'
-    },
-    lastMessage: {
-      text: '¿Podría hacer el check-in un poco antes? Llegaremos alrededor de las 13:00.',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-      isOwner: false,
-      status: 'read'
-    },
-    messages: [
-      {
-        text: 'Hola, tengo una reserva para la próxima semana.',
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000 - 30 * 60 * 1000), // Ayer, 30 minutos después
-        isOwner: false,
-        status: 'read'
-      },
-      {
-        text: 'Hola Juan, sí, veo tu reserva del 15 al 22 de agosto.',
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // Ayer
-        isOwner: true,
-        status: 'read'
-      },
-      {
-        text: '¿Podría hacer el check-in un poco antes? Llegaremos alrededor de las 13:00.',
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-        isOwner: false,
-        status: 'read'
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: 'Ana Martínez',
-    avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
-    online: false,
-    lastSeen: new Date(Date.now() - 45 * 60 * 1000), // 45 minutos atrás
-    email: 'ana.martinez@example.com',
-    phone: '+34 623 456 789',
-    propertyId: 2,
-    unread: false,
-    starred: true,
-    archived: false,
-    booking: {
-      id: 'B5678',
-      checkIn: '2023-09-05',
-      checkOut: '2023-09-12',
-      guests: 2,
-      paymentStatus: 'pending'
-    },
-    lastMessage: {
-      text: 'Gracias por aceptar mi reserva. ¿Hay algún restaurante que recomiende cerca del apartamento?',
-      timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 día atrás
-      isOwner: false,
-      status: 'read'
-    },
-    messages: [
-      {
-        text: 'Hola, acabo de realizar una reserva para septiembre.',
-        timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 días atrás
-        isOwner: false,
-        status: 'read'
-      },
-      {
-        text: 'Hola Ana, gracias por tu reserva. La he confirmado para las fechas solicitadas.',
-        timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 días atrás
-        isOwner: true,
-        status: 'read'
-      },
-      {
-        text: 'Gracias por aceptar mi reserva. ¿Hay algún restaurante que recomiende cerca del apartamento?',
-        timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 día atrás
-        isOwner: false,
-        status: 'read'
-      }
-    ]
-  },
-  {
-    id: 3,
-    name: 'Carlos Rodríguez',
-    avatar: null,
-    online: false,
-    lastSeen: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 días atrás
-    email: 'carlos.rodriguez@example.com',
-    phone: '+34 634 567 890',
-    propertyId: 3,
-    unread: true,
-    starred: false,
-    archived: false,
-    booking: {
-      id: 'B9012',
-      checkIn: '2023-07-20',
-      checkOut: '2023-07-27',
-      guests: 4,
-      paymentStatus: 'refunded'
-    },
-    lastMessage: {
-      text: 'Entiendo la situación. Gracias por el reembolso rápido.',
-      timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 días atrás
-      isOwner: false,
-      status: 'delivered'
-    },
-    messages: [
-      {
-        text: 'Lamento informarle que debido a un problema familiar, no podremos asistir a nuestra reserva programada.',
-        timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 días atrás
-        isOwner: false,
-        status: 'read'
-      },
-      {
-        text: 'Hola Carlos, siento mucho escuchar eso. Según nuestra política de cancelación, puedo ofrecerte un reembolso del 50%.',
-        timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 días atrás
-        isOwner: true,
-        status: 'read'
-      },
-      {
-        text: 'Entiendo la situación. Gracias por el reembolso rápido.',
-        timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 días atrás
-        isOwner: false,
-        status: 'delivered'
-      }
-    ]
-  },
-  {
-    id: 4,
-    name: 'María García',
-    avatar: 'https://randomuser.me/api/portraits/women/42.jpg',
-    online: true,
-    lastSeen: null,
-    email: 'maria.garcia@example.com',
-    phone: '+34 645 678 901',
-    propertyId: 1,
-    unread: false,
-    starred: false,
-    archived: true,
-    booking: {
-      id: 'B3456',
-      checkIn: '2023-06-10',
-      checkOut: '2023-06-17',
-      guests: 2,
-      paymentStatus: 'paid'
-    },
-    lastMessage: {
-      text: 'Muchas gracias por todo. El apartamento estaba perfecto y lo pasamos genial. ¡Hasta la próxima!',
-      timestamp: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 días atrás
-      isOwner: false,
-      status: 'read'
-    },
-    messages: [
-      {
-        text: 'Hola, quería agradecerle por la estancia. Todo estuvo perfecto.',
-        timestamp: new Date(Date.now() - 31 * 24 * 60 * 60 * 1000), // 31 días atrás
-        isOwner: false,
-        status: 'read'
-      },
-      {
-        text: 'Hola María, me alegra mucho que hayas disfrutado de tu estancia. Espero que vuelvas pronto.',
-        timestamp: new Date(Date.now() - 31 * 24 * 60 * 60 * 1000 + 30 * 60 * 1000), // 31 días atrás + 30 minutos
-        isOwner: true,
-        status: 'read'
-      },
-      {
-        text: 'Muchas gracias por todo. El apartamento estaba perfecto y lo pasamos genial. ¡Hasta la próxima!',
-        timestamp: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 días atrás
-        isOwner: false,
-        status: 'read'
-      }
-    ]
-  }
-]);
+const conversations = ref([]);
+const conversationMessages = ref([]);
 
-// Conversaciones filtradas
+// ----------------------------
+// NUEVO: Mensajes actuales
+const currentMessages = computed(() => conversationMessages.value);
+// ----------------------------
+
+// --- Lógica para obtener el otro usuario de la conversación ---
+function getOtherUserId(conversation) {
+  if (!props.userId || !conversation) return null;
+  if ('user_one_id' in conversation && 'user_two_id' in conversation) {
+    return conversation.user_one_id === props.userId
+      ? conversation.user_two_id
+      : conversation.user_one_id;
+  }
+  return null;
+}
+
+const { listenMessages, listenTyping, listenOnline, newMessage: incomingMessage, typingUserId, onlineUsers } = useMessaging(props.userId);
+
+const isOnline = (userId) => onlineUsers.value.some(u => u.id === userId);
+
+function getConversationName(conversation) {
+  if (!props.userId || !conversation) return '';
+  if (conversation.owner_id === props.userId) return conversation.guest?.name || '';
+  return conversation.owner?.name || '';
+}
+function getPropertyName(propertyId) {
+  const property = props.properties.find(p => p.id === propertyId);
+  return property ? property.name : 'Propiedad no especificada';
+}
+
+function getFilterCount(filterId) {
+  if (filterId === 'all') return conversations.value.length;
+  if (filterId === 'unread') return conversations.value.filter(c => c.unread).length;
+  if (filterId === 'sent') return conversations.value.filter(c => c.last_message?.sender_id === props.userId).length;
+  if (filterId === 'archived') return conversations.value.filter(c => c.archived_by_guest || c.archived_by_owner).length;
+  if (filterId === 'starred') return conversations.value.filter(c => c.starred_by_guest || c.starred_by_owner).length;
+  return 0;
+}
+
 const filteredConversations = computed(() => {
   let filtered = [...conversations.value];
-  
-  // Aplicar filtro de búsqueda
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
     filtered = filtered.filter(conversation => 
-      conversation.name.toLowerCase().includes(query) || 
-      conversation.lastMessage.text.toLowerCase().includes(query)
+      getConversationName(conversation).toLowerCase().includes(query) || 
+      (conversation.last_message?.text?.toLowerCase() || '').includes(query)
     );
   }
-  
-  // Aplicar filtro de categoría
   if (activeFilter.value === 'unread') {
     filtered = filtered.filter(conversation => conversation.unread);
   } else if (activeFilter.value === 'sent') {
-    filtered = filtered.filter(conversation => conversation.lastMessage.isOwner);
+    filtered = filtered.filter(conversation => conversation.last_message?.sender_id === props.userId);
   } else if (activeFilter.value === 'archived') {
-    filtered = filtered.filter(conversation => conversation.archived);
+    filtered = filtered.filter(conversation => conversation.archived_by_guest || conversation.archived_by_owner);
   } else if (activeFilter.value === 'starred') {
-    filtered = filtered.filter(conversation => conversation.starred);
+    filtered = filtered.filter(conversation => conversation.starred_by_guest || conversation.starred_by_owner);
   }
-  
-  // Ordenar por fecha del último mensaje (más reciente primero)
   filtered.sort((a, b) => 
-    new Date(b.lastMessage.timestamp) - new Date(a.lastMessage.timestamp)
+    new Date(b.last_message?.created_at || 0) - new Date(a.last_message?.created_at || 0)
   );
-  
   return filtered;
 });
-
-// Conversación actual
 const currentConversation = computed(() => {
   if (!activeConversation.value) return null;
   return conversations.value.find(c => c.id === activeConversation.value) || null;
 });
 
-// Métodos
-const getFilterCount = (filterId) => {
-  if (filterId === 'all') return conversations.value.length;
-  if (filterId === 'unread') return conversations.value.filter(c => c.unread).length;
-  if (filterId === 'sent') return conversations.value.filter(c => c.lastMessage.isOwner).length;
-  if (filterId === 'archived') return conversations.value.filter(c => c.archived).length;
-  if (filterId === 'starred') return conversations.value.filter(c => c.starred).length;
-  return 0;
-};
-
-const getPropertyName = (propertyId) => {
-  const property = props.properties.find(p => p.id === propertyId);
-  return property ? property.name : 'Propiedad no especificada';
-};
-
-const getInitials = (name) => {
-  if (!name) return '?';
-  return name.split(' ')
-    .map(part => part.charAt(0))
-    .join('')
-    .toUpperCase()
-    .substring(0, 2);
-};
+const getInitials = name =>
+  name ? name.split(' ').map(p => p[0]).join('').toUpperCase().substring(0, 2) : '?';
 
 const formatMessageTime = (timestamp) => {
   if (!timestamp) return '';
-  
   const date = new Date(timestamp);
   const now = new Date();
   const diffMs = now - date;
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  
   if (diffDays === 0) {
-    // Hoy - mostrar hora
     return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
   } else if (diffDays === 1) {
-    // Ayer
     return 'Ayer';
   } else if (diffDays < 7) {
-    // Esta semana - mostrar día de la semana
     const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     return days[date.getDay()];
   } else {
-    // Más de una semana - mostrar fecha
     return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
   }
 };
-
 const formatMessageDate = (timestamp) => {
   if (!timestamp) return '';
-  
   const date = new Date(timestamp);
   const now = new Date();
   const diffMs = now - date;
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  
-  if (diffDays === 0) {
-    return 'Hoy';
-  } else if (diffDays === 1) {
-    return 'Ayer';
-  } else {
-    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
-  }
+  if (diffDays === 0) return 'Hoy';
+  else if (diffDays === 1) return 'Ayer';
+  else return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+};
+const formatBookingDates = reservation => {
+  if (!reservation || !reservation.reservation_date) return 'No disponible';
+  return new Date(reservation.reservation_date).toLocaleDateString('es-ES');
 };
 
-const formatLastSeen = (timestamp) => {
-  if (!timestamp) return 'Desconocido';
-  
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diffMs = now - date;
-  const diffMinutes = Math.floor(diffMs / (1000 * 60));
-  
-  if (diffMinutes < 1) {
-    return 'Ahora mismo';
-  } else if (diffMinutes < 60) {
-    return `hace ${diffMinutes} ${diffMinutes === 1 ? 'minuto' : 'minutos'}`;
-  } else {
-    const diffHours = Math.floor(diffMinutes / 60);
-    if (diffHours < 24) {
-      return `hace ${diffHours} ${diffHours === 1 ? 'hora' : 'horas'}`;
-    } else {
-      return formatMessageTime(timestamp);
-    }
-  }
-};
-
-const formatBookingDates = (booking) => {
-  if (!booking || !booking.checkIn || !booking.checkOut) return 'No disponible';
-  
-  const checkIn = new Date(booking.checkIn);
-  const checkOut = new Date(booking.checkOut);
-  
-  const formatOptions = { day: 'numeric', month: 'short' };
-  return `${checkIn.toLocaleDateString('es-ES', formatOptions)} - ${checkOut.toLocaleDateString('es-ES', formatOptions)}`;
-};
-
-const getPaymentStatusText = (status) => {
-  const statusMap = {
-    'paid': 'Pagado',
-    'pending': 'Pendiente',
-    'refunded': 'Reembolsado',
-    'failed': 'Fallido'
-  };
-  
-  return statusMap[status] || 'Desconocido';
-};
-
-const showDateDivider = (message, index) => {
-  if (index === 0) return true;
-  
-  const prevMessage = currentConversation.value.messages[index - 1];
-  const currentDate = new Date(message.timestamp).setHours(0, 0, 0, 0);
-  const prevDate = new Date(prevMessage.timestamp).setHours(0, 0, 0, 0);
-  
-  return currentDate !== prevDate;
-};
-
-const isFirstInGroup = (message, index) => {
-  if (index === 0) return true;
-  
-  const prevMessage = currentConversation.value.messages[index - 1];
-  return prevMessage.isOwner !== message.isOwner || 
-         (new Date(message.timestamp) - new Date(prevMessage.timestamp)) > 5 * 60 * 1000; // 5 minutos
-};
-
-const isLastInGroup = (message, index) => {
-  if (index === currentConversation.value.messages.length - 1) return true;
-  
-  const nextMessage = currentConversation.value.messages[index + 1];
-  return nextMessage.isOwner !== message.isOwner || 
-         (new Date(nextMessage.timestamp) - new Date(message.timestamp)) > 5 * 60 * 1000; // 5 minutos
-};
-
-const selectConversation = (conversationId) => {
+async function selectConversation(conversationId) {
   activeConversation.value = conversationId;
-  
-  // Marcar como leída
-  const conversation = conversations.value.find(c => c.id === conversationId);
-  if (conversation && conversation.unread) {
-    conversation.unread = false;
-  }
-  
-  // Simular "está escribiendo" ocasionalmente
-  if (Math.random() > 0.7) {
-    setTimeout(() => {
-      isTyping.value = true;
-      
-      setTimeout(() => {
-        isTyping.value = false;
-      }, 3000);
-    }, 2000);
-  }
-  
-  // Scroll al final de los mensajes
-  nextTick(() => {
-    scrollToBottom();
-  });
-};
-
+  const { data } = await getMessages(conversationId);
+  conversationMessages.value = data;
+  // Marcar como leído (si tienes endpoint)
+  try {
+    await axios.post('/api/messages/markAsRead', { conversation_id: conversationId }, apiHeaders());
+    const c = conversations.value.find(c => c.id === conversationId);
+    if (c) c.unread = false;
+  } catch {}
+  nextTick(scrollToBottom);
+}
 const scrollToBottom = () => {
-  if (messagesList.value) {
-    messagesList.value.scrollTop = messagesList.value.scrollHeight;
+  if (messagesList.value) messagesList.value.scrollTop = messagesList.value.scrollHeight;
+};
+const openComposeModal = () => {
+  showComposeModal.value = true;
+  newConversation.value = { reservationId: '', message: '' };
+};
+const closeComposeModal = () => showComposeModal.value = false;
+async function sendNewMessage() {
+  if (!newConversation.value.reservationId) return;
+  const { data: conversation } = await createConversation(newConversation.value.reservationId);
+  if (!conversations.value.some(c => c.id === conversation.id)) conversations.value.push(conversation);
+  await selectConversation(conversation.id);
+  if (newConversation.value.message) {
+    await sendMessage(conversation.id, newConversation.value.message);
+    await selectConversation(conversation.id);
   }
-};
-
-const toggleInfoPanel = () => {
-  showInfoPanel.value = !showInfoPanel.value;
-};
-
-const showBookingDetails = () => {
-  // Aquí iría la lógica para mostrar los detalles de la reserva
-  console.log('Mostrar detalles de la reserva:', currentConversation.value.booking);
-};
-
-const sendMessage = () => {
+  closeComposeModal();
+}
+async function sendMessageHandler() {
   if (!newMessage.value.trim() && attachments.value.length === 0) return;
-  
-  // Añadir el nuevo mensaje a la conversación
-  currentConversation.value.messages.push({
-    text: newMessage.value,
-    timestamp: new Date(),
-    isOwner: true,
-    status: 'sent'
-  });
-  
-  // Actualizar el último mensaje
-  currentConversation.value.lastMessage = {
-    text: newMessage.value,
-    timestamp: new Date(),
-    isOwner: true,
-    status: 'sent'
-  };
-  
-  // Limpiar el campo de mensaje y los adjuntos
+  await sendMessage(activeConversation.value, newMessage.value, attachments.value[0]?.file || null);
+  await selectConversation(activeConversation.value);
   newMessage.value = '';
   attachments.value = [];
-  
-  // Scroll al final de los mensajes
-  nextTick(() => {
-    scrollToBottom();
-    
-    // Simular cambio de estado del mensaje
-    setTimeout(() => {
-      currentConversation.value.lastMessage.status = 'delivered';
-      currentConversation.value.messages[currentConversation.value.messages.length - 1].status = 'delivered';
-      
-      setTimeout(() => {
-        currentConversation.value.lastMessage.status = 'read';
-        currentConversation.value.messages[currentConversation.value.messages.length - 1].status = 'read';
-      }, 2000);
-    }, 1000);
-  });
-};
-
-const triggerFileInput = () => {
-  fileInput.value.click();
-};
-
+}
+const triggerFileInput = () => fileInput.value.click();
 const handleFileUpload = (event) => {
   const files = event.target.files;
   if (!files.length) return;
-  
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     const reader = new FileReader();
-    
     reader.onload = (e) => {
       attachments.value.push({
         name: file.name,
         type: file.type,
         size: file.size,
-        preview: file.type.startsWith('image/') ? e.target.result : null
+        preview: file.type.startsWith('image/') ? e.target.result : null,
+        file: file
       });
     };
-    
     reader.readAsDataURL(file);
   }
-  
-  // Limpiar el input para permitir seleccionar el mismo archivo nuevamente
   event.target.value = '';
 };
+const removeAttachment = (index) => attachments.value.splice(index, 1);
 
-const removeAttachment = (index) => {
-  attachments.value.splice(index, 1);
-};
+// --- Evento de typing ---
+let typingTimeout = null;
+function sendTyping() {
+  if (!activeConversation.value) return;
+  if (typingTimeout) clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(async () => {
+    await axios.post('/api/messages/typing', { conversation_id: activeConversation.value }, apiHeaders());
+  }, 200);
+}
 
-const openComposeModal = () => {
-  showComposeModal.value = true;
-  newConversation.value = {
-    recipientId: '',
-    propertyId: '',
-    message: ''
-  };
-};
+// --- Integración de tiempo real ---
+onMounted(async () => {
+  if (window.Echo) {
+    window.Echo.connector.pusher.connection.bind('connected', function() {
+      console.log('Conectado a Pusher!');
+    });
+  }
+  // Carga inicial
+  const { data } = await getConversations();
+  conversations.value = data;
+  if (conversations.value.length > 0) await selectConversation(conversations.value[0].id);
 
-const closeComposeModal = () => {
-  showComposeModal.value = false;
-};
-
-const sendNewMessage = () => {
-  // Aquí iría la lógica para enviar un nuevo mensaje
-  console.log('Enviando nuevo mensaje:', newConversation.value);
-  
-  // Cerrar el modal
-  closeComposeModal();
-};
-
-// Observar cambios en los mensajes para mantener el scroll al final
-watch(() => currentConversation.value?.messages.length, () => {
-  nextTick(() => {
-    scrollToBottom();
+  // Escucha mensajes en tiempo real
+  listenMessages((msg) => {
+    console.log('[FRONT] Mensaje recibido:', msg);
+    if (activeConversation.value && msg.conversation_id === activeConversation.value) {
+      conversationMessages.value.push(msg);
+      nextTick(scrollToBottom);
+    } else {
+      const c = conversations.value.find(c => c.id === msg.conversation_id);
+      if (c) c.unread = true;
+    }
   });
+
+  // Escucha typing en tiempo real
+  listenTyping((fromUserId) => {
+    const currentOtherId = getOtherUserId(currentConversation.value);
+    if (currentConversation.value && fromUserId === currentOtherId) {
+      isTyping.value = true;
+      setTimeout(() => isTyping.value = false, 2000);
+    }
+  });
+
+  // Escucha online
+  listenOnline();
 });
 
-// Inicializar
-onMounted(() => {
-  // Si hay conversaciones, seleccionar la primera por defecto
-  if (conversations.value.length > 0) {
-    selectConversation(conversations.value[0].id);
+watch(
+  () => conversationMessages.value.length,
+  () => nextTick(scrollToBottom)
+);
+
+watch(activeConversation, (conversationId, oldId) => {
+  if (window.Echo) {
+    if (oldId) window.Echo.leave(`chat.${oldId}`);
+      window.Echo.private(`chat.${conversationId}`)
+      .listen('.message.sent', (e) => {
+        console.log('[FRONT] Mensaje recibido:', e.message);
+      })
+      .listen('.user.typing', (e) => {
+          console.log('[FRONT] Usuario está escribiendo:', e.from_user_id);
+          // ... tu lógica de typing aquí ...
+        })
   }
 });
 </script>
+
 
 <style scoped>
 .messages-section {

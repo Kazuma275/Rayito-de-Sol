@@ -13,65 +13,53 @@
       </div>
     </div>
 
-    <!-- Resumen del usuario obtenido vía API -->
-    <div v-if="loadingUser" class="user-summary">Cargando resumen...</div>
-    <div v-else-if="userError" class="user-summary error">Error: {{ userError }}</div>
-    <div v-else class="user-summary">
-      <ul>
-        <li><strong>Email:</strong> {{ userSummary.email }}</li>
-        <li><strong>Propiedades:</strong> {{ userSummary.totalProperties }}</li>
-        <li><strong>Reservas totales:</strong> {{ userSummary.totalBookings }}</li>
-        <li><strong>Ingresos del mes:</strong> {{ userSummary.monthlyRevenue }} €</li>
-        <li><strong>Ocupación:</strong> {{ userSummary.occupancyRate }} %</li>
-      </ul>
-    </div>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon-wrapper">
-          <HomeIcon class="stat-icon" />
-          <div class="stat-icon-glow"></div>
-        </div>
-        <div class="stat-content">
-          <p class="stat-value">{{ userSummary?.totalProperties ?? '-' }}</p>
-          <h3 class="stat-title">Propiedades</h3>
-        </div>
+      <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon-wrapper">
+        <HomeIcon class="stat-icon" />
+        <div class="stat-icon-glow"></div>
       </div>
-
-      <div class="stat-card">
-        <div class="stat-icon-wrapper">
-          <CalendarIcon class="stat-icon" />
-          <div class="stat-icon-glow"></div>
-        </div>
-        <div class="stat-content">
-          <p class="stat-value">{{ userSummary?.totalBookings ?? '-' }}</p>
-          <h3 class="stat-title">Reservas</h3>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon-wrapper">
-          <TrendingUpIcon class="stat-icon" />
-          <div class="stat-icon-glow"></div>
-        </div>
-        <div class="stat-content">
-          <p class="stat-value">{{ userSummary?.occupancyRate ?? '-' }}%</p>
-          <h3 class="stat-title">Ocupación</h3>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon-wrapper">
-          <EuroIcon class="stat-icon" />
-          <div class="stat-icon-glow"></div>
-        </div>
-        <div class="stat-content">
-          <p class="stat-value">{{ userSummary?.monthlyRevenue ?? '-' }}€</p>
-          <h3 class="stat-title">Ingresos</h3>
-        </div>
+      <div class="stat-content">
+        <p class="stat-value">{{ properties.length }}</p>
+        <h3 class="stat-title">Propiedades</h3>
       </div>
     </div>
-    
+    <div class="stat-card">
+      <div class="stat-icon-wrapper">
+        <CalendarIcon class="stat-icon" />
+        <div class="stat-icon-glow"></div>
+      </div>
+      <div class="stat-content">
+        <p class="stat-value">{{ reservations.length }}</p>
+        <h3 class="stat-title">Reservas</h3>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper">
+        <TrendingUpIcon class="stat-icon" />
+        <div class="stat-icon-glow"></div>
+      </div>
+      <div class="stat-content">
+        <p class="stat-value">
+          {{ occupancyRate }}%
+        </p>
+        <h3 class="stat-title">Ocupación</h3>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper">
+        <EuroIcon class="stat-icon" />
+        <div class="stat-icon-glow"></div>
+      </div>
+      <div class="stat-content">
+        <p class="stat-value">
+          {{ totalRevenue }}€
+        </p>
+        <h3 class="stat-title">Ingresos</h3>
+      </div>
+    </div>
+  </div>
+      
     <div class="dashboard-grid">
       <div class="dashboard-column">
         <div class="dashboard-card">
@@ -83,22 +71,25 @@
             </button>
           </div>
           
-          <div v-if="upcomingBookings.length > 0" class="upcoming-bookings">
-            <div v-for="booking in upcomingBookings" :key="booking.id" class="booking-item">
-              <div class="booking-property">
-                <img :src="getPropertyById(booking.property_id)?.image || '/img/placeholder.jpg'" />
-                <h4>{{ getPropertyById(booking.property_id)?.name || 'Propiedad' }}</h4>
-                <p class="booking-dates">{{ formatDate(booking.details?.check_in) }} - {{ formatDate(booking.details?.check_out) }}</p>
-              </div>
-              <div class="booking-guest">
-                <UserIcon class="guest-icon" />
-                <div>
-                  <p class="guest-name">{{ booking.guestName || 'Invitado' }}</p>
-                  <p class="guest-info">{{ booking.details?.guests || '-' }} huéspedes</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div v-if="upcomingBookingsPreview && upcomingBookingsPreview.length > 0" class="upcoming-bookings">
+  <div v-for="booking in upcomingBookingsPreview" :key="booking.id" class="booking-item">
+    <div class="booking-property">
+      <img :src="getPropertyById(booking.property_id || booking.propertyId)?.image || '/img/placeholder.jpg'" class="booking-image" />
+      <h4>{{ getPropertyById(booking.property_id || booking.propertyId)?.name || 'Propiedad' }}</h4>
+      <p class="booking-dates">
+        {{ formatDate(booking.details?.check_in || booking.checkIn) }} -
+        {{ formatDate(booking.details?.check_out || booking.checkOut) }}
+      </p>
+    </div>
+    <div class="booking-guest">
+      <UserIcon class="guest-icon" />
+      <div>
+        <p class="guest-name">{{ booking.guestName || booking.user?.name || 'Invitado' }}</p>
+        <p class="guest-info">{{ booking.details?.guests || booking.guests || '-' }} huéspedes</p>
+      </div>
+    </div>
+  </div>
+</div>
           <div v-else class="empty-state">
             <CalendarOffIcon class="empty-icon" />
             <p>No hay reservas próximas</p>
@@ -129,9 +120,12 @@
               <div class="property-stats">
                 <div class="property-stat">
                   <p class="stat-label">Ocupación</p>
-                  <div class="progress-bar">
-                    <div class="progress" :style="{ width: `${property.occupancy}%` }"></div>
-                  </div>
+<div class="progress-bar">
+  <div
+    class="progress"
+    :style="{ width: property.occupancy + '%' }"
+  ></div>
+</div>
                   <p class="stat-percentage">{{ property.occupancy }}%</p>
                 </div>
                 <div class="property-stat">
@@ -233,80 +227,137 @@ import {
 } from 'lucide-vue-next'
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
+import { getItem } from '@/helpers/storage';
 
 const router = useRouter()
+const upcomingBookingsPreview = computed(() => (upcomingBookings.value || []).slice(0, 5));
 
 // Estado local para el resumen de usuario y manejo de carga/error
 const userSummary = ref(null)
 const loadingUser = ref(true)
 const userError = ref(null)
 
-// Propiedades de ejemplo (puedes cargar desde API real si lo necesitas)
-const properties = ref([]) // Array de propiedades [{ id, name, image, location, occupancy, revenue }]
+const properties = ref([]) // Array de propiedades
+
+const occupancyRate = computed(() => {
+  if (!properties.value.length) return 0;
+
+  // Asume año actual
+  const currentYear = new Date().getFullYear();
+  const yearStart = new Date(currentYear, 0, 1);
+  const yearEnd = new Date(currentYear + 1, 0, 1);
+
+  let totalNightsBooked = 0;
+
+  reservations.value.forEach(r => {
+    const checkIn = r.checkIn ? new Date(r.checkIn) : null;
+    const checkOut = r.checkOut ? new Date(r.checkOut) : null;
+    if (checkIn && checkOut) {
+      // Solo cuenta noches en el año actual
+      let start = checkIn < yearStart ? yearStart : checkIn;
+      let end = checkOut > yearEnd ? yearEnd : checkOut;
+      // Si la reserva no pisa el año actual, ignórala
+      if (end > start) {
+        totalNightsBooked += (end - start) / (1000 * 60 * 60 * 24);
+      }
+    }
+  });
+
+  const totalPossibleNights = properties.value.length * 365;
+
+  // Log para depuración
+  console.log({
+    totalNightsBooked,
+    totalPossibleNights,
+    resultado: totalPossibleNights ? Math.round((totalNightsBooked / totalPossibleNights) * 100) : 0
+  });
+
+  return totalPossibleNights ? Math.round((totalNightsBooked / totalPossibleNights) * 100) : 0;
+});
+
+
+const reservations = ref([]);
 const recentMessages = ref([]) // Array de mensajes recientes
 const recentActivity = ref([]) // Array de actividad reciente
+const revenueByProperty = computed(() => userSummary.value?.revenueByProperty ?? [])
 
-// Cargar datos del usuario y las propiedades al montar
+
+
 onMounted(async () => {
   loadingUser.value = true
   userError.value = null
   try {
-    const token = localStorage.getItem('auth_token')
-    const res = await axios.get('http://localhost:8000/api/user/summary', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    })
+    const token = getItem('auth_token', true) || getItem('auth_token');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/json'
+    };
+    
+    // Resumen usuario
+    const res = await axios.get('http://localhost:8000/api/user/summary', { headers })
     userSummary.value = res.data
+    
+    // Cargar propiedades
+    const propRes = await axios.get('http://localhost:8000/api/properties', { headers })
+    console.log("Respuesta propiedades:", propRes.data)
+    // Cargar reservas
+    const bookingsRes = await axios.get('http://localhost:8000/api/bookings', { headers })
+    reservations.value = bookingsRes.data
+    
+    // Mapea propiedades y añade revenue/occupancy
+properties.value = propRes.data.map(prop => {
+  const propBookings = reservations.value.filter(r =>
+    r.property_id == prop.id || r.propertyId == prop.id
+  );
+  let totalNights = 0;
+  let revenue = 0;
+  propBookings.forEach(r => {
+    const inD = r.checkIn;
+    const outD = r.checkOut;
+    if (inD && outD) {
+      const nights = (new Date(outD) - new Date(inD)) / (1000 * 60 * 60 * 24);
+      totalNights += nights;
+    }
+    // Asume que el ingreso de la reserva = precio de la propiedad actual (¡mejor si lo guardas en la reserva en el futuro!)
+    revenue += Number(r.property?.price || 0);
+  });
+  const occupancy = Math.round((totalNights / 365) * 100);
+  return { ...prop, occupancy, revenue };
+});
 
-    // Si tu backend devuelve las propiedades y mensajes recientes, asígnalos aquí
-    // properties.value = res.data.properties || []
-    // recentMessages.value = res.data.recentMessages || []
-    // recentActivity.value = res.data.recentActivity || []
+} catch (err) {
+  userError.value = err.response?.data?.message || err.message
+} finally {
+  loadingUser.value = false
+}
 
-  } catch (err) {
-    userError.value = err.response?.data?.message || err.message
-  } finally {
-    loadingUser.value = false
-  }
 })
 
-// Computed para próximas reservas y mensajes recientes
-const upcomingBookings = computed(() => userSummary.value?.upcomingBookings || [])
-// Si tu backend devuelve las propiedades, usa userSummary.value.properties o properties.value
-const getPropertyById = (id) => {
-  return properties.value.find(p => p.id === id)
-}
+const totalRevenue = computed(() => {
+  return properties.value.reduce((acc, p) => acc + Number(p.price || 0), 0);
+});
 
-// Fechas
-const formatDate = (dateStr) => {
-  if (!dateStr) return '-'
-  const d = new Date(dateStr)
-  return d.toLocaleDateString()
-}
-const formatDateTime = (dateStr) => {
-  if (!dateStr) return '-'
-  const d = new Date(dateStr)
-  return d.toLocaleString()
-}
+// Computed para próximas reservas (filtra en frontend)
+const upcomingBookings = computed(() => {
+  const now = new Date();
+  return (reservations.value || []).filter(r => {
+    const checkIn = r.checkIn || r.details?.check_in || r.check_in || null;
+    return checkIn && new Date(checkIn) >= now;
+  });
+});
 
-// Navegación
-const navigateTo = (route) => {
-  router.push(`/manage/${route}`)
-}
-
-// Icono de actividad
-const getActivityIcon = (type) => {
-  const icons = {
-    'booking': CalendarIcon,
-    'message': MessageSquareIcon,
-    'alert': AlertCircleIcon,
-    'update': BellIcon
-  }
-  return icons[type] || BellIcon
-}
-
+const getPropertyById = (id) => properties.value.find(p => p.id == id)
+const formatDate = (dateStr) => !dateStr ? '-' : new Date(dateStr).toLocaleDateString()
+const formatDateTime = (dateStr) => !dateStr ? '-' : new Date(dateStr).toLocaleString()
+const navigateTo = (route) => router.push(`/manage/${route}`)
+const getActivityIcon = (type) => ({
+  'booking': CalendarIcon,
+  'message': MessageSquareIcon,
+  'alert': AlertCircleIcon,
+  'update': BellIcon
+}[type] || BellIcon)
+console.log(reservations.value)
+console.log(reservations.value.slice(0, 5));
 </script>
 
 <style scoped>
@@ -686,8 +737,8 @@ const getActivityIcon = (type) => {
   height: 100%;
   background: linear-gradient(to right, #0071c2, #003580);
   border-radius: 4px;
+  transition: width 0.5s;
 }
-
 .stat-percentage {
   font-size: 0.9rem;
   font-weight: 600;
