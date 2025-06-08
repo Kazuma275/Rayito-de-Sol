@@ -8,6 +8,7 @@ use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\UnavailableDateController;
 use App\Http\Controllers\PropertyDayPriceController;
 use App\Http\Controllers\StatisticsController;
@@ -31,51 +32,55 @@ Route::get('/test-cors', function () {
     return response()->json(['message' => 'CORS está funcionando!']);
 });
 
-// --- RUTAS PROTEGIDAS ---
+// --- PROPIEDADES (PÚBLICO) ---
+Route::get('/properties', [PropertyController::class, 'index']);
+Route::get('/properties/{id}', [PropertyController::class, 'show']);
+
+// --- DÍAS NO DISPONIBLES (PÚBLICO) ---
+Route::get('/properties/{id}/unavailable-dates', [UnavailableDateController::class, 'index']);
+
+// --- PRECIOS POR DÍA (PÚBLICO) ---
+Route::get('/properties/{id}/day-prices', [PropertyDayPriceController::class, 'index']);
+
+// Precios por día (crear y borrar)
+Route::post('/properties/{id}/day-prices', [PropertyDayPriceController::class, 'store']);
+Route::delete('/properties/{id}/day-prices', [PropertyDayPriceController::class, 'destroy']);
+Route::post('/properties/{id}/unavailable-dates', [UnavailableDateController::class, 'store']);
+Route::delete('/properties/{id}/unavailable-dates', [UnavailableDateController::class, 'destroy']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/messages/send', [MessageController::class, 'send']);
+    Route::post('/messages/typing', [MessageController::class, 'typing']);
+});
+
+// --- RUTAS PROTEGIDAS SOLO LAS NECESARIAS ---
 Route::middleware('auth:sanctum')->group(function () {
     // Perfil de usuario
     Route::get('/user/profile', [UserController::class, 'profile']);
     Route::patch('/user/profile', [UserController::class, 'updateProfile']);
-
-    // Favoritos del usuario
+    Route::post('/user/change-password', [UserController::class, 'changePassword']);
     Route::get('/user/favorites', [FavoriteController::class, 'index']);
-
-    // Reservas (Bookings) ADMIN (todas)
-    Route::get('/bookings', [ReservationController::class, 'index']);
-
-    // Crear reserva (huésped)
-    Route::post('/reservations', [ReservationController::class, 'store']);
-
-    // Ver reservas sólo de las propiedades del propietario autenticado
-    Route::get('/owner/bookings', [ReservationController::class, 'ownerBookings']);
-
-    // Gestionar reservas por propiedad concreta
-    Route::get('/properties/{id}/bookings', [ReservationController::class, 'propertyBookings']);
-
     Route::get('/user/summary', [UserController::class, 'dashboardSummary']);
 
-    // Acciones sobre reservas específicas (requiere métodos en el controller)
+    // Reservas
+    Route::get('/bookings', [ReservationController::class, 'index']);
+    Route::post('/reservations', [ReservationController::class, 'store']);
+    Route::get('/owner/bookings', [ReservationController::class, 'ownerBookings']);
+    Route::get('/properties/{id}/bookings', [ReservationController::class, 'propertyBookings']);
     Route::post('/reservations/{reservation}/accept', [ReservationController::class, 'accept']);
     Route::post('/reservations/{reservation}/reject', [ReservationController::class, 'reject']);
 
-    Route::middleware('auth:sanctum')->get('/statistics', [App\Http\Controllers\StatisticsController::class, 'statistics']);
+    // Crear propiedad
+    Route::post('/properties', [PropertyController::class, 'store']);
 
+
+    // Mensajes y conversaciones
+    Route::get('/conversations', [ConversationController::class, 'index']);
+    Route::post('/conversations', [ConversationController::class, 'store']);
+    Route::get('/conversations/{id}', [ConversationController::class, 'show']);
+    Route::get('/conversations/{conversation}/messages', [MessageController::class, 'index']);
+    Route::post('/conversations/{conversation}/messages', [MessageController::class, 'store']);
+
+    // Estadísticas
+    Route::get('/statistics', [StatisticsController::class, 'statistics']);
 });
-
-// --- PROPIEDADES ---
-Route::get('/properties', [PropertyController::class, 'index']);
-Route::get('/properties/{id}', [PropertyController::class, 'show']);
-Route::post('/properties', [PropertyController::class, 'store']);
-
-// --- DÍAS NO DISPONIBLES ---
-Route::get('/properties/{id}/unavailable-dates', [UnavailableDateController::class, 'index']);
-Route::post('/properties/{id}/unavailable-dates', [UnavailableDateController::class, 'store']);
-Route::delete('/properties/{id}/unavailable-dates', [UnavailableDateController::class, 'destroy']);
-
-// --- PRECIOS POR DÍA ---
-Route::get('/properties/{id}/day-prices', [PropertyDayPriceController::class, 'index']);
-Route::post('/properties/{id}/day-prices', [PropertyDayPriceController::class, 'store']);
-Route::delete('/properties/{id}/day-prices', [PropertyDayPriceController::class, 'destroy']);
-
-// --- MENSAJES ---
-// Route::get('/messages', [MessageController::class, 'index']);
