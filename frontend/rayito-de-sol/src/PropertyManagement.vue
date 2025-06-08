@@ -80,11 +80,11 @@
         v-if="activeTab === 'settings'"
         :settings-tabs="settingsTabs"
         :active-settings-tab="activeSettingsTab"
-        :profile="localSettings.profile"
+        :profile="userData"
         :preview-image="previewImage"
-        :notifications="localSettings.notifications"
+        :notifications="notificationSettings"
         :payment-methods="paymentMethods"
-        :bank-account="localSettings.payment"
+        :bank-account="bankAccount"
         @change-tab="setActiveSettingsTab"
         @change-avatar="handleAvatarChange"
         @save-profile="saveProfile"
@@ -226,7 +226,7 @@ onMounted(async () => {
     console.log('[PADRE] Iniciando carga de datos...');
 
     const [userRes, propsRes, bookingsRes, messagesRes] = await Promise.allSettled([
-      axios.get('/api/user', apiHeaders()),
+      /* axios.get('/api/user', apiHeaders()), */
       axios.get('/api/properties', apiHeaders()),
       axios.get('/api/bookings', apiHeaders()),
       axios.get('/api/messages', apiHeaders()),
@@ -1092,6 +1092,7 @@ const changeTab = (tabId) => {
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  pointer-events: none; 
 }
 
 .modal-content {
@@ -1521,7 +1522,7 @@ const changeTab = (tabId) => {
   width: 16px;
   height: 16px;
   color: #64748b;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .calendar-navigation {
