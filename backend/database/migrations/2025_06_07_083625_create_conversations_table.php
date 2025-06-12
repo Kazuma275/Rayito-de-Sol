@@ -14,6 +14,8 @@ class CreateConversationsTable extends Migration
             $table->foreignId('user_two_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('property_id')->nullable()->constrained('properties')->onDelete('set null');
             $table->foreignId('reservation_id')->nullable()->constrained('reservations')->onDelete('set null');
+            $table->foreignId('guest_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('owner_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
 
             $table->unique(['user_one_id', 'user_two_id', 'property_id', 'reservation_id'], 'unique_conversation');
