@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useUserStore } from '@/stores/userStore';
 import { SunIcon, ChevronDownIcon, SettingsIcon, LogOutIcon, HelpCircleIcon } from 'lucide-vue-next';
 
@@ -80,6 +80,15 @@ const changeTab = (tab) => {
     userMenuOpen.value = false;
   }
 };
+
+onMounted(() => {
+  userStore.hydrate();
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'auth_user' || event.key === 'auth_token') {
+      userStore.hydrate();
+    }
+  });
+});
 
 const logout = () => {
   userStore.logout();

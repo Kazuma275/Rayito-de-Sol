@@ -293,7 +293,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import axios from 'axios'
+import api from '@/axios'
 import {
   RefreshCwIcon,
   ChevronLeftIcon,
@@ -571,7 +571,7 @@ async function fetchProperties() {
       Authorization: `Bearer ${token}`
     }
   }
-  const res = await axios.get('/api/properties', authHeaders)
+  const res = await api.get('/properties', authHeaders)
   properties.value = res.data
   if (properties.value.length > 0 && !selectedPropertyId.value) {
     selectedPropertyId.value = properties.value[0].id
@@ -609,10 +609,10 @@ async function fetchCalendarDataForProperty(propertyId) {
     // Si cruza al siguiente mes, también obtenemos esos datos
     if (weekStart.getMonth() !== weekEnd.getMonth()) {
       const [bookingsRes, unavailableRes, pricesRes1, pricesRes2] = await Promise.all([
-        axios.get(`/api/properties/${propertyId}/bookings`, authHeaders),
-        axios.get(`/api/properties/${propertyId}/unavailable-dates`, authHeaders),
-        axios.get(`/api/properties/${propertyId}/day-prices?year=${year}&month=${month}`, authHeaders),
-        axios.get(`/api/properties/${propertyId}/day-prices?year=${weekEnd.getFullYear()}&month=${weekEnd.getMonth() + 1}`, authHeaders)
+        api.get(`/properties/${propertyId}/bookings`, authHeaders),
+        api.get(`/properties/${propertyId}/unavailable-dates`, authHeaders),
+        api.get(`/properties/${propertyId}/day-prices?year=${year}&month=${month}`, authHeaders),
+        api.get(`/properties/${propertyId}/day-prices?year=${weekEnd.getFullYear()}&month=${weekEnd.getMonth() + 1}`, authHeaders)
       ])
       
       bookings.value = bookingsRes.data
@@ -623,9 +623,9 @@ async function fetchCalendarDataForProperty(propertyId) {
       }
     } else {
       const [bookingsRes, unavailableRes, pricesRes] = await Promise.all([
-        axios.get(`/api/properties/${propertyId}/bookings`, authHeaders),
-        axios.get(`/api/properties/${propertyId}/unavailable-dates`, authHeaders),
-        axios.get(`/api/properties/${propertyId}/day-prices?year=${year}&month=${month}`, authHeaders)
+        api.get(`/properties/${propertyId}/bookings`, authHeaders),
+        api.get(`/properties/${propertyId}/unavailable-dates`, authHeaders),
+        api.get(`/properties/${propertyId}/day-prices?year=${year}&month=${month}`, authHeaders)
       ])
       
       bookings.value = bookingsRes.data
@@ -640,9 +640,9 @@ async function fetchCalendarDataForProperty(propertyId) {
     month = currentMonth.value + 1
     
     const [bookingsRes, unavailableRes, pricesRes] = await Promise.all([
-      axios.get(`/api/properties/${propertyId}/bookings`, authHeaders),
-      axios.get(`/api/properties/${propertyId}/unavailable-dates`, authHeaders),
-      axios.get(`/api/properties/${propertyId}/day-prices?year=${year}&month=${month}`, authHeaders)
+      api.get(`/properties/${propertyId}/bookings`, authHeaders),
+      api.get(`/properties/${propertyId}/unavailable-dates`, authHeaders),
+      api.get(`/properties/${propertyId}/day-prices?year=${year}&month=${month}`, authHeaders)
     ])
     
     bookings.value = bookingsRes.data
@@ -687,12 +687,12 @@ async function setBulkAvailability(available) {
 
     const dateString = d.toISOString().split('T')[0];
     if (available) {
-      await axios.delete(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
+      await api.delete(`/properties/${selectedPropertyId.value}/unavailable-dates`, {
         data: { date: dateString }
       });
     } else {
-      await axios.post(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, { date: dateString });
-      await axios.delete(`/api/properties/${selectedPropertyId.value}/day-prices`, {
+      await api.post(`/properties/${selectedPropertyId.value}/unavailable-dates`, { date: dateString });
+      await api.delete(`/properties/${selectedPropertyId.value}/day-prices`, {
         data: { date: dateString }
       });
     }
@@ -751,17 +751,17 @@ async function saveDayChanges() {
   }
 
   if (selectedDayStatus.value === 'unavailable') {
-    await axios.post(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
+    await api.post(`/properties/${selectedPropertyId.value}/unavailable-dates`, {
       date: selectedDate.value
     });
-    await axios.delete(`/api/properties/${selectedPropertyId.value}/day-prices`, {
+    await api.delete(`/properties/${selectedPropertyId.value}/day-prices`, {
       data: { date: selectedDate.value }
     });
   } else if (selectedDayStatus.value === 'available') {
-    await axios.delete(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
+    await api.delete(`/properties/${selectedPropertyId.value}/unavailable-dates`, {
       data: { date: selectedDate.value }
     });
-    await axios.post(`/api/properties/${selectedPropertyId.value}/day-prices`, {
+    await api.post(`/properties/${selectedPropertyId.value}/day-prices`, {
       date: selectedDate.value,
       price: selectedDayPrice.value
     });

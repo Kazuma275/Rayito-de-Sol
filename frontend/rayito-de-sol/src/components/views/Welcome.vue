@@ -54,25 +54,6 @@ const monthlyRevenue = computed(() => {
     .reduce((sum, b) => sum + (b.details?.total_price || 0), 0)
 })
 
-const fetchStatistics = async () => {
-  loading.value = true
-  error.value = null
-  try {
-    const token = localStorage.getItem('auth_token')
-    const res = await axios.get('http://localhost:8000/api/statistics', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    })
-    statistics.value = res.data
-  } catch (err) {
-    error.value = err.response?.data?.message || err.message
-  } finally {
-    loading.value = false
-  }
-}
-
 // Funciones para redirección
 function goToProperties() {
   router.push({ name: 'Properties' })
@@ -85,9 +66,6 @@ function goToPayments() {
   router.push({ name: 'Bookings' })
 }
 
-onMounted(() => {
-  fetchStatistics()
-})
 </script>
 
 <template>
