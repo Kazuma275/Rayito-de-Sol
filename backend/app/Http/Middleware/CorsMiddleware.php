@@ -23,7 +23,7 @@ class CorsMiddleware
         $response->headers->set('Access-Control-Allow-Origin', 'http://localhost:5173');
         $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH');
         $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Authorization');
-        $response->headers->set('Access-Control-Allow-Credentials', 'true');
+        $response->headers->set('Access-Control-Allow-Credentials', 'false');
 
         // Si la solicitud es de tipo OPTIONS (pre-flight), responder con un código 200
         if ($request->getMethod() == "OPTIONS") {
