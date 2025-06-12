@@ -34,6 +34,20 @@ class PropertyController extends Controller
             'property' => $property
         ]);
     }
+
+    public function destroy($id)
+    {
+        $property = Property::findOrFail($id);
+        $property->delete();
+
+        return response()->json(['message' => 'Propiedad eliminada correctamente']);
+    }
+    /**
+     * Store a newly created property in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request)
     {
         $data = $request->validate([
