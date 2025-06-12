@@ -17,6 +17,7 @@ class User extends Authenticatable
         'name',
         'username',
         'email',
+        'phone',
         'password',
         'token_verificacion',
         'verificado',
@@ -24,18 +25,36 @@ class User extends Authenticatable
         'role',
         'email_verified_at',
         'remember_token',
+        'reset_password_token',
+        'reset_password_expires_at',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'reset_password_token',
     ];
 
     protected $casts = [
+        'email_verified_at' => 'datetime',
         'verificado' => 'boolean',
+        'reset_password_expires_at' => 'datetime',
         'fecha_registro' => 'datetime',
     ];
 
+    // Método para verificar si el usuario tiene un rol específico
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
+
+    // Método para verificar si el usuario es administrador
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    // Tus relaciones existentes...
     public function contacts()
     {
         return $this->hasMany(Contact::class, 'user_id');
@@ -77,6 +96,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class, 'sender_id');
     }
+
     public function propertyReservations()
     {
         return $this->hasManyThrough(

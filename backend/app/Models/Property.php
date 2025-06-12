@@ -43,4 +43,19 @@ class Property extends Model
     {
         return $this->hasMany(Conversation::class);
     }
+
+    // Días no disponibles (añade esto)
+    public function unavailableDates()
+    {
+        return $this->hasMany(UnavailableDate::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'property_id');
+    }
+    public function getRatingAttribute()
+    {
+        return round($this->reviews()->avg('rating') ?? 4.5, 1);
+    }
 }

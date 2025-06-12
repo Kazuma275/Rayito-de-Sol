@@ -15,6 +15,13 @@ class Message extends Model
         'text',
         'attachment',
         'status',
+        'read_at',
+    ];
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'read_at',
     ];
 
     // ... relaciones

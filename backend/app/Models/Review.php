@@ -29,4 +29,16 @@ class Review extends Model
     {
         return $this->hasMany(ReviewTranslation::class, 'review_id');
     }
+
+    // En Review.php
+    public function property()
+    {
+        return $this->belongsTo(Property::class, 'property_id');
+    }
+
+    // En Property.php
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'property_id');
+    }
 }
