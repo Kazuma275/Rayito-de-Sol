@@ -74,6 +74,8 @@ class MessagingDemoSeeder extends Seeder
             'property_id' => $property->id,
             'guest_id' => $guest->id,
             'owner_id' => $owner->id,
+            'user_one_id' => $guest->id,
+            'user_two_id' => $owner->id,
         ]);
 
         // Mensajes
