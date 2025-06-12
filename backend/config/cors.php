@@ -2,19 +2,23 @@
 
 return [
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],  // Asegura que CORS se aplica a todas las rutas de API
-
-    'allowed_methods' => ['*'],  // Permite todos los métodos: GET, POST, PUT, DELETE, etc.
-
-    'allowed_origins' => [
-        'http://localhost:5173',  // Permite el acceso desde tu frontend
+    'paths' => [
+        'api/*',
+        'sanctum/csrf-cookie',
+        'broadcasting/auth',
     ],
 
-    'allowed_headers' => ['*'],  // Permite todos los encabezados
+    'allowed_methods' => ['*'],
 
-    'exposed_headers' => [],  // No es necesario exponer encabezados específicos
+    'allowed_origins' => ['http://localhost:5173'],
 
-    'max_age' => 0,  // Tiempo de cache de las solicitudes CORS
+    'allowed_origins_patterns' => [],
 
-    'supports_credentials' => true,  // Permite el envío de cookies y credenciales con las solicitudes
+    'allowed_headers' => ['*'],
+
+    'exposed_headers' => [],
+
+    'max_age' => 0,
+
+    'supports_credentials' => true,
 ];

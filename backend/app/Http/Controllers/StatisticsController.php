@@ -13,30 +13,32 @@ class StatisticsController extends Controller
     {
         $user = Auth::user();
 
-        // Get all properties belonging to the user
+        // Obtener todas las propiedades del usuario
         $properties = Property::where('user_id', $user->id)
             ->select('id', 'name')
             ->get();
 
-        // Get all reservations for the user's properties
+        // Obtener todas las reservas de esas propiedades
         $reservations = Reservation::whereIn('property_id', $properties->pluck('id'))->get();
 
-        // Total properties
+        // Total de propiedades
         $totalProperties = $properties->count();
 
-        // Total bookings
+        // Total de reservas
         $totalBookings = $reservations->count();
 
-        // Total revenue
+        // Revenue total (sumando total_price desde details)
         $totalRevenue = $reservations->sum(function($r) {
-            return $r->details['total_price'] ?? 0;
+            $details = json_decode($r->details, true) ?? [];
+            return $details['total_price'] ?? 0;
         });
 
-        // Occupancy rate (percentage of occupied nights over all possible nights in a year)
+        // Porcentaje de ocupación global (todas las propiedades)
         $totalNights = 0;
         foreach ($reservations as $r) {
-            $checkIn = isset($r->details['check_in']) ? strtotime($r->details['check_in']) : null;
-            $checkOut = isset($r->details['check_out']) ? strtotime($r->details['check_out']) : null;
+            $details = json_decode($r->details, true) ?? [];
+            $checkIn = isset($details['check_in']) ? strtotime($details['check_in']) : null;
+            $checkOut = isset($details['check_out']) ? strtotime($details['check_out']) : null;
             if ($checkIn && $checkOut && $checkOut > $checkIn) {
                 $totalNights += ($checkOut - $checkIn) / (60 * 60 * 24);
             }
@@ -44,38 +46,48 @@ class StatisticsController extends Controller
         $maxNights = $totalProperties * 365;
         $occupancyRate = $maxNights > 0 ? round(($totalNights / $maxNights) * 100) : 0;
 
-        // Bookings per month
+        // Reservas por mes
         $bookingsByMonth = array_fill(1, 12, 0);
         foreach ($reservations as $r) {
-            if (isset($r->details['check_in'])) {
-                $month = date('n', strtotime($r->details['check_in']));
+            $details = json_decode($r->details, true) ?? [];
+            if (isset($details['check_in'])) {
+                $month = date('n', strtotime($details['check_in']));
                 $bookingsByMonth[$month]++;
             }
         }
 
-        // Revenue by property
+        // Revenue y ocupación por propiedad individual
         $revenueByProperty = [];
         foreach ($properties as $property) {
             $revenue = 0;
+            $totalNights = 0;
             foreach ($reservations as $r) {
                 if ($r->property_id == $property->id) {
-                    $revenue += $r->details['total_price'] ?? 0;
+                    $details = json_decode($r->details, true) ?? [];
+                    $revenue += $details['total_price'] ?? 0;
+                    $checkIn = isset($details['check_in']) ? strtotime($details['check_in']) : null;
+                    $checkOut = isset($details['check_out']) ? strtotime($details['check_out']) : null;
+                    if ($checkIn && $checkOut && $checkOut > $checkIn) {
+                        $totalNights += ($checkOut - $checkIn) / (60 * 60 * 24);
+                    }
                 }
             }
+            $occupancy = round(($totalNights / 365) * 100);
             $revenueByProperty[] = [
                 'id' => $property->id,
                 'name' => $property->name,
-                'revenue' => $revenue
+                'revenue' => $revenue,
+                'occupancy' => $occupancy
             ];
         }
 
         return response()->json([
-            'totalProperties' => $totalProperties,
-            'totalBookings' => $totalBookings,
-            'occupancyRate' => $occupancyRate,
-            'totalRevenue' => $totalRevenue,
-            'bookingsByMonth' => $bookingsByMonth, // Example: [1=>2,2=>0,3=>1,...]
-            'revenueByProperty' => $revenueByProperty // Example: [['id'=>1,'name'=>'Property','revenue'=>0], ...]
+            'totalProperties'   => $totalProperties,
+            'totalBookings'     => $totalBookings,
+            'occupancyRate'     => $occupancyRate,
+            'totalRevenue'      => $totalRevenue,
+            'bookingsByMonth'   => $bookingsByMonth,
+            'revenueByProperty' => $revenueByProperty
         ]);
     }
 }

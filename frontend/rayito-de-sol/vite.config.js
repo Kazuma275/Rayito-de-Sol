@@ -1,28 +1,41 @@
-import { fileURLToPath, URL } from 'node:url'
-
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
+import { fileURLToPath, URL } from 'node:url'
 
-// https://vite.dev/config/
+const isDev = process.env.NODE_ENV !== 'production'
+
 export default defineConfig({
-  base: '/portal/',
   plugins: [
     vue(),
-    vueDevTools(),
-  ],
-  build: {
-    outDir: '../backend/public/portal',  
-    emptyOutDir: true,
-  },
+    isDev && vueDevTools(),
+  ].filter(Boolean),
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
-    },
+    }
   },
   server: {
-  proxy: {
-    '/api': 'http://localhost:8000',
-  }
-  }
+    watch: {
+      ignored: [
+        '**/node_modules/**',
+        '**/vendor/**',
+        '**/storage/**',
+        '**/.git/**',
+      ],
+    },
+    proxy: {
+      '/api': 'http://localhost:8000',
+      '/portal/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/portal\/api/, '/api'),
+      },
+      '/contact-support': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })

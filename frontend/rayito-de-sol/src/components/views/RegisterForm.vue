@@ -6,17 +6,17 @@
       
       <form @submit.prevent="handleSubmit" class="register-form">
         <div class="form-group">
-          <label for="name">Nombre completo</label>
+          <label for="username">Nombre completo</label>
           <input 
             type="text" 
-            id="name" 
-            v-model="formData.name" 
+            id="username" 
+            v-model="formData.username" 
             required 
             class="form-input"
-            :class="{ 'input-error': errors.name }"
+            :class="{ 'input-error': errors.username }"
             placeholder="Introduce tu nombre completo"
           />
-          <span v-if="errors.name" class="error-message">{{ errors.name }}</span>
+          <span v-if="errors.username" class="error-message">{{ errors.username }}</span>
         </div>
         
         <div class="form-group">
@@ -108,7 +108,7 @@ import { EyeIcon, EyeOffIcon, LoaderIcon } from 'lucide-vue-next';
 const router = useRouter();
 
 const formData = reactive({
-  name: '',
+  username: '',  
   email: '',
   password: '',
   confirmPassword: '',
@@ -116,7 +116,7 @@ const formData = reactive({
 });
 
 const errors = reactive({
-  name: '',
+  username: '',
   email: '',
   password: '',
   confirmPassword: '',
@@ -135,9 +135,9 @@ const validateForm = () => {
   });
   
   // Validate name
-  if (formData.name.trim().length < 3) {
-    errors.name = 'El nombre debe tener al menos 3 caracteres';
-    isValid = false;
+  if (formData.username.trim().length < 3) {
+  errors.username = 'El nombre de usuario debe tener al menos 3 caracteres';
+  isValid = false;
   }
   
   // Validate email
@@ -178,12 +178,10 @@ const handleSubmit = async () => {
   try {
     // Llamada a la API de Laravel para registrar al usuario
     const response = await axios.post('http://127.0.0.1:8000/api/register', {
-      name: formData.name,
+      username: formData.username,
       email: formData.email,
       password: formData.password,
       password_confirmation: formData.confirmPassword,
-    }, {
-      withCredentials: true,
     });
 
     // Si la respuesta es exitosa, redirigir al login

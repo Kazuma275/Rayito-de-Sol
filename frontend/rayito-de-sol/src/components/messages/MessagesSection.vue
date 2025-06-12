@@ -9,29 +9,31 @@
         </button>
       </div>
     </div>
-    
     <div class="messages-container">
       <div class="messages-sidebar">
         <div class="search-container">
           <div class="search-input">
             <SearchIcon class="search-icon" />
-            <input 
-              type="text" 
-              v-model="searchQuery" 
-              placeholder="Buscar mensajes..." 
+            <input
+              type="text"
+              v-model="searchQuery"
+              placeholder="Buscar mensajes..."
               class="search-field"
             />
-            <button v-if="searchQuery" @click="searchQuery = ''" class="clear-search">
+            <button
+              v-if="searchQuery"
+              @click="searchQuery = ''"
+              class="clear-search"
+            >
               <XIcon class="clear-icon" />
             </button>
           </div>
         </div>
-        
         <div class="conversation-filters">
-          <button 
-            v-for="filter in conversationFilters" 
-            :key="filter.id" 
-            class="filter-button" 
+          <button
+            v-for="filter in conversationFilters"
+            :key="filter.id"
+            class="filter-button"
             :class="{ active: activeFilter === filter.id }"
             @click="activeFilter = filter.id"
           >
@@ -40,121 +42,145 @@
             <span class="filter-count">{{ getFilterCount(filter.id) }}</span>
           </button>
         </div>
-        
         <div class="conversations-list">
-          <div 
-            v-for="conversation in filteredConversations" 
-            :key="conversation.id" 
+          <div
+            v-for="conversation in filteredConversations"
+            :key="conversation.id"
             class="conversation-item"
-            :class="{ 
+            :class="{
               active: activeConversation === conversation.id,
-              unread: conversation.unread
+              unread: conversation.unread,
             }"
             @click="selectConversation(conversation.id)"
           >
             <div class="conversation-avatar">
-              <img 
-                v-if="conversation.avatar" 
-                :src="conversation.avatar" 
-                :alt="conversation.name" 
+              <img
+                v-if="conversation.avatar"
+                :src="conversation.avatar"
+                :alt="conversation.name"
                 class="avatar-image"
               />
               <div v-else class="avatar-placeholder">
                 {{ getInitials(conversation.name) }}
               </div>
-              <div v-if="conversation.online" class="online-indicator"></div>
+              <div
+                v-if="isOnline(getOtherUserId(conversation))"
+                class="online-indicator"
+              ></div>
             </div>
-            
             <div class="conversation-content">
               <div class="conversation-header">
                 <h3 class="conversation-name">{{ conversation.name }}</h3>
-                <span class="conversation-time">{{ formatMessageTime(conversation.lastMessage.timestamp) }}</span>
+                <span class="conversation-time">{{
+                  formatMessageTime(conversation.lastMessage.timestamp)
+                }}</span>
               </div>
-              
               <div class="conversation-property">
                 <HomeIcon class="property-icon" />
-                <span>{{ getPropertyName(conversation.propertyId) }}</span>
+                <span>{{ conversation.property?.name }}</span>
               </div>
-              
               <p class="conversation-preview">
                 <span v-if="conversation.lastMessage.isOwner">Tú: </span>
                 {{ conversation.lastMessage.text }}
               </p>
             </div>
           </div>
-          
-          <div v-if="filteredConversations.length === 0" class="empty-conversations">
+          <div
+            v-if="filteredConversations.length === 0"
+            class="empty-conversations"
+          >
             <MessageSquareOffIcon class="empty-icon" />
             <p>No hay conversaciones que coincidan con tu búsqueda</p>
           </div>
         </div>
       </div>
-      
       <div class="messages-content">
         <div v-if="activeConversation" class="conversation-view">
           <div class="conversation-header">
             <div class="conversation-user">
               <div class="user-avatar">
-                <img 
-                  v-if="currentConversation.avatar" 
-                  :src="currentConversation.avatar" 
-                  :alt="currentConversation.name" 
+                <img
+                  v-if="currentConversation.avatar"
+                  :src="currentConversation.avatar"
+                  :alt="currentConversation.name"
                   class="avatar-image"
                 />
                 <div v-else class="avatar-placeholder">
                   {{ getInitials(currentConversation.name) }}
                 </div>
+                <div
+                  v-if="isOnline(getOtherUserId(currentConversation))"
+                  class="online-indicator"
+                ></div>
               </div>
-              
               <div class="user-info">
                 <h3>{{ currentConversation.name }}</h3>
                 <div class="user-status">
-                  <span v-if="currentConversation.online" class="status online">En línea</span>
-                  <span v-else class="status offline">Última vez {{ formatLastSeen(currentConversation.lastSeen) }}</span>
+                  <span
+                    v-if="isOnline(getOtherUserId(currentConversation))"
+                    class="status online"
+                    >En línea</span
+                  >
+                  <span v-else class="status offline"
+                    >Última vez
+                    {{ formatLastSeen(currentConversation.lastSeen) }}</span
+                  >
                 </div>
               </div>
             </div>
-            
             <div class="conversation-actions">
               <button class="action-button" @click="showBookingDetails">
                 <CalendarIcon class="action-icon" />
                 <span class="action-text">Ver Reserva</span>
               </button>
-              
               <button class="action-button" @click="toggleInfoPanel">
                 <InfoIcon class="action-icon" />
                 <span class="action-text">Info</span>
               </button>
             </div>
           </div>
-          
           <div class="messages-list" ref="messagesList">
-            <div v-for="(message, index) in currentConversation.messages" :key="index" class="message-group">
-              <div v-if="showDateDivider(message, index)" class="date-divider">
+            <div
+              v-for="(message, index) in currentMessages"
+              :key="message.id || index"
+              class="message-group"
+            >
+              <div
+                v-if="showDateDivider(message, currentMessages[index - 1])"
+                class="date-divider"
+              >
                 <span>{{ formatMessageDate(message.timestamp) }}</span>
               </div>
-              
-              <div 
-                class="message-bubble" 
-                :class="{ 
-                  'owner': message.isOwner, 
-                  'guest': !message.isOwner,
-                  'first': isFirstInGroup(message, index),
-                  'last': isLastInGroup(message, index)
+              <div
+                class="message-bubble"
+                :class="{
+                  owner: message.isOwner,
+                  guest: !message.isOwner,
+                  first: isFirstInGroup(message, currentMessages[index - 1]),
+                  last: isLastInGroup(message, currentMessages[index + 1]),
                 }"
               >
                 <div class="message-content">{{ message.text }}</div>
                 <div class="message-time">
                   {{ formatMessageTime(message.timestamp) }}
-                  <span v-if="message.isOwner" class="message-status" :class="message.status">
-                    <CheckIcon v-if="message.status === 'read'" class="status-icon" />
-                    <CheckCheckIcon v-else-if="message.status === 'delivered'" class="status-icon" />
+                  <span
+                    v-if="message.isOwner"
+                    class="message-status"
+                    :class="message.status"
+                  >
+                    <CheckIcon
+                      v-if="message.status === 'read'"
+                      class="status-icon"
+                    />
+                    <CheckCheckIcon
+                      v-else-if="message.status === 'delivered'"
+                      class="status-icon"
+                    />
                     <ClockIcon v-else class="status-icon" />
                   </span>
                 </div>
               </div>
             </div>
-            
             <div v-if="isTyping" class="typing-indicator">
               <div class="typing-bubble">
                 <div class="typing-dot"></div>
@@ -164,70 +190,77 @@
               <span>{{ currentConversation.name }} está escribiendo...</span>
             </div>
           </div>
-          
           <div class="message-composer">
             <div class="composer-attachments" v-if="attachments.length > 0">
-              <div v-for="(attachment, index) in attachments" :key="index" class="attachment-preview">
-                <img v-if="attachment.type.startsWith('image/')" :src="attachment.preview" class="attachment-image" />
+              <div
+                v-for="(attachment, index) in attachments"
+                :key="index"
+                class="attachment-preview"
+              >
+                <img
+                  v-if="attachment.type.startsWith('image/')"
+                  :src="attachment.preview"
+                  class="attachment-image"
+                />
                 <div v-else class="attachment-file">
                   <FileIcon class="file-icon" />
                   <span class="file-name">{{ attachment.name }}</span>
                 </div>
-                <button class="remove-attachment" @click="removeAttachment(index)">
+                <button
+                  class="remove-attachment"
+                  @click="removeAttachment(index)"
+                >
                   <XIcon class="remove-icon" />
                 </button>
               </div>
             </div>
-            
             <div class="composer-input-container">
               <button class="attachment-button" @click="triggerFileInput">
                 <PaperclipIcon class="attachment-icon" />
-                <input 
-                  type="file" 
-                  ref="fileInput" 
-                  @change="handleFileUpload" 
-                  multiple 
-                  style="display: none;" 
+                <input
+                  type="file"
+                  ref="fileInput"
+                  @change="handleFileUpload"
+                  multiple
+                  style="display: none"
                 />
               </button>
-              
               <div class="composer-input">
-                <textarea 
-                  v-model="newMessage" 
-                  placeholder="Escribe un mensaje..." 
+                <textarea
+                  v-model="newMessage"
+                  placeholder="Escribe un mensaje..."
                   class="message-input"
-                  @keydown.enter.prevent="sendMessage"
+                  @keydown.enter.prevent="sendMessageHandler"
+                  @input="sendTyping"
                   ref="messageInput"
                   rows="1"
                 ></textarea>
               </div>
-              
-              <button 
-                class="send-button" 
-                :disabled="!newMessage.trim() && attachments.length === 0"
-                @click="sendMessage"
+              <button
+                class="send-button"
+                :disabled="
+                  !(newMessage && newMessage.trim()) && attachments.length === 0
+                "
+                @click="sendMessageHandler"
               >
                 <SendIcon class="send-icon" />
               </button>
             </div>
           </div>
         </div>
-        
         <div v-else class="no-conversation-selected">
           <MessageSquareIcon class="empty-icon" />
           <h3>Selecciona una conversación</h3>
           <p>Elige una conversación de la lista para ver los mensajes</p>
         </div>
       </div>
-      
-      <div v-if="showInfoPanel" class="info-panel">
+      <div v-if="showInfoPanel && currentConversation" class="info-panel">
         <div class="info-panel-header">
           <h3>Información</h3>
           <button class="close-info-button" @click="toggleInfoPanel">
             <XIcon class="close-icon" />
           </button>
         </div>
-        
         <div class="info-panel-content">
           <div class="info-section">
             <h4>Detalles del Huésped</h4>
@@ -242,52 +275,33 @@
               <MailIcon class="info-icon" />
               <div>
                 <p class="info-label">Email</p>
-                <p class="info-value">{{ currentConversation.email || 'No disponible' }}</p>
+                <p class="info-value">
+                  {{ currentConversation.email || "No disponible" }}
+                </p>
               </div>
             </div>
             <div class="info-item">
               <PhoneIcon class="info-icon" />
               <div>
                 <p class="info-label">Teléfono</p>
-                <p class="info-value">{{ currentConversation.phone || 'No disponible' }}</p>
+                <p class="info-value">
+                  {{ currentConversation.phone || "No disponible" }}
+                </p>
               </div>
             </div>
           </div>
-          
           <div class="info-section">
             <h4>Detalles de la Reserva</h4>
             <div class="info-item">
               <HomeIcon class="info-icon" />
               <div>
                 <p class="info-label">Propiedad</p>
-                <p class="info-value">{{ getPropertyName(currentConversation.propertyId) }}</p>
-              </div>
-            </div>
-            <div class="info-item">
-              <CalendarIcon class="info-icon" />
-              <div>
-                <p class="info-label">Fechas</p>
-                <p class="info-value">{{ formatBookingDates(currentConversation.booking) }}</p>
-              </div>
-            </div>
-            <div class="info-item">
-              <UsersIcon class="info-icon" />
-              <div>
-                <p class="info-label">Huéspedes</p>
-                <p class="info-value">{{ currentConversation.booking?.guests || 'No especificado' }}</p>
-              </div>
-            </div>
-            <div class="info-item">
-              <CreditCardIcon class="info-icon" />
-              <div>
-                <p class="info-label">Estado del pago</p>
-                <p class="info-value payment-status" :class="currentConversation.booking?.paymentStatus || 'pending'">
-                  {{ getPaymentStatusText(currentConversation.booking?.paymentStatus) }}
+                <p class="info-value">
+                  {{ currentConversation.property?.name || "No disponible" }}
                 </p>
               </div>
             </div>
           </div>
-          
           <div class="info-section">
             <h4>Acciones Rápidas</h4>
             <div class="quick-actions">
@@ -308,9 +322,11 @@
         </div>
       </div>
     </div>
-    
-    <!-- Modal de Nuevo Mensaje -->
-    <div v-if="showComposeModal" class="compose-modal" @click="closeComposeModal">
+    <div
+      v-if="showComposeModal"
+      class="compose-modal"
+      @click="closeComposeModal"
+    >
       <div class="modal-content" @click.stop>
         <div class="modal-header">
           <h3>Nuevo Mensaje</h3>
@@ -318,44 +334,49 @@
             <XIcon class="close-icon" />
           </button>
         </div>
-        
         <div class="modal-body">
           <form @submit.prevent="sendNewMessage" class="compose-form">
             <div class="form-group">
-              <label for="recipient">Destinatario</label>
-              <select id="recipient" v-model="newConversation.recipientId" class="form-input" required>
-                <option value="" disabled selected>Selecciona un destinatario</option>
-                <option v-for="guest in guests" :key="guest.id" :value="guest.id">
-                  {{ guest.name }}
+              <label for="reservation">Reserva</label>
+              <select
+                id="reservation"
+                v-model="newConversation.reservationId"
+                class="form-input"
+                required
+              >
+                <option value="" disabled>Selecciona una reserva</option>
+                <option
+                  v-for="res in reservations"
+                  :key="res.id"
+                  :value="res.id"
+                >
+                  {{ getPropertyName(res.property_id) }} -
+                  {{ res.reservation_date }}
                 </option>
               </select>
             </div>
-            
-            <div class="form-group">
-              <label for="property">Propiedad</label>
-              <select id="property" v-model="newConversation.propertyId" class="form-input" required>
-                <option value="" disabled selected>Selecciona una propiedad</option>
-                <option v-for="property in properties" :key="property.id" :value="property.id">
-                  {{ property.name }}
-                </option>
-              </select>
-            </div>
-            
             <div class="form-group">
               <label for="message">Mensaje</label>
-              <textarea 
-                id="message" 
-                v-model="newConversation.message" 
-                class="form-textarea" 
-                rows="4" 
+              <textarea
+                id="message"
+                v-model="newConversation.message"
+                class="form-textarea"
+                rows="4"
                 required
                 placeholder="Escribe tu mensaje aquí..."
               ></textarea>
             </div>
-            
             <div class="form-actions">
-              <button type="button" class="cancel-button" @click="closeComposeModal">Cancelar</button>
-              <button type="submit" class="submit-button">Enviar Mensaje</button>
+              <button
+                type="button"
+                class="cancel-button"
+                @click="closeComposeModal"
+              >
+                Cancelar
+              </button>
+              <button type="submit" class="submit-button">
+                Enviar Mensaje
+              </button>
             </div>
           </form>
         </div>
@@ -363,14 +384,13 @@
     </div>
   </div>
 </template>
-
 <script setup>
-import { ref, computed, onMounted, nextTick, watch } from 'vue';
-import { 
-  PenSquareIcon, 
-  SearchIcon, 
-  XIcon, 
-  MessageSquareIcon, 
+import { ref, computed, onMounted, nextTick, watch } from "vue";
+import {
+  PenSquareIcon,
+  SearchIcon,
+  XIcon,
+  MessageSquareIcon,
   MessageSquareOffIcon,
   InboxIcon,
   SendIcon,
@@ -390,556 +410,422 @@ import {
   PhoneIcon,
   UsersIcon,
   CreditCardIcon,
-  FileTextIcon
-} from 'lucide-vue-next';
+  FileTextIcon,
+} from "lucide-vue-next";
+import {
+  getConversations,
+  getMessages,
+  sendMessage,
+  createConversation,
+  markAsRead,
+} from "@/api/messages";
+import { apiHeaders } from "@/../utils/api";
+import { useMessaging } from "@/../componsables/useMessaging";
 
-// Props
 const props = defineProps({
-  properties: {
-    type: Array,
-    default: () => []
-  },
-  guests: {
-    type: Array,
-    default: () => []
-  }
+  properties: { type: Array, default: () => [] },
+  reservations: { type: Array, default: () => [] },
+  userId: { type: Number, required: true },
 });
 
-// Estado
-const searchQuery = ref('');
-const activeFilter = ref('all');
+const searchQuery = ref("");
+const activeFilter = ref("all");
 const activeConversation = ref(null);
 const showInfoPanel = ref(false);
-const newMessage = ref('');
 const isTyping = ref(false);
 const attachments = ref([]);
 const showComposeModal = ref(false);
 const newConversation = ref({
-  recipientId: '',
-  propertyId: '',
-  message: ''
+  reservationId: "",
+  message: "",
 });
 
-// Referencias
+function toggleInfoPanel() {
+  showInfoPanel.value = !showInfoPanel.value;
+}
+
 const messagesList = ref(null);
-const messageInput = ref(null);
 const fileInput = ref(null);
 
-// Filtros de conversación
 const conversationFilters = [
-  { id: 'all', name: 'Todos', icon: MessageSquareIcon },
-  { id: 'unread', name: 'No leídos', icon: InboxIcon },
-  { id: 'sent', name: 'Enviados', icon: SendIcon },
-  { id: 'archived', name: 'Archivados', icon: ArchiveIcon },
-  { id: 'starred', name: 'Destacados', icon: StarIcon }
+  { id: "all", name: "Todos", icon: MessageSquareIcon },
+  { id: "unread", name: "No leídos", icon: InboxIcon },
+  { id: "sent", name: "Enviados", icon: SendIcon },
+  { id: "archived", name: "Archivados", icon: ArchiveIcon },
+  { id: "starred", name: "Destacados", icon: StarIcon },
 ];
 
-// Datos de ejemplo para conversaciones
-const conversations = ref([
-  {
-    id: 1,
-    name: 'Juan Pérez',
-    avatar: null,
-    online: true,
-    lastSeen: null,
-    email: 'juan.perez@example.com',
-    phone: '+34 612 345 678',
-    propertyId: 1,
-    unread: true,
-    starred: false,
-    archived: false,
-    booking: {
-      id: 'B1234',
-      checkIn: '2023-08-15',
-      checkOut: '2023-08-22',
-      guests: 3,
-      paymentStatus: 'paid'
-    },
-    lastMessage: {
-      text: '¿Podría hacer el check-in un poco antes? Llegaremos alrededor de las 13:00.',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-      isOwner: false,
-      status: 'read'
-    },
-    messages: [
-      {
-        text: 'Hola, tengo una reserva para la próxima semana.',
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000 - 30 * 60 * 1000), // Ayer, 30 minutos después
-        isOwner: false,
-        status: 'read'
-      },
-      {
-        text: 'Hola Juan, sí, veo tu reserva del 15 al 22 de agosto.',
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // Ayer
-        isOwner: true,
-        status: 'read'
-      },
-      {
-        text: '¿Podría hacer el check-in un poco antes? Llegaremos alrededor de las 13:00.',
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-        isOwner: false,
-        status: 'read'
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: 'Ana Martínez',
-    avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
-    online: false,
-    lastSeen: new Date(Date.now() - 45 * 60 * 1000), // 45 minutos atrás
-    email: 'ana.martinez@example.com',
-    phone: '+34 623 456 789',
-    propertyId: 2,
-    unread: false,
-    starred: true,
-    archived: false,
-    booking: {
-      id: 'B5678',
-      checkIn: '2023-09-05',
-      checkOut: '2023-09-12',
-      guests: 2,
-      paymentStatus: 'pending'
-    },
-    lastMessage: {
-      text: 'Gracias por aceptar mi reserva. ¿Hay algún restaurante que recomiende cerca del apartamento?',
-      timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 día atrás
-      isOwner: false,
-      status: 'read'
-    },
-    messages: [
-      {
-        text: 'Hola, acabo de realizar una reserva para septiembre.',
-        timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 días atrás
-        isOwner: false,
-        status: 'read'
-      },
-      {
-        text: 'Hola Ana, gracias por tu reserva. La he confirmado para las fechas solicitadas.',
-        timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 días atrás
-        isOwner: true,
-        status: 'read'
-      },
-      {
-        text: 'Gracias por aceptar mi reserva. ¿Hay algún restaurante que recomiende cerca del apartamento?',
-        timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 día atrás
-        isOwner: false,
-        status: 'read'
-      }
-    ]
-  },
-  {
-    id: 3,
-    name: 'Carlos Rodríguez',
-    avatar: null,
-    online: false,
-    lastSeen: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 días atrás
-    email: 'carlos.rodriguez@example.com',
-    phone: '+34 634 567 890',
-    propertyId: 3,
-    unread: true,
-    starred: false,
-    archived: false,
-    booking: {
-      id: 'B9012',
-      checkIn: '2023-07-20',
-      checkOut: '2023-07-27',
-      guests: 4,
-      paymentStatus: 'refunded'
-    },
-    lastMessage: {
-      text: 'Entiendo la situación. Gracias por el reembolso rápido.',
-      timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 días atrás
-      isOwner: false,
-      status: 'delivered'
-    },
-    messages: [
-      {
-        text: 'Lamento informarle que debido a un problema familiar, no podremos asistir a nuestra reserva programada.',
-        timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 días atrás
-        isOwner: false,
-        status: 'read'
-      },
-      {
-        text: 'Hola Carlos, siento mucho escuchar eso. Según nuestra política de cancelación, puedo ofrecerte un reembolso del 50%.',
-        timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 días atrás
-        isOwner: true,
-        status: 'read'
-      },
-      {
-        text: 'Entiendo la situación. Gracias por el reembolso rápido.',
-        timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 días atrás
-        isOwner: false,
-        status: 'delivered'
-      }
-    ]
-  },
-  {
-    id: 4,
-    name: 'María García',
-    avatar: 'https://randomuser.me/api/portraits/women/42.jpg',
-    online: true,
-    lastSeen: null,
-    email: 'maria.garcia@example.com',
-    phone: '+34 645 678 901',
-    propertyId: 1,
-    unread: false,
-    starred: false,
-    archived: true,
-    booking: {
-      id: 'B3456',
-      checkIn: '2023-06-10',
-      checkOut: '2023-06-17',
-      guests: 2,
-      paymentStatus: 'paid'
-    },
-    lastMessage: {
-      text: 'Muchas gracias por todo. El apartamento estaba perfecto y lo pasamos genial. ¡Hasta la próxima!',
-      timestamp: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 días atrás
-      isOwner: false,
-      status: 'read'
-    },
-    messages: [
-      {
-        text: 'Hola, quería agradecerle por la estancia. Todo estuvo perfecto.',
-        timestamp: new Date(Date.now() - 31 * 24 * 60 * 60 * 1000), // 31 días atrás
-        isOwner: false,
-        status: 'read'
-      },
-      {
-        text: 'Hola María, me alegra mucho que hayas disfrutado de tu estancia. Espero que vuelvas pronto.',
-        timestamp: new Date(Date.now() - 31 * 24 * 60 * 60 * 1000 + 30 * 60 * 1000), // 31 días atrás + 30 minutos
-        isOwner: true,
-        status: 'read'
-      },
-      {
-        text: 'Muchas gracias por todo. El apartamento estaba perfecto y lo pasamos genial. ¡Hasta la próxima!',
-        timestamp: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 días atrás
-        isOwner: false,
-        status: 'read'
-      }
-    ]
-  }
-]);
+const conversations = ref([]);
+const conversationMessages = ref([]);
+const currentMessages = computed(() => {
+  // Asegúrate de que siempre es un array y no null/undefined
+  return Array.isArray(conversationMessages.value)
+    ? conversationMessages.value
+    : [];
+});
 
-// Conversaciones filtradas
-const filteredConversations = computed(() => {
-  let filtered = [...conversations.value];
+function getOtherUserId(conversation) {
+  if (!props.userId || !conversation) return null;
+  if ("user_one_id" in conversation && "user_two_id" in conversation) {
+    return conversation.user_one_id === props.userId
+      ? conversation.user_two_id
+      : conversation.user_one_id;
+  }
+  return null;
+}
+
+const {
+  newMessage,
+  typingUserId,
+  onlineUsers,
+  listenToConversation,
+  leaveConversation,
+  listenOnline,
+  sendTyping,
+} = useMessaging(props.userId);
+
+async function selectConversation(conversationId) {
+  console.log('🎯 Seleccionando conversación:', conversationId);
   
-  // Aplicar filtro de búsqueda
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase();
-    filtered = filtered.filter(conversation => 
-      conversation.name.toLowerCase().includes(query) || 
-      conversation.lastMessage.text.toLowerCase().includes(query)
-    );
+  // Si ya hay una conversación activa, desconectarse
+  if (activeConversation.value && activeConversation.value !== conversationId) {
+    console.log('🔌 Desconectando de conversación anterior:', activeConversation.value);
+    leaveConversation(activeConversation.value);
   }
   
-  // Aplicar filtro de categoría
-  if (activeFilter.value === 'unread') {
-    filtered = filtered.filter(conversation => conversation.unread);
-  } else if (activeFilter.value === 'sent') {
-    filtered = filtered.filter(conversation => conversation.lastMessage.isOwner);
-  } else if (activeFilter.value === 'archived') {
-    filtered = filtered.filter(conversation => conversation.archived);
-  } else if (activeFilter.value === 'starred') {
-    filtered = filtered.filter(conversation => conversation.starred);
+  activeConversation.value = conversationId;
+  
+  try {
+    // Obtener mensajes
+    const { data } = await getMessages(conversationId);
+    if (Array.isArray(data)) {
+      conversationMessages.value = data;
+    } else if (Array.isArray(data.messages)) {
+      conversationMessages.value = data.messages;
+    } else {
+      conversationMessages.value = [];
+    }
+    
+    // Marcar como leído
+    await markAsRead(conversationId);
+    const c = conversations.value.find((c) => c.id === conversationId);
+    if (c) c.unread = false;
+    
+  } catch (error) {
+    console.error('Error cargando mensajes:', error);
   }
   
-  // Ordenar por fecha del último mensaje (más reciente primero)
-  filtered.sort((a, b) => 
-    new Date(b.lastMessage.timestamp) - new Date(a.lastMessage.timestamp)
+  // SOLO conectarse a esta conversación específica
+  listenToConversation(
+    conversationId, 
+    // Callback para mensajes
+    (msg) => {
+      console.log("[FRONT] Mensaje recibido:", msg);
+      conversationMessages.value.push(msg);
+      nextTick(scrollToBottom);
+    },
+    // Callback para typing
+    (fromUserId) => {
+      const currentOtherId = getOtherUserId(currentConversation.value);
+      if (currentConversation.value && fromUserId === currentOtherId) {
+        isTyping.value = true;
+        setTimeout(() => (isTyping.value = false), 2000);
+      }
+    }
   );
   
+  nextTick(scrollToBottom);
+}
+
+const isOnline = (userId) => onlineUsers.value.some((u) => u.id === userId);
+
+function getConversationName(conversation) {
+  if (!props.userId || !conversation) return "";
+  if (conversation.owner_id === props.userId)
+    return conversation.guest?.name || "";
+  return conversation.owner?.name || "";
+}
+function getPropertyName(propertyId) {
+  const property = props.properties.find((p) => p.id === propertyId);
+  return property ? property.name : "No disponible";
+}
+
+function getFilterCount(filterId) {
+  if (filterId === "all") return conversations.value.length;
+  if (filterId === "unread")
+    return conversations.value.filter((c) => c.unread).length;
+  if (filterId === "sent")
+    return conversations.value.filter(
+      (c) => c.last_message?.sender_id === props.userId
+    ).length;
+  if (filterId === "archived")
+    return conversations.value.filter(
+      (c) => c.archived_by_guest || c.archived_by_owner
+    ).length;
+  if (filterId === "starred")
+    return conversations.value.filter(
+      (c) => c.starred_by_guest || c.starred_by_owner
+    ).length;
+  return 0;
+}
+
+const filteredConversations = computed(() => {
+  let filtered = [...conversations.value];
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    filtered = filtered.filter(
+      (conversation) =>
+        getConversationName(conversation).toLowerCase().includes(query) ||
+        (conversation.last_message?.text?.toLowerCase() || "").includes(query)
+    );
+  }
+  if (activeFilter.value === "unread") {
+    filtered = filtered.filter((conversation) => conversation.unread);
+  } else if (activeFilter.value === "sent") {
+    filtered = filtered.filter(
+      (conversation) => conversation.last_message?.sender_id === props.userId
+    );
+  } else if (activeFilter.value === "archived") {
+    filtered = filtered.filter(
+      (conversation) =>
+        conversation.archived_by_guest || conversation.archived_by_owner
+    );
+  } else if (activeFilter.value === "starred") {
+    filtered = filtered.filter(
+      (conversation) =>
+        conversation.starred_by_guest || conversation.starred_by_owner
+    );
+  }
+  filtered.sort(
+    (a, b) =>
+      new Date(b.last_message?.created_at || 0) -
+      new Date(a.last_message?.created_at || 0)
+  );
   return filtered;
 });
 
-// Conversación actual
 const currentConversation = computed(() => {
   if (!activeConversation.value) return null;
-  return conversations.value.find(c => c.id === activeConversation.value) || null;
+  return (
+    conversations.value.find((c) => c.id === activeConversation.value) || null
+  );
 });
 
-// Métodos
-const getFilterCount = (filterId) => {
-  if (filterId === 'all') return conversations.value.length;
-  if (filterId === 'unread') return conversations.value.filter(c => c.unread).length;
-  if (filterId === 'sent') return conversations.value.filter(c => c.lastMessage.isOwner).length;
-  if (filterId === 'archived') return conversations.value.filter(c => c.archived).length;
-  if (filterId === 'starred') return conversations.value.filter(c => c.starred).length;
-  return 0;
-};
-
-const getPropertyName = (propertyId) => {
-  const property = props.properties.find(p => p.id === propertyId);
-  return property ? property.name : 'Propiedad no especificada';
-};
-
-const getInitials = (name) => {
-  if (!name) return '?';
-  return name.split(' ')
-    .map(part => part.charAt(0))
-    .join('')
-    .toUpperCase()
-    .substring(0, 2);
-};
+const getInitials = (name) =>
+  name
+    ? name
+        .split(" ")
+        .map((p) => p[0])
+        .join("")
+        .toUpperCase()
+        .substring(0, 2)
+    : "?";
 
 const formatMessageTime = (timestamp) => {
-  if (!timestamp) return '';
-  
+  if (!timestamp) return "";
   const date = new Date(timestamp);
   const now = new Date();
   const diffMs = now - date;
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  
   if (diffDays === 0) {
-    // Hoy - mostrar hora
-    return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   } else if (diffDays === 1) {
-    // Ayer
-    return 'Ayer';
+    return "Ayer";
   } else if (diffDays < 7) {
-    // Esta semana - mostrar día de la semana
-    const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    const days = [
+      "Domingo",
+      "Lunes",
+      "Martes",
+      "Miércoles",
+      "Jueves",
+      "Viernes",
+      "Sábado",
+    ];
     return days[date.getDay()];
   } else {
-    // Más de una semana - mostrar fecha
-    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+    return date.toLocaleDateString("es-ES", { day: "numeric", month: "short" });
   }
 };
-
 const formatMessageDate = (timestamp) => {
-  if (!timestamp) return '';
-  
+  if (!timestamp) return "";
   const date = new Date(timestamp);
   const now = new Date();
   const diffMs = now - date;
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  
-  if (diffDays === 0) {
-    return 'Hoy';
-  } else if (diffDays === 1) {
-    return 'Ayer';
-  } else {
-    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
-  }
+  if (diffDays === 0) return "Hoy";
+  else if (diffDays === 1) return "Ayer";
+  else
+    return date.toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
 };
-
-const formatLastSeen = (timestamp) => {
-  if (!timestamp) return 'Desconocido';
-  
-  const date = new Date(timestamp);
+const formatBookingDates = (reservation) => {
+  if (!reservation || !reservation.reservation_date) return "No disponible";
+  return new Date(reservation.reservation_date).toLocaleDateString("es-ES");
+};
+function formatLastSeen(lastSeen) {
+  if (!lastSeen) return "hace mucho";
+  const date = new Date(lastSeen);
   const now = new Date();
   const diffMs = now - date;
   const diffMinutes = Math.floor(diffMs / (1000 * 60));
-  
-  if (diffMinutes < 1) {
-    return 'Ahora mismo';
-  } else if (diffMinutes < 60) {
-    return `hace ${diffMinutes} ${diffMinutes === 1 ? 'minuto' : 'minutos'}`;
-  } else {
-    const diffHours = Math.floor(diffMinutes / 60);
-    if (diffHours < 24) {
-      return `hace ${diffHours} ${diffHours === 1 ? 'hora' : 'horas'}`;
-    } else {
-      return formatMessageTime(timestamp);
-    }
-  }
-};
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-const formatBookingDates = (booking) => {
-  if (!booking || !booking.checkIn || !booking.checkOut) return 'No disponible';
-  
-  const checkIn = new Date(booking.checkIn);
-  const checkOut = new Date(booking.checkOut);
-  
-  const formatOptions = { day: 'numeric', month: 'short' };
-  return `${checkIn.toLocaleDateString('es-ES', formatOptions)} - ${checkOut.toLocaleDateString('es-ES', formatOptions)}`;
-};
+  if (diffMinutes < 1) return "hace un momento";
+  if (diffMinutes < 60) return `hace ${diffMinutes} min`;
+  if (diffHours < 24) return `hace ${diffHours} h`;
+  if (diffDays === 1) return "ayer";
+  if (diffDays < 7) return `hace ${diffDays} días`;
+  return date.toLocaleDateString("es-ES");
+}
 
-const getPaymentStatusText = (status) => {
-  const statusMap = {
-    'paid': 'Pagado',
-    'pending': 'Pendiente',
-    'refunded': 'Reembolsado',
-    'failed': 'Fallido'
-  };
-  
-  return statusMap[status] || 'Desconocido';
-};
+function showDateDivider(msg, prevMsg) {
+  if (!prevMsg) return true; // Primer mensaje, muestra divider
+  const date1 = new Date(msg.created_at || msg.timestamp);
+  const date2 = new Date(prevMsg.created_at || prevMsg.timestamp);
+  return (
+    date1.getDate() !== date2.getDate() ||
+    date1.getMonth() !== date2.getMonth() ||
+    date1.getFullYear() !== date2.getFullYear()
+  );
+}
+function isFirstInGroup(msg, prevMsg) {
+  if (!prevMsg) return true;
+  return msg.isOwner !== prevMsg.isOwner || showDateDivider(msg, prevMsg);
+}
+function isLastInGroup(msg, nextMsg) {
+  if (!nextMsg) return true;
+  return msg.isOwner !== nextMsg.isOwner || showDateDivider(nextMsg, msg);
+}
 
-const showDateDivider = (message, index) => {
-  if (index === 0) return true;
-  
-  const prevMessage = currentConversation.value.messages[index - 1];
-  const currentDate = new Date(message.timestamp).setHours(0, 0, 0, 0);
-  const prevDate = new Date(prevMessage.timestamp).setHours(0, 0, 0, 0);
-  
-  return currentDate !== prevDate;
-};
-
-const isFirstInGroup = (message, index) => {
-  if (index === 0) return true;
-  
-  const prevMessage = currentConversation.value.messages[index - 1];
-  return prevMessage.isOwner !== message.isOwner || 
-         (new Date(message.timestamp) - new Date(prevMessage.timestamp)) > 5 * 60 * 1000; // 5 minutos
-};
-
-const isLastInGroup = (message, index) => {
-  if (index === currentConversation.value.messages.length - 1) return true;
-  
-  const nextMessage = currentConversation.value.messages[index + 1];
-  return nextMessage.isOwner !== message.isOwner || 
-         (new Date(nextMessage.timestamp) - new Date(message.timestamp)) > 5 * 60 * 1000; // 5 minutos
-};
-
-const selectConversation = (conversationId) => {
-  activeConversation.value = conversationId;
-  
-  // Marcar como leída
-  const conversation = conversations.value.find(c => c.id === conversationId);
-  if (conversation && conversation.unread) {
-    conversation.unread = false;
-  }
-  
-  // Simular "está escribiendo" ocasionalmente
-  if (Math.random() > 0.7) {
-    setTimeout(() => {
-      isTyping.value = true;
-      
-      setTimeout(() => {
-        isTyping.value = false;
-      }, 3000);
-    }, 2000);
-  }
-  
-  // Scroll al final de los mensajes
-  nextTick(() => {
-    scrollToBottom();
-  });
-};
+function getPaymentStatusText(status) {
+  if (!status) return "Pendiente";
+  if (status === "paid") return "Pagado";
+  if (status === "pending") return "Pendiente";
+  if (status === "failed") return "Fallido";
+  return status;
+}
 
 const scrollToBottom = () => {
-  if (messagesList.value) {
+  if (messagesList.value)
     messagesList.value.scrollTop = messagesList.value.scrollHeight;
+};
+const openComposeModal = () => {
+  showComposeModal.value = true;
+  newConversation.value = { reservationId: "", message: "" };
+};
+const closeComposeModal = () => (showComposeModal.value = false);
+async function sendNewMessage() {
+  if (!newConversation.value.reservationId) return;
+  const { data: conversation } = await createConversation(
+    newConversation.value.reservationId
+  );
+  if (!conversations.value.some((c) => c.id === conversation.id))
+    conversations.value.push(conversation);
+  await selectConversation(conversation.id);
+  if (newConversation.value.message) {
+    await sendMessage(conversation.id, newConversation.value.message);
+    await selectConversation(conversation.id);
   }
-};
-
-const toggleInfoPanel = () => {
-  showInfoPanel.value = !showInfoPanel.value;
-};
-
-const showBookingDetails = () => {
-  // Aquí iría la lógica para mostrar los detalles de la reserva
-  console.log('Mostrar detalles de la reserva:', currentConversation.value.booking);
-};
-
-const sendMessage = () => {
+  closeComposeModal();
+}
+async function sendMessageHandler() {
   if (!newMessage.value.trim() && attachments.value.length === 0) return;
-  
-  // Añadir el nuevo mensaje a la conversación
-  currentConversation.value.messages.push({
-    text: newMessage.value,
-    timestamp: new Date(),
-    isOwner: true,
-    status: 'sent'
-  });
-  
-  // Actualizar el último mensaje
-  currentConversation.value.lastMessage = {
-    text: newMessage.value,
-    timestamp: new Date(),
-    isOwner: true,
-    status: 'sent'
-  };
-  
-  // Limpiar el campo de mensaje y los adjuntos
-  newMessage.value = '';
+  await sendMessage(
+    activeConversation.value,
+    newMessage.value,
+    attachments.value[0]?.file || null
+  );
+  await selectConversation(activeConversation.value);
+  newMessage.value = "";
   attachments.value = [];
-  
-  // Scroll al final de los mensajes
-  nextTick(() => {
-    scrollToBottom();
-    
-    // Simular cambio de estado del mensaje
-    setTimeout(() => {
-      currentConversation.value.lastMessage.status = 'delivered';
-      currentConversation.value.messages[currentConversation.value.messages.length - 1].status = 'delivered';
-      
-      setTimeout(() => {
-        currentConversation.value.lastMessage.status = 'read';
-        currentConversation.value.messages[currentConversation.value.messages.length - 1].status = 'read';
-      }, 2000);
-    }, 1000);
-  });
-};
-
-const triggerFileInput = () => {
-  fileInput.value.click();
-};
-
+}
+const triggerFileInput = () => fileInput.value.click();
 const handleFileUpload = (event) => {
   const files = event.target.files;
   if (!files.length) return;
-  
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     const reader = new FileReader();
-    
     reader.onload = (e) => {
       attachments.value.push({
         name: file.name,
         type: file.type,
         size: file.size,
-        preview: file.type.startsWith('image/') ? e.target.result : null
+        preview: file.type.startsWith("image/") ? e.target.result : null,
+        file: file,
       });
     };
-    
     reader.readAsDataURL(file);
   }
+  event.target.value = "";
+};
+const removeAttachment = (index) => attachments.value.splice(index, 1);
+
+let typingTimeout = null;
+function sendTypingNotification() {
+  if (!activeConversation.value) return;
+
+  if (typingTimeout) clearTimeout(typingTimeout);
+
+  typingTimeout = setTimeout(() => {
+    sendTyping(activeConversation.value);
+  }, 300); // Debounce de 300ms
+}
+
+onMounted(async () => {
+  if (window.Echo) {
+    window.Echo.connector.pusher.connection.bind(
+      "state_change",
+      function (states) {
+        console.log("Pusher state changed:", states);
+      }
+    );
+    window.Echo.connector.pusher.connection.bind("error", function (err) {
+      console.error("Pusher error:", err);
+    });
+  }
   
-  // Limpiar el input para permitir seleccionar el mismo archivo nuevamente
-  event.target.value = '';
-};
-
-const removeAttachment = (index) => {
-  attachments.value.splice(index, 1);
-};
-
-const openComposeModal = () => {
-  showComposeModal.value = true;
-  newConversation.value = {
-    recipientId: '',
-    propertyId: '',
-    message: ''
-  };
-};
-
-const closeComposeModal = () => {
-  showComposeModal.value = false;
-};
-
-const sendNewMessage = () => {
-  // Aquí iría la lógica para enviar un nuevo mensaje
-  console.log('Enviando nuevo mensaje:', newConversation.value);
-  
-  // Cerrar el modal
-  closeComposeModal();
-};
-
-// Observar cambios en los mensajes para mantener el scroll al final
-watch(() => currentConversation.value?.messages.length, () => {
-  nextTick(() => {
-    scrollToBottom();
-  });
+  try {
+    // Carga inicial
+    const { data } = await getConversations();
+    console.log("CONVERSATIONS:", data);
+    conversations.value = data;
+    
+    // SOLO seleccionar la primera conversación, NO conectar a todas
+    if (conversations.value.length > 0) {
+      await selectConversation(conversations.value[0].id);
+    }
+    
+    // Escucha usuarios online
+    listenOnline();
+    
+  } catch (error) {
+    console.error('Error en onMounted:', error);
+  }
 });
 
-// Inicializar
-onMounted(() => {
-  // Si hay conversaciones, seleccionar la primera por defecto
-  if (conversations.value.length > 0) {
-    selectConversation(conversations.value[0].id);
+watch(
+  () => conversationMessages.value.length,
+  () => nextTick(scrollToBottom)
+);
+
+watch(activeConversation, (conversationId, oldId) => {
+  if (window.Echo) {
+    if (oldId) window.Echo.leave(`chat.${oldId}`);
+    window.Echo.private(`chat.${conversationId}`)
+      .listen(".message.sent", (e) => {
+        console.log("[FRONT] Mensaje recibido:", e.message);
+      })
+      .listen(".user.typing", (e) => {
+        console.log("[FRONT] Usuario está escribiendo:", e.from_user_id);
+      });
   }
 });
 </script>
@@ -962,15 +848,22 @@ onMounted(() => {
 }
 
 .messages-section::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 150%, rgba(0, 113, 194, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% -50%, rgba(0, 53, 128, 0.03) 0%, transparent 60%);
+  background: radial-gradient(
+      circle at 20% 150%,
+      rgba(0, 113, 194, 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% -50%,
+      rgba(0, 53, 128, 0.03) 0%,
+      transparent 60%
+    );
   z-index: 0;
 }
 
@@ -991,7 +884,7 @@ onMounted(() => {
 }
 
 .section-title::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -8px;
   left: 0;
@@ -1357,7 +1250,7 @@ onMounted(() => {
 }
 
 .status.online::before {
-  content: '';
+  content: "";
   display: inline-block;
   width: 8px;
   height: 8px;
@@ -1417,7 +1310,7 @@ onMounted(() => {
 }
 
 .date-divider::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 0;
@@ -1565,7 +1458,8 @@ onMounted(() => {
 }
 
 @keyframes typingAnimation {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
     opacity: 0.5;
   }
@@ -1998,7 +1892,8 @@ onMounted(() => {
   font-size: 0.95rem;
 }
 
-.form-input, .form-textarea {
+.form-input,
+.form-textarea {
   padding: 0.875rem 1rem;
   border: 1px solid #e6f0ff;
   border-radius: 8px;
@@ -2008,7 +1903,8 @@ onMounted(() => {
   background-color: #f8fafc;
 }
 
-.form-input:focus, .form-textarea:focus {
+.form-input:focus,
+.form-textarea:focus {
   outline: none;
   border-color: #0071c2;
   box-shadow: 0 0 0 3px rgba(0, 113, 194, 0.1);
@@ -2066,7 +1962,7 @@ onMounted(() => {
   .messages-container {
     grid-template-columns: 280px 1fr;
   }
-  
+
   .info-panel {
     position: absolute;
     top: 0;
@@ -2081,16 +1977,16 @@ onMounted(() => {
   .messages-section {
     padding: 1.5rem;
   }
-  
+
   .messages-container {
     grid-template-columns: 1fr;
     height: auto;
   }
-  
+
   .messages-sidebar {
     display: none;
   }
-  
+
   .messages-sidebar.active {
     display: flex;
     position: absolute;
@@ -2100,15 +1996,15 @@ onMounted(() => {
     width: 100%;
     z-index: 10;
   }
-  
+
   .conversation-view {
     height: 60vh;
   }
-  
+
   .action-text {
     display: none;
   }
-  
+
   .info-panel {
     width: 100%;
   }
@@ -2118,43 +2014,43 @@ onMounted(() => {
   .messages-section {
     padding: 1rem;
   }
-  
+
   .section-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-  
+
   .header-actions {
     width: 100%;
   }
-  
+
   .compose-button {
     width: 100%;
     justify-content: center;
   }
-  
+
   .conversation-header {
     padding: 1rem;
   }
-  
+
   .user-avatar {
     width: 40px;
     height: 40px;
   }
-  
+
   .messages-list {
     padding: 1rem;
   }
-  
+
   .message-bubble {
     max-width: 85%;
   }
-  
+
   .modal-content {
     width: 95%;
   }
-  
+
   .modal-body {
     padding: 1.5rem;
   }

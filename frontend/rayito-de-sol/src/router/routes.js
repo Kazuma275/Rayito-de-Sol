@@ -18,11 +18,12 @@ import RentersLogin from "@/components/pages/RentersLogin.vue"
 import RentersDashboard from "@/components/pages/RentersDashboard.vue"
 import RentersSearch from "@/components/pages/RentersSearch.vue"
 import RentersBookings from "@/components/pages/RentersBookings.vue"
-import RentersFavorites from "@/components/pages/RentersFavorites.vue"
+import RentersFavoritesSection from "@/components/favorites/RentersFavoritesSection.vue"
 import RentersMessages from "@/components/pages/RentersMessages.vue"
 import RentersProfile from "@/components/pages/RentersProfile.vue"
 import RentersSettings from "@/components/pages/RentersSettings.vue"
 import RentersPropertyDetail from "@/components/properties/RentersPropertyDetail.vue"
+import ResetPassword from "@/components/pages/ResetPassword.vue"
 
 const routes = [
   {
@@ -60,6 +61,11 @@ const routes = [
     name: "Help",
     component: HelpSupportSection,
   },
+  {
+    path: "/reset-password",
+    name: "ResetPassword",
+    component: ResetPassword,
+  },
   // Portal de inquilinos (login individual)
   {
     path: "/renters/login",
@@ -92,8 +98,8 @@ const routes = [
       },
       {
         path: "favorites",
-        name: "RentersFavorites",
-        component: RentersFavorites,
+        name: "RentersFavoritesSection",
+        component: RentersFavoritesSection,
       },
       {
         path: "messages",

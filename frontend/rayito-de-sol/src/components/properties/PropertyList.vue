@@ -1,170 +1,186 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
-import { HomeIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-vue-next'
-import RendersPropertyCard from './RendersPropertyCard.vue'
-import { useRouter } from 'vue-router'
-const router = useRouter()
+import { ref, computed, onMounted } from "vue";
+import axios from "axios";
+import { HomeIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-vue-next";
+import RendersPropertyCard from "./RendersPropertyCard.vue";
+import { useRouter } from "vue-router";
+import { apiHeaders } from "@/../utils/api";
+import { getItem } from "@/helpers/storage";
+
+const router = useRouter();
 
 const props = defineProps({
-  title: { type: String, default: 'Propiedades' },
+  title: { type: String, default: "Propiedades" },
   showFilters: { type: Boolean, default: true },
   showPagination: { type: Boolean, default: true },
-  itemsPerPage: { type: Number, default: 6 }
-})
+  itemsPerPage: { type: Number, default: 6 },
+});
 
-const emit = defineEmits(['toggleFavorite', 'viewProperty', 'changePage'])
+const emit = defineEmits(["toggleFavorite", "viewProperty", "changePage"]);
 
-const properties = ref([])
-const favorites = ref([])
+const properties = ref([]);
+const favorites = ref([]);
 
-const sortBy = ref('price_asc')
-const activeFilters = ref([])
-const currentPage = ref(1)
+const sortBy = ref("price_asc");
+const activeFilters = ref([]);
+const currentPage = ref(1);
 
 const filterOptions = [
-  { id: 'pool', name: 'Piscina' },
-  { id: 'beach', name: 'Playa' },
-  { id: 'wifi', name: 'Wi-Fi' },
-  { id: 'parking', name: 'Parking' }
-]
+  { id: "pool", name: "Piscina" },
+  { id: "beach", name: "Playa" },
+  { id: "wifi", name: "Wi-Fi" },
+  { id: "parking", name: "Parking" },
+];
 const amenities = [
-  { id: 'wifi', name: 'Wi-Fi' },
-  { id: 'pool', name: 'Piscina' },
-  { id: 'ac', name: 'Aire acondicionado' },
-  { id: 'kitchen', name: 'Cocina equipada' },
-  { id: 'washer', name: 'Lavadora' },
-  { id: 'tv', name: 'TV' },
-  { id: 'terrace', name: 'Terraza' },
-  { id: 'parking', name: 'Parking' }
-]
+  { id: "wifi", name: "Wi-Fi" },
+  { id: "pool", name: "Piscina" },
+  { id: "ac", name: "Aire acondicionado" },
+  { id: "kitchen", name: "Cocina equipada" },
+  { id: "washer", name: "Lavadora" },
+  { id: "tv", name: "TV" },
+  { id: "terrace", name: "Terraza" },
+  { id: "parking", name: "Parking" },
+];
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
 async function fetchProperties() {
-  // SIEMPRE carga propiedades
   try {
-    const propRes = await axios.get(`${API_BASE_URL}/properties`)
-    properties.value = propRes.data
+    const propRes = await axios.get(`${API_BASE_URL}/properties`, apiHeaders());
+    properties.value = propRes.data;
   } catch (e) {
-    console.error('Error al cargar propiedades:', e)
-    properties.value = []
+    console.error("Error al cargar propiedades:", e);
+    properties.value = [];
   }
 
-  // Solo favoritos si hay token (usuario logueado)
-  const token = localStorage.getItem('auth_token')
+  // Solo carga favoritos si hay token
+  const token = getItem("auth_token", true) || getItem("auth_token");
   if (token) {
     try {
-      const favRes = await axios.get(`${API_BASE_URL}/user/favorites`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      favorites.value = favRes.data
+      const favRes = await axios.get(
+        `${API_BASE_URL}/user/favorites`,
+        apiHeaders()
+      );
+      favorites.value = favRes.data;
     } catch (e) {
-      console.error('Error al cargar favoritos:', e)
-      favorites.value = []
+      console.error("Error al cargar favoritos:", e);
+      favorites.value = [];
     }
   } else {
-    favorites.value = []
+    favorites.value = [];
   }
 }
 
-onMounted(fetchProperties)
+onMounted(fetchProperties);
 
 function propertyHasAmenity(property, filterId) {
   if (!property.amenities || property.amenities.length === 0) return false;
-  if (typeof property.amenities[0] === 'string') {
-    return property.amenities.includes(filterId)
+  if (typeof property.amenities[0] === "string") {
+    return property.amenities.includes(filterId);
   }
-  if (typeof property.amenities[0] === 'object') {
-    return property.amenities.some(a => a.id === filterId)
+  if (typeof property.amenities[0] === "object") {
+    return property.amenities.some((a) => a.id === filterId);
   }
-  return false
+  return false;
 }
 
 const filteredProperties = computed(() => {
-  let result = [...properties.value]
+  let result = [...properties.value];
   if (activeFilters.value.length > 0) {
-    result = result.filter(property =>
-      activeFilters.value.some(filter =>
-        property.amenities && property.amenities.includes(filter)
+    result = result.filter((property) =>
+      activeFilters.value.some(
+        (filter) => property.amenities && property.amenities.includes(filter)
       )
-    )
+    );
   }
   result.sort((a, b) => {
     switch (sortBy.value) {
-      case 'price_asc': return a.price - b.price
-      case 'price_desc': return b.price - a.price
-      case 'rating': return (b.rating || 0) - (a.rating || 0)
-      case 'newest': return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
-      default: return 0
+      case "price_asc":
+        return a.price - b.price;
+      case "price_desc":
+        return b.price - a.price;
+      case "rating":
+        return (b.rating || 0) - (a.rating || 0);
+      case "newest":
+        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      default:
+        return 0;
     }
-  })
-  const startIndex = (currentPage.value - 1) * props.itemsPerPage
-  const endIndex = startIndex + props.itemsPerPage
-  return result.slice(startIndex, endIndex)
-})
+  });
+  const startIndex = (currentPage.value - 1) * props.itemsPerPage;
+  const endIndex = startIndex + props.itemsPerPage;
+  return result.slice(startIndex, endIndex);
+});
 
 const totalPages = computed(() => {
-  let result = [...properties.value]
+  let result = [...properties.value];
   if (activeFilters.value.length > 0) {
-    result = result.filter(property =>
-      activeFilters.value.every(filter =>
+    result = result.filter((property) =>
+      activeFilters.value.every((filter) =>
         propertyHasAmenity(property, filter)
       )
-    )
+    );
   }
-  return Math.max(1, Math.ceil(result.length / props.itemsPerPage))
-})
+  return Math.max(1, Math.ceil(result.length / props.itemsPerPage));
+});
 
 const paginationPages = computed(() => {
-  const pages = []
-  const maxVisiblePages = 5
+  const pages = [];
+  const maxVisiblePages = 5;
   if (totalPages.value <= maxVisiblePages) {
-    for (let i = 1; i <= totalPages.value; i++) pages.push(i)
+    for (let i = 1; i <= totalPages.value; i++) pages.push(i);
   } else {
-    let startPage = Math.max(1, currentPage.value - Math.floor(maxVisiblePages / 2))
-    let endPage = Math.min(totalPages.value, startPage + maxVisiblePages - 1)
+    let startPage = Math.max(
+      1,
+      currentPage.value - Math.floor(maxVisiblePages / 2)
+    );
+    let endPage = Math.min(totalPages.value, startPage + maxVisiblePages - 1);
     if (endPage === totalPages.value) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1)
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
-    for (let i = startPage; i <= endPage; i++) pages.push(i)
+    for (let i = startPage; i <= endPage; i++) pages.push(i);
   }
-  return pages
-})
+  return pages;
+});
 
 const toggleFilter = (filterId) => {
-  const index = activeFilters.value.indexOf(filterId)
+  const index = activeFilters.value.indexOf(filterId);
   if (index === -1) {
-    activeFilters.value.push(filterId)
+    activeFilters.value.push(filterId);
   } else {
-    activeFilters.value.splice(index, 1)
+    activeFilters.value.splice(index, 1);
   }
-  currentPage.value = 1
-}
+  currentPage.value = 1;
+};
 
 const toggleFavorite = async (propertyId) => {
-  const token = localStorage.getItem('auth_token')
-  if (!token) return // No permitir si no está logueado
+  const token = localStorage.getItem("auth_token");
+  if (!token) return; // No permitir si no está logueado
   try {
-    await axios.post(`${API_BASE_URL}/user/toggle-favorite`, { propertyId }, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    await fetchProperties()
-    emit('toggleFavorite', propertyId)
+    await axios.post(
+      `${API_BASE_URL}/user/toggle-favorite`,
+      { propertyId },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    await fetchProperties();
+    emit("toggleFavorite", propertyId);
   } catch (e) {
-    console.error('Error al cambiar favorito:', e)
+    console.error("Error al cambiar favorito:", e);
   }
-}
+};
 
 const viewProperty = (propertyId) => {
-  emit('viewProperty', propertyId)
-  router.push(`/renters/property/${propertyId}`)
-}
+  emit("viewProperty", propertyId);
+  router.push(`/renters/property/${propertyId}`);
+};
 
 const changePage = (page) => {
-  currentPage.value = page
-  emit('changePage', page)
-}
+  currentPage.value = page;
+  emit("changePage", page);
+};
 </script>
 
 <template>
@@ -181,7 +197,7 @@ const changePage = (page) => {
             <option value="newest">Más recientes</option>
           </select>
         </div>
-        <div class="filter-group">
+        <!--         <div class="filter-group">
           <label>Filtrar por:</label>
           <div class="filter-buttons">
             <button 
@@ -194,18 +210,19 @@ const changePage = (page) => {
               {{ filter.name }}
             </button>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     <div v-if="filteredProperties.length > 0" class="properties-grid">
-    <RendersPropertyCard
-      v-for="property in filteredProperties"
-      :key="property.id"
-      :property="property"
-      :favorite="favorites.includes(property.id)"
-      @view="() => viewProperty(property.id)"
-      @toggleFavorite="() => toggleFavorite(property.id)"
-    />
+      <RendersPropertyCard
+        v-for="property in filteredProperties"
+        :key="property.id"
+        :property="property"
+        :properties="properties"
+        :favorite="favorites.includes(property.id)"
+        @view="() => viewProperty(property.id)"
+        @toggleFavorite="() => toggleFavorite(property.id)"
+      />
     </div>
     <div v-else class="empty-state">
       <div class="empty-illustration">
@@ -216,26 +233,26 @@ const changePage = (page) => {
       <p>Intenta cambiar los filtros o busca en otra ubicación</p>
     </div>
     <div v-if="showPagination && totalPages > 1" class="pagination">
-      <button 
-        class="pagination-button" 
+      <button
+        class="pagination-button"
         :disabled="currentPage === 1"
         @click="changePage(currentPage - 1)"
       >
         <ChevronLeftIcon class="pagination-icon" />
       </button>
       <div class="pagination-pages">
-        <button 
-          v-for="page in paginationPages" 
-          :key="page" 
-          class="page-button" 
+        <button
+          v-for="page in paginationPages"
+          :key="page"
+          class="page-button"
           :class="{ active: currentPage === page }"
           @click="changePage(page)"
         >
           {{ page }}
         </button>
       </div>
-      <button 
-        class="pagination-button" 
+      <button
+        class="pagination-button"
         :disabled="currentPage === totalPages"
         @click="changePage(currentPage + 1)"
       >
@@ -259,7 +276,7 @@ const changePage = (page) => {
   position: relative;
 }
 .list-title::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -8px;
   left: 0;
@@ -363,7 +380,8 @@ const changePage = (page) => {
   animation: wave 3s ease-in-out infinite;
 }
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -371,7 +389,8 @@ const changePage = (page) => {
   }
 }
 @keyframes wave {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {

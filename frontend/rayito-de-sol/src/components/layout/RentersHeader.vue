@@ -11,34 +11,35 @@
       
       <div class="desktop-nav">
         <nav class="main-nav">
-          <a 
+          <router-link 
             v-for="item in navItems" 
             :key="item.path" 
-            :href="item.path" 
+            :to="item.path" 
             class="nav-link"
             :class="{ active: isActive(item.path) }"
           >
             <component :is="item.icon" class="nav-icon" />
             <span>{{ item.label }}</span>
-          </a>
+          </router-link>
         </nav>
         
         <div class="user-menu">
           <button class="user-button" @click="toggleUserMenu">
-            <UserIcon class="user-icon" />
-            <span class="user-name">{{ userName }}</span>
+            <div v-if="user && user.avatar" class="profile-pic">
+              <img :src="user.avatar" alt="Foto de perfil" />
+            </div>
+            <div v-else class="profile-pic-placeholder">
+              {{ user && user.username ? user.username.charAt(0).toUpperCase() : 'U' }}
+            </div>
+            <span class="user-name">{{ user && user.username ? user.username : 'Usuario' }}</span>
             <ChevronDownIcon class="chevron-icon" :class="{ 'rotate': userMenuOpen }" />
           </button>
           
           <div class="dropdown-menu" v-if="userMenuOpen">
-            <a href="/portal/renters/profile" class="dropdown-item">
-              <UserIcon class="dropdown-icon" />
-              <span>Mi Perfil</span>
-            </a>
-            <a href="/portal/renters/settings" class="dropdown-item">
+            <router-link to="/renters/profile" class="dropdown-item" @click="closeMenus">
               <SettingsIcon class="dropdown-icon" />
               <span>Configuración</span>
-            </a>
+            </router-link>
             <div class="dropdown-divider"></div>
             <button @click="logout" class="dropdown-item">
               <LogOutIcon class="dropdown-icon" />
@@ -55,29 +56,29 @@
     </div>
     
     <div class="mobile-menu" v-if="mobileMenuOpen">
-      <a 
+      <router-link 
         v-for="item in navItems" 
         :key="item.path" 
-        :href="item.path" 
+        :to="item.path" 
         class="mobile-nav-link"
         :class="{ active: isActive(item.path) }"
         @click="mobileMenuOpen = false"
       >
         <component :is="item.icon" class="nav-icon" />
         <span>{{ item.label }}</span>
-      </a>
+      </router-link>
       
       <div class="mobile-divider"></div>
       
-      <a href="/portal/renters/profile" class="mobile-nav-link" @click="mobileMenuOpen = false">
+      <router-link to="/renters/profile" class="mobile-nav-link" @click="mobileMenuOpen = false">
         <UserIcon class="nav-icon" />
         <span>Mi Perfil</span>
-      </a>
+      </router-link>
       
-      <a href="/portal/renters/settings" class="mobile-nav-link" @click="mobileMenuOpen = false">
+      <router-link to="/renters/settings" class="mobile-nav-link" @click="mobileMenuOpen = false">
         <SettingsIcon class="nav-icon" />
         <span>Configuración</span>
-      </a>
+      </router-link>
       
       <button @click="logout" class="mobile-nav-link logout">
         <LogOutIcon class="nav-icon" />
@@ -89,7 +90,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { 
   SunIcon, 
   HomeIcon, 
@@ -105,28 +106,28 @@ import {
   ChevronDownIcon
 } from 'lucide-vue-next';
 
-const route = useRoute();
+import { useUserStore } from '@/stores/userStore';
 
-// User state (would come from auth store in a real app)
-const userName = ref('Usuario');
+const route = useRoute();
+const router = useRouter();
+const userStore = useUserStore();
+const user = computed(() => userStore.user);
+
 const userMenuOpen = ref(false);
 const mobileMenuOpen = ref(false);
 
-// Navigation items - ACTUALIZADO para apuntar al nuevo portal
 const navItems = ref([
-  { label: 'Inicio', path: '/portal/renters/dashboard', icon: HomeIcon },
-  { label: 'Buscar', path: '/portal/renters/search', icon: SearchIcon },
-  { label: 'Mis Reservas', path: '/portal/renters/bookings', icon: CalendarIcon },
-  { label: 'Mensajes', path: '/portal/renters/messages', icon: MessageSquareIcon },
-  { label: 'Favoritos', path: '/portal/renters/favorites', icon: HeartIcon }
+  { label: 'Inicio', path: '/renters/dashboard', icon: HomeIcon },
+  { label: 'Buscar', path: '/renters/search', icon: SearchIcon },
+  { label: 'Mis Reservas', path: '/renters/bookings', icon: CalendarIcon },
+  { label: 'Mensajes', path: '/renters/messages', icon: MessageSquareIcon },
+  { label: 'Favoritos', path: '/renters/favorites', icon: HeartIcon }
 ]);
 
-// Check if a route is active
 const isActive = (path) => {
   return route.path === path || route.path.startsWith(`${path}/`);
 };
 
-// Toggle user dropdown menu
 const toggleUserMenu = () => {
   userMenuOpen.value = !userMenuOpen.value;
   if (userMenuOpen.value) {
@@ -134,7 +135,6 @@ const toggleUserMenu = () => {
   }
 };
 
-// Toggle mobile menu
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value;
   if (mobileMenuOpen.value) {
@@ -142,31 +142,32 @@ const toggleMobileMenu = () => {
   }
 };
 
-// Go to home page - ACTUALIZADO para apuntar al nuevo portal
 const goToHome = () => {
-  window.location.href = '/portal/renters/dashboard';
+  router.push('/portal/renters/dashboard');
 };
 
-// Logout function - ACTUALIZADO para apuntar al nuevo portal
 const logout = () => {
-  // In a real app, this would call your auth service
-  localStorage.removeItem('renters_auth');
+  userStore.logout();
+  router.replace('/portal/renters/login');
+};
+
+const closeMenus = () => {
   userMenuOpen.value = false;
   mobileMenuOpen.value = false;
-  window.location.href = '/portal/renters/login';
 };
 
-// Close menus when clicking outside
-const closeMenus = (event) => {
-  if (!event.target.closest('.user-menu') && !event.target.closest('.mobile-menu-button')) {
-    userMenuOpen.value = false;
-    mobileMenuOpen.value = false;
-  }
-};
-
-// Add event listener
 onMounted(() => {
-  window.addEventListener('click', closeMenus);
+  userStore.hydrate?.();
+  window.addEventListener('click', (event) => {
+    if (!event.target.closest('.user-menu') && !event.target.closest('.mobile-menu-button')) {
+      closeMenus();
+    }
+  });
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'auth_user' || event.key === 'auth_token') {
+      userStore.hydrate?.();
+    }
+  });
 });
 </script>
 
@@ -178,6 +179,38 @@ onMounted(() => {
   top: 0;
   z-index: 100;
   padding: 1rem 0;
+}
+
+.profile-pic {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 0.5rem;
+  background: #fbbf24;
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.profile-pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.profile-pic-placeholder {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fde68a;
+  color: #f59e0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-right: 0.5rem;
+  border: 2px solid #fff;
 }
 
 .header-container {

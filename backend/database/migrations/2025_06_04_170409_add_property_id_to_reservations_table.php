@@ -7,17 +7,14 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up()
     {
-        Schema::table('reservations', function (Blueprint $table) {
-            $table->unsignedBigInteger('property_id')->after('user_id');
-            $table->foreign('property_id')->references('id')->on('properties')->onDelete('cascade');
-        });
+        // Ya no hace falta agregar property_id, la columna ya existe.
+        // $table->unsignedBigInteger('property_id')->after('user_id');
+        // $table->foreign('property_id')->references('id')->on('properties')->onDelete('cascade');
     }
 
     public function down()
     {
-        Schema::table('reservations', function (Blueprint $table) {
-            $table->dropForeign(['property_id']);
-            $table->dropColumn('property_id');
-        });
+        // $table->dropForeign(['property_id']);
+        // $table->dropColumn('property_id');
     }
 };

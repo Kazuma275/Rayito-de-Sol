@@ -107,8 +107,6 @@ import {
   ArrowLeftIcon
 } from 'lucide-vue-next';
 import axios from 'axios';
-// Si tienes un store de usuario, puedes importarlo aquí
-// import { useUserStore } from '../../../stores/user';
 
 const formData = reactive({
   email: '',
@@ -149,17 +147,22 @@ const handleSubmit = async () => {
   isSubmitting.value = true;
 
   try {
-    // Cambia la URL al endpoint real de tu backend
+    // Cambia la URL si tu backend está en otra dirección
     const response = await axios.post('http://127.0.0.1:8000/api/login', {
       email: formData.email,
       password: formData.password,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
     });
 
-    localStorage.setItem('renters_auth_token', response.data.token);  
-    localStorage.setItem('renters_auth_user', JSON.stringify(response.data.user));
-    // Si usas Pinia/Vuex: userStore.setUser(response.data.user); userStore.setToken(response.data.token);
+    // Guarda el token y el usuario siempre con las mismas claves
+    localStorage.setItem('auth_token', response.data.token);  
+    localStorage.setItem('auth_user', JSON.stringify(response.data.user));
 
-    // Redirige al dashboard de inquilinos usando window.location.href (como antes)
+    // Redirige al dashboard de inquilinos
     window.location.href = '/portal/renters/dashboard';
   } catch (error) {
     if (error.response) {
@@ -175,11 +178,11 @@ const handleSubmit = async () => {
 };
 
 const forgotPassword = () => {
-  window.location.href = '/portal/renters/forgot-password';
+  window.location.href = '/portal/forgot-password';
 };
 
 const goToRegister = () => {
-  window.location.href = '/portal/renters/register';
+  window.location.href = '/portal/register';
 };
 </script>
 

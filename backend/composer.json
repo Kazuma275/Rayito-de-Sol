@@ -9,7 +9,9 @@
         "php": "^8.2",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.1",
-        "laravel/tinker": "^2.10.1"
+        "laravel/tinker": "^2.10.1",
+        "pusher/pusher-php-server": "^7.2",
+        "stripe/stripe-php": "^17.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -67,6 +69,7 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
+            "composer/installers": true,
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
         }

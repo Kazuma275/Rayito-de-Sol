@@ -54,25 +54,6 @@ const monthlyRevenue = computed(() => {
     .reduce((sum, b) => sum + (b.details?.total_price || 0), 0)
 })
 
-const fetchStatistics = async () => {
-  loading.value = true
-  error.value = null
-  try {
-    const token = localStorage.getItem('auth_token')
-    const res = await axios.get('http://localhost:8000/api/statistics', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    })
-    statistics.value = res.data
-  } catch (err) {
-    error.value = err.response?.data?.message || err.message
-  } finally {
-    loading.value = false
-  }
-}
-
 // Funciones para redirección
 function goToProperties() {
   router.push({ name: 'Properties' })
@@ -85,9 +66,6 @@ function goToPayments() {
   router.push({ name: 'Bookings' })
 }
 
-onMounted(() => {
-  fetchStatistics()
-})
 </script>
 
 <template>
@@ -97,48 +75,6 @@ onMounted(() => {
       <p class="welcome-subtitle">
         Gestiona tus propiedades, reservas y ganancias desde un solo lugar
       </p>
-    </div>
-
-    <div v-if="loading" style="margin:2rem 0;text-align:center">Cargando estadísticas...</div>
-    <div v-if="error" style="color:red; margin:2rem 0;text-align:center">{{ error }}</div>
-
-    <div v-if="statistics" class="stats-overview">
-      <div class="stat-card">
-        <div class="stat-icon">
-          <HomeIcon />
-        </div>
-        <div class="stat-content">
-          <h3>{{ statistics.totalProperties ?? '-' }}</h3>
-          <p>Propiedades</p>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">
-          <CalendarIcon />
-        </div>
-        <div class="stat-content">
-          <h3>{{ statistics?.totalBookings ?? '-' }}</h3>
-          <p>Reservas Activas</p>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">
-          <BarChartIcon />
-        </div>
-        <div class="stat-content">
-          <h3>{{ statistics?.occupancyRate ?? '-' }}%</h3>
-          <p>Ocupación este mes</p>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">
-          <KeyIcon />
-        </div>
-        <div class="stat-content">
-          <h3>€{{ statistics?.monthlyRevenue.toLocaleString() ?? '-'}}</h3>
-          <p>Ingresos Mensuales</p>
-        </div>
-      </div>
     </div>
 
     <!-- Acciones rápidas con navegación -->
