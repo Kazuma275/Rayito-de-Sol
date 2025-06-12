@@ -10,15 +10,18 @@ class RouteServiceProvider extends ServiceProvider
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
      */
-    public function boot(): void
+// app/Providers/RouteServiceProvider.php
+    public function boot()
     {
         $this->routes(function () {
-            Route::middleware('web')
-                ->group(base_path('routes/web.php'));
-
             Route::prefix('api')
-                ->middleware('api')
+                ->middleware('api')  // SOLO 'api', NO 'web'
+                ->namespace($this->namespace)
                 ->group(base_path('routes/api.php'));
+
+            Route::middleware('web')
+                ->namespace($this->namespace)
+                ->group(base_path('routes/web.php'));
         });
     }
 }
