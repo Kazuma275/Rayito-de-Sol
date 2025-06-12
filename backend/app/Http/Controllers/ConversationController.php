@@ -14,13 +14,61 @@ class ConversationController extends Controller
     public function index()
     {
         $userId = Auth::id();
-        $conversations = Conversation::with(['property', 'guest', 'owner', 'lastMessage'])
+
+        $conversations = Conversation::with([
+            'property',
+            'guest',
+            'owner',
+            'reservation',
+            'lastMessage'
+        ])
             ->where('guest_id', $userId)
             ->orWhere('owner_id', $userId)
             ->orderByDesc('updated_at')
             ->get();
 
-        return response()->json($conversations);
+
+        $mapped = $conversations->map(function ($conv) use ($userId) {
+            $isOwner = $conv->owner_id === $userId;
+            $otherUser = $isOwner ? $conv->guest : $conv->owner;
+            $reservation = $conv->reservation;
+
+            return [
+                'id' => $conv->id,
+                'propertyId' => $conv->property_id,
+                'name' => $otherUser->name ?? '',
+                'avatar' => $otherUser->avatar ?? null,
+                'email' => $otherUser->email ?? null,
+                'phone' => $otherUser->phone ?? null,
+                'lastMessage' => $conv->lastMessage ? [
+                    'text' => $conv->lastMessage->text,
+                    'timestamp' => $conv->lastMessage->created_at,
+                    'isOwner' => $conv->lastMessage->sender_id === $conv->owner_id,
+                    'status' => $conv->lastMessage->status,
+                ] : null,
+                'unread' => false, // puedes personalizar esto según tus necesidades
+                'property' => $conv->property ? [
+                    'name' => $conv->property->name,
+                    'address' => $conv->property->address ?? null,
+                    'city' => $conv->property->city ?? null,
+                ] : null,
+                'reservation' => $reservation ? [
+                    'id' => $reservation->id,
+                    'reservation_date' => $reservation->reservation_date ?? null,
+                    'checkin' => $reservation->checkin ?? null,
+                    'checkout' => $reservation->checkout ?? null,
+                    'guests' => $reservation->guests ?? null,
+                    'paymentStatus' => $reservation->payment_status ?? null,
+                ] : null,
+                'owner_id' => $conv->owner_id,
+                'guest_id' => $conv->guest_id,
+                'user_one_id' => $conv->guest_id,
+                'user_two_id' => $conv->owner_id,
+            ];
+        });
+
+
+        return response()->json($mapped);
     }
 
     // Crear una nueva conversación (si no existe ya) según una reserva
@@ -59,7 +107,7 @@ class ConversationController extends Controller
     // Mostrar una conversación y sus mensajes
     public function show($id)
     {
-        $conversation = Conversation::with(['messages.sender', 'property', 'guest', 'owner'])
+        $conversation = Conversation::with(['messages.sender', 'property', 'guest', 'owner', 'reservation'])
             ->findOrFail($id);
 
         $userId = Auth::id();
