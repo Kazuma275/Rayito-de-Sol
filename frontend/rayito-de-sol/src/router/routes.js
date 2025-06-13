@@ -37,7 +37,7 @@ const routes = [
     path: "/main",
     name: "MainPage",
     component: MainPage,
-    meta: { requiresAuth: false }
+    meta: { requiresAuth: true }  // Aseguramos que requiere autenticación
   },
   {
     path: "/login",
