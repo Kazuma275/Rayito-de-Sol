@@ -49,10 +49,10 @@ Route::get('/properties/{id}/day-prices', [PropertyDayPriceController::class, 'i
 | RESERVAS (PÚBLICO) - PARA PERMITIR VER Y CREAR RESERVAS
 |--------------------------------------------------------------------------
 */
-Route::get('/bookings', [ReservationController::class, 'index']);
-Route::post('/bookings', [ReservationController::class, 'store']);
-Route::get('/bookings/{id}', [ReservationController::class, 'show']);
-Route::put('/bookings/{id}', [ReservationController::class, 'update']);
+Route::middleware('auth:sanctum')->get('/bookings', [ReservationController::class, 'index']);
+Route::middleware('auth:sanctum')->post('/bookings', [ReservationController::class, 'store']);
+Route::middleware('auth:sanctum')->get('/bookings/{id}', [ReservationController::class, 'show']);
+Route::middleware('auth:sanctum')->put('/bookings/{id}', [ReservationController::class, 'update']);
 
 /*
 |--------------------------------------------------------------------------
