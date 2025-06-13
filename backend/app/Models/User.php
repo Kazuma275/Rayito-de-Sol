@@ -7,6 +7,48 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @OA\Schema(
+ *     schema="User",
+ *     type="object",
+ *     title="User",
+ *     description="Modelo que representa un usuario del sistema",
+ *     required={"id", "name", "email"},
+ *     @OA\Property(property="id", type="integer", readOnly=true, example=1),
+ *     @OA\Property(property="name", type="string", example="Kazuma"),
+ *     @OA\Property(property="username", type="string", example="kazuma123"),
+ *     @OA\Property(property="email", type="string", format="email", example="kazuma@example.com"),
+ *     @OA\Property(property="phone", type="string", example="+34123456789"),
+ *     @OA\Property(property="role", type="string", example="user"),
+ *     @OA\Property(property="verificado", type="boolean", example=true),
+ *     @OA\Property(property="fecha_registro", type="string", format="date-time", example="2025-01-01T12:00:00Z"),
+ *     @OA\Property(property="email_verified_at", type="string", format="date-time", nullable=true, example="2025-01-02T15:00:00Z"),
+ *     @OA\Property(property="created_at", type="string", format="date-time", readOnly=true, example="2025-01-01T12:00:00Z"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time", readOnly=true, example="2025-01-10T12:00:00Z")
+ * )
+ *
+ * @OA\Get(
+ *     path="/api/users/{id}",
+ *     summary="Obtener usuario por ID",
+ *     tags={"Usuarios"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         description="ID del usuario",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Usuario encontrado",
+ *         @OA\JsonContent(ref="#/components/schemas/User")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Usuario no encontrado"
+ *     )
+ * )
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -42,19 +84,16 @@ class User extends Authenticatable
         'fecha_registro' => 'datetime',
     ];
 
-    // Método para verificar si el usuario tiene un rol específico
     public function hasRole($role)
     {
         return $this->role === $role;
     }
 
-    // Método para verificar si el usuario es administrador
     public function isAdmin()
     {
         return $this->role === 'admin';
     }
 
-    // Tus relaciones existentes...
     public function contacts()
     {
         return $this->hasMany(Contact::class, 'user_id');
@@ -75,13 +114,11 @@ class User extends Authenticatable
         return $this->hasMany(Service::class, 'user_id');
     }
 
-    // NUEVA RELACIÓN PARA DASHBOARD
     public function properties()
     {
         return $this->hasMany(Property::class, 'user_id');
     }
 
-    // Relación con conversaciones
     public function conversationsAsOne()
     {
         return $this->hasMany(Conversation::class, 'user_one_id');

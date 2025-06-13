@@ -1,31 +1,41 @@
 <?php
-// routes/channels.php - CORREGIDO
+// routes/channels.php
+//
+// Canales de broadcasting para Laravel Echo y Pusher.
+// Estos canales permiten comunicación en tiempo real en la aplicación.
+//
 
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Log;
 use App\Models\Conversation;
 
-// Canal para usuarios específicos
+// Canal privado para un usuario específico (por ID)
+// Ejemplo: user.5
 Broadcast::channel('user.{userId}', function ($user, $userId) {
     return (int) $user->id === (int) $userId;
 });
 
-// Canal para usuarios en línea
+// Canal de usuarios en línea (puedes emitir eventos de presencia)
+// Ejemplo: online
 Broadcast::channel('online', function ($user) {
     return ['id' => $user->id, 'name' => $user->name];
 });
 
-// Canal general de chat (si lo necesitas)
+// Canal general de chat (todos los autenticados pueden escuchar)
+// Ejemplo: chat
 Broadcast::channel('chat', function ($user) {
     return true;
 });
 
-// 🚨 ESTE ES EL IMPORTANTE - Canal para conversaciones específicas
+// Canal privado para una conversación concreta
+// Ejemplo: chat.12 (donde 12 es el ID de la conversación)
+//
+// Lógica:
+// - Solo pueden escuchar los usuarios que son participantes de la conversación
+// - Se hace log si la conversación no existe o si el usuario no es participante
 Broadcast::channel('chat.{conversationId}', function ($user, $conversationId) {
-    // Buscar la conversación
     $conversation = Conversation::find($conversationId);
 
-    // Verificar que la conversación existe y el usuario es participante
     if (!$conversation) {
         Log::warning("Conversación {$conversationId} no encontrada para usuario {$user->id}");
         return false;
@@ -40,7 +50,6 @@ Broadcast::channel('chat.{conversationId}', function ($user, $conversationId) {
 
     Log::info("Usuario {$user->id} autorizado para conversación {$conversationId}");
 
-    // Retornar información del usuario para el canal
     return [
         'id' => $user->id,
         'name' => $user->name,

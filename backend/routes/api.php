@@ -21,14 +21,21 @@ use Illuminate\Support\Facades\Broadcast;
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
+|
+| Rutas principales de la API para la documentación Swagger/OpenAPI.
+| Cada bloque indica una agrupación de endpoints.
+| Recuerda que la documentación real de Swagger se encuentra en los controladores.
+| Estos comentarios sirven de referencia rápida para la estructura de tu API.
 */
 
 /*
 |--------------------------------------------------------------------------
 | AUTENTICACIÓN
 |--------------------------------------------------------------------------
+|
+| @route POST /register Registrar nuevo usuario
+| @route POST /login Iniciar sesión y obtener token de acceso
 */
-
 Route::post('/register', [AuthenticatedSessionController::class, 'register']);
 Route::post('/login', [AuthenticatedSessionController::class, 'login'])->name('login');
 
@@ -36,7 +43,13 @@ Route::post('/login', [AuthenticatedSessionController::class, 'login'])->name('l
 |--------------------------------------------------------------------------
 | PROPIEDADES (PÚBLICO)
 |--------------------------------------------------------------------------
-| Todas las rutas públicas relacionadas a propiedades
+|
+| Endpoints públicos para consultar propiedades, buscar, ver detalles, días no disponibles y precios diarios.
+| @route GET /properties Listar propiedades (requiere autenticación)
+| @route GET /properties/search Buscar propiedades disponibles (pública)
+| @route GET /properties/{id} Ver detalles de una propiedad
+| @route GET /properties/{id}/unavailable-dates Días no disponibles de la propiedad
+| @route GET /properties/{id}/day-prices Precios personalizados por día
 */
 Route::middleware('auth:sanctum')->get('/properties', [PropertyController::class, 'index']);
 Route::get('/properties/search', [PropertyController::class, 'search']);
@@ -46,8 +59,14 @@ Route::get('/properties/{id}/day-prices', [PropertyDayPriceController::class, 'i
 
 /*
 |--------------------------------------------------------------------------
-| RESERVAS (PÚBLICO) - PARA PERMITIR VER Y CREAR RESERVAS
+| RESERVAS (PÚBLICO)
 |--------------------------------------------------------------------------
+|
+| Endpoints públicos para visualizar y crear reservas.
+| @route GET /bookings Listar mis reservas (requiere autenticación)
+| @route POST /bookings Crear reserva (requiere autenticación)
+| @route GET /bookings/{id} Ver detalles de mi reserva
+| @route PUT /bookings/{id} Actualizar mi reserva
 */
 Route::middleware('auth:sanctum')->get('/bookings', [ReservationController::class, 'index']);
 Route::middleware('auth:sanctum')->post('/bookings', [ReservationController::class, 'store']);
@@ -58,6 +77,10 @@ Route::middleware('auth:sanctum')->put('/bookings/{id}', [ReservationController:
 |--------------------------------------------------------------------------
 | RUTAS DE PAGO CON STRIPE (PÚBLICAS)
 |--------------------------------------------------------------------------
+|
+| Endpoints para gestión de pagos con Stripe.
+| @route POST /create-payment-intent Crear intención de pago
+| @route POST /confirm-payment Confirmar estado del pago
 */
 Route::post('/create-payment-intent', [PaymentController::class, 'createPaymentIntent']);
 Route::post('/confirm-payment', [PaymentController::class, 'confirmPayment']);
@@ -66,21 +89,34 @@ Route::post('/confirm-payment', [PaymentController::class, 'confirmPayment']);
 |--------------------------------------------------------------------------
 | MENSAJES Y CONVERSACIONES (PÚBLICO)
 |--------------------------------------------------------------------------
-| (Agrega aquí las rutas públicas de mensajes/conversaciones si las hay)
+| (Endpoints públicos de mensajes/conversaciones. Agrega aquí si los hay.)
 */
 
 /*
 |--------------------------------------------------------------------------
 | RUTAS PROTEGIDAS POR AUTENTICACIÓN
 |--------------------------------------------------------------------------
+|
+| Todas las rutas de este grupo requieren autenticación con Sanctum (token Bearer).
 */
 Route::middleware('auth:sanctum')->group(function () {
     // Propiedades del usuario autenticado
+    // @route POST /properties Crear propiedad
+    // @route PUT /properties/{id} Actualizar propiedad
+    // @route DELETE /properties/{id} Eliminar propiedad
     Route::post('/properties', [PropertyController::class, 'store']);
     Route::put('/properties/{id}', [PropertyController::class, 'update']);
     Route::delete('/properties/{id}', [PropertyController::class, 'destroy']);
 
-    // Bookings & reservas (rutas específicas del propietario)
+    // Bookings & reservas (solo propietario)
+    // @route GET /owner/bookings Reservas de todas mis propiedades
+    // @route GET /properties/{id}/bookings Reservas de una propiedad
+    // @route POST /bookings/{booking}/accept Aceptar reserva
+    // @route POST /bookings/{booking}/reject Rechazar reserva
+    // @route POST /reservations/{reservation}/accept Aceptar reserva (alias)
+    // @route POST /reservations/{reservation}/reject Rechazar reserva (alias)
+    // @route POST /bookings/{id}/cancel Cancelar reserva
+    // @route DELETE /bookings/{id} Eliminar reserva
     Route::get('/owner/bookings', [ReservationController::class, 'ownerBookings']);
     Route::get('/properties/{id}/bookings', [ReservationController::class, 'propertyBookings']);
     Route::post('/bookings/{booking}/accept', [ReservationController::class, 'accept']);
@@ -90,21 +126,34 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/bookings/{id}/cancel', [ReservationController::class, 'cancel']);
     Route::delete('/bookings/{id}', [ReservationController::class, 'destroy']);
 
-    // Rutas específicas de usuario para reservas
+    // Rutas de reservas por usuario y por propiedad
+    // @route GET /user/{userId}/bookings Reservas por usuario
+    // @route GET /property/{propertyId}/bookings Reservas por propiedad
     Route::get('/user/{userId}/bookings', [ReservationController::class, 'getByUser']);
     Route::get('/property/{propertyId}/bookings', [ReservationController::class, 'getByProperty']);
 
+    // Usuarios (listado)
+    // @route GET /users Listar usuarios con reservas
     Route::get('/users', [ReservationController::class, 'getUsers']);
 
     // Días y precios de propiedades
+    // @route POST /properties/{id}/day-prices Guardar precio de un día
+    // @route DELETE /properties/{id}/day-prices Eliminar precio personalizado de un día
+    // @route POST /properties/{id}/unavailable-dates Agregar día no disponible
+    // @route DELETE /properties/{id}/unavailable-dates Quitar día no disponible
     Route::post('/properties/{id}/day-prices', [PropertyDayPriceController::class, 'store']);
     Route::delete('/properties/{id}/day-prices', [PropertyDayPriceController::class, 'destroy']);
     Route::post('/properties/{id}/unavailable-dates', [UnavailableDateController::class, 'store']);
     Route::delete('/properties/{id}/unavailable-dates', [UnavailableDateController::class, 'destroy']);
 
-    Route::put('properties/{id}', [PropertyController::class, 'update']);
-
     // Mensajes y conversaciones privadas
+    // @route GET /conversations Listar conversaciones
+    // @route POST /conversations Crear conversación
+    // @route GET /conversations/{id} Ver conversación
+    // @route GET /conversations/{conversation}/messages Listar mensajes
+    // @route POST /conversations/{conversation}/messages Enviar mensaje
+    // @route POST /conversations/{conversation}/markAsRead Marcar como leídos
+    // @route POST /conversations/{conversation}/typing Escribir (evento typing)
     Route::get('/conversations', [ConversationController::class, 'index']);
     Route::post('/conversations', [ConversationController::class, 'store']);
     Route::get('/conversations/{id}', [ConversationController::class, 'show']);
@@ -114,6 +163,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/conversations/{conversation}/typing', [MessageController::class, 'typing']);
 
     // Perfil de usuario y favoritos
+    // @route GET /user/profile Ver perfil
+    // @route PATCH /user/profile Actualizar perfil
+    // @route DELETE /user/profile Eliminar perfil
+    // @route POST /user/change-password Cambiar contraseña
+    // @route GET /user/favorites Listar favoritos
+    // @route POST /user/favorites Añadir favorito
+    // @route DELETE /user/favorites/{id} Quitar favorito
     Route::get('/user/profile', [UserController::class, 'profile']);
     Route::patch('/user/profile', [UserController::class, 'updateProfile']);
     Route::delete('/user/profile', [UserController::class, 'destroy']);
@@ -123,21 +179,25 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/user/favorites/{id}', [FavoriteController::class, 'destroy']);
 
     // Dashboard y resumen
+    // @route GET /user/summary Resumen para dashboard
+    // @route GET /user/renter-summary Resumen como inquilino
     Route::get('/user/summary', [UserController::class, 'dashboardSummary']);
     Route::get('/user/renter-summary', [UserController::class, 'renterSummary']);
 
     // Estadísticas privadas
+    // @route GET /statistics Estadísticas del propietario
     Route::get('/statistics', [StatisticsController::class, 'statistics']);
 
     // Usuario autenticado (info básica)
+    // @route GET /user Info de usuario autenticado
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 });
 
 // Rutas para broadcasting con autenticación
+// @route GET /broadcasting/auth Autenticación de broadcasting para websockets
 Broadcast::routes(['middleware' => ['auth:sanctum']]);
-
 Route::post('/broadcasting/auth', function (Request $request) {
     return Broadcast::auth($request);
 })->middleware('auth:sanctum');
@@ -146,6 +206,8 @@ Route::post('/broadcasting/auth', function (Request $request) {
 |--------------------------------------------------------------------------
 | SOPORTE Y UTILIDADES
 |--------------------------------------------------------------------------
+|
+| @route POST /contact-support Contactar soporte técnico
 */
 Route::post('/contact-support', [SupportController::class, 'contact']);
 
@@ -153,6 +215,11 @@ Route::post('/contact-support', [SupportController::class, 'contact']);
 |--------------------------------------------------------------------------
 | RECUPERACIÓN DE CONTRASEÑA
 |--------------------------------------------------------------------------
+|
+| Endpoints para restaurar acceso mediante token de recuperación.
+| @route POST /forgot-password Solicitar recuperación de contraseña
+| @route POST /verify-reset-token Verificar token de recuperación
+| @route POST /reset-password Restablecer contraseña
 */
 Route::post('/forgot-password', [AuthenticatedSessionController::class, 'forgotPassword']);
 Route::post('/verify-reset-token', [AuthenticatedSessionController::class, 'verifyResetToken']);
@@ -162,6 +229,11 @@ Route::post('/reset-password', [AuthenticatedSessionController::class, 'resetPas
 |--------------------------------------------------------------------------
 | RUTAS DE DEBUGGING - ELIMINAR EN PRODUCCIÓN
 |--------------------------------------------------------------------------
+|
+| Endpoints solo para pruebas y depuración. ¡No exponer en producción!
+| @route GET /log-test Escribir en el log
+| @route GET /debug-users Ver usuarios y tokens de recuperación
+| @route GET /debug-token-search/{token} Buscar usuario por token de recuperación
 */
 Route::get('/log-test', function () {
     Log::info('¡Laravel está escribiendo en el log!');

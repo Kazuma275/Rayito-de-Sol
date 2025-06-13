@@ -6,6 +6,37 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Carbon\Carbon;
 
+/**
+ * @OA\Schema(
+ *     schema="Reservation",
+ *     type="object",
+ *     title="Reservation",
+ *     description="Reserva de una propiedad por un huésped",
+ *     required={"user_id", "property_id", "reservation_date", "reservation_time"},
+ *     @OA\Property(property="id", type="integer", readOnly=true, example=1),
+ *     @OA\Property(property="user_id", type="integer", example=4),
+ *     @OA\Property(property="property_id", type="integer", example=10),
+ *     @OA\Property(property="reservation_date", type="string", format="date", example="2025-07-01"),
+ *     @OA\Property(property="reservation_time", type="string", example="15:00"),
+ *     @OA\Property(
+ *         property="details",
+ *         type="object",
+ *         description="Detalles adicionales en formato JSON",
+ *         @OA\Property(property="check_in", type="string", format="date", example="2025-07-05"),
+ *         @OA\Property(property="check_out", type="string", format="date", example="2025-07-10"),
+ *         @OA\Property(property="guests", type="integer", example=2),
+ *         @OA\Property(property="total_price", type="number", format="float", example=500.00),
+ *         @OA\Property(property="status", type="string", example="confirmed"),
+ *         @OA\Property(property="booking_reference", type="string", example="ABC123XYZ"),
+ *         @OA\Property(property="payment_intent_id", type="string", example="pi_1Hxyz..."),
+ *         @OA\Property(property="guest_name", type="string", example="Juan Pérez"),
+ *         @OA\Property(property="guest_email", type="string", example="juan@example.com"),
+ *         @OA\Property(property="guest_phone", type="string", example="+34600000000"),
+ *         @OA\Property(property="created_via", type="string", example="stripe_payment"),
+ *         @OA\Property(property="total_nights", type="integer", example=5)
+ *     )
+ * )
+ */
 class Reservation extends Model
 {
     use HasFactory;
@@ -16,7 +47,6 @@ class Reservation extends Model
         'reservation_date',
         'reservation_time',
         'details',
-        // 'status', // Si decides agregarlo
     ];
 
     protected $casts = [
@@ -24,82 +54,68 @@ class Reservation extends Model
         'reservation_date' => 'date',
     ];
 
-    // Huésped que realizó la reserva
     public function guest()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Propietario de la propiedad reservada
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Propiedad reservada
     public function property()
     {
         return $this->belongsTo(Property::class);
     }
 
-    // Conversación asociada a esta reserva (1 a 1)
     public function conversation()
     {
         return $this->hasOne(Conversation::class);
     }
 
-    // NUEVOS MÉTODOS PARA STRIPE INTEGRATION
-
-    // Obtener el estado de la reserva
     public function getStatusAttribute()
     {
         $details = $this->details ?? [];
         return $details['status'] ?? 'pending';
     }
 
-    // Obtener fecha de check-in
     public function getCheckinDateAttribute()
     {
         $details = $this->details ?? [];
         return isset($details['check_in']) ? Carbon::parse($details['check_in']) : null;
     }
 
-    // Obtener fecha de check-out
     public function getCheckoutDateAttribute()
     {
         $details = $this->details ?? [];
         return isset($details['check_out']) ? Carbon::parse($details['check_out']) : null;
     }
 
-    // Obtener número de huéspedes
     public function getGuestsAttribute()
     {
         $details = $this->details ?? [];
         return $details['guests'] ?? 1;
     }
 
-    // Obtener precio total
     public function getTotalPriceAttribute()
     {
         $details = $this->details ?? [];
         return $details['total_price'] ?? 0;
     }
 
-    // Obtener referencia de reserva
     public function getBookingReferenceAttribute()
     {
         $details = $this->details ?? [];
         return $details['booking_reference'] ?? null;
     }
 
-    // Obtener Payment Intent ID
     public function getPaymentIntentIdAttribute()
     {
         $details = $this->details ?? [];
         return $details['payment_intent_id'] ?? null;
     }
 
-    // Obtener información del huésped
     public function getGuestInfoAttribute()
     {
         $details = $this->details ?? [];
@@ -110,32 +126,27 @@ class Reservation extends Model
         ];
     }
 
-    // Verificar si la reserva está confirmada
     public function isConfirmed()
     {
         return $this->status === 'confirmed';
     }
 
-    // Verificar si la reserva está cancelada
     public function isCancelled()
     {
         return $this->status === 'cancelled';
     }
 
-    // Verificar si la reserva está pendiente
     public function isPending()
     {
         return $this->status === 'pending';
     }
 
-    // Verificar si la reserva fue creada vía Stripe
     public function isStripeBooking()
     {
         $details = $this->details ?? [];
         return isset($details['created_via']) && $details['created_via'] === 'stripe_payment';
     }
 
-    // Obtener duración en noches
     public function getDurationInNightsAttribute()
     {
         if ($this->checkin_date && $this->checkout_date) {
@@ -146,7 +157,6 @@ class Reservation extends Model
         return $details['total_nights'] ?? 0;
     }
 
-    // Scopes para filtrar reservas
     public function scopeConfirmed($query)
     {
         return $query->whereJsonContains('details->status', 'confirmed');
@@ -176,5 +186,4 @@ class Reservation extends Model
     {
         return $query->whereJsonContains('details->created_via', 'stripe_payment');
     }
-
 }

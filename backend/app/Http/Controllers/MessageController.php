@@ -12,7 +12,66 @@ use Illuminate\Support\Facades\Storage;
 
 class MessageController extends Controller
 {
-    // Enviar mensaje (texto y/o adjunto)
+    /**
+     * @OA\Post(
+     *     path="/api/messages/send",
+     *     summary="Enviar mensaje (texto y/o adjunto)",
+     *     tags={"Mensajes"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"conversation_id"},
+     *                 @OA\Property(property="conversation_id", type="integer", example=1),
+     *                 @OA\Property(property="text", type="string", example="Hola, ¿cómo estás?"),
+     *                 @OA\Property(
+     *                     property="attachment",
+     *                     type="string",
+     *                     format="binary",
+     *                     description="Archivo adjunto, máximo 10MB"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Mensaje enviado correctamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="conversation_id", type="integer", example=1),
+     *                 @OA\Property(property="sender_id", type="integer", example=2),
+     *                 @OA\Property(property="text", type="string", example="Hola, ¿cómo estás?"),
+     *                 @OA\Property(property="attachment", type="string", example="attachments/archivo.pdf"),
+     *                 @OA\Property(property="status", type="string", example="sent"),
+     *                 @OA\Property(property="created_at", type="string", example="2024-07-01 12:00:00")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="No autorizado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Error de validación",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
+     */
     public function send(Request $request)
     {
         $request->validate([
@@ -36,7 +95,7 @@ class MessageController extends Controller
 
         $message = Message::create([
             'conversation_id' => $conversation->id,
-            'sender_id' => $userId, // Asegúrate que tu modelo Message tiene este campo
+            'sender_id' => $userId,
             'text' => $request->text,
             'attachment' => $attachmentPath,
             'status' => 'sent',
@@ -48,35 +107,117 @@ class MessageController extends Controller
         return response()->json(['message' => $message]);
     }
 
-    // Enviar evento de typing
+    /**
+     * @OA\Post(
+     *     path="/api/conversations/{conversation}/typing",
+     *     summary="Emitir evento de typing en una conversación",
+     *     tags={"Mensajes"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="conversation",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la conversación",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Evento de typing emitido",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="No autorizado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Conversación no encontrada",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="No encontrado")
+     *         )
+     *     )
+     * )
+     */
     public function typing(Request $request, $conversation)
-{
-    $conversation = Conversation::findOrFail($conversation);
-    $userId = auth()->id();
+    {
+        $conversation = Conversation::findOrFail($conversation);
+        $userId = auth()->id();
 
-    // Verificar que el usuario es parte de la conversación
-    if (!in_array($userId, [$conversation->user_one_id, $conversation->user_two_id])) {
-        abort(403, 'No autorizado');
+        if (!in_array($userId, [$conversation->user_one_id, $conversation->user_two_id])) {
+            abort(403, 'No autorizado');
+        }
+
+        broadcast(new UserTyping($userId, $conversation->id))->toOthers();
+
+        return response()->json(['success' => true]);
     }
 
-    // Emitir evento de typing
-    broadcast(new UserTyping($userId, $conversation->id))->toOthers();
-
-    return response()->json(['success' => true]);
-}
-
+    /**
+     * @OA\Get(
+     *     path="/api/conversations/{conversation}/messages",
+     *     summary="Obtener mensajes de una conversación",
+     *     tags={"Mensajes"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="conversation",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la conversación",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de mensajes",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="conversation_id", type="integer", example=1),
+     *                 @OA\Property(property="sender_id", type="integer", example=2),
+     *                 @OA\Property(property="text", type="string", example="Hola, ¿cómo estás?"),
+     *                 @OA\Property(property="attachment", type="string", example="attachments/archivo.pdf"),
+     *                 @OA\Property(property="status", type="string", example="sent"),
+     *                 @OA\Property(property="created_at", type="string", example="2024-07-01 12:00:00"),
+     *                 @OA\Property(property="read_at", type="string", example="2024-07-01 12:00:05")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="No autorizado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Conversación no encontrada",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="No encontrado")
+     *         )
+     *     )
+     * )
+     */
     public function index($conversationId)
     {
-        // Verifica que la conversación existe
         $conversation = Conversation::findOrFail($conversationId);
 
-        // Solo los participantes pueden ver los mensajes
         $userId = Auth::id();
         if (!in_array($userId, [$conversation->user_one_id, $conversation->user_two_id])) {
             abort(403, 'No autorizado');
         }
 
-        // Obtén los mensajes ordenados por fecha de creación
         $messages = Message::where('conversation_id', $conversationId)
             ->orderBy('created_at')
             ->get();
@@ -84,24 +225,59 @@ class MessageController extends Controller
         return response()->json($messages);
     }
 
-public function markAsRead(Request $request, $conversation)
-{
-    $conversation = Conversation::findOrFail($conversation);
-    $userId = auth()->id();
+    /**
+     * @OA\Post(
+     *     path="/api/conversations/{conversation}/mark-as-read",
+     *     summary="Marcar mensajes de una conversación como leídos",
+     *     tags={"Mensajes"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="conversation",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la conversación",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Mensajes marcados como leídos",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="No autorizado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Conversación no encontrada",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="No encontrado")
+     *         )
+     *     )
+     * )
+     */
+    public function markAsRead(Request $request, $conversation)
+    {
+        $conversation = Conversation::findOrFail($conversation);
+        $userId = auth()->id();
 
-    // Verificar que el usuario es parte de la conversación
-    if (!in_array($userId, [$conversation->user_one_id, $conversation->user_two_id])) {
-        abort(403, 'No autorizado');
+        if (!in_array($userId, [$conversation->user_one_id, $conversation->user_two_id])) {
+            abort(403, 'No autorizado');
+        }
+
+        $conversation->messages()
+            ->where('sender_id', '!=', $userId)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        return response()->json(['success' => true]);
     }
-
-    // Marcar mensajes como leídos
-    $conversation->messages()
-        ->where('sender_id', '!=', $userId)
-        ->whereNull('read_at')
-        ->update(['read_at' => now()]);
-
-    return response()->json(['success' => true]);
-}
-
-
 }

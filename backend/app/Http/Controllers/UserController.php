@@ -9,7 +9,58 @@ use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
-    // Actualizar datos del perfil del usuario autenticado
+    /**
+     * @OA\Put(
+     *     path="/api/profile",
+     *     summary="Actualizar datos del perfil del usuario autenticado",
+     *     tags={"Perfil"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=false,
+     *         description="Datos para actualizar el perfil",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="name", type="string", maxLength=255, example="Juan Pérez"),
+     *             @OA\Property(property="email", type="string", format="email", maxLength=255, example="juan@example.com"),
+     *             @OA\Property(property="phone", type="string", maxLength=25, example="34123456789")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Perfil actualizado correctamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Perfil actualizado correctamente"),
+     *             @OA\Property(
+     *                 property="user",
+     *                 type="object",
+     *                 description="Usuario actualizado",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="Juan Pérez"),
+     *                 @OA\Property(property="email", type="string", format="email", example="juan@example.com"),
+     *                 @OA\Property(property="phone", type="string", example="+34123456789")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Error de validación",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
     public function updateProfile(Request $request)
     {
         $user = $request->user();
@@ -28,30 +79,153 @@ class UserController extends Controller
         ]);
     }
 
-    // Obtener el perfil del usuario autenticado
+    /**
+     * @OA\Get(
+     *     path="/api/profile",
+     *     summary="Obtener el perfil del usuario autenticado",
+     *     tags={"Perfil"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Perfil del usuario autenticado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="user",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="Juan Pérez"),
+     *                 @OA\Property(property="email", type="string", format="email", example="juan@example.com"),
+     *                 @OA\Property(property="phone", type="string", example="+34123456789")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
     public function profile(Request $request)
     {
         return response()->json(['user' => $request->user()]);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/profile",
+     *     summary="Eliminar la cuenta del usuario autenticado",
+     *     tags={"Perfil"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Cuenta eliminada correctamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Cuenta eliminada correctamente")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
     public function destroy(Request $request)
     {
         $user = $request->user();
-
-        // Puedes hacer un soft delete, o eliminar completamente el usuario
-        // Si usas SoftDeletes:
-        // $user->delete();
-
-        // Si quieres eliminar completamente:
         $user->forceDelete();
-
-        // Cierra la sesión o invalida el token si es necesario
-
         return response()->json(['message' => 'Cuenta eliminada correctamente']);
     }
 
-    // Método seguro para obtener los detalles como array
-
+    /**
+     * @OA\Get(
+     *     path="/api/dashboard-summary",
+     *     summary="Obtener resumen del panel del usuario",
+     *     tags={"Perfil"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resumen del dashboard del usuario",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="name", type="string", example="Juan Pérez"),
+     *             @OA\Property(property="email", type="string", example="juan@example.com"),
+     *             @OA\Property(property="lastLogin", type="string", example="2024-01-01 12:00:00"),
+     *             @OA\Property(property="totalProperties", type="integer", example=5),
+     *             @OA\Property(property="reservationsAsOwner", type="integer", example=10),
+     *             @OA\Property(property="reservationsAsGuest", type="integer", example=3),
+     *             @OA\Property(property="monthlyRevenue", type="number", format="float", example=1200.50),
+     *             @OA\Property(property="totalRevenue", type="number", format="float", example=35000.75),
+     *             @OA\Property(property="occupancyRate", type="number", format="float", example=75.2),
+     *             @OA\Property(
+     *                 property="upcomingBookings",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="details", type="object"),
+     *                     @OA\Property(property="check_in", type="string", example="2024-07-01"),
+     *                     @OA\Property(property="check_out", type="string", example="2024-07-10"),
+     *                     @OA\Property(
+     *                         property="property",
+     *                         type="object",
+     *                         @OA\Property(property="id", type="integer", example=2),
+     *                         @OA\Property(property="name", type="string", example="Apartamento Centro"),
+     *                         @OA\Property(property="location", type="string", example="Madrid"),
+     *                         @OA\Property(property="image", type="string", example="image.jpg")
+     *                     ),
+     *                     @OA\Property(property="status", type="string", example="confirmed")
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="guestBookings",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="details", type="object"),
+     *                     @OA\Property(property="check_in", type="string", example="2024-07-01"),
+     *                     @OA\Property(property="check_out", type="string", example="2024-07-10"),
+     *                     @OA\Property(
+     *                         property="property",
+     *                         type="object",
+     *                         @OA\Property(property="id", type="integer", example=2),
+     *                         @OA\Property(property="name", type="string", example="Apartamento Centro"),
+     *                         @OA\Property(property="location", type="string", example="Madrid"),
+     *                         @OA\Property(property="image", type="string", example="image.jpg")
+     *                     ),
+     *                     @OA\Property(property="status", type="string", example="pending")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Unauthorized")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Internal Server Error")
+     *         )
+     *     )
+     * )
+     */
     public function dashboardSummary(Request $request)
     {
         try {
@@ -60,29 +234,23 @@ class UserController extends Controller
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
 
-            // Propiedades del usuario
             $properties = $user->properties()->with(['reservations'])->get();
             $totalProperties = $properties->count();
 
-            // Reservas como propietario
             $reservationsAsOwner = $user->propertyReservations()
                 ->with(['property:id,name,location,image,user_id'])
                 ->get();
 
-            // Reservas como huésped
             $reservationsAsGuest = $user->reservations()
                 ->with(['property:id,name,location,image,user_id'])
                 ->get();
 
-            // --- INGRESOS TOTALES (como propietario) ---
-            // Suma todos los total_price de las reservas de tus propiedades
             $totalRevenue = $reservationsAsOwner->reduce(function ($carry, $r) {
                 $details = $this->safeDetails($r->details);
                 $price = isset($details['total_price']) ? floatval($details['total_price']) : 0;
                 return $carry + ($price > 0 ? $price : 0);
             }, 0);
 
-            // --- INGRESOS DEL MES ACTUAL (como propietario) ---
             $monthlyRevenue = $reservationsAsOwner->filter(function ($r) {
                 $details = $this->safeDetails($r->details);
                 if (isset($details['check_in'])) {
@@ -95,8 +263,6 @@ class UserController extends Controller
                 return $carry + (isset($details['total_price']) ? floatval($details['total_price']) : 0);
             }, 0);
 
-            // --- OCUPACIÓN REAL ---
-            // Calcula noches reservadas (aunque haya solapamientos, igual que SQL SUM)
             $totalNightsBooked = $reservationsAsOwner->reduce(function ($carry, $r) {
                 $details = $this->safeDetails($r->details);
                 if (!empty($details['check_in']) && !empty($details['check_out'])) {
@@ -110,13 +276,11 @@ class UserController extends Controller
                 return $carry;
             }, 0);
 
-            // Noches posibles: nº propiedades * 365
             $totalPossibleNights = $totalProperties * 365;
             $occupancyRate = $totalPossibleNights > 0
                 ? min(100, max(0, round(($totalNightsBooked / $totalPossibleNights) * 100)))
                 : 0;
 
-            // --- PRÓXIMAS RESERVAS (como propietario, próximas en fecha) ---
             $upcomingBookings = $reservationsAsOwner->filter(function ($r) {
                 $details = $this->safeDetails($r->details);
                 if (isset($details['check_in'])) {
@@ -179,6 +343,42 @@ class UserController extends Controller
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/renter-summary",
+     *     summary="Obtener resumen como huésped",
+     *     tags={"Perfil"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resumen de reservas como huésped",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="name", type="string", example="Juan Pérez"),
+     *             @OA\Property(property="totalBookings", type="integer", example=7),
+     *             @OA\Property(property="citiesVisited", type="integer", example=3),
+     *             @OA\Property(property="totalSpent", type="number", format="float", example=2100.00)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Unauthorized")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Internal Server Error")
+     *         )
+     *     )
+     * )
+     */
     public function renterSummary(Request $request)
     {
         try {
@@ -189,7 +389,7 @@ class UserController extends Controller
 
             $bookings = $user->reservations()
                 ->with('property:id,name,location,image')
-                ->whereHas('property') // evita reservas huérfanas
+                ->whereHas('property')
                 ->get();
 
             $totalBookings = $bookings->count();
@@ -233,6 +433,55 @@ class UserController extends Controller
         return [];
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/profile/change-password",
+     *     summary="Cambiar la contraseña del usuario autenticado",
+     *     tags={"Perfil"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"current_password", "new_password"},
+     *             @OA\Property(property="current_password", type="string", example="passwordantigua"),
+     *             @OA\Property(property="new_password", type="string", minLength=8, example="nuevacontraseña123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Contraseña cambiada correctamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Contraseña cambiada correctamente")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="La contraseña actual no es correcta",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="La contraseña actual no es correcta")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Error de validación",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
     public function changePassword(Request $request)
     {
         $request->validate([

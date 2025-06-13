@@ -9,31 +9,78 @@ use App\Models\Reservation;
 
 class StatisticsController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/statistics",
+     *     summary="Obtener estadísticas generales del usuario propietario",
+     *     tags={"Estadísticas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Estadísticas generales",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="totalProperties", type="integer", example=3),
+     *             @OA\Property(property="totalBookings", type="integer", example=25),
+     *             @OA\Property(property="occupancyRate", type="number", example=68),
+     *             @OA\Property(property="totalRevenue", type="number", format="float", example=15300.50),
+     *             @OA\Property(
+     *                 property="bookingsByMonth",
+     *                 type="object",
+     *                 @OA\Property(property="1", type="integer", example=3),
+     *                 @OA\Property(property="2", type="integer", example=2),
+     *                 @OA\Property(property="3", type="integer", example=4),
+     *                 @OA\Property(property="4", type="integer", example=1),
+     *                 @OA\Property(property="5", type="integer", example=3),
+     *                 @OA\Property(property="6", type="integer", example=2),
+     *                 @OA\Property(property="7", type="integer", example=1),
+     *                 @OA\Property(property="8", type="integer", example=2),
+     *                 @OA\Property(property="9", type="integer", example=2),
+     *                 @OA\Property(property="10", type="integer", example=1),
+     *                 @OA\Property(property="11", type="integer", example=2),
+     *                 @OA\Property(property="12", type="integer", example=2)
+     *             ),
+     *             @OA\Property(
+     *                 property="revenueByProperty",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="Apartamento Centro"),
+     *                     @OA\Property(property="revenue", type="number", format="float", example=5400.00),
+     *                     @OA\Property(property="occupancy", type="integer", example=74)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
     public function statistics(Request $request)
     {
         $user = Auth::user();
 
-        // Obtener todas las propiedades del usuario
         $properties = Property::where('user_id', $user->id)
             ->select('id', 'name')
             ->get();
 
-        // Obtener todas las reservas de esas propiedades
         $reservations = Reservation::whereIn('property_id', $properties->pluck('id'))->get();
 
-        // Total de propiedades
         $totalProperties = $properties->count();
-
-        // Total de reservas
         $totalBookings = $reservations->count();
 
-        // Revenue total (sumando total_price desde details)
         $totalRevenue = $reservations->sum(function($r) {
             $details = json_decode($r->details, true) ?? [];
             return $details['total_price'] ?? 0;
         });
 
-        // Porcentaje de ocupación global (todas las propiedades)
         $totalNights = 0;
         foreach ($reservations as $r) {
             $details = json_decode($r->details, true) ?? [];
@@ -46,7 +93,6 @@ class StatisticsController extends Controller
         $maxNights = $totalProperties * 365;
         $occupancyRate = $maxNights > 0 ? round(($totalNights / $maxNights) * 100) : 0;
 
-        // Reservas por mes
         $bookingsByMonth = array_fill(1, 12, 0);
         foreach ($reservations as $r) {
             $details = json_decode($r->details, true) ?? [];
@@ -56,7 +102,6 @@ class StatisticsController extends Controller
             }
         }
 
-        // Revenue y ocupación por propiedad individual
         $revenueByProperty = [];
         foreach ($properties as $property) {
             $revenue = 0;

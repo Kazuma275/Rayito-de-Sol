@@ -11,6 +11,25 @@ use Carbon\Carbon;
 
 class ReservationController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/users",
+     *     summary="Obtener lista de usuarios (id y nombre)",
+     *     tags={"Reservas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de usuarios",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="Juan Pérez")
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function getUsers()
     {
         return response()->json(\App\Models\User::select('id', 'name')->get());
@@ -18,14 +37,24 @@ class ReservationController extends Controller
 
     public function __construct()
     {
-        // TU CLAVE SECRETA DE PRUEBA
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
     }
 
-    // Método para mostrar las reservas del usuario autenticado
+    /**
+     * @OA\Get(
+     *     path="/api/reservations",
+     *     summary="Listar reservas del usuario autenticado",
+     *     tags={"Reservas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Listado de reservas",
+     *         @OA\JsonContent(type="array", @OA\Items(type="object"))
+     *     )
+     * )
+     */
     public function index()
     {
-        // Si hay usuario autenticado, mostrar solo sus reservas
         if (Auth::check()) {
             $reservations = Reservation::where('user_id', Auth::id())
                 ->with(['property' => function ($query) {
@@ -34,14 +63,25 @@ class ReservationController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
         } else {
-            // Si no hay usuario autenticado, devolver array vacío
             $reservations = collect([]);
         }
 
         return response()->json($reservations);
     }
 
-    // Método para mostrar TODAS las reservas (solo para admin)
+    /**
+     * @OA\Get(
+     *     path="/api/reservations/all",
+     *     summary="Listar todas las reservas (solo admin)",
+     *     tags={"Reservas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Listado de todas las reservas",
+     *         @OA\JsonContent(type="array", @OA\Items(type="object"))
+     *     )
+     * )
+     */
     public function all()
     {
         $reservations = Reservation::with(['property' => function ($query) {
@@ -51,14 +91,41 @@ class ReservationController extends Controller
         return response()->json($reservations);
     }
 
-    // Resto de métodos...
+    /**
+     * @OA\Get(
+     *     path="/api/reservations/{id}",
+     *     summary="Obtener los detalles de una reserva",
+     *     tags={"Reservas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la reserva",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detalles de la reserva",
+     *         @OA\JsonContent(type="object")
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado",
+     *         @OA\JsonContent(@OA\Property(property="error", type="string", example="No autorizado"))
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Reserva no encontrada",
+     *         @OA\JsonContent(@OA\Property(property="error", type="string", example="No encontrada"))
+     *     )
+     * )
+     */
     public function show($id)
     {
         $reservation = Reservation::with('property')->findOrFail($id);
 
-        // Verificar que el usuario puede ver esta reserva
         if (Auth::check() && $reservation->user_id !== Auth::id()) {
-            // También permitir si es el propietario de la propiedad
             if ($reservation->property->user_id !== Auth::id()) {
                 return response()->json(['error' => 'No autorizado'], 403);
             }
@@ -67,6 +134,66 @@ class ReservationController extends Controller
         return response()->json($reservation);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/reservations",
+     *     summary="Crear una nueva reserva",
+     *     tags={"Reservas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"property_id","payment_intent_id","checkin_date","checkout_date","guests","guest_name","guest_email","guest_phone","total_price","total_nights","subtotal","service_fee","taxes"},
+     *             @OA\Property(property="property_id", type="integer", example=1),
+     *             @OA\Property(property="payment_intent_id", type="string", example="pi_1NAb0a2eZvKYlo2C5s"),
+     *             @OA\Property(property="checkin_date", type="string", format="date", example="2024-07-01"),
+     *             @OA\Property(property="checkout_date", type="string", format="date", example="2024-07-10"),
+     *             @OA\Property(property="guests", type="integer", example=2),
+     *             @OA\Property(property="guest_name", type="string", example="Juan Pérez"),
+     *             @OA\Property(property="guest_email", type="string", example="juan@example.com"),
+     *             @OA\Property(property="guest_phone", type="string", example="34123456789"),
+     *             @OA\Property(property="total_price", type="number", format="float", example=1200.50),
+     *             @OA\Property(property="total_nights", type="integer", example=3),
+     *             @OA\Property(property="subtotal", type="number", format="float", example=1100.00),
+     *             @OA\Property(property="service_fee", type="number", format="float", example=50.00),
+     *             @OA\Property(property="taxes", type="number", format="float", example=50.50)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Reserva creada exitosamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="id", type="integer"),
+     *             @OA\Property(property="booking_reference", type="string"),
+     *             @OA\Property(property="status", type="string"),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="reservation", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Pago no completado",
+     *         @OA\JsonContent(@OA\Property(property="error", type="string", example="El pago no se ha completado correctamente"))
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Error de validación",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Error al crear la reserva"),
+     *             @OA\Property(property="message", type="string", example="The given data was invalid.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Error al crear la reserva"),
+     *             @OA\Property(property="message", type="string", example="Error message")
+     *         )
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         try {
@@ -86,7 +213,6 @@ class ReservationController extends Controller
                 'taxes' => 'required|numeric|min:0',
             ]);
 
-            // Verificar que el pago fue exitoso
             $paymentIntent = \Stripe\PaymentIntent::retrieve($request->payment_intent_id);
 
             if ($paymentIntent->status !== 'succeeded') {
@@ -95,10 +221,8 @@ class ReservationController extends Controller
                 ], 400);
             }
 
-            // Verificar que la propiedad existe
             $property = Property::findOrFail($request->property_id);
 
-            // Crear la reserva
             $reservation = Reservation::create([
                 'user_id' => Auth::id() ?? null,
                 'property_id' => $request->property_id,
@@ -127,7 +251,6 @@ class ReservationController extends Controller
                 ],
             ]);
 
-            // Cargar la relación con la propiedad
             $reservation->load('property');
 
             return response()->json([
@@ -150,11 +273,51 @@ class ReservationController extends Controller
         }
     }
 
+    /**
+     * @OA\Put(
+     *     path="/api/reservations/{id}",
+     *     summary="Actualizar una reserva",
+     *     tags={"Reservas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la reserva",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="reservation_date", type="string", format="date", example="2024-07-01"),
+     *             @OA\Property(property="reservation_time", type="string", example="15:00:00"),
+     *             @OA\Property(property="details", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reserva actualizada exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Reserva actualizada exitosamente"),
+     *             @OA\Property(property="reservation", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado",
+     *         @OA\JsonContent(@OA\Property(property="error", type="string", example="No autorizado"))
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Reserva no encontrada",
+     *         @OA\JsonContent(@OA\Property(property="error", type="string", example="No encontrada"))
+     *     )
+     * )
+     */
     public function update(Request $request, $id)
     {
         $reservation = Reservation::findOrFail($id);
 
-        // Verificar que el usuario puede actualizar esta reserva
         if (Auth::check() && $reservation->user_id !== Auth::id()) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
@@ -173,11 +336,42 @@ class ReservationController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/reservations/{id}",
+     *     summary="Eliminar una reserva",
+     *     tags={"Reservas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la reserva",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reserva eliminada exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Reserva eliminada exitosamente")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado",
+     *         @OA\JsonContent(@OA\Property(property="error", type="string", example="No autorizado"))
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Reserva no encontrada",
+     *         @OA\JsonContent(@OA\Property(property="error", type="string", example="No encontrada"))
+     *     )
+     * )
+     */
     public function destroy($id)
     {
         $reservation = Reservation::findOrFail($id);
 
-        // Verificar que el usuario puede eliminar esta reserva
         if (Auth::check() && $reservation->user_id !== Auth::id()) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
@@ -189,17 +383,54 @@ class ReservationController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/reservations/{id}/cancel",
+     *     summary="Cancelar una reserva",
+     *     tags={"Reservas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la reserva",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=false,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="reason", type="string", example="Imprevisto personal")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reserva cancelada exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Reserva cancelada exitosamente"),
+     *             @OA\Property(property="reservation", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado",
+     *         @OA\JsonContent(@OA\Property(property="error", type="string", example="No autorizado"))
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Reserva no encontrada",
+     *         @OA\JsonContent(@OA\Property(property="error", type="string", example="No encontrada"))
+     *     )
+     * )
+     */
     public function cancel(Request $request, $id)
     {
         try {
             $reservation = Reservation::findOrFail($id);
 
-            // Verificar que el usuario puede cancelar esta reserva
             if (Auth::check() && $reservation->user_id !== Auth::id()) {
                 return response()->json(['error' => 'No autorizado'], 403);
             }
 
-            // Actualizar el estado en los detalles
             $details = $reservation->details;
             $details['status'] = 'cancelled';
             $details['cancelled_at'] = now()->toISOString();
@@ -226,6 +457,26 @@ class ReservationController extends Controller
         return 'BK' . strtoupper(uniqid());
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/properties/{propertyId}/reservations",
+     *     summary="Obtener reservas de una propiedad",
+     *     tags={"Reservas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="propertyId",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la propiedad",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reservas de la propiedad",
+     *         @OA\JsonContent(type="array", @OA\Items(type="object"))
+     *     )
+     * )
+     */
     public function getByProperty($propertyId)
     {
         $reservations = Reservation::where('property_id', $propertyId)
@@ -236,9 +487,33 @@ class ReservationController extends Controller
         return response()->json($reservations);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/users/{userId}/reservations",
+     *     summary="Obtener reservas de un usuario",
+     *     tags={"Reservas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="userId",
+     *         in="path",
+     *         required=true,
+     *         description="ID del usuario",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reservas del usuario",
+     *         @OA\JsonContent(type="array", @OA\Items(type="object"))
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado",
+     *         @OA\JsonContent(@OA\Property(property="error", type="string", example="No autorizado"))
+     *     )
+     * )
+     */
     public function getByUser($userId)
     {
-        // Verificar que el usuario puede ver estas reservas
         if (Auth::check() && Auth::id() != $userId) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
@@ -251,7 +526,19 @@ class ReservationController extends Controller
         return response()->json($reservations);
     }
 
-    // Métodos adicionales para propietarios
+    /**
+     * @OA\Get(
+     *     path="/api/owner/reservations",
+     *     summary="Obtener reservas de propiedades del propietario autenticado",
+     *     tags={"Reservas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reservas de propiedades del propietario",
+     *         @OA\JsonContent(type="array", @OA\Items(type="object"))
+     *     )
+     * )
+     */
     public function ownerBookings()
     {
         $user = Auth::user();
@@ -263,11 +550,35 @@ class ReservationController extends Controller
         return response()->json($reservations);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/properties/{propertyId}/bookings",
+     *     summary="Obtener reservas de una propiedad (solo propietario)",
+     *     tags={"Reservas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="propertyId",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la propiedad",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reservas de la propiedad",
+     *         @OA\JsonContent(type="array", @OA\Items(type="object"))
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado",
+     *         @OA\JsonContent(@OA\Property(property="error", type="string", example="No autorizado"))
+     *     )
+     * )
+     */
     public function propertyBookings($propertyId)
     {
         $property = Property::findOrFail($propertyId);
 
-        // Verificar que el usuario es el propietario
         if ($property->user_id !== Auth::id()) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
@@ -280,12 +591,39 @@ class ReservationController extends Controller
         return response()->json($reservations);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/reservations/{id}/accept",
+     *     summary="Aceptar una reserva (solo propietario)",
+     *     tags={"Reservas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la reserva",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reserva aceptada exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Reserva aceptada exitosamente"),
+     *             @OA\Property(property="reservation", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado",
+     *         @OA\JsonContent(@OA\Property(property="error", type="string", example="No autorizado"))
+     *     )
+     * )
+     */
     public function accept(Request $request, $id)
     {
         try {
             $reservation = Reservation::findOrFail($id);
 
-            // Verificar que el usuario es el propietario
             if ($reservation->property->user_id !== Auth::id()) {
                 return response()->json(['error' => 'No autorizado'], 403);
             }
@@ -310,12 +648,45 @@ class ReservationController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/reservations/{id}/reject",
+     *     summary="Rechazar una reserva (solo propietario)",
+     *     tags={"Reservas"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la reserva",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=false,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="reason", type="string", example="Motivo de rechazo")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reserva rechazada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Reserva rechazada"),
+     *             @OA\Property(property="reservation", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="No autorizado",
+     *         @OA\JsonContent(@OA\Property(property="error", type="string", example="No autorizado"))
+     *     )
+     * )
+     */
     public function reject(Request $request, $id)
     {
         try {
             $reservation = Reservation::findOrFail($id);
 
-            // Verificar que el usuario es el propietario
             if ($reservation->property->user_id !== Auth::id()) {
                 return response()->json(['error' => 'No autorizado'], 403);
             }

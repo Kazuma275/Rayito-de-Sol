@@ -8,12 +8,69 @@ use Illuminate\Support\Facades\Log;
 
 class PropertyController extends Controller
 {
-
+    /**
+     * @OA\Put(
+     *     path="/api/properties/{id}",
+     *     summary="Actualizar una propiedad",
+     *     tags={"Propiedades"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la propiedad",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name","location","bedrooms","capacity","price","status","image","description"},
+     *             @OA\Property(property="name", type="string", example="Apartamento Centro"),
+     *             @OA\Property(property="location", type="string", example="Madrid"),
+     *             @OA\Property(property="bedrooms", type="integer", example=2),
+     *             @OA\Property(property="capacity", type="integer", example=4),
+     *             @OA\Property(property="price", type="number", format="float", example=120.00),
+     *             @OA\Property(property="status", type="string", enum={"active","inactive"}, example="active"),
+     *             @OA\Property(property="image", type="string", example="https://example.com/image.jpg"),
+     *             @OA\Property(property="description", type="string", example="Bonito apartamento en el centro"),
+     *             @OA\Property(property="amenities", type="string", example="wifi,parking,piscina")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Propiedad actualizada correctamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Propiedad actualizada correctamente"),
+     *             @OA\Property(
+     *                 property="property",
+     *                 type="object"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Error de validación",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Propiedad no encontrada",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Propiedad no encontrada")
+     *         )
+     *     )
+     * )
+     */
     public function update(Request $request, $id)
     {
         $property = Property::findOrFail($id);
 
-        // Valida los campos
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'location' => 'required|string|max:255',
@@ -23,10 +80,9 @@ class PropertyController extends Controller
             'status' => 'required|in:active,inactive',
             'image' => 'required|url',
             'description' => 'required|string',
-            'amenities' => 'nullable|string', // podrías guardar como string separado por comas
+            'amenities' => 'nullable|string',
         ]);
 
-        // Actualiza la propiedad
         $property->update($validated);
 
         return response()->json([
@@ -35,6 +91,37 @@ class PropertyController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/properties/{id}",
+     *     summary="Eliminar una propiedad",
+     *     tags={"Propiedades"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la propiedad",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Propiedad eliminada correctamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Propiedad eliminada correctamente")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Propiedad no encontrada",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Propiedad no encontrada")
+     *         )
+     *     )
+     * )
+     */
     public function destroy($id)
     {
         $property = Property::findOrFail($id);
@@ -42,11 +129,45 @@ class PropertyController extends Controller
 
         return response()->json(['message' => 'Propiedad eliminada correctamente']);
     }
+
     /**
-     * Store a newly created property in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Post(
+     *     path="/api/properties",
+     *     summary="Crear una nueva propiedad",
+     *     tags={"Propiedades"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name","location","bedrooms","capacity","price","description","status"},
+     *             @OA\Property(property="name", type="string", example="Apartamento Centro"),
+     *             @OA\Property(property="location", type="string", example="Madrid"),
+     *             @OA\Property(property="bedrooms", type="integer", example=2),
+     *             @OA\Property(property="capacity", type="integer", example=4),
+     *             @OA\Property(property="price", type="number", format="float", example=120.00),
+     *             @OA\Property(property="image", type="string", example="https://example.com/image.jpg"),
+     *             @OA\Property(property="description", type="string", example="Bonito apartamento en el centro"),
+     *             @OA\Property(property="amenities", type="array", @OA\Items(type="string")),
+     *             @OA\Property(property="status", type="string", enum={"active","inactive"}, example="active")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Propiedad creada correctamente",
+     *         @OA\JsonContent(
+     *             type="object"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Error de validación",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
      */
     public function store(Request $request)
     {
@@ -68,6 +189,30 @@ class PropertyController extends Controller
         return response()->json($property, 201);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/properties",
+     *     summary="Listar propiedades del usuario autenticado",
+     *     tags={"Propiedades"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de propiedades",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Unauthorized")
+     *         )
+     *     )
+     * )
+     */
     public function index(Request $request)
     {
         $user = $request->user();
@@ -80,9 +225,37 @@ class PropertyController extends Controller
         );
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/properties/{id}",
+     *     summary="Obtener los detalles de una propiedad",
+     *     tags={"Propiedades"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la propiedad",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detalles de la propiedad",
+     *         @OA\JsonContent(
+     *             type="object"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Propiedad no encontrada",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Propiedad no encontrada")
+     *         )
+     *     )
+     * )
+     */
     public function show($id)
     {
-        // ✅ También aquí cargamos las reviews
         $property = Property::with('reviews')->find($id);
         if (!$property) {
             return response()->json(['message' => 'Propiedad no encontrada'], 404);
@@ -90,6 +263,84 @@ class PropertyController extends Controller
         return response()->json($property);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/properties/search",
+     *     summary="Buscar propiedades disponibles",
+     *     tags={"Propiedades"},
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Texto de búsqueda para nombre, ubicación o tipo",
+     *         @OA\Schema(type="string", example="Madrid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="guests",
+     *         in="query",
+     *         required=false,
+     *         description="Capacidad mínima",
+     *         @OA\Schema(type="integer", example=4)
+     *     ),
+     *     @OA\Parameter(
+     *         name="maxPrice",
+     *         in="query",
+     *         required=false,
+     *         description="Precio máximo",
+     *         @OA\Schema(type="number", format="float", example=150.00)
+     *     ),
+     *     @OA\Parameter(
+     *         name="propertyTypes",
+     *         in="query",
+     *         required=false,
+     *         description="Tipos de propiedad (separados por comas)",
+     *         @OA\Schema(type="string", example="apartamento,casa")
+     *     ),
+     *     @OA\Parameter(
+     *         name="bedrooms",
+     *         in="query",
+     *         required=false,
+     *         description="Número mínimo de habitaciones",
+     *         @OA\Schema(type="integer", example=2)
+     *     ),
+     *     @OA\Parameter(
+     *         name="bathrooms",
+     *         in="query",
+     *         required=false,
+     *         description="Número mínimo de baños",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="amenities",
+     *         in="query",
+     *         required=false,
+     *         description="Comodidades requeridas (separadas por comas)",
+     *         @OA\Schema(type="string", example="wifi,parking")
+     *     ),
+     *     @OA\Parameter(
+     *         name="checkIn",
+     *         in="query",
+     *         required=false,
+     *         description="Fecha de check-in (YYYY-MM-DD)",
+     *         @OA\Schema(type="string", format="date", example="2024-07-01")
+     *     ),
+     *     @OA\Parameter(
+     *         name="checkOut",
+     *         in="query",
+     *         required=false,
+     *         description="Fecha de check-out (YYYY-MM-DD)",
+     *         @OA\Schema(type="string", format="date", example="2024-07-10")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resultados de la búsqueda",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(type="object")
+     *         )
+     *     )
+     * )
+     */
     public function search(Request $request)
     {
         \Log::info('Entrando al método search');
@@ -162,7 +413,7 @@ class PropertyController extends Controller
             });
         }
 
-        $properties = $query->with('reviews')->get(); // ✅ Cargamos las reviews también en búsqueda
+        $properties = $query->with('reviews')->get();
 
         return response()->json($properties);
     }

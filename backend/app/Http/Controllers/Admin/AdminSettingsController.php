@@ -12,12 +12,27 @@ use Illuminate\Validation\Rule;
 
 class AdminSettingsController extends Controller
 {
-    // ELIMINAR ESTE CONSTRUCTOR COMPLETAMENTE
-    // public function __construct()
-    // {
-    //     $this->middleware('admin');
-    // }
-
+    /**
+     * @OA\Get(
+     *     path="/admin/stats",
+     *     summary="Estadísticas del sistema para administradores",
+     *     tags={"Admin"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Estadísticas obtenidas correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="total_users", type="integer"),
+     *             @OA\Property(property="active_users", type="integer"),
+     *             @OA\Property(property="admin_users", type="integer"),
+     *             @OA\Property(property="recent_registrations", type="integer"),
+     *             @OA\Property(property="total_properties", type="integer"),
+     *             @OA\Property(property="total_reservations", type="integer"),
+     *         )
+     *     ),
+     *     @OA\Response(response=403, description="No autorizado"),
+     * )
+     */
     public function index()
     {
         $stats = [
