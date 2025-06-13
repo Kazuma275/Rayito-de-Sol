@@ -12,7 +12,10 @@ window.Pusher = Pusher;
 const headers = apiHeaders().headers;
 console.log('Headers de autenticación:', headers);
 
+console.log('PUSHER KEY', import.meta.env.VITE_PUSHER_APP_KEY);
+console.log('PUSHER CLUSTER', import.meta.env.VITE_PUSHER_APP_CLUSTER);
 window.Echo = new Echo({
+  
   broadcaster: 'pusher',
   key: import.meta.env.VITE_PUSHER_APP_KEY,
   cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'eu',
