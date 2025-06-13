@@ -1,5 +1,5 @@
 <template>
-  <div v-if="authState.loading" class="auth-loading">
+  <div v-if="loading" class="auth-loading">
     <div class="auth-loading-content">
       <div class="logo-container">
         <div class="logo-icon-wrapper">
@@ -33,60 +33,76 @@
       <div class="bg-line line-3"></div>
     </div>
   </div>
-  <slot v-else-if="authState.isAuthenticated"></slot>
+  <slot v-else-if="isAuthenticated"></slot>
   <!-- Si no está autenticado, no renderiza nada porque el router ya redirigirá -->
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuth, authState } from './router/auth-guard';
 import axios from 'axios';
 import { getItem } from "@/helpers/storage";
 import { apiHeaders } from "@/../utils/api";
 import { SunIcon } from 'lucide-vue-next';
 
 const router = useRouter();
-const { requireAuth } = useAuth();
+const loading = ref(true);
+const isAuthenticated = ref(false);
+const redirectAttempted = ref(false);
 
 onMounted(async () => {
-  authState.loading = true;
-  
+  // Evitar bucle infinito: verificar si ya intentamos redireccionar
+  if (redirectAttempted.value) {
+    loading.value = false;
+    return;
+  }
+
   try {
-    // Verifica si hay token
-    if (!requireAuth()) {
-      return; // El requireAuth ya redirige si es necesario
-    }
-    
-    // Opcional: Verificar validez del token con el servidor
+    // Verificar si hay token
     const token = getItem("auth_token", true) || getItem("auth_token");
     
-    if (token) {
-      try {
-        // Intenta obtener datos del usuario para verificar que el token es válido
-        const { data } = await axios.get("http://localhost:8000/api/user", apiHeaders());
-        authState.user = data;
-        authState.isAuthenticated = true;
-      } catch (error) {
-        console.error("Error al verificar token:", error);
-        // Si hay error, el token probablemente expiró
-        authState.isAuthenticated = false;
-        router.push('/login');
-      }
-    } else {
-      authState.isAuthenticated = false;
+    if (!token) {
+      console.log("No hay token, redirigiendo al login");
+      redirectAttempted.value = true;
       router.push('/login');
+      return;
+    }
+    
+    // Verificar si el token ha expirado
+    const expirationTime = parseInt(localStorage.getItem('token_expiration') || '0');
+    if (expirationTime && Date.now() > expirationTime) {
+      console.log("Token expirado, redirigiendo al login");
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('token_expiration');
+      redirectAttempted.value = true;
+      router.push('/login?session_expired=true');
+      return;
+    }
+    
+    try {
+      // Intenta obtener datos del usuario para verificar que el token es válido
+      const { data } = await axios.get("http://localhost:8000/api/user", apiHeaders());
+      isAuthenticated.value = true;
+    } catch (error) {
+      console.error("Error al verificar token:", error);
+      // Si hay error, el token probablemente expiró o es inválido
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('token_expiration');
+      redirectAttempted.value = true;
+      router.push('/login');
+      return;
     }
   } finally {
     // Añadir un pequeño retraso para que se vea la animación
     setTimeout(() => {
-      authState.loading = false;
+      loading.value = false;
     }, 1200);
   }
 });
 </script>
 
 <style scoped>
+/* Mantener los estilos existentes */
 .auth-loading {
   position: fixed;
   top: 0;
