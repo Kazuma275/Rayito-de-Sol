@@ -23,7 +23,8 @@ class Property extends Model
     ];
 
     protected $casts = [
-        'amenities' => 'array', // Esto es clave
+        'amenities' => 'array',
+        'images' => 'array',
     ];
 
     // Propietario de la propiedad

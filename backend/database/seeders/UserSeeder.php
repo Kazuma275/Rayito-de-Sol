@@ -20,8 +20,24 @@ class UserSeeder extends Seeder
         }
 
         $totalUsers = 200;
-        $ownerCount = intval($totalUsers * 0.85); // 85% owners (170)
-        $guestCount = $totalUsers - $ownerCount;   // 15% guests (30)
+        $adminCount = 3;
+        $ownerCount = intval($totalUsers * 0.25); // 25% owners (50)
+        $guestCount = $totalUsers - $ownerCount - $adminCount; // El resto guests (147)
+
+        // Admins
+        for ($i = 1; $i <= $adminCount; $i++) {
+            User::create([
+                'username' => 'admin' . $faker->unique()->numberBetween(1, 1000000),
+                'name' => $faker->name(),
+                'email' => $faker->unique()->safeEmail(),
+                'email_verified_at' => now(),
+                'avatar' => $avatarUrls[array_rand($avatarUrls)],
+                'password' => Hash::make('adminpassword'),
+                'remember_token' => Str::random(10),
+                'role' => 'admin',
+                'phone' => self::fakeSpanishMobile($faker),
+            ]);
+        }
 
         // Owners (con propiedades)
         for ($i = 1; $i <= $ownerCount; $i++) {
@@ -37,6 +53,7 @@ class UserSeeder extends Seeder
                 'phone' => self::fakeSpanishMobile($faker),
             ]);
         }
+
         // Guests (sin propiedades)
         for ($i = 1; $i <= $guestCount; $i++) {
             User::create([
