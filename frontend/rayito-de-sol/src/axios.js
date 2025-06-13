@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getItem } from "@/helpers/storage.js";
+import { getItem, removeItem } from "@/helpers/storage.js";
 
 const api = axios.create({
   baseURL: "/api", // Esto es CRUCIAL
@@ -15,5 +15,18 @@ api.interceptors.request.use(config => {
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
+
+// Interceptor para respuestas (validación de sesión)
+api.interceptors.response.use(
+  response => response,
+  error => {
+    console.log("Interceptor de respuesta activado", error.response?.status);
+    if (error.response && error.response.status === 401) {
+      removeItem("auth_token");
+      window.location = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;
