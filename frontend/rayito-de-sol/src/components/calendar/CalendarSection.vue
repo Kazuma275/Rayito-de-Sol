@@ -310,6 +310,7 @@ import {
 } from 'lucide-vue-next'
 import { useUserStore } from '@/stores/userStore' 
 import { getItem } from '@/helpers/storage';
+import { useToast } from 'vue-toastification'
 // Estado dinámico
 const properties = ref([])
 const bookings = ref([])
@@ -327,6 +328,9 @@ const currentWeekStart = ref(getStartOfWeek(new Date()))
 // Estado para acciones en bloque
 const bulkStartDate = ref('')
 const bulkEndDate = ref('')
+
+// Importar y configurar el toast
+const toast = useToast();
 
 // Estado para el modal de edición de día
 const showDayModal = ref(false)
@@ -582,13 +586,13 @@ function syncCalendar() {
   if (selectedPropertyId.value) {
     fetchCalendarDataForProperty(selectedPropertyId.value)
   }
-  alert("Calendario sincronizado.");
+  // Simulación de éxito
+  toast.success("Calendario sincronizado correctamente.");
 }
 
 // Cargar reservas, unavailable dates y precios diarios para la propiedad seleccionada (CORREGIDA)
 async function fetchCalendarDataForProperty(propertyId) {
   if (!propertyId) return
-  
   const authHeaders = {
     headers: {
       Authorization: `Bearer ${userStore.token || localStorage.getItem('auth_token')}`
@@ -768,6 +772,7 @@ async function saveDayChanges() {
   }
   await fetchCalendarDataForProperty(selectedPropertyId.value);
   closeDayModal();
+  toast.success("Cambios guardados correctamente.");
 }
 
 function viewBookingDetails(bookingId) {}

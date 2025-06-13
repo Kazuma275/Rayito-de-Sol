@@ -245,6 +245,9 @@ import {
   ShieldIcon,
   BookIcon,
 } from "lucide-vue-next";
+import { useToast } from 'vue-toastification'
+
+const toast = useToast();
 
 // Estado
 const searchQuery = ref("");
@@ -1419,7 +1422,7 @@ const submitContactForm = async () => {
     }
 
     if (response.ok && result.success) {
-      alert("✅ Tu mensaje ha sido enviado.");
+      toast.success("Tu mensaje ha sido enviado.");
       contactForm.value = {
         subject: "",
         message: "",
@@ -1428,11 +1431,11 @@ const submitContactForm = async () => {
       };
       showContactModal.value = false;
     } else {
-      alert("❌ Falló el envío: " + result.message);
+      toast.error("Falló el envío: " + result.message);
     }
   } catch (error) {
+    toast.error("Error al enviar el formulario: " + error.message);
     console.error("Error al enviar el formulario:", error);
-    alert("❌ No se pudo enviar el formulario. " + error.message);
   } finally {
     isSubmitting.value = false;
   }

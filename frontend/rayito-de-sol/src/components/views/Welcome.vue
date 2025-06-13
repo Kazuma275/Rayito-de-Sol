@@ -1,73 +1,3 @@
-<script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { HomeIcon, KeyIcon, BarChartIcon, CalendarIcon } from 'lucide-vue-next'
-import axios from 'axios'
-
-const statistics = ref(null)
-const loading = ref(false)
-const error = ref(null)
-const router = useRouter()
-const now = new Date()
-const currentMonth = now.getMonth() + 1 // Enero=1 en backend, 0 en JS
-const currentYear = now.getFullYear()
-
-const activeBookings = computed(() =>
-  statistics.value?.bookings?.filter(b => b.status === 'confirmed') ?? []
-)
-
-// Ocupación este mes (%) calculada con reservas confirmadas del mes actual
-const occupancyRate = computed(() => {
-  if (!statistics.value?.bookings || !statistics.value?.revenueByProperty?.length) return 0
-  let totalNights = 0
-  let propertyCount = statistics.value.revenueByProperty.length
-
-  statistics.value.bookings.forEach(booking => {
-    if (
-      booking.status === 'confirmed' &&
-      booking.details?.check_in &&
-      new Date(booking.details.check_in).getMonth() + 1 === currentMonth &&
-      new Date(booking.details.check_in).getFullYear() === currentYear
-    ) {
-      const nights =
-        (new Date(booking.details.check_out) - new Date(booking.details.check_in)) /
-        (1000 * 60 * 60 * 24)
-      totalNights += nights
-    }
-  })
-  const maxNights = propertyCount * 30 // 30 días del mes
-  return maxNights > 0 ? Math.round((totalNights / maxNights) * 100) : 0
-})
-
-// Ingresos del mes actual (solo reservas confirmadas)
-const monthlyRevenue = computed(() => {
-  if (!statistics.value?.bookings) return 0
-  return statistics.value.bookings
-    .filter(b => {
-      const date = new Date(b.details?.check_in)
-      return (
-        b.status === 'confirmed' &&
-        date.getMonth() + 1 === currentMonth &&
-        date.getFullYear() === currentYear
-      )
-    })
-    .reduce((sum, b) => sum + (b.details?.total_price || 0), 0)
-})
-
-// Funciones para redirección
-function goToProperties() {
-  router.push({ name: 'Properties' })
-}
-function goToBookings() {
-  router.push({ name: 'Bookings' })
-}
-function goToPayments() {
-  // Si tienes una ruta Payments mejor, cambia aquí el name
-  router.push({ name: 'Bookings' })
-}
-
-</script>
-
 <template>
   <div class="welcome-container">
     <div class="welcome-header">
@@ -106,6 +36,33 @@ function goToPayments() {
     </div>
   </div>
 </template>
+
+<script setup>
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { HomeIcon, CalendarIcon, KeyIcon } from 'lucide-vue-next';
+import { useAuth } from '@/router/auth-guard';
+
+const router = useRouter();
+const { requireAuth } = useAuth();
+
+// Verificar autenticación al montar el componente
+onMounted(() => {
+  requireAuth(); // Esto redirigirá al login si no hay sesión
+});
+
+const goToProperties = () => {
+  router.push('/manage/properties');
+};
+
+const goToBookings = () => {
+  router.push('/manage/bookings');
+};
+
+const goToPayments = () => {
+  router.push('/manage/payments');
+};
+</script>
 
 <style scoped>
 .welcome-container {

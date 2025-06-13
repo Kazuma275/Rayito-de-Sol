@@ -174,10 +174,16 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button class="edit-button" @click="openEditModal">
-            <EditIcon class="button-icon" />
-            Editar propiedad
-          </button>
+          <div class="button-group">
+            <button class="edit-button" @click="openEditModal">
+              <EditIcon class="button-icon" />
+              Editar propiedad
+            </button>
+            <button class="delete-button" @click="openDeleteConfirmation">
+              <Trash2Icon class="button-icon" />
+              Eliminar propiedad
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -323,6 +329,54 @@
         </form>
       </div>
     </div>
+
+    <!-- Modal de confirmación de eliminación -->
+    <div v-if="showDeleteModal" class="property-modal" @click="closeDeleteModal">
+      <div class="modal-content delete-modal" @click.stop>
+        <div class="modal-header delete-header">
+          <h2>Confirmar eliminación</h2>
+          <button class="close-button" @click="closeDeleteModal">
+            <XIcon class="close-icon" />
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="delete-confirmation">
+            <AlertTriangleIcon class="warning-icon" />
+            <p class="confirmation-text">
+              ¿Estás seguro de que deseas eliminar esta propiedad?
+            </p>
+            <p class="confirmation-subtext">
+              Esta acción no se puede deshacer y eliminará permanentemente la propiedad
+              <strong>{{ property.name }}</strong>.
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="form-actions">
+            <button
+              type="button"
+              class="cancel-button"
+              @click="closeDeleteModal"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="button" 
+              class="delete-confirm-button" 
+              :disabled="isDeleting"
+              @click="deleteProperty"
+            >
+              <LoaderIcon
+                v-if="isDeleting"
+                class="button-icon animate-spin"
+              />
+              <Trash2Icon v-else class="button-icon" />
+              {{ isDeleting ? "Eliminando..." : "Eliminar propiedad" }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -336,10 +390,15 @@ import {
   EditIcon,
   SaveIcon,
   LoaderIcon,
+  Trash2Icon,
+  AlertTriangleIcon
 } from "lucide-vue-next";
 import { computed, ref, reactive } from "vue";
 import axios from "axios";
 import { apiHeaders } from "@/../utils/api";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const props = defineProps({
   property: {
@@ -360,11 +419,13 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["viewProperty", "propertyUpdated"]);
+const emit = defineEmits(["viewProperty", "propertyUpdated", "propertyDeleted"]);
 
 const showModal = ref(false);
 const showEditModal = ref(false);
+const showDeleteModal = ref(false);
 const isUpdating = ref(false);
+const isDeleting = ref(false);
 
 // Formulario de edición
 const editForm = reactive({
@@ -410,8 +471,8 @@ async function updateProperty() {
     fields.amenities = JSON.stringify(
       amenitiesText.value
         .split(",")
-        .map(a => a.trim())
-        .filter(a => !!a)
+        .map((a) => a.trim())
+        .filter((a) => !!a)
     );
 
     const response = await axios.put(
@@ -426,24 +487,71 @@ async function updateProperty() {
       if (idx !== -1) {
         props.properties.value[idx] = {
           ...props.properties.value[idx],
-          ...response.data.property || response.data,
+          ...(response.data.property || response.data),
         };
       }
     }
 
     showEditModal.value = false;
-    alert("Propiedad actualizada correctamente.");
+    toast.success("Propiedad actualizada correctamente.");
     emit("propertyUpdated", response.data.property || response.data);
+    setTimeout(() => {
+      window.location.reload();
+    }, 2500);
   } catch (error) {
     console.error("Error updating property:", error);
     if (error.response) {
       console.error("Response data:", error.response.data);
-      alert("Error: " + (error.response.data.message || error.message));
+      toast.error("Error: " + (error.response.data.message || error.message));
     } else {
-      alert("Error al actualizar la propiedad. Por favor, inténtalo de nuevo.");
+      toast.error(
+        "Error al actualizar la propiedad. Por favor, inténtalo de nuevo."
+      );
     }
   } finally {
     isUpdating.value = false;
+  }
+}
+
+async function deleteProperty() {
+  try {
+    isDeleting.value = true;
+    const id = props.property.id;
+    
+    const response = await axios.delete(
+      `/api/properties/${id}`,
+      apiHeaders()
+    );
+
+    // Actualiza el array de propiedades del padre, si lo tienes como prop
+    if (props.properties && Array.isArray(props.properties.value)) {
+      const idx = props.properties.value.findIndex((p) => p.id === id);
+      if (idx !== -1) {
+        props.properties.value.splice(idx, 1);
+      }
+    }
+
+    showDeleteModal.value = false;
+    showModal.value = false;
+    toast.success("Propiedad eliminada correctamente.");
+    emit("propertyDeleted", id);
+    
+    // Opcional: recargar la página después de un breve retraso
+    setTimeout(() => {
+      window.location.reload();
+    }, 2500);
+  } catch (error) {
+    console.error("Error deleting property:", error);
+    if (error.response) {
+      console.error("Response data:", error.response.data);
+      toast.error("Error: " + (error.response.data.message || error.message));
+    } else {
+      toast.error(
+        "Error al eliminar la propiedad. Por favor, inténtalo de nuevo."
+      );
+    }
+  } finally {
+    isDeleting.value = false;
   }
 }
 
@@ -491,6 +599,15 @@ const openEditModal = () => {
 
 const closeEditModal = () => {
   showEditModal.value = false;
+};
+
+const openDeleteConfirmation = () => {
+  showDeleteModal.value = true;
+  closeModal(); // Opcional: cerrar el modal de detalles
+};
+
+const closeDeleteModal = () => {
+  showDeleteModal.value = false;
 };
 
 const getAmenityName = (id) => {
@@ -694,6 +811,10 @@ const formatDate = (dateString) => {
   max-width: 800px;
 }
 
+.modal-content.delete-modal {
+  max-width: 500px;
+}
+
 @keyframes modalFadeIn {
   from {
     opacity: 0;
@@ -714,6 +835,10 @@ const formatDate = (dateString) => {
   background: linear-gradient(135deg, #003580 0%, #0071c2 100%);
   color: white;
   border-radius: 16px 16px 0 0;
+}
+
+.modal-header.delete-header {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
 }
 
 .modal-header h2 {
@@ -921,13 +1046,16 @@ const formatDate = (dateString) => {
   border-radius: 0 0 16px 16px;
 }
 
-.edit-button {
-  width: 100%;
+.button-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.edit-button, .delete-button {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0071c2 0%, #003580 100%);
-  color: white;
   border: none;
   padding: 0.75rem 1rem;
   border-radius: 8px;
@@ -936,9 +1064,23 @@ const formatDate = (dateString) => {
   transition: all 0.3s ease;
 }
 
-.edit-button:hover {
+.edit-button {
+  background: linear-gradient(135deg, #0071c2 0%, #003580 100%);
+  color: white;
+}
+
+.delete-button {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+  color: white;
+}
+
+.edit-button:hover, .delete-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 53, 128, 0.15);
+}
+
+.delete-button:hover {
+  box-shadow: 0 6px 12px rgba(225, 29, 72, 0.15);
 }
 
 .button-icon {
@@ -1004,7 +1146,8 @@ const formatDate = (dateString) => {
 }
 
 .cancel-button,
-.save-button {
+.save-button,
+.delete-confirm-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1030,12 +1173,26 @@ const formatDate = (dateString) => {
   color: white;
 }
 
-.save-button:hover:not(:disabled) {
+.delete-confirm-button {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+  color: white;
+}
+
+.save-button:hover:not(:disabled),
+.delete-confirm-button:hover:not(:disabled) {
   transform: translateY(-2px);
+}
+
+.save-button:hover:not(:disabled) {
   box-shadow: 0 6px 12px rgba(0, 53, 128, 0.15);
 }
 
-.save-button:disabled {
+.delete-confirm-button:hover:not(:disabled) {
+  box-shadow: 0 6px 12px rgba(225, 29, 72, 0.15);
+}
+
+.save-button:disabled,
+.delete-confirm-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
@@ -1051,6 +1208,34 @@ const formatDate = (dateString) => {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Estilos para el modal de confirmación de eliminación */
+.delete-confirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+}
+
+.warning-icon {
+  width: 48px;
+  height: 48px;
+  color: #e11d48;
+  margin-bottom: 1rem;
+}
+
+.confirmation-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.confirmation-subtext {
+  color: #64748b;
+  margin-bottom: 0;
 }
 
 @media (max-width: 768px) {
@@ -1083,6 +1268,10 @@ const formatDate = (dateString) => {
   }
 
   .form-actions {
+    flex-direction: column;
+  }
+  
+  .button-group {
     flex-direction: column;
   }
 }

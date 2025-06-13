@@ -314,14 +314,14 @@
               <XIcon class="action-icon" />
               Rechazar Reserva
             </button>
-            <button
+<!--             <button
               class="action-button message"
               @click="messageBooking(selectedBooking.id)"
               type="button"
             >
               <MessageSquareIcon class="action-icon" />
               Enviar Mensaje
-            </button>
+            </button> -->
             <!-- <button
               v-if="selectedBooking.status === 'confirmed'"
               class="action-button calendar"
@@ -594,6 +594,7 @@ const acceptBooking = async (bookingId) => {
     await axios.post(`/api/bookings/${bookingId}/accept`, {}, apiHeaders());
     await loadData();
     toast.success("Reserva aceptada correctamente");
+    closeBookingDetails();
   } catch (error) {
     toast.error("Error al aceptar la reserva");
   }
@@ -607,6 +608,7 @@ const rejectBooking = async (bookingId) => {
         : b
     );
     toast.success("Reserva rechazada correctamente");
+    closeBookingDetails();
   } catch (error) {
     toast.error("Error al rechazar la reserva");
   }
@@ -619,7 +621,12 @@ const applyDateFilter = () => {
 };
 const syncBookings = () => {
   // Implementa tu sincronización si aplica
-  alert("Calendario sincronizado.");
+  toast.info("Sincronizando reservas...");
+  loadData().then(() => {
+    toast.success("Reservas sincronizadas correctamente");
+  }).catch(() => {
+    toast.error("Error al sincronizar reservas");
+  });
 };
 </script>
 

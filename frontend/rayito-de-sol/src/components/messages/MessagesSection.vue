@@ -129,10 +129,10 @@
               </div>
             </div>
             <div class="conversation-actions">
-              <button class="action-button" @click="showBookingDetails">
+<!--               <button class="action-button" @click="showBookingDetails">
                 <CalendarIcon class="action-icon" />
                 <span class="action-text">Ver Reserva</span>
-              </button>
+              </button> -->
               <button class="action-button" @click="toggleInfoPanel">
                 <InfoIcon class="action-icon" />
                 <span class="action-text">Info</span>

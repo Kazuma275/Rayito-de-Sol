@@ -112,11 +112,17 @@
       :isOpen="showForgotPasswordModal" 
       @close="closeForgotPasswordModal" 
     />
+    
+    <!-- Modal de sesión expirada -->
+    <SessionExpiredModal 
+      :isOpen="showSessionExpiredModal" 
+      @close="closeSessionExpiredModal" 
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import {
   EyeIcon,
@@ -129,6 +135,8 @@ import api from "@/axios";
 import { useUserStore } from "@/stores/userStore.js";
 import { setItem } from "@/helpers/storage.js";
 import ForgotPasswordModal from "./ForgotPasswordModal.vue";
+import SessionExpiredModal from "./SessionExpiredModal.vue";
+import { authState } from '@/router/auth-guard';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -147,6 +155,44 @@ const isSubmitting = ref(false);
 const showPassword = ref(false);
 const isValid = ref(true);
 const showForgotPasswordModal = ref(false);
+const showSessionExpiredModal = ref(false);
+
+// Configurar temporizador para verificar expiración del token
+const setupExpirationTimer = () => {
+  // Limpiar cualquier temporizador existente
+  if (window.tokenExpirationTimer) {
+    clearInterval(window.tokenExpirationTimer);
+  }
+  
+  // Crear nuevo temporizador que verifica cada 10 segundos
+  window.tokenExpirationTimer = setInterval(() => {
+    const expirationTime = parseInt(localStorage.getItem('token_expiration') || '0');
+    
+    // Si el token ha expirado
+    if (expirationTime && Date.now() > expirationTime) {
+      // Limpiar el temporizador
+      clearInterval(window.tokenExpirationTimer);
+      
+      // Cerrar sesión
+      userStore.logout();
+      
+      // Actualizar estado de autenticación
+      authState.isAuthenticated = false;
+      authState.user = null;
+      
+      // Redirigir al login con parámetro de sesión expirada
+      router.push('/login?session_expired=true');
+    }
+  }, 10000); // Verificar cada 10 segundos
+};
+
+// Verificar si hay un parámetro de sesión expirada en la URL
+onMounted(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('session_expired') === 'true') {
+    showSessionExpiredModal.value = true;
+  }
+});
 
 const validateForm = () => {
   isValid.value = true;
@@ -187,10 +233,23 @@ const handleSubmit = async () => {
       }
     );
 
+    // Guardar el token y el usuario
     userStore.setUser(response.data.user, formData.remember);
     userStore.setToken(response.data.token, formData.remember);
+    
+    // Establecer tiempo de expiración (5 minutos = 300000 ms)
+    const expirationTime = Date.now() + 300000;
+    localStorage.setItem('token_expiration', expirationTime.toString());
+    
+    // Actualizar el estado de autenticación
+    authState.isAuthenticated = true;
+    authState.user = response.data.user;
+    
+    // Configurar temporizador para verificar expiración
+    setupExpirationTimer();
+    
     console.log("TOKEN recibido:", response.data.token);
-    console.log("response data",response.data);
+    console.log("response data", response.data);
 
     router.push("/main");
   } catch (error) {
@@ -217,13 +276,20 @@ const closeForgotPasswordModal = () => {
   showForgotPasswordModal.value = false;
 };
 
+const closeSessionExpiredModal = () => {
+  showSessionExpiredModal.value = false;
+  // Limpiar el parámetro de la URL
+  const url = new URL(window.location);
+  url.searchParams.delete('session_expired');
+  window.history.replaceState({}, '', url);
+};
+
 const goToRegister = () => {
   router.push("/register");
 };
 </script>
 
 <style scoped>
-/* Mantén todos los estilos existentes del LoginForm original */
 .login-container {
   min-height: 100vh;
   padding: 2rem 1rem;

@@ -20,7 +20,11 @@
           placeholder="Buscar por propiedad, ubicación o ID de reserva..."
           class="search-input"
         />
-        <button v-if="searchQuery" @click="searchQuery = ''" class="clear-search">
+        <button
+          v-if="searchQuery"
+          @click="searchQuery = ''"
+          class="clear-search"
+        >
           <XIcon class="icon" />
         </button>
       </div>
@@ -85,17 +89,25 @@
                 <MapPinIcon class="location-icon" />
                 <span>{{ booking.property.location }}</span>
               </div>
-              <div class="booking-id">Reserva #{{ booking.bookingReference || booking.id }}</div>
+              <div class="booking-id">
+                Reserva #{{ booking.bookingReference || booking.id }}
+              </div>
             </div>
           </div>
 
           <div class="booking-status-container">
             <div class="booking-status" :class="booking.status">
-              <component :is="getStatusIcon(booking.status)" class="status-icon" />
+              <component
+                :is="getStatusIcon(booking.status)"
+                class="status-icon"
+              />
               {{ getStatusText(booking.status) }}
             </div>
             <div class="booking-actions-menu">
-              <button class="menu-button" @click="toggleBookingMenu(booking.id)">
+              <button
+                class="menu-button"
+                @click="toggleBookingMenu(booking.id)"
+              >
                 <MoreVerticalIcon class="icon" />
               </button>
               <div
@@ -103,8 +115,16 @@
                 class="menu-dropdown"
                 @click.stop
               >
-                <button @click="$emit('view-details', booking)" class="menu-item">
-                  <EyeIcon class="menu-icon" />
+                <button
+                  @click="
+                    () => {
+                      console.log('booking emitido:', booking);
+                      $emit('view-details', booking);
+                    }
+                  "
+                  class="action-button action-button--primary"
+                >
+                  <EyeIcon class="action-icon" />
                   Ver detalles
                 </button>
                 <button
@@ -115,11 +135,17 @@
                   <XIcon class="menu-icon" />
                   Cancelar reserva
                 </button>
-                <button @click="$emit('contact-owner', booking)" class="menu-item">
+                <button
+                  @click="$emit('contact-owner', booking)"
+                  class="menu-item"
+                >
                   <MessageSquareIcon class="menu-icon" />
                   Contactar propietario
                 </button>
-                <button @click="$emit('view-property', booking.property)" class="menu-item">
+                <button
+                  @click="$emit('view-property', booking.property)"
+                  class="menu-item"
+                >
                   <HomeIcon class="menu-icon" />
                   Ver propiedad
                 </button>
@@ -161,7 +187,12 @@
             </div>
             <div class="info-item">
               <ClockIcon class="info-icon" />
-              <span>{{ calculateNights(booking.checkIn, booking.checkOut) }} noches</span>
+              <span
+                >{{
+                  calculateNights(booking.checkIn, booking.checkOut)
+                }}
+                noches</span
+              >
             </div>
             <div class="info-item">
               <EuroIcon class="info-icon" />
@@ -238,7 +269,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import {
   SearchIcon,
   XIcon,
@@ -259,114 +290,116 @@ import {
   UserIcon,
   AlertCircleIcon,
   CheckCircleIcon,
-  XCircleIcon
-} from 'lucide-vue-next'
-import BookingDetailsModal from './BookingDetailsModal.vue'
+  XCircleIcon,
+} from "lucide-vue-next";
+import BookingDetailsModal from "./BookingDetailsModal.vue";
 
 // Props
 const props = defineProps({
   bookings: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   bookingFilters: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   activeFilter: {
     type: String,
-    default: 'all'
+    default: "all",
   },
   showBookingDetails: {
     type: Boolean,
-    default: false
+    default: false,
   },
   selectedBooking: {
     type: Object,
-    default: null
+    default: null,
   },
   isLoading: {
     type: Boolean,
-    default: false
+    default: false,
   },
   formatDate: {
     type: Function,
-    required: true
+    required: true,
   },
   formatDateTime: {
     type: Function,
-    required: true
+    required: true,
   },
   getStatusText: {
     type: Function,
-    required: true
+    required: true,
   },
   canCancel: {
     type: Function,
-    required: true
+    required: true,
   },
   calculateNights: {
     type: Function,
-    required: true
+    required: true,
   },
   getEventIcon: {
     type: Function,
-    required: true
-  }
-})
+    required: true,
+  },
+});
 
 // Emits
 const emit = defineEmits([
-  'change-filter',
-  'view-details',
-  'cancel-booking',
-  'contact-owner',
-  'close-details',
-  'view-property',
-  'change-tab'
-])
+  "change-filter",
+  "view-details",
+  "cancel-booking",
+  "contact-owner",
+  "close-details",
+  "view-property",
+  "change-tab",
+]);
 
 // Local state
-const showSearch = ref(false)
-const searchQuery = ref('')
-const sortBy = ref('date-desc')
-const activeBookingMenu = ref(null)
+const showSearch = ref(false);
+const searchQuery = ref("");
+const sortBy = ref("date-desc");
+const activeBookingMenu = ref(null);
 
 // Computed properties
 const filteredAndSortedBookings = computed(() => {
-  let filtered = props.bookings
+  let filtered = props.bookings;
 
   // Apply search filter
   if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(booking =>
-      booking.property.name.toLowerCase().includes(query) ||
-      booking.property.location.toLowerCase().includes(query) ||
-      booking.id.toString().toLowerCase().includes(query) ||
-      (booking.bookingReference && booking.bookingReference.toLowerCase().includes(query))
-    )
+    const query = searchQuery.value.toLowerCase();
+    filtered = filtered.filter(
+      (booking) =>
+        booking.property.name.toLowerCase().includes(query) ||
+        booking.property.location.toLowerCase().includes(query) ||
+        booking.id.toString().toLowerCase().includes(query) ||
+        (booking.bookingReference &&
+          booking.bookingReference.toLowerCase().includes(query))
+    );
   }
 
   // Sort bookings
   return filtered.sort((a, b) => {
     switch (sortBy.value) {
-      case 'date-desc':
-        return new Date(b.createdAt) - new Date(a.createdAt)
-      case 'date-asc':
-        return new Date(a.createdAt) - new Date(b.createdAt)
-      case 'checkin-desc':
-        return new Date(b.checkIn) - new Date(a.checkIn)
-      case 'checkin-asc':
-        return new Date(a.checkIn) - new Date(b.checkIn)
-      case 'price-desc':
-        return b.totalPrice - a.totalPrice
-      case 'price-asc':
-        return a.totalPrice - b.totalPrice
+      case "date-desc":
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      case "date-asc":
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      case "checkin-desc":
+        return new Date(b.checkIn) - new Date(a.checkIn);
+      case "checkin-asc":
+        return new Date(a.checkIn) - new Date(b.checkIn);
+      case "price-desc":
+        return b.totalPrice - a.totalPrice;
+      case "price-asc":
+        return a.totalPrice - b.totalPrice;
       default:
-        return 0
+        return 0;
     }
-  })
-})
+  });
+});
 
 // Methods
 const getFilterIcon = (filterId) => {
@@ -377,15 +410,15 @@ const getFilterIcon = (filterId) => {
     completed: CheckIcon,
     cancelled: XCircleIcon,
     pending: AlertCircleIcon,
-    confirmed: CheckCircleIcon
-  }
-  return icons[filterId] || CalendarIcon
-}
+    confirmed: CheckCircleIcon,
+  };
+  return icons[filterId] || CalendarIcon;
+};
 
 const getFilterCount = (filterId) => {
-  if (filterId === 'all') return null
-  return props.bookings.filter(booking => booking.status === filterId).length
-}
+  if (filterId === "all") return null;
+  return props.bookings.filter((booking) => booking.status === filterId).length;
+};
 
 const getStatusIcon = (status) => {
   const icons = {
@@ -393,63 +426,64 @@ const getStatusIcon = (status) => {
     confirmed: CheckCircleIcon,
     active: CheckIcon,
     completed: CheckCircleIcon,
-    cancelled: XCircleIcon
-  }
-  return icons[status] || AlertCircleIcon
-}
+    cancelled: XCircleIcon,
+  };
+  return icons[status] || AlertCircleIcon;
+};
 
 const isPastBooking = (booking) => {
-  return new Date(booking.checkOut) < new Date()
-}
+  return new Date(booking.checkOut) < new Date();
+};
 
 const toggleBookingMenu = (bookingId) => {
-  activeBookingMenu.value = activeBookingMenu.value === bookingId ? null : bookingId
-}
+  activeBookingMenu.value =
+    activeBookingMenu.value === bookingId ? null : bookingId;
+};
 
 const handleImageError = (event) => {
-  event.target.src = '/img/placeholder.jpg'
-}
+  event.target.src = "/img/placeholder.jpg";
+};
 
 const getEmptyStateTitle = () => {
   const titles = {
-    all: 'No tienes reservas',
-    upcoming: 'No tienes reservas próximas',
-    active: 'No tienes reservas activas',
-    completed: 'No tienes reservas completadas',
-    cancelled: 'No tienes reservas canceladas',
-    pending: 'No tienes reservas pendientes',
-    confirmed: 'No tienes reservas confirmadas'
-  }
-  return titles[props.activeFilter] || 'No se encontraron reservas'
-}
+    all: "No tienes reservas",
+    upcoming: "No tienes reservas próximas",
+    active: "No tienes reservas activas",
+    completed: "No tienes reservas completadas",
+    cancelled: "No tienes reservas canceladas",
+    pending: "No tienes reservas pendientes",
+    confirmed: "No tienes reservas confirmadas",
+  };
+  return titles[props.activeFilter] || "No se encontraron reservas";
+};
 
 const getEmptyStateDescription = () => {
   const descriptions = {
-    all: 'Cuando hagas una reserva, aparecerá aquí.',
-    upcoming: 'Tus próximas reservas aparecerán aquí.',
-    active: 'No tienes ninguna estancia activa en este momento.',
-    completed: 'Tus reservas completadas aparecerán aquí.',
-    cancelled: 'No tienes reservas canceladas.',
-    pending: 'No tienes reservas pendientes de confirmación.',
-    confirmed: 'No tienes reservas confirmadas.'
-  }
-  return descriptions[props.activeFilter] || 'Prueba a cambiar los filtros.'
-}
+    all: "Cuando hagas una reserva, aparecerá aquí.",
+    upcoming: "Tus próximas reservas aparecerán aquí.",
+    active: "No tienes ninguna estancia activa en este momento.",
+    completed: "Tus reservas completadas aparecerán aquí.",
+    cancelled: "No tienes reservas canceladas.",
+    pending: "No tienes reservas pendientes de confirmación.",
+    confirmed: "No tienes reservas confirmadas.",
+  };
+  return descriptions[props.activeFilter] || "Prueba a cambiar los filtros.";
+};
 
 // Close menu when clicking outside
 const handleClickOutside = (event) => {
-  if (!event.target.closest('.booking-actions-menu')) {
-    activeBookingMenu.value = null
+  if (!event.target.closest(".booking-actions-menu")) {
+    activeBookingMenu.value = null;
   }
-}
+};
 
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
+  document.addEventListener("click", handleClickOutside);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
+  document.removeEventListener("click", handleClickOutside);
+});
 </script>
 
 <style scoped>
@@ -631,8 +665,12 @@ onUnmounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .bookings-list {

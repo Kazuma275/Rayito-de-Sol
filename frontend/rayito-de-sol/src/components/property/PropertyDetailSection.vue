@@ -56,7 +56,7 @@
               </span>
               <span class="feature">
                 <UsersIcon class="feature-icon" />
-                {{ property.maxGuests || 2 }} huéspedes
+                {{ property.maxGuests || property.capacity || 2 }} huéspedes
               </span>
               <span class="feature">
                 <BathIcon class="feature-icon" />
@@ -503,57 +503,101 @@ const error = ref(null)
 const property = ref(null)
 
 // Helper to always set property.images as an array and pricePerNight
+// Modificación necesaria en la función normalizeProperty
 function normalizeProperty(raw) {
+  // Verificar si raw es null o undefined
+  if (!raw) {
+    console.error('Los datos de la propiedad están vacíos');
+    return null;
+  }
+
+  console.log('Normalizando propiedad:', raw);
+
   // Images: prefer images array, fallback to image string, fallback to placeholder
-  let images = []
+  let images = [];
   if (Array.isArray(raw.images) && raw.images.length) {
-    images = raw.images
+    images = raw.images;
   } else if (raw.image) {
-    images = [raw.image]
+    images = [raw.image];
   } else {
-    images = ['/placeholder.svg?height=400&width=600']
+    images = ['/placeholder.svg?height=400&width=600'];
   }
 
   // Price: fallback to 0
-  let price = Number(raw.pricePerNight ?? raw.price)
-  if (isNaN(price)) price = 0
+  let price = 0;
+  if (raw.pricePerNight !== undefined && raw.pricePerNight !== null) {
+    price = Number(raw.pricePerNight);
+  } else if (raw.price !== undefined && raw.price !== null) {
+    price = Number(raw.price);
+  }
+  if (isNaN(price)) price = 0;
 
   // Amenities: array or parseable string
-  let amenities = []
+  let amenities = [];
   if (Array.isArray(raw.amenities)) {
-    amenities = raw.amenities
+    amenities = raw.amenities;
   } else if (typeof raw.amenities === "string" && raw.amenities.length > 0) {
     try {
-      amenities = JSON.parse(raw.amenities)
+      amenities = JSON.parse(raw.amenities);
     } catch (e) {
-      amenities = raw.amenities.split(',').map(a => a.trim())
+      console.error('Error al parsear amenities:', e);
+      amenities = raw.amenities.split(',').map(a => a.trim());
     }
   }
+
+  // Ensure reviews is always an array
+  const reviews = Array.isArray(raw.reviews) ? raw.reviews : [];
+
+  // Ensure maxGuests is set (might be called capacity in the API)
+  const maxGuests = raw.maxGuests || raw.capacity || 2;
+
+  // Ensure bathrooms is set
+  const bathrooms = raw.bathrooms || 1;
+
+  // Normalize owner information
+  const owner = raw.owner || {};
 
   return {
     ...raw,
     images,
     pricePerNight: price,
-    amenities
-  }
+    amenities,
+    reviews,
+    maxGuests,
+    bathrooms,
+    owner
+  };
 }
-
 // Fetch property from API
 const fetchProperty = async () => {
-  loading.value = true
-  error.value = null
-  try {
-    const { data } = await axios.get(`/api/properties/${props.propertyId}`)
-    property.value = normalizeProperty(data)
-    // Reset image selection on property change
-    selectedImage.value = null
-  } catch (e) {
-    error.value = 'Error cargando los datos de la propiedad'
-    property.value = null
-  } finally {
-    loading.value = false
+  loading.value = true;
+  error.value = null;
+  
+  // Verificar si propertyId es válido antes de hacer la solicitud
+  if (!props.propertyId) {
+    console.error('propertyId es null o undefined');
+    error.value = 'ID de propiedad no válido';
+    property.value = null;
+    loading.value = false;
+    return;
   }
-}
+  
+  try {
+    console.log(`Fetching property with ID: ${props.propertyId}`);
+    const { data } = await axios.get(`/api/properties/${props.propertyId}`);
+    console.log('API response:', data);
+    
+    property.value = normalizeProperty(data);
+    // Reset image selection on property change
+    selectedImage.value = null;
+  } catch (e) {
+    console.error('Error fetching property:', e);
+    error.value = `Error cargando los datos de la propiedad: ${e.message || 'Error desconocido'}`;
+    property.value = null;
+  } finally {
+    loading.value = false;
+  }
+};
 
 // Cargar al montar y cuando cambie el propertyId
 onMounted(fetchProperty)

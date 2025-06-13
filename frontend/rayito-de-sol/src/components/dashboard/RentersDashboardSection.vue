@@ -5,7 +5,9 @@
       <div class="welcome-message">
         <p>
           Bienvenido,
-          <span class="user-name">{{ computedUserSummary?.name || "Usuario" }}</span>
+          <span class="user-name">{{
+            computedUserSummary?.name || "Usuario"
+          }}</span>
         </p>
       </div>
     </div>
@@ -17,7 +19,9 @@
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ computedUserSummary?.totalBookings || 0 }}</p>
+          <p class="stat-value">
+            {{ computedUserSummary?.totalBookings || 0 }}
+          </p>
           <h3 class="stat-title">Reservas Totales</h3>
         </div>
       </div>
@@ -27,7 +31,9 @@
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ computedUserSummary?.citiesVisited || 0 }}</p>
+          <p class="stat-value">
+            {{ computedUserSummary?.citiesVisited || 0 }}
+          </p>
           <h3 class="stat-title">Ciudades Visitadas</h3>
         </div>
       </div>
@@ -81,9 +87,12 @@
                 />
                 <div>
                   <h4>{{ booking.property?.name || "Propiedad" }}</h4>
-                  <p class="booking-location">{{ booking.property?.location }}</p>
+                  <p class="booking-location">
+                    {{ booking.property?.location }}
+                  </p>
                   <p class="booking-dates">
-                    {{ formatDate(booking.check_in) }} - {{ formatDate(booking.check_out) }}
+                    {{ formatDate(booking.check_in) }} -
+                    {{ formatDate(booking.check_out) }}
                   </p>
                 </div>
               </div>
@@ -141,7 +150,10 @@
                   class="favorite-button"
                   :class="{ active: isFavorite(property.id) }"
                 >
-                  <HeartIcon class="heart-icon" :class="{ filled: isFavorite(property.id) }" />
+                  <HeartIcon
+                    class="heart-icon"
+                    :class="{ filled: isFavorite(property.id) }"
+                  />
                 </button>
               </div>
             </div>
@@ -186,7 +198,9 @@
                   class="message-avatar"
                 />
                 <div>
-                  <h4 class="sender-name">{{ conversation.ownerName || conversation.name }}</h4>
+                  <h4 class="sender-name">
+                    {{ conversation.ownerName || conversation.name }}
+                  </h4>
                   <p class="message-property">
                     {{ conversation.property?.name || "Propiedad" }}
                   </p>
@@ -219,7 +233,10 @@
             <h3>Historial Reciente</h3>
           </div>
 
-          <div v-if="recentBookings && recentBookings.length > 0" class="history-list">
+          <div
+            v-if="recentBookings && recentBookings.length > 0"
+            class="history-list"
+          >
             <div
               v-for="booking in recentBookings.slice(0, 4)"
               :key="booking.id"
@@ -233,18 +250,28 @@
                 />
                 <div>
                   <h4>{{ booking.property?.name }}</h4>
-                  <p class="history-location">{{ booking.property?.location }}</p>
+                  <p class="history-location">
+                    {{ booking.property?.location }}
+                  </p>
                   <p class="history-dates">
-                    {{ formatDate(booking.check_in) }} - {{ formatDate(booking.check_out) }}
+                    {{ formatDate(booking.check_in) }} -
+                    {{ formatDate(booking.check_out) }}
                   </p>
                 </div>
               </div>
               <div class="history-actions">
-                <button class="review-button" v-if="!booking.reviewed" @click="openReviewModal(booking)">
+                <button
+                  class="review-button"
+                  v-if="!booking.reviewed"
+                  @click="openReviewModal(booking)"
+                >
                   <StarIcon class="star-icon" />
                   Reseñar
                 </button>
-                <button class="rebook-button" @click="rebookProperty(booking.property?.id)">
+                <button
+                  class="rebook-button"
+                  @click="rebookProperty(booking.property?.id)"
+                >
                   <RefreshCwIcon class="refresh-icon" />
                   Reservar de nuevo
                 </button>
@@ -298,15 +325,16 @@
         </div>
         <div class="modal-body">
           <div class="review-property-info">
-            <img 
-              :src="selectedBooking?.property?.image || '/img/placeholder.jpg'" 
+            <img
+              :src="selectedBooking?.property?.image || '/img/placeholder.jpg'"
               class="review-property-image"
               @error="handleImageError"
             />
             <div>
               <h4>{{ selectedBooking?.property?.name }}</h4>
               <p class="review-property-dates">
-                {{ formatDate(selectedBooking?.check_in) }} - {{ formatDate(selectedBooking?.check_out) }}
+                {{ formatDate(selectedBooking?.check_in) }} -
+                {{ formatDate(selectedBooking?.check_out) }}
               </p>
             </div>
           </div>
@@ -314,20 +342,23 @@
           <div class="review-rating">
             <p class="rating-label">¿Cómo valorarías tu estancia?</p>
             <div class="rating-stars">
-              <button 
-                v-for="star in 5" 
-                :key="star" 
+              <button
+                v-for="star in 5"
+                :key="star"
                 @click="reviewRating = star"
                 class="star-button"
               >
-                <StarIcon class="star-icon" :class="{ filled: star <= reviewRating }" />
+                <StarIcon
+                  class="star-icon"
+                  :class="{ filled: star <= reviewRating }"
+                />
               </button>
             </div>
           </div>
 
           <div class="review-comment">
             <label for="review-comment">Comentarios (opcional)</label>
-            <textarea 
+            <textarea
               id="review-comment"
               v-model="reviewComment"
               placeholder="Comparte tu experiencia con otros huéspedes..."
@@ -340,8 +371,8 @@
           <button class="cancel-button" @click="closeReviewModal">
             Cancelar
           </button>
-          <button 
-            class="submit-button" 
+          <button
+            class="submit-button"
             :disabled="reviewRating === 0"
             @click="submitReview"
           >
@@ -368,7 +399,7 @@ import {
   RefreshCwIcon,
   ClockIcon,
   ChevronRightIcon,
-  XIcon
+  XIcon,
 } from "lucide-vue-next";
 import { ref, onMounted, computed, watch } from "vue";
 import axios from "axios";
@@ -376,9 +407,9 @@ import { getItem } from "@/helpers/storage";
 import { apiHeaders } from "@/../utils/api";
 import { useFavorites } from "@/helpers/favoriteManager";
 
-
 // Usar el composable de favoritos
-const { favoriteIds, isFavorite, toggleFavorite, reloadFavorites } = useFavorites();
+const { favoriteIds, isFavorite, toggleFavorite, reloadFavorites } =
+  useFavorites();
 
 const { favoriteSummaries } = useFavorites();
 const router = useRouter();
@@ -393,91 +424,101 @@ const bookings = ref([]);
 const showReviewModal = ref(false);
 const selectedBooking = ref(null);
 const reviewRating = ref(0);
-const reviewComment = ref('');
+const reviewComment = ref("");
 
 // Computed properties
 const upcomingBookings = computed(() => {
   if (!bookings.value || bookings.value.length === 0) return [];
-  
+
   const now = new Date();
   return bookings.value
-    .filter(booking => {
+    .filter((booking) => {
       // Usar la estructura correcta de datos de las reservas
       const checkInDate = booking.details?.check_in || booking.checkIn;
       if (!checkInDate) return false;
-      
+
       const checkIn = new Date(checkInDate);
       const status = booking.details?.status || booking.status;
-      
+
       // Solo mostrar reservas confirmadas o pendientes que sean futuras
-      return checkIn >= now && (status === 'confirmed' || status === 'pending');
+      return checkIn >= now && (status === "confirmed" || status === "pending");
     })
     .sort((a, b) => {
       const dateA = new Date(a.details?.check_in || a.checkIn);
       const dateB = new Date(b.details?.check_in || b.checkIn);
       return dateA - dateB;
     })
-    .map(booking => ({
-      ...booking,
-      // Normalizar la estructura de datos
-      check_in: booking.details?.check_in || booking.checkIn,
-      check_out: booking.details?.check_out || booking.checkOut,
-      guests: booking.details?.guests || booking.guests || 1,
-      status: booking.details?.status || booking.status
-    }));
-});
-
-const recentBookings = computed(() => {
-  if (!bookings.value || bookings.value.length === 0) return [];
-  
-  const now = new Date();
-  return bookings.value
-    .filter(booking => {
-      const checkOutDate = booking.details?.check_out || booking.checkOut;
-      if (!checkOutDate) return false;
-      
-      const checkOut = new Date(checkOutDate);
-      const status = booking.details?.status || booking.status;
-      
-      // Solo mostrar reservas completadas que sean del pasado
-      return checkOut < now && (status === 'completed' || status === 'confirmed');
-    })
-    .sort((a, b) => {
-      const dateA = new Date(a.details?.check_out || a.checkOut);
-      const dateB = new Date(b.details?.check_out || b.checkOut);
-      return dateB - dateA; // Más recientes primero
-    })
-    .map(booking => ({
+    .map((booking) => ({
       ...booking,
       // Normalizar la estructura de datos
       check_in: booking.details?.check_in || booking.checkIn,
       check_out: booking.details?.check_out || booking.checkOut,
       guests: booking.details?.guests || booking.guests || 1,
       status: booking.details?.status || booking.status,
-      reviewed: booking.reviewed || false
+    }));
+});
+
+const recentBookings = computed(() => {
+  if (!bookings.value || bookings.value.length === 0) return [];
+
+  const now = new Date();
+  return bookings.value
+    .filter((booking) => {
+      const checkOutDate = booking.details?.check_out || booking.checkOut;
+      if (!checkOutDate) return false;
+
+      const checkOut = new Date(checkOutDate);
+      const status = booking.details?.status || booking.status;
+
+      // Solo mostrar reservas completadas que sean del pasado
+      return (
+        checkOut < now && (status === "completed" || status === "confirmed")
+      );
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.details?.check_out || a.checkOut);
+      const dateB = new Date(b.details?.check_out || b.checkOut);
+      return dateB - dateA; // Más recientes primero
+    })
+    .map((booking) => ({
+      ...booking,
+      // Normalizar la estructura de datos
+      check_in: booking.details?.check_in || booking.checkIn,
+      check_out: booking.details?.check_out || booking.checkOut,
+      guests: booking.details?.guests || booking.guests || 1,
+      status: booking.details?.status || booking.status,
+      reviewed: booking.reviewed || false,
     }));
 });
 
 const computedUserSummary = computed(() => {
-  const totalBookings = bookings.value?.length || 0;
-  const totalSpent = bookings.value?.reduce((sum, booking) => {
-    const price = booking.details?.total_price || booking.totalPrice || 0;
-    return sum + parseFloat(price);
-  }, 0) || 0;
-  
-  const citiesVisited = new Set(
-    bookings.value
-      ?.filter(b => b.details?.status === 'completed' || b.status === 'completed')
-      ?.map(b => b.property?.location)
-      ?.filter(Boolean)
-  ).size || 0;
-
+  const summary = userSummary.value || {};
   return {
-    ...userSummary.value,
-    name: userSummary.value?.name || "Usuario",
-    totalBookings,
-    totalSpent: Math.round(totalSpent),
-    citiesVisited
+    name: summary.name || "Usuario",
+    totalBookings:
+      typeof summary.totalBookings === "number"
+        ? summary.totalBookings
+        : bookings.value?.length || 0,
+    totalSpent:
+      typeof summary.totalSpent === "number"
+        ? summary.totalSpent
+        : bookings.value?.reduce((sum, booking) => {
+            const price =
+              booking.details?.total_price || booking.totalPrice || 0;
+            return sum + parseFloat(price);
+          }, 0) || 0,
+    citiesVisited:
+      typeof summary.citiesVisited === "number"
+        ? summary.citiesVisited
+        : new Set(
+            bookings.value
+              ?.filter(
+                (b) =>
+                  b.details?.status === "completed" || b.status === "completed"
+              )
+              ?.map((b) => b.property?.location)
+              ?.filter(Boolean)
+          ).size || 0,
   };
 });
 
@@ -485,41 +526,46 @@ const loadFavoriteProperties = async () => {
   console.log("=== CARGANDO PROPIEDADES FAVORITAS ===");
   console.log("IDs de favoritos actuales:", favoriteIds.value);
   console.log("Número de favoritos:", favoriteIds.value.length);
-  
+
   if (favoriteIds.value.length === 0) {
     console.log("No hay favoritos para cargar");
     favoriteProperties.value = [];
     return;
   }
-  
+
   try {
     // Cargar todas las propiedades
-    const response = await axios.get("http://localhost:8000/api/properties", apiHeaders());
+    const response = await axios.get(
+      "http://localhost:8000/api/properties",
+      apiHeaders()
+    );
     console.log("Propiedades obtenidas de la API:", response.data.length);
-    
+
     // Filtrar solo las que están en favoritos
-    const filtered = response.data.filter(property => {
+    const filtered = response.data.filter((property) => {
       const isFav = favoriteIds.value.includes(property.id);
       if (isFav) {
-        console.log(`Propiedad ${property.id} (${property.name}) está en favoritos`);
+        console.log(
+          `Propiedad ${property.id} (${property.name}) está en favoritos`
+        );
       }
       return isFav;
     });
-    
+
     console.log("Propiedades filtradas por favoritos:", filtered.length);
-    
+
     // Normalizar las propiedades
-    favoriteProperties.value = filtered.map(property => ({
+    favoriteProperties.value = filtered.map((property) => ({
       id: property.id,
       name: property.name || "Sin nombre",
       location: property.location || "Ubicación no disponible",
       price: property.price || 0,
-      image: property.image || '/img/placeholder.jpg',
+      image: property.image || "/img/placeholder.jpg",
       bedrooms: property.bedrooms || 1,
       bathrooms: property.bathrooms || 1,
-      maxGuests: property.capacity || 2
+      maxGuests: property.capacity || 2,
     }));
-    
+
     console.log("Propiedades favoritas finales:", favoriteProperties.value);
   } catch (error) {
     console.error("Error cargando propiedades favoritas:", error);
@@ -528,22 +574,26 @@ const loadFavoriteProperties = async () => {
 };
 
 // Observar cambios en favoriteIds para recargar propiedades
-watch(favoriteIds, () => {
-  loadFavoriteProperties();
-}, { deep: true });
+watch(
+  favoriteIds,
+  () => {
+    loadFavoriteProperties();
+  },
+  { deep: true }
+);
 
 // Asegurémonos de que se carguen los favoritos al montar el componente
 onMounted(async () => {
   // Recargar favoritos explícitamente
   reloadFavorites();
-  
+
   loadingUser.value = true;
   userError.value = null;
-  
+
   try {
     // Cargar favoritos primero para asegurar que están disponibles
     await loadFavoriteProperties();
-    
+
     const token = getItem("auth_token", true) || getItem("auth_token");
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -552,13 +602,18 @@ onMounted(async () => {
 
     // Cargar resumen del usuario
     try {
-      const userRes = await axios.get("http://localhost:8000/api/user/renter-summary", {
-        headers,
-      });
+      const userRes = await axios.get(
+        "http://localhost:8000/api/user/renter-summary",
+        {
+          headers,
+        }
+      );
       userSummary.value = userRes.data;
       console.log("Resumen usuario (inquilino):", userSummary.value);
     } catch (err) {
-      console.log("No se pudo cargar el resumen del usuario, usando datos por defecto");
+      console.log(
+        "No se pudo cargar el resumen del usuario, usando datos por defecto"
+      );
       userSummary.value = { name: "Usuario" };
     }
 
@@ -566,13 +621,23 @@ onMounted(async () => {
     const bookingsRes = await axios.get("http://localhost:8000/api/bookings", {
       headers,
     });
-    bookings.value = bookingsRes.data.map(booking => ({
+    bookings.value = bookingsRes.data.map((booking) => ({
       ...booking,
-      // Normalizar la estructura de datos
-      check_in: booking.details?.check_in || booking.reservation_date,
-      check_out: booking.details?.check_out || booking.reservation_date,
-      guests: booking.details?.guests || 1,
-      status: booking.details?.status || 'confirmed'
+      check_in:
+        booking.details?.check_in ||
+        booking.check_in ||
+        booking.reservation_date,
+      check_out:
+        booking.details?.check_out ||
+        booking.check_out ||
+        booking.reservation_date,
+      guests: booking.details?.guests || booking.guests || 1,
+      status: booking.details?.status || booking.status || "confirmed",
+      property: booking.property || {
+        name: "Propiedad",
+        location: "",
+        image: "/img/placeholder.jpg",
+      },
     }));
     console.log("Reservas inquilino:", bookings.value);
 
@@ -581,16 +646,20 @@ onMounted(async () => {
 
     // Cargar conversaciones
     try {
-      const conversationsRes = await axios.get("http://localhost:8000/api/conversations", {
-        headers,
-      });
-      conversations.value = Array.isArray(conversationsRes.data) ? conversationsRes.data : [];
+      const conversationsRes = await axios.get(
+        "http://localhost:8000/api/conversations",
+        {
+          headers,
+        }
+      );
+      conversations.value = Array.isArray(conversationsRes.data)
+        ? conversationsRes.data
+        : [];
       console.log("Conversaciones:", conversations.value);
     } catch (err) {
       console.log("No se pudieron cargar las conversaciones");
       conversations.value = [];
     }
-
   } catch (err) {
     console.error("ERROR cargando dashboard inquilino:", err);
     userError.value = err.response?.data?.message || err.message;
@@ -603,10 +672,10 @@ onMounted(async () => {
 const formatDate = (dateStr) => {
   if (!dateStr) return "-";
   try {
-    return new Date(dateStr).toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
+    return new Date(dateStr).toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
     });
   } catch (e) {
     return "-";
@@ -616,11 +685,11 @@ const formatDate = (dateStr) => {
 const formatDateTime = (dateStr) => {
   if (!dateStr) return "-";
   try {
-    return new Date(dateStr).toLocaleString('es-ES', {
-      day: 'numeric',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateStr).toLocaleString("es-ES", {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   } catch (e) {
     return "-";
@@ -628,8 +697,8 @@ const formatDateTime = (dateStr) => {
 };
 
 const navigateTo = (route) => {
-  if (route === 'search') {
-    router.push('/renters/search');
+  if (route === "search") {
+    router.push("/renters/search");
   } else {
     router.push(`/renters/${route}`);
   }
@@ -637,10 +706,10 @@ const navigateTo = (route) => {
 
 const getStatusText = (status) => {
   const statusMap = {
-    confirmed: 'Confirmada',
-    pending: 'Pendiente',
-    cancelled: 'Cancelada',
-    completed: 'Completada'
+    confirmed: "Confirmada",
+    pending: "Pendiente",
+    cancelled: "Cancelada",
+    completed: "Completada",
   };
   return statusMap[status] || status;
 };
@@ -660,63 +729,63 @@ const rebookProperty = (propertyId) => {
 };
 
 const handleImageError = (event) => {
-  event.target.src = '/img/placeholder.jpg';
+  event.target.src = "/img/placeholder.jpg";
 };
 
 // Funciones para el modal de reseñas
 const openReviewModal = (booking) => {
   selectedBooking.value = booking;
   reviewRating.value = 0;
-  reviewComment.value = '';
+  reviewComment.value = "";
   showReviewModal.value = true;
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow = "hidden";
 };
 
 const closeReviewModal = () => {
   showReviewModal.value = false;
   selectedBooking.value = null;
-  document.body.style.overflow = 'auto';
+  document.body.style.overflow = "auto";
 };
 
 const submitReview = async () => {
   if (!selectedBooking.value || reviewRating.value === 0) return;
-  
+
   try {
     // Aquí implementarías la llamada a la API para guardar la reseña
-    console.log('Enviando reseña:', {
+    console.log("Enviando reseña:", {
       bookingId: selectedBooking.value.id,
       propertyId: selectedBooking.value.property?.id,
       rating: reviewRating.value,
-      comment: reviewComment.value
+      comment: reviewComment.value,
     });
-    
+
     // Simulamos una llamada exitosa
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     // Marcar la reserva como reseñada
-    const index = bookings.value.findIndex(b => b.id === selectedBooking.value.id);
+    const index = bookings.value.findIndex(
+      (b) => b.id === selectedBooking.value.id
+    );
     if (index !== -1) {
       bookings.value[index].reviewed = true;
     }
-    
+
     // Cerrar el modal
     closeReviewModal();
-    
+
     // Mostrar mensaje de éxito
-    alert('¡Gracias por tu reseña!');
-    
+    alert("¡Gracias por tu reseña!");
   } catch (error) {
-    console.error('Error al enviar la reseña:', error);
-    alert('No se pudo enviar la reseña. Por favor, inténtalo de nuevo.');
+    console.error("Error al enviar la reseña:", error);
+    alert("No se pudo enviar la reseña. Por favor, inténtalo de nuevo.");
   }
 };
 
 const clearAllFavorites = () => {
-  console.log('Limpiando todos los favoritos');
+  console.log("Limpiando todos los favoritos");
   favoriteIds.value = [];
-  localStorage.removeItem('favorite-properties');
+  localStorage.removeItem("favorite-properties");
 };
-
 </script>
 
 <style scoped>
@@ -1619,11 +1688,11 @@ const clearAllFavorites = () => {
     flex-direction: row;
     justify-content: space-between;
   }
-  
+
   .review-modal {
     width: 95%;
   }
-  
+
   .review-property-info {
     flex-direction: column;
   }
