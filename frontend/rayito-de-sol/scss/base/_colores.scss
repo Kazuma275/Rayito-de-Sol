@@ -1,24 +1,9 @@
-// Colores principales (inspirados en el entorno de Calahonda)
-
-$azul-marino:   #1E40AF; // Dominante: header/nav
-$azul-medio:    #3B82F6; // Hover, links, tarjetas
-$azul-pastel:   #6C9AE3; // Fondos suaves e info
-
-$amarillo-oscuro: #F59E0B; // Botones primarios, íconos
-$amarillo-claro:  #FBBF24; // Sombras, elementos secundarios
-
-$blanco:       #FFFFFF;  // Fondo principal
-$gris-claro:   #F8FAFC;  // Neutro claro
-$negro:        #0F172A;  // Texto principal
-
-// Paleta para referencia
-$paleta: (
-  "azul-marino": $azul-marino,
-  "azul-medio": $azul-medio,
-  "azul-pastel": $azul-pastel,
-  "amarillo-oscuro": $amarillo-oscuro,
-  "amarillo-claro": $amarillo-claro,
-  "blanco": $blanco,
-  "gris-claro": $gris-claro,
-  "negro": $negro
-);
+// Variables siguiendo BEM-like para colores
+$color--amarillo-oscuro: #F59E0B;
+$color--amarillo-claro:  #FBBF24;
+$color--azul-medio:      #3B82F6;
+$color--azul-marino:     #1E40AF;
+$color--azul-pastel:     #6C9AE3;
+$color--blanco:          #FFFFFF;
+$color--gris-claro:      #F8FAFC;
+$color--negro:           #0F172A;
