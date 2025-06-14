@@ -463,6 +463,12 @@ const totalPages = computed(() => {
   return Math.max(1, Math.ceil(filteredBookingsRaw.value.length / itemsPerPage.value));
 });
 
+// Reproducir sonido de éxito
+function playSound() {
+  const audio = new Audio("/sounds/success.mp3");
+  audio.play();
+}
+
 const paginationPages = computed(() => {
   const pages = [];
   const maxVisiblePages = 5;
@@ -594,6 +600,7 @@ const acceptBooking = async (bookingId) => {
     await axios.post(`/api/bookings/${bookingId}/accept`, {}, apiHeaders());
     await loadData();
     toast.success("Reserva aceptada correctamente");
+    playSound();
     closeBookingDetails();
   } catch (error) {
     toast.error("Error al aceptar la reserva");
@@ -608,6 +615,7 @@ const rejectBooking = async (bookingId) => {
         : b
     );
     toast.success("Reserva rechazada correctamente");
+    playSound();
     closeBookingDetails();
   } catch (error) {
     toast.error("Error al rechazar la reserva");
@@ -620,6 +628,7 @@ const applyDateFilter = () => {
   currentPage.value = 1;
 };
 const syncBookings = () => {
+  playSound();
   // Implementa tu sincronización si aplica
   toast.info("Sincronizando reservas...");
   loadData().then(() => {
