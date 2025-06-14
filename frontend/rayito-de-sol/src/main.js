@@ -8,7 +8,8 @@ import 'vue-toastification/dist/index.css'
 import { useUserStore } from '@/stores/userStore'
 import { setupGlobalExpirationCheck } from './router/auth-guard';
 import '@/assets/toast-styles.css'; 
-import './assets/fonts.css';
+import '@/assets/css/main.css'; 
+import '@/assets/scss/main.scss';
 
 // Configurar verificación global de expiración de sesión
 setupGlobalExpirationCheck();

@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,600&family=Poppins:wght@400;500;700&display=swap");
+h1 {
+  font-family: "Poppins", sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+}
+
+h2 {
+  font-family: "Merriweather", serif;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #0F172A;
+}
+
+/*# sourceMappingURL=main.css.map */
