@@ -1,0 +1,21 @@
+@use '../base/colores';
+
+.header {
+  background-color: colores.$color--azul-marino;
+  color: colores.$color--blanco;
+  padding: 1rem;
+
+  &__nav {
+    display: flex;
+    gap: 1rem;
+  }
+
+  &__nav-item {
+    color: colores.$color--blanco;
+    text-decoration: none;
+
+    &:hover {
+      color: colores.$color--azul-pastel;
+    }
+  }
+}

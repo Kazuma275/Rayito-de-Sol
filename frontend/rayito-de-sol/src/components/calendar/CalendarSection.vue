@@ -311,6 +311,10 @@ import {
 import { useUserStore } from '@/stores/userStore' 
 import { getItem } from '@/helpers/storage';
 import { useToast } from 'vue-toastification'
+
+// Importar sonidos
+import success from '/assets/sounds/success.mp3';
+
 // Estado dinámico
 const properties = ref([])
 const bookings = ref([])
@@ -581,13 +585,20 @@ async function fetchProperties() {
     selectedPropertyId.value = properties.value[0].id
   }
 }
+// Reproducir sonido de éxito
+function playSound() {
+  const audio = new Audio(success);
+  audio.play();
+}
 
+// Sincroniza el calendario y reproduce un sonido de éxito
 function syncCalendar() {
   if (selectedPropertyId.value) {
-    fetchCalendarDataForProperty(selectedPropertyId.value)
+    fetchCalendarDataForProperty(selectedPropertyId.value);
   }
   // Simulación de éxito
   toast.success("Calendario sincronizado correctamente.");
+  playSound();
 }
 
 // Cargar reservas, unavailable dates y precios diarios para la propiedad seleccionada (CORREGIDA)

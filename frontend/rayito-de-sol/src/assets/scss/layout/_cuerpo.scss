@@ -1,0 +1,13 @@
+@use '../base/colores';
+
+.main {
+  padding: 2rem;
+  background-color: colores.$color--blanco;
+  color: colores.$color--negro;
+
+  &__card {
+    background-color: colores.$color--azul-pastel;
+    padding: 1rem;
+    border-radius: 0.5rem;
+  }
+}

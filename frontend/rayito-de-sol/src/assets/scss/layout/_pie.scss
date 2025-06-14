@@ -1,0 +1,8 @@
+@use '../base/colores';
+
+.footer {
+  background-color: colores.$color--azul-marino;
+  color: colores.$color--blanco;
+  padding: 1rem;
+  text-align: center;
+}
