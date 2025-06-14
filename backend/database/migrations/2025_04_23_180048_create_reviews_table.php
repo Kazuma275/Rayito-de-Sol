@@ -9,11 +9,15 @@ class CreateReviewsTable extends Migration
     public function up()
     {
         Schema::create('reviews', function (Blueprint $table) {
-            $table->id('review_id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('product_id');
-            $table->text('review');
+            $table->id(); // Usa 'id' estándar de Laravel para la PK
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('property_id')->constrained()->onDelete('cascade');
             $table->tinyInteger('rating');
+            $table->text('review');
+            $table->string('language', 10)->nullable();
+            $table->string('author_name')->nullable();
+            $table->string('author_image')->nullable();
+            $table->timestamp('review_date')->nullable();
             $table->timestamps();
         });
     }

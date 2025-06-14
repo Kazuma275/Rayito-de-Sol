@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram version="1" name="E/R_rayito_db">
+	<entities>
+		<data-source id="mysql8-1974aa2342b-3304ac64ce097373">
+			<entity id="1" name="cache" fq-name="rayito_db.cache">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="2" name="cache_locks" fq-name="rayito_db.cache_locks">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="3" name="contact" fq-name="rayito_db.contact">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="4" name="conversations" fq-name="rayito_db.conversations">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="5" name="gallery" fq-name="rayito_db.gallery">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="6" name="jobs" fq-name="rayito_db.jobs">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="7" name="messages" fq-name="rayito_db.messages">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="8" name="migrations" fq-name="rayito_db.migrations">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="9" name="personal_access_tokens" fq-name="rayito_db.personal_access_tokens">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="10" name="properties" fq-name="rayito_db.properties">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="11" name="property_day_prices" fq-name="rayito_db.property_day_prices">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="12" name="reservations" fq-name="rayito_db.reservations">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="13" name="review_translations" fq-name="rayito_db.review_translations">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="14" name="reviews" fq-name="rayito_db.reviews">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="15" name="roles" fq-name="rayito_db.roles">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="16" name="services" fq-name="rayito_db.services">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="17" name="services_translations" fq-name="rayito_db.services_translations">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="18" name="unavailable_dates" fq-name="rayito_db.unavailable_dates">
+				<path name="rayito_db"/>
+			</entity>
+			<entity id="19" name="users" fq-name="rayito_db.users">
+				<path name="rayito_db"/>
+			</entity>
+		</data-source>
+	</entities>
+	<relations>
+		<relation name="messages_conversation_id_foreign" fq-name="rayito_db.messages.messages_conversation_id_foreign" type="fk" pk-ref="4" fk-ref="7"/>
+		<relation name="conversations_property_id_foreign" fq-name="rayito_db.conversations.conversations_property_id_foreign" type="fk" pk-ref="10" fk-ref="4"/>
+		<relation name="property_day_prices_property_id_foreign" fq-name="rayito_db.property_day_prices.property_day_prices_property_id_foreign" type="fk" pk-ref="10" fk-ref="11"/>
+		<relation name="reservations_property_id_foreign" fq-name="rayito_db.reservations.reservations_property_id_foreign" type="fk" pk-ref="10" fk-ref="12"/>
+		<relation name="reviews_property_id_foreign" fq-name="rayito_db.reviews.reviews_property_id_foreign" type="fk" pk-ref="10" fk-ref="14"/>
+		<relation name="unavailable_dates_property_id_foreign" fq-name="rayito_db.unavailable_dates.unavailable_dates_property_id_foreign" type="fk" pk-ref="10" fk-ref="18"/>
+		<relation name="conversations_reservation_id_foreign" fq-name="rayito_db.conversations.conversations_reservation_id_foreign" type="fk" pk-ref="12" fk-ref="4"/>
+		<relation name="conversations_guest_id_foreign" fq-name="rayito_db.conversations.conversations_guest_id_foreign" type="fk" pk-ref="19" fk-ref="4"/>
+		<relation name="conversations_owner_id_foreign" fq-name="rayito_db.conversations.conversations_owner_id_foreign" type="fk" pk-ref="19" fk-ref="4"/>
+		<relation name="conversations_user_one_id_foreign" fq-name="rayito_db.conversations.conversations_user_one_id_foreign" type="fk" pk-ref="19" fk-ref="4"/>
+		<relation name="conversations_user_two_id_foreign" fq-name="rayito_db.conversations.conversations_user_two_id_foreign" type="fk" pk-ref="19" fk-ref="4"/>
+		<relation name="messages_sender_id_foreign" fq-name="rayito_db.messages.messages_sender_id_foreign" type="fk" pk-ref="19" fk-ref="7"/>
+		<relation name="properties_user_id_foreign" fq-name="rayito_db.properties.properties_user_id_foreign" type="fk" pk-ref="19" fk-ref="10"/>
+		<relation name="reservations_user_id_foreign" fq-name="rayito_db.reservations.reservations_user_id_foreign" type="fk" pk-ref="19" fk-ref="12"/>
+		<relation name="reviews_user_id_foreign" fq-name="rayito_db.reviews.reviews_user_id_foreign" type="fk" pk-ref="19" fk-ref="14"/>
+	</relations>
+</diagram>

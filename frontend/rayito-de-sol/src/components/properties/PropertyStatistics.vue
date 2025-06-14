@@ -9,40 +9,37 @@
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ totalProperties }}</p>
+          <p class="stat-value">{{ statistics?.totalProperties ?? '-' }}</p>
           <h3 class="stat-title">Propiedades</h3>
         </div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-icon-wrapper">
           <CalendarIcon class="stat-icon" />
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ totalBookings }}</p>
+          <p class="stat-value">{{ statistics?.totalBookings ?? '-' }}</p>
           <h3 class="stat-title">Reservas</h3>
         </div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-icon-wrapper">
           <TrendingUpIcon class="stat-icon" />
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ occupancyRate }}%</p>
+          <p class="stat-value">{{ statistics?.occupancyRate ?? '-' }}%</p>
           <h3 class="stat-title">Ocupación</h3>
         </div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-icon-wrapper">
           <EuroIcon class="stat-icon" />
           <div class="stat-icon-glow"></div>
         </div>
         <div class="stat-content">
-          <p class="stat-value">{{ totalRevenue }}€</p>
+          <p class="stat-value">{{ statistics?.totalRevenue ?? '-' }}€</p>
           <h3 class="stat-title">Ingresos</h3>
         </div>
       </div>
@@ -54,12 +51,12 @@
         <div class="chart-placeholder">
           <div class="chart-bars">
             <div 
-              v-for="(value, month) in bookingsByMonth" 
-              :key="month" 
+              v-for="(value, i) in months"
+              :key="i"
               class="chart-bar"
-              :style="{ height: `${(value / Math.max(...Object.values(bookingsByMonth))) * 100}%` }"
+              :style="{ height: `${maxBookings ? ((statistics?.bookingsByMonth?.[i+1] || 0) / maxBookings) * 100 : 0}%` }"
             >
-              <span class="bar-value">{{ value }}</span>
+              <span class="bar-value">{{ statistics?.bookingsByMonth?.[i+1] || 0 }}</span>
             </div>
           </div>
           <div class="chart-labels">
@@ -71,7 +68,7 @@
       <div class="chart-card">
         <h3 class="chart-title">Ingresos por propiedad</h3>
         <div class="chart-placeholder">
-          <div class="property-revenue" v-for="(property, index) in topProperties" :key="index">
+          <div class="property-revenue" v-for="property in statistics?.revenueByProperty || []" :key="property.id">
             <div class="property-info">
               <span class="property-name">{{ property.name }}</span>
               <span class="property-value">{{ property.revenue }}€</span>
@@ -79,73 +76,61 @@
             <div class="revenue-bar-container">
               <div 
                 class="revenue-bar" 
-                :style="{ width: `${(property.revenue / topProperties[0].revenue) * 100}%` }"
+                :style="{ width: `${maxRevenue ? (property.revenue / maxRevenue) * 100 : 0}%` }"
               ></div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <div v-if="loading" style="margin-top:2rem;text-align:center">Cargando estadísticas...</div>
+    <div v-if="error" style="color:red; margin-top:2rem;text-align:center">{{ error }}</div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { HomeIcon, CalendarIcon, TrendingUpIcon, EuroIcon } from 'lucide-vue-next';
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
+import { HomeIcon, CalendarIcon, TrendingUpIcon, EuroIcon } from 'lucide-vue-next'
 
-const props = defineProps({
-  properties: {
-    type: Array,
-    required: true
-  },
-  bookings: {
-    type: Array,
-    required: true
+const statistics = ref(null)
+const loading = ref(false)
+const error = ref(null)
+
+const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+
+const maxBookings = computed(() => {
+  if (!statistics.value?.bookingsByMonth) return 0
+  return Math.max(...Object.values(statistics.value.bookingsByMonth))
+})
+
+const maxRevenue = computed(() => {
+  if (!statistics.value?.revenueByProperty?.length) return 0
+  return Math.max(...statistics.value.revenueByProperty.map(p => p.revenue))
+})
+
+const fetchStatistics = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    const token = localStorage.getItem('auth_token')
+    const res = await axios.get('http://localhost:8000/api/statistics', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    })
+    statistics.value = res.data
+  } catch (err) {
+    error.value = err.response?.data?.message || err.message
+  } finally {
+    loading.value = false
   }
-});
+}
 
-// Computed statistics
-const totalProperties = computed(() => props.properties.length);
-
-const totalBookings = computed(() => props.bookings.length);
-
-const occupancyRate = computed(() => {
-  if (props.properties.length === 0) return 0;
-  
-  // This is a placeholder calculation
-  // In a real app, you would calculate this based on actual booking data
-  return Math.round(Math.random() * 40 + 60); // Random value between 60-100%
-});
-
-const totalRevenue = computed(() => {
-  return props.bookings.reduce((sum, booking) => sum + (booking.total || 0), 0);
-});
-
-// Sample data for charts
-const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-
-const bookingsByMonth = {
-  'Ene': 5,
-  'Feb': 7,
-  'Mar': 10,
-  'Abr': 8,
-  'May': 12,
-  'Jun': 15,
-  'Jul': 20,
-  'Ago': 25,
-  'Sep': 18,
-  'Oct': 14,
-  'Nov': 9,
-  'Dic': 12
-};
-
-const topProperties = [
-  { name: 'Apartamento Vista Mar', revenue: 12500 },
-  { name: 'Villa con Piscina', revenue: 9800 },
-  { name: 'Ático de Lujo', revenue: 7200 },
-  { name: 'Estudio Centro', revenue: 5400 },
-  { name: 'Casa Rural', revenue: 3800 }
-];
+onMounted(() => {
+  fetchStatistics()
+})
 </script>
 
 <style scoped>

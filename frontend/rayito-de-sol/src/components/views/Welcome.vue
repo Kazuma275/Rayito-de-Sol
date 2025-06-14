@@ -1,83 +1,68 @@
-<script setup>
-import { ref } from 'vue';
-import { HomeIcon, KeyIcon, BarChartIcon, CalendarIcon } from 'lucide-vue-next';
-
-const title = ref('¡Bienvenido al Portal de Propietarios!');
-</script>
-
 <template>
   <div class="welcome-container">
     <div class="welcome-header">
-      <h1>{{ title }}</h1>
-      <p class="welcome-subtitle">Gestiona tus propiedades, reservas y ganancias desde un solo lugar</p>
+      <h1>¡Bienvenido al Portal de Propietarios!</h1>
+      <p class="welcome-subtitle">
+        Gestiona tus propiedades, reservas y ganancias desde un solo lugar
+      </p>
     </div>
-    
-    <div class="stats-overview">
-      <div class="stat-card">
-        <div class="stat-icon">
-          <HomeIcon />
-        </div>
-        <div class="stat-content">
-          <h3>3</h3>
-          <p>Propiedades</p>
-        </div>
-      </div>
-      
-      <div class="stat-card">
-        <div class="stat-icon">
-          <CalendarIcon />
-        </div>
-        <div class="stat-content">
-          <h3>5</h3>
-          <p>Reservas Activas</p>
-        </div>
-      </div>
-      
-      <div class="stat-card">
-        <div class="stat-icon">
-          <BarChartIcon />
-        </div>
-        <div class="stat-content">
-          <h3>74%</h3>
-          <p>Ocupación</p>
-        </div>
-      </div>
-      
-      <div class="stat-card">
-        <div class="stat-icon">
-          <KeyIcon />
-        </div>
-        <div class="stat-content">
-          <h3>€8,150</h3>
-          <p>Ingresos Mensuales</p>
-        </div>
-      </div>
-    </div>
-    
+
+    <!-- Acciones rápidas con navegación -->
     <div class="quick-actions">
       <h2>Acciones Rápidas</h2>
       <div class="action-buttons">
-        <button class="action-button">
+        <button class="action-button" @click="goToProperties">
           <HomeIcon class="action-icon" />
           <span>Añadir Propiedad</span>
         </button>
-        <button class="action-button">
+        <button class="action-button" @click="goToBookings">
           <CalendarIcon class="action-icon" />
           <span>Gestionar Reservas</span>
         </button>
-        <button class="action-button">
+        <button class="action-button" @click="goToPayments">
           <KeyIcon class="action-icon" />
           <span>Ver Pagos</span>
         </button>
       </div>
     </div>
-    
+
     <div class="welcome-message">
-      <p>Gracias por utilizar nuestro portal de gestión de propiedades. Estamos aquí para ayudarte a maximizar tus ingresos y simplificar la gestión de tus alquileres vacacionales.</p>
-      <p>Si necesitas ayuda, no dudes en contactar con nuestro equipo de soporte.</p>
+      <p>
+        Gracias por utilizar nuestro portal de gestión de propiedades. Estamos aquí para ayudarte a maximizar tus ingresos y simplificar la gestión de tus alquileres vacacionales.
+      </p>
+      <p>
+        Si necesitas ayuda, no dudes en contactar con nuestro equipo de soporte.
+      </p>
     </div>
   </div>
 </template>
+
+<script setup>
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { HomeIcon, CalendarIcon, KeyIcon } from 'lucide-vue-next';
+import { useAuth } from '@/router/auth-guard';
+
+const router = useRouter();
+const { requireAuth } = useAuth();
+
+// Verificar autenticación al montar el componente
+onMounted(() => {
+  requireAuth(); // Esto redirigirá al login si no hay sesión
+});
+
+const goToProperties = () => {
+  router.push('/manage/properties');
+};
+
+const goToBookings = () => {
+  router.push('/manage/bookings');
+};
+
+const goToPayments = () => {
+  router.push('/manage/payments');
+};
+</script>
 
 <style scoped>
 .welcome-container {

@@ -10,27 +10,49 @@
           Plataforma de gestión de propiedades para anfitriones.
         </p>
       </div>
-      
+
       <div class="footer-section">
         <h4 class="footer-title">Enlaces</h4>
         <ul class="footer-links">
-          <li><a href="#" @click.prevent="changeTab('dashboard')">Inicio</a></li>
-          <li><a href="#" @click.prevent="changeTab('properties')">Propiedades</a></li>
-          <li><a href="#" @click.prevent="changeTab('bookings')">Reservas</a></li>
-          <li><a href="#" @click.prevent="changeTab('calendar')">Calendario</a></li>
+          <li>
+            <a href="#" @click.prevent="changeTab('dashboard')">Inicio</a>
+          </li>
+          <li>
+            <a href="#" @click.prevent="changeTab('properties')">Propiedades</a>
+          </li>
+          <li>
+            <a href="#" @click.prevent="changeTab('bookings')">Reservas</a>
+          </li>
+          <li>
+            <a href="#" @click.prevent="changeTab('calendar')">Calendario</a>
+          </li>
         </ul>
       </div>
-      
+
       <div class="footer-section">
         <h4 class="footer-title">Soporte</h4>
         <ul class="footer-links">
-          <li><router-link to="/help" @click.prevent="changeTab('/help')">Centro de Ayuda</router-link></li>
-          <li><a href="#" @click.prevent="changeTab('help')">Contacto</a></li>
-          <li><router-link to="/terms" @click.prevent="changeTab('/terms')">Términos y condiciones</router-link></li>
-          <li><a href="#" @click.prevent="changeTab('settings')">Política de privacidad</a></li>
+          <li>
+            <router-link to="/manage/help" @click.prevent="changeTab('help')">
+              Centro de Ayuda
+            </router-link>
+          </li>
+          <li>
+            <a href="#" @click.prevent="changeTab('help')"> Contacto </a>
+          </li>
+          <li>
+            <router-link to="/manage/help" @click.prevent="changeTab('help')">
+              Términos y condiciones
+            </router-link>
+          </li>
+          <li>
+            <a href="#" @click.prevent="changeTab('help')">
+              Política de privacidad
+            </a>
+          </li>
         </ul>
       </div>
-      
+
       <div class="footer-section">
         <h4 class="footer-title">Contacto</h4>
         <ul class="footer-contact">
@@ -49,10 +71,12 @@
         </ul>
       </div>
     </div>
-    
+
     <div class="footer-bottom">
       <div class="footer-container">
-        <p class="copyright">© 2023 Rayito de Sol. Todos los derechos reservados.</p>
+        <p class="copyright">
+          © 2023 Rayito de Sol. Todos los derechos reservados.
+        </p>
         <div class="social-links">
           <a href="#" class="social-link">
             <FacebookIcon class="social-icon" />
@@ -70,12 +94,20 @@
 </template>
 
 <script setup>
-import { SunIcon, MapPinIcon, PhoneIcon, MailIcon, FacebookIcon, TwitterIcon, InstagramIcon } from 'lucide-vue-next';
+import {
+  SunIcon,
+  MapPinIcon,
+  PhoneIcon,
+  MailIcon,
+  FacebookIcon,
+  TwitterIcon,
+  InstagramIcon,
+} from "lucide-vue-next";
 
-const emit = defineEmits(['changeTab']);
+const emit = defineEmits(["changeTab"]);
 
 const changeTab = (tab) => {
-  emit('changeTab', tab);
+  emit("changeTab", tab);
 };
 </script>
 
@@ -89,15 +121,22 @@ const changeTab = (tab) => {
 }
 
 .footer::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 150%, rgba(0, 113, 194, 0.4) 0%, transparent 50%),
-    radial-gradient(circle at 80% -50%, rgba(0, 53, 128, 0.3) 0%, transparent 60%);
+  background: radial-gradient(
+      circle at 20% 150%,
+      rgba(0, 113, 194, 0.4) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% -50%,
+      rgba(0, 53, 128, 0.3) 0%,
+      transparent 60%
+    );
   z-index: 0;
 }
 
@@ -133,8 +172,13 @@ const changeTab = (tab) => {
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 .logo-text {
@@ -159,7 +203,7 @@ const changeTab = (tab) => {
 }
 
 .footer-title::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -168,13 +212,15 @@ const changeTab = (tab) => {
   background-color: #feba02;
 }
 
-.footer-links, .footer-contact {
+.footer-links,
+.footer-contact {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.footer-links li, .footer-contact li {
+.footer-links li,
+.footer-contact li {
   margin-bottom: 0.75rem;
 }
 
@@ -187,7 +233,7 @@ const changeTab = (tab) => {
 }
 
 .footer-links a::before {
-  content: '›';
+  content: "›";
   position: absolute;
   left: -12px;
   top: 0;
@@ -260,13 +306,17 @@ const changeTab = (tab) => {
 }
 
 .social-link::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(254, 186, 2, 0.8) 0%, rgba(254, 186, 2, 0.4) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(254, 186, 2, 0.8) 0%,
+    rgba(254, 186, 2, 0.4) 100%
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -292,7 +342,7 @@ const changeTab = (tab) => {
   .footer-section {
     flex: 0 0 50%;
   }
-  
+
   .footer-bottom .footer-container {
     flex-direction: column;
     gap: 1rem;
@@ -303,7 +353,7 @@ const changeTab = (tab) => {
   .footer-section {
     flex: 0 0 100%;
   }
-  
+
   .footer-container {
     padding: 0 1rem;
   }

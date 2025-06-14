@@ -1,17 +1,69 @@
 <template>
-  <footer class="portal-footer">
+  <footer class="footer">
     <div class="footer-container">
-      <div class="footer-nav">
-        <a 
-          v-for="tab in navigationTabs" 
-          :key="tab.id" 
-          :href="tab.path" 
-          class="footer-tab" 
-          :class="{ active: activeTab === tab.id }"
-        >
-          <component :is="tab.icon" class="tab-icon" />
-          <span class="tab-text">{{ tab.name }}</span>
-        </a>
+      <div class="footer-section">
+        <div class="footer-logo">
+          <SunIcon class="logo-icon" />
+          <span class="logo-text">Rayito de Sol</span>
+        </div>
+        <p class="footer-description">
+          Plataforma de gestión de propiedades para anfitriones.
+        </p>
+      </div>
+      
+      <div class="footer-section">
+        <h4 class="footer-title">Enlaces</h4>
+        <ul class="footer-links">
+          <li><a href="#" @click.prevent="changeTab('dashboard')">Inicio</a></li>
+          <li><a href="#" @click.prevent="changeTab('properties')">Propiedades</a></li>
+          <li><a href="#" @click.prevent="changeTab('bookings')">Reservas</a></li>
+          <li><a href="#" @click.prevent="changeTab('calendar')">Calendario</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4 class="footer-title">Soporte</h4>
+        <ul class="footer-links">
+          <li><router-link to="/help" @click.prevent="changeTab('/help')">Centro de Ayuda</router-link></li>
+          <li><a href="#" @click.prevent="changeTab('help')">Contacto</a></li>
+          <li><router-link to="/terms" @click.prevent="changeTab('/terms')">Términos y condiciones</router-link></li>
+          <li><a href="#" @click.prevent="changeTab('settings')">Política de privacidad</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4 class="footer-title">Contacto</h4>
+        <ul class="footer-contact">
+          <li>
+            <MapPinIcon class="contact-icon" />
+            <span>Calle Principal 123, Madrid</span>
+          </li>
+          <li>
+            <PhoneIcon class="contact-icon" />
+            <span>+34 912 345 678</span>
+          </li>
+          <li>
+            <MailIcon class="contact-icon" />
+            <span>info@rayitodesol.com</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="footer-container">
+        <p class="copyright">© 2023 Rayito de Sol. Todos los derechos reservados.</p>
+        <div class="social-links">
+          <a href="#" class="social-link">
+            <FacebookIcon class="social-icon" />
+          </a>
+          <a href="#" class="social-link">
+            <TwitterIcon class="social-icon" />
+          </a>
+          <a href="#" class="social-link">
+            <InstagramIcon class="social-icon" />
+          </a>
+        </div>
       </div>
     </div>
   </footer>
@@ -19,48 +71,32 @@
 
 <script setup>
 import { 
-  HomeIcon, 
-  SearchIcon, 
-  CalendarIcon, 
-  HeartIcon, 
-  MessageSquareIcon 
+  SunIcon, 
+  MapPinIcon, 
+  PhoneIcon, 
+  MailIcon, 
+  FacebookIcon, 
+  TwitterIcon, 
+  InstagramIcon 
 } from 'lucide-vue-next';
-import { ref } from 'vue';
-
-// Navigation tabs for mobile footer - ACTUALIZADO para apuntar al nuevo portal
-const navigationTabs = [
-  { id: 'dashboard', name: 'Inicio', path: '/renters/dashboard', icon: HomeIcon },
-  { id: 'search', name: 'Buscar', path: '/renters/search', icon: SearchIcon },
-  { id: 'bookings', name: 'Reservas', path: '/renters/bookings', icon: CalendarIcon },
-  { id: 'favorites', name: 'Favoritos', path: '/renters/favorites', icon: HeartIcon },
-  { id: 'messages', name: 'Mensajes', path: '/renters/messages', icon: MessageSquareIcon }
-];
-
-const props = defineProps({
-  activeTab: {
-    type: String,
-    default: 'dashboard'
-  }
-});
 
 const emit = defineEmits(['changeTab']);
+
+function changeTab(tab) {
+  emit('changeTab', tab);
+}
 </script>
 
 <style scoped>
-.portal-footer {
-  display: none;
+.footer {
   background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-  box-shadow: 0 -1px 4px rgba(245, 158, 11, 0.15);
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  height: 56px; /* Reduced height */
+  color: white;
+  padding-top: 3rem;
+  position: relative;
   overflow: hidden;
 }
 
-.portal-footer::before {
+.footer::before {
   content: '';
   position: absolute;
   top: 0;
@@ -74,103 +110,210 @@ const emit = defineEmits(['changeTab']);
 }
 
 .footer-container {
-  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
   position: relative;
   z-index: 1;
 }
 
-.footer-nav {
-  display: flex;
-  justify-content: space-around;
-  height: 100%;
+.footer-section {
+  flex: 1;
+  min-width: 250px;
+  margin-bottom: 2rem;
 }
 
-.footer-tab {
+.footer-logo {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.logo-icon {
+  width: 28px;
+  height: 28px;
+  color: #fffbe5;
+  filter: drop-shadow(0 0 8px rgba(254, 186, 2, 0.6));
+  margin-right: 0.75rem;
+  animation: pulse 3s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.footer-description {
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 300px;
+  line-height: 1.6;
+}
+
+.footer-title {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: white;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.footer-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background-color: #fffbe5;
+}
+
+.footer-links, .footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li, .footer-contact li {
+  margin-bottom: 0.75rem;
+}
+
+.footer-links a, .footer-links router-link {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  padding-left: 0;
+}
+
+.footer-links a::before, .footer-links router-link::before {
+  content: '›';
+  position: absolute;
+  left: -12px;
+  top: 0;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.footer-links a:hover, .footer-links router-link:hover {
+  color: white;
+  padding-left: 12px;
+}
+
+.footer-links a:hover::before, .footer-links router-link:hover::before {
+  opacity: 1;
+  left: 0;
+}
+
+.footer-contact li {
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;
+}
+
+.footer-contact li:hover {
+  color: white;
+}
+
+.contact-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 0.75rem;
+  color: #fffbe5;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.5rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-bottom .footer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copyright {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-link {
+  display: flex;
   align-items: center;
   justify-content: center;
-  background: none;
-  border: none;
-  padding: 0;
-  color: rgba(31, 41, 55, 0.7);
-  cursor: pointer;
-  flex: 1;
-  text-decoration: none;
-  transition: all 0.2s ease;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
   position: relative;
-  height: 100%;
+  overflow: hidden;
 }
 
-.footer-tab::before {
+.social-link::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 0;
-  background-color: rgba(255, 255, 255, 0.15);
-  transition: height 0.2s ease;
-  z-index: -1;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(254, 186, 2, 0.8) 0%, rgba(254, 186, 2, 0.4) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.footer-tab:hover::before {
-  height: 100%;
+.social-link:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.footer-tab.active {
-  color: #1e293b;
-  font-weight: 500;
+.social-link:hover::before {
+  opacity: 1;
 }
 
-.footer-tab.active::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 30%;
-  height: 3px;
-  background-color: #1e293b;
-  border-radius: 0 0 3px 3px;
-}
-
-.tab-icon {
-  width: 20px; /* Smaller icons */
-  height: 20px;
-  margin-bottom: 2px; /* Reduced margin */
-  transition: transform 0.2s ease;
-}
-
-.footer-tab:hover .tab-icon {
-  transform: translateY(-1px);
-}
-
-.tab-text {
-  font-size: 0.65rem; /* Smaller text */
-  transition: transform 0.2s ease;
-  white-space: nowrap;
+.social-icon {
+  width: 18px;
+  height: 18px;
+  color: white;
+  position: relative;
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
-  .portal-footer {
-    display: block;
+  .footer-section {
+    flex: 0 0 50%;
   }
   
-  /* Add padding to main content to account for fixed footer */
-  :deep(.main-content) {
-    padding-bottom: 56px; /* Match footer height */
+  .footer-bottom .footer-container {
+    flex-direction: column;
+    gap: 1rem;
   }
 }
 
-@media (max-width: 360px) {
-  .tab-text {
-    font-size: 0.6rem;
+@media (max-width: 576px) {
+  .footer-section {
+    flex: 0 0 100%;
   }
   
-  .tab-icon {
-    width: 18px;
-    height: 18px;
+  .footer-container {
+    padding: 0 1rem;
   }
 }
 </style>

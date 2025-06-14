@@ -52,8 +52,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useUserStore } from '../../../stores/user';
+import { ref, computed, onMounted } from 'vue';
+import { useUserStore } from '@/stores/userStore';
 import { SunIcon, ChevronDownIcon, SettingsIcon, LogOutIcon, HelpCircleIcon } from 'lucide-vue-next';
 
 const userStore = useUserStore();
@@ -81,9 +81,18 @@ const changeTab = (tab) => {
   }
 };
 
+onMounted(() => {
+  userStore.hydrate();
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'auth_user' || event.key === 'auth_token') {
+      userStore.hydrate();
+    }
+  });
+});
+
 const logout = () => {
   userStore.logout();
-  window.location.href = '/login';
+  window.location.href = '/portal/';
 };
 </script>
 
@@ -94,7 +103,7 @@ const logout = () => {
   padding: 1rem 0;
   box-shadow: 0 4px 12px rgba(0, 53, 128, 0.15);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   z-index: 50; /* Increased z-index to ensure header stays above other content */
 }
 

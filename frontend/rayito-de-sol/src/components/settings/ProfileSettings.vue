@@ -177,4 +177,4 @@ const profile = ref({
     margin-bottom: 1rem;
   }
 }
-</style>
+</style>  

@@ -13,6 +13,7 @@
           <div class="form-group">
             <label>Nombre</label>
             <input v-model="localProperty.name" type="text" required class="form-input" />
+            <span v-if="validationErrors.name" class="form-error">{{ validationErrors.name[0] }}</span>
           </div>
 
           <div class="form-group">
@@ -21,6 +22,7 @@
               <MapPinIcon class="input-icon" />
               <input v-model="localProperty.location" type="text" required class="form-input with-icon" placeholder="Ciudad, Provincia" />
             </div>
+            <span v-if="validationErrors.location" class="form-error">{{ validationErrors.location[0] }}</span>
           </div>
 
           <div class="form-row">
@@ -30,6 +32,7 @@
                 <BedIcon class="input-icon" />
                 <input v-model.number="localProperty.bedrooms" type="number" min="1" required class="form-input with-icon" />
               </div>
+              <span v-if="validationErrors.bedrooms" class="form-error">{{ validationErrors.bedrooms[0] }}</span>
             </div>
             <div class="form-group">
               <label>Capacidad</label>
@@ -37,6 +40,7 @@
                 <UsersIcon class="input-icon" />
                 <input v-model.number="localProperty.capacity" type="number" min="1" required class="form-input with-icon" />
               </div>
+              <span v-if="validationErrors.capacity" class="form-error">{{ validationErrors.capacity[0] }}</span>
             </div>
           </div>
 
@@ -46,11 +50,13 @@
               <EuroIcon class="input-icon" />
               <input v-model.number="localProperty.price" type="number" min="1" required class="form-input with-icon" />
             </div>
+            <span v-if="validationErrors.price" class="form-error">{{ validationErrors.price[0] }}</span>
           </div>
 
           <div class="form-group">
             <label>Descripción</label>
             <textarea v-model="localProperty.description" class="form-textarea" rows="4" required></textarea>
+            <span v-if="validationErrors.description" class="form-error">{{ validationErrors.description[0] }}</span>
           </div>
 
           <div class="form-group">
@@ -63,6 +69,91 @@
               </div>
               <img v-else :src="localProperty.image" class="image-preview" />
             </div>
+            <span v-if="validationErrors.image" class="form-error">{{ validationErrors.image[0] }}</span>
+          </div>
+
+          <!-- NUEVA SECCIÓN DE AMENITIES MEJORADA -->
+          <div class="form-group">
+            <label>Comodidades</label>
+            <div class="amenities-container">
+              <!-- Amenities predefinidos -->
+              <div class="amenities-grid">
+                <div 
+                  v-for="amenity in predefinedAmenities" 
+                  :key="amenity.id"
+                  class="amenity-card"
+                  :class="{ selected: selectedAmenities.includes(amenity.name) }"
+                  @click="toggleAmenity(amenity.name)"
+                >
+                  <div class="amenity-icon">
+                    <component :is="amenity.icon" />
+                  </div>
+                  <span class="amenity-name">{{ amenity.name }}</span>
+                  <div class="amenity-check" v-if="selectedAmenities.includes(amenity.name)">
+                    <CheckIcon />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Amenities personalizados -->
+              <div class="custom-amenities-section">
+                <h4 class="custom-title">Amenidades personalizadas</h4>
+                <div class="custom-amenities-list">
+                  <div 
+                    v-for="(customAmenity, index) in customAmenities" 
+                    :key="`custom-${index}`"
+                    class="custom-amenity-item"
+                  >
+                    <input
+                      v-model="customAmenities[index]"
+                      type="text"
+                      class="custom-amenity-input"
+                      placeholder="Ej: Terraza privada, Jacuzzi..."
+                      @input="updateAmenities"
+                    />
+                    <button
+                      v-if="customAmenities.length > 1"
+                      type="button"
+                      @click="removeCustomAmenity(index)"
+                      class="remove-custom-button"
+                      aria-label="Eliminar amenidad personalizada"
+                    >
+                      <XIcon />
+                    </button>
+                  </div>
+                </div>
+                <button 
+                  type="button" 
+                  @click="addCustomAmenity" 
+                  class="add-custom-button"
+                >
+                  <PlusIcon />
+                  Añadir amenidad personalizada
+                </button>
+              </div>
+
+              <!-- Resumen de amenities seleccionados -->
+              <div v-if="allSelectedAmenities.length > 0" class="selected-summary">
+                <h4 class="summary-title">Amenidades seleccionadas ({{ allSelectedAmenities.length }})</h4>
+                <div class="selected-tags">
+                  <span 
+                    v-for="amenity in allSelectedAmenities" 
+                    :key="amenity"
+                    class="selected-tag"
+                  >
+                    {{ amenity }}
+                    <button 
+                      @click="removeAmenity(amenity)"
+                      class="remove-tag-button"
+                      aria-label="Quitar amenidad"
+                    >
+                      <XIcon />
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <span v-if="validationErrors.amenities" class="form-error">{{ validationErrors.amenities[0] }}</span>
           </div>
           
           <div class="form-group">
@@ -87,7 +178,10 @@
                 Inactivo
               </button>
             </div>
+            <span v-if="validationErrors.status" class="form-error">{{ validationErrors.status[0] }}</span>
           </div>
+
+          <div v-if="formError" class="form-error form-error-global">{{ formError }}</div>
 
           <div class="form-actions">
             <button type="button" class="cancel-button" @click="$emit('close')">Cancelar</button>
@@ -102,8 +196,40 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-import { XIcon, MapPinIcon, BedIcon, UsersIcon, EuroIcon, ImageIcon, CheckIcon, XCircleIcon } from 'lucide-vue-next'
+import { ref, watch, computed } from 'vue'
+import { 
+  XIcon, 
+  MapPinIcon, 
+  BedIcon, 
+  UsersIcon, 
+  EuroIcon, 
+  ImageIcon, 
+  CheckIcon, 
+  XCircleIcon,
+  PlusIcon,
+  WifiIcon, 
+  CarIcon, 
+  UtensilsIcon, 
+  TvIcon, 
+  AirVentIcon, 
+  WashingMachineIcon,
+  DumbbellIcon,
+  WavesIcon,
+  TreesIcon,
+  CoffeeIcon,
+  ShieldCheckIcon,
+  PawPrintIcon,
+  BathIcon,
+  MicrowaveIcon,
+  RefrigeratorIcon,
+  SnowflakeIcon,
+  ThermometerIcon
+} from 'lucide-vue-next'
+import axios from 'axios'
+import { apiHeaders } from '@/../utils/api';
+
+// Usa variable de entorno si tienes VITE_API_URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
 const props = defineProps({
   visible: Boolean,
@@ -111,18 +237,129 @@ const props = defineProps({
   isEditMode: Boolean
 })
 
-const emit = defineEmits(['submit', 'close'])
+const emit = defineEmits(['submit', 'close', 'error'])
+
+// Amenities predefinidos con iconos
+const predefinedAmenities = ref([
+  { id: 1, name: 'WiFi gratuito', icon: WifiIcon },
+  { id: 2, name: 'Aparcamiento gratuito', icon: CarIcon },
+  { id: 3, name: 'Cocina equipada', icon: UtensilsIcon },
+  { id: 4, name: 'TV', icon: TvIcon },
+  { id: 5, name: 'Aire acondicionado', icon: AirVentIcon },
+  { id: 6, name: 'Lavadora', icon: WashingMachineIcon },
+  { id: 7, name: 'Gimnasio', icon: DumbbellIcon },
+  { id: 8, name: 'Piscina', icon: WavesIcon },
+  { id: 9, name: 'Jardín', icon: TreesIcon },
+  { id: 10, name: 'Cafetera', icon: CoffeeIcon },
+  { id: 11, name: 'Caja fuerte', icon: ShieldCheckIcon },
+  { id: 12, name: 'Se admiten mascotas', icon: PawPrintIcon },
+  { id: 13, name: 'Bañera', icon: BathIcon },
+  { id: 14, name: 'Microondas', icon: MicrowaveIcon },
+  { id: 15, name: 'Nevera', icon: RefrigeratorIcon },
+  { id: 16, name: 'Calefacción', icon: ThermometerIcon },
+  { id: 17, name: 'Congelador', icon: SnowflakeIcon }
+])
 
 const localProperty = ref({})
+const formError = ref('')
+const validationErrors = ref({})
 
+// Estados para amenities
+const selectedAmenities = ref([])
+const customAmenities = ref([''])
+
+// Computed para obtener todas las amenidades seleccionadas
+const allSelectedAmenities = computed(() => {
+  const predefined = selectedAmenities.value
+  const custom = customAmenities.value.filter(amenity => amenity.trim() !== '')
+  return [...predefined, ...custom]
+})
+
+// Watch para inicializar localProperty correctamente
 watch(
   () => props.property,
   (newVal) => {
-    localProperty.value = { ...newVal }
+    localProperty.value = { 
+      name: '',
+      location: '',
+      bedrooms: 1,
+      capacity: 1,
+      price: 1,
+      description: '',
+      image: '',
+      status: 'active',
+      statusText: 'Activo',
+      amenities: [],
+      ...newVal
+    }
+    
+    // Inicializar amenities
+    if (Array.isArray(localProperty.value.amenities)) {
+      const predefinedNames = predefinedAmenities.value.map(a => a.name)
+      selectedAmenities.value = localProperty.value.amenities.filter(amenity => predefinedNames.includes(amenity))
+      const customValues = localProperty.value.amenities.filter(amenity => !predefinedNames.includes(amenity))
+      customAmenities.value = customValues.length > 0 ? customValues : ['']
+    } else {
+      selectedAmenities.value = []
+      customAmenities.value = ['']
+    }
+    
+    formError.value = ''
+    validationErrors.value = {}
   },
   { immediate: true }
 )
 
+// Watch para actualizar localProperty.amenities cuando cambien las amenities
+watch(allSelectedAmenities, (newAmenities) => {
+  localProperty.value.amenities = newAmenities
+}, { deep: true })
+
+// Métodos para amenities
+const toggleAmenity = (amenityName) => {
+  const index = selectedAmenities.value.indexOf(amenityName)
+  if (index > -1) {
+    selectedAmenities.value.splice(index, 1)
+  } else {
+    selectedAmenities.value.push(amenityName)
+  }
+}
+
+const addCustomAmenity = () => {
+  customAmenities.value.push('')
+}
+
+const removeCustomAmenity = (index) => {
+  customAmenities.value.splice(index, 1)
+  if (customAmenities.value.length === 0) {
+    customAmenities.value.push('')
+  }
+}
+
+const removeAmenity = (amenityName) => {
+  // Remover de predefinidos
+  const predefinedIndex = selectedAmenities.value.indexOf(amenityName)
+  if (predefinedIndex > -1) {
+    selectedAmenities.value.splice(predefinedIndex, 1)
+    return
+  }
+  
+  // Remover de personalizados
+  const customIndex = customAmenities.value.indexOf(amenityName)
+  if (customIndex > -1) {
+    customAmenities.value.splice(customIndex, 1)
+    if (customAmenities.value.length === 0) {
+      customAmenities.value.push('')
+    }
+  }
+}
+
+const updateAmenities = () => {
+  // Método para forzar actualización cuando se escriben amenities personalizados
+  localProperty.value.amenities = allSelectedAmenities.value
+}
+
+// Manejo de imagen (base64)
 const handleImageUpload = (event) => {
   const file = event.target.files[0]
   if (file && file.type.startsWith('image/')) {
@@ -134,8 +371,46 @@ const handleImageUpload = (event) => {
   }
 }
 
-const handleSubmit = () => {
-  emit('submit', { ...localProperty.value })
+// Enviar formulario
+const handleSubmit = async () => {
+  formError.value = ''
+  validationErrors.value = {}
+
+  const payload = { ...localProperty.value }
+  delete payload.statusText
+  if (!payload.image) delete payload.image
+  if (!payload.description) delete payload.description
+
+  payload.amenities = allSelectedAmenities.value
+
+  try {
+    if (props.isEditMode) {
+      await axios.put(`${API_BASE_URL}/properties/${localProperty.value.id}`, payload, apiHeaders())
+      emit('submit', { ...localProperty.value })
+      // Recarga la página o refresca la lista aquí si quieres
+      window.location.reload()
+    } else {
+      await axios.post(`${API_BASE_URL}/properties`, payload, apiHeaders())
+      emit('submit', { ...localProperty.value })
+      // Refresca la página para ver la nueva propiedad
+      window.location.reload()
+    }
+  } catch (error) {
+    // Si la respuesta existe y es 201, lo consideramos OK (axios sólo hace catch para status >=400)
+    if (error.response && error.response.status === 422) {
+      validationErrors.value = error.response.data.errors || {}
+      formError.value = 'Hay errores en el formulario'
+    } else if (error.response && error.response.status === 201) {
+      // Esto es por si acaso, pero axios normalmente NO hace catch con 201
+      emit('submit', { ...localProperty.value })
+      window.location.reload()
+    } else if (error.response && error.response.data && error.response.data.message) {
+      formError.value = error.response.data.message
+    } else {
+      formError.value = 'Error al crear la propiedad'
+    }
+    emit('error', formError.value)
+  }
 }
 </script>
 
@@ -158,7 +433,7 @@ const handleSubmit = () => {
   background-color: white;
   border-radius: 12px;
   width: 90%;
-  max-width: 700px;
+  max-width: 800px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 10px 25px rgba(0, 53, 128, 0.2);
@@ -317,6 +592,227 @@ const handleSubmit = () => {
   border-radius: 8px;
 }
 
+/* ESTILOS PARA AMENITIES */
+.amenities-container {
+  background: #f8fafc;
+  border: 1px solid #e6f0ff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.amenity-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 2px solid #e6f0ff;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.amenity-card:hover {
+  border-color: #0071c2;
+  background: #f0f7ff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 113, 194, 0.1);
+}
+
+.amenity-card.selected {
+  border-color: #0071c2;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f0ff 100%);
+  box-shadow: 0 2px 8px rgba(0, 113, 194, 0.15);
+}
+
+.amenity-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: #0071c2;
+}
+
+.amenity-name {
+  flex: 1;
+  font-weight: 500;
+  color: #1e293b;
+  font-size: 0.85rem;
+}
+
+.amenity-check {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  width: 16px;
+  height: 16px;
+  background: #0071c2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.amenity-check svg {
+  width: 10px;
+  height: 10px;
+}
+
+.custom-amenities-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e6f0ff;
+}
+
+.custom-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #003580;
+  margin: 0 0 1rem 0;
+}
+
+.custom-amenities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.custom-amenity-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.custom-amenity-input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #cce0ff;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.custom-amenity-input:focus {
+  outline: none;
+  border-color: #0071c2;
+  box-shadow: 0 0 0 2px rgba(0, 113, 194, 0.1);
+}
+
+.remove-custom-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.remove-custom-button:hover {
+  background: #fecaca;
+}
+
+.remove-custom-button svg {
+  width: 12px;
+  height: 12px;
+}
+
+.add-custom-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: white;
+  border: 1px dashed #0071c2;
+  border-radius: 6px;
+  color: #0071c2;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.85rem;
+}
+
+.add-custom-button:hover {
+  background: #f0f7ff;
+}
+
+.add-custom-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.selected-summary {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e6f0ff;
+}
+
+.summary-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #003580;
+  margin: 0 0 0.75rem 0;
+}
+
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.selected-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.625rem;
+  background: linear-gradient(135deg, #0071c2 0%, #003580 100%);
+  color: white;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.remove-tag-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.remove-tag-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.remove-tag-button svg {
+  width: 8px;
+  height: 8px;
+}
+
 .status-toggle {
   display: flex;
   gap: 1rem;
@@ -401,6 +897,20 @@ const handleSubmit = () => {
   box-shadow: 0 6px 12px rgba(0, 53, 128, 0.15);
 }
 
+.form-error {
+  color: #e41c00;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.form-error-global {
+  background: #fff2f0;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 0.75rem;
+  text-align: center;
+}
+
 @media (max-width: 768px) {
   .modal-content {
     width: 95%;
@@ -417,6 +927,42 @@ const handleSubmit = () => {
   .form-row {
     flex-direction: column;
     gap: 1rem;
+  }
+  
+  .amenities-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.5rem;
+  }
+  
+  .amenity-card {
+    padding: 0.5rem;
+  }
+  
+  .amenity-name {
+    font-size: 0.8rem;
+  }
+  
+  .custom-amenity-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .remove-custom-button {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .amenities-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .selected-tags {
+    flex-direction: column;
+  }
+  
+  .selected-tag {
+    justify-content: space-between;
   }
 }
 </style>

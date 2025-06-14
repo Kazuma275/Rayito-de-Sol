@@ -12,8 +12,9 @@
         </div>
         
         <h2 class="login-title">Portal de Inquilinos</h2>
+        <p class="login-subtitle">Accede a tu cuenta para gestionar tus reservas</p>
         
-        <form class="login-form" @submit.prevent="handleLogin">
+        <form class="login-form" @submit.prevent="handleSubmit">
           <div class="form-group">
             <label for="email">Email</label>
             <div class="input-wrapper">
@@ -21,13 +22,15 @@
               <input 
                 type="email" 
                 id="email" 
-                v-model="email" 
+                v-model="formData.email" 
                 placeholder="tu@email.com" 
                 required 
                 class="form-input"
+                :class="{ 'input-error': errors.email }"
               />
               <div class="input-glow"></div>
             </div>
+            <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
           </div>
           
           <div class="form-group">
@@ -40,26 +43,29 @@
               <input 
                 :type="showPassword ? 'text' : 'password'" 
                 id="password" 
-                v-model="password" 
+                v-model="formData.password" 
                 placeholder="Tu contraseña" 
                 required 
                 class="form-input"
+                :class="{ 'input-error': errors.password }"
               />
               <div class="input-glow"></div>
               <button 
                 type="button" 
                 class="toggle-password" 
                 @click="showPassword = !showPassword"
+                aria-label="Mostrar contraseña"
               >
                 <EyeIcon v-if="!showPassword" class="eye-icon" />
                 <EyeOffIcon v-else class="eye-icon" />
               </button>
             </div>
+            <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
           </div>
           
           <div class="remember-me">
             <label class="checkbox-container">
-              <input type="checkbox" v-model="rememberMe" class="custom-checkbox" />
+              <input type="checkbox" v-model="formData.remember" class="custom-checkbox" />
               <span class="checkbox-label">Recordarme</span>
             </label>
           </div>
@@ -67,28 +73,12 @@
           <button 
             type="submit" 
             class="login-button" 
-            :disabled="isLoading"
+            :disabled="isSubmitting"
           >
-            <LoaderIcon v-if="isLoading" class="spinner" />
+            <LoaderIcon v-if="isSubmitting" class="spinner" />
             <span v-else>Iniciar Sesión</span>
           </button>
         </form>
-        
-        <div class="login-divider">
-          <span>o</span>
-        </div>
-        
-        <div class="social-login">
-          <button class="social-button google">
-            <div class="social-icon google-icon"></div>
-            Continuar con Google
-          </button>
-          
-          <button class="social-button facebook">
-            <div class="social-icon facebook-icon"></div>
-            Continuar con Facebook
-          </button>
-        </div>
         
         <div class="register-link">
           ¿No tienes una cuenta? <a href="#" @click.prevent="goToRegister">Regístrate</a>
@@ -102,11 +92,17 @@
         </div>
       </div>
     </div>
+    
+    <!-- Modal de sesión expirada -->
+    <SessionExpiredModal 
+      :isOpen="showSessionExpiredModal" 
+      @close="closeSessionExpiredModal" 
+    />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { 
   SunIcon, 
@@ -117,35 +113,144 @@ import {
   LoaderIcon,
   ArrowLeftIcon
 } from 'lucide-vue-next';
+import axios from 'axios';
+import { authState } from '@/router/auth-guard';
+import SessionExpiredModal from '../views/SessionExpiredModal.vue';
 
 const router = useRouter();
+const formData = reactive({
+  email: '',
+  password: '',
+  remember: false
+});
 
-const email = ref('');
-const password = ref('');
-const rememberMe = ref(false);
+const errors = reactive({
+  email: '',
+  password: ''
+});
+
+const isSubmitting = ref(false);
 const showPassword = ref(false);
-const isLoading = ref(false);
+const isValid = ref(true);
+const showSessionExpiredModal = ref(false);
+
+// Verificar si hay un parámetro de sesión expirada en la URL
+onMounted(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('session_expired') === 'true') {
+    showSessionExpiredModal.value = true;
+  }
+});
+
+const validateForm = () => {
+  isValid.value = true;
+  Object.keys(errors).forEach(key => errors[key] = '');
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.email)) {
+    errors.email = 'Por favor, introduce un correo electrónico válido';
+    isValid.value = false;
+  }
+
+  if (formData.password.length < 1) {
+    errors.password = 'Por favor, introduce tu contraseña';
+    isValid.value = false;
+  }
+
+  return isValid.value;
+};
+
+// Configurar temporizador para verificar expiración del token
+const setupExpirationTimer = () => {
+  // Limpiar cualquier temporizador existente
+  if (window.tokenExpirationTimer) {
+    clearInterval(window.tokenExpirationTimer);
+  }
+  
+  // Crear nuevo temporizador que verifica cada 10 segundos
+  window.tokenExpirationTimer = setInterval(() => {
+    const expirationTime = parseInt(localStorage.getItem('token_expiration') || '0');
+    
+    // Si el token ha expirado
+    if (expirationTime && Date.now() > expirationTime) {
+      // Limpiar el temporizador
+      clearInterval(window.tokenExpirationTimer);
+      
+      // Cerrar sesión
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+      
+      // Actualizar estado de autenticación
+      authState.isAuthenticated = false;
+      authState.user = null;
+      
+      // Redirigir al login con parámetro de sesión expirada
+      router.push('/renters/login?session_expired=true');
+    }
+  }, 10000); // Verificar cada 10 segundos
+};
+
+const handleSubmit = async () => {
+  if (!validateForm()) return;
+
+  isSubmitting.value = true;
+
+  try {
+    // Cambia la URL si tu backend está en otra dirección
+    const response = await axios.post('http://127.0.0.1:8000/api/login', {
+      email: formData.email,
+      password: formData.password,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    });
+
+    // Guarda el token y el usuario siempre con las mismas claves
+    localStorage.setItem('auth_token', response.data.token);  
+    localStorage.setItem('auth_user', JSON.stringify(response.data.user));
+    
+    // Establecer tiempo de expiración (5 minutos = 300000 ms)
+    const expirationTime = Date.now() + 300000;
+    localStorage.setItem('token_expiration', expirationTime.toString());
+    
+    // Actualizar el estado de autenticación
+    authState.isAuthenticated = true;
+    authState.user = response.data.user;
+    
+    // Configurar temporizador para verificar expiración
+    setupExpirationTimer();
+
+    // Redirige al dashboard de inquilinos
+    router.push('/renters/dashboard');
+  } catch (error) {
+    if (error.response) {
+      console.error('Error al iniciar sesión:', error.response.data.message);
+      alert(error.response.data.message || 'Correo electrónico o contraseña incorrectos.');
+    } else {
+      console.error('Error de red:', error);
+      alert('Hubo un problema con la conexión, por favor intenta más tarde.');
+    }
+  } finally {
+    isSubmitting.value = false;
+  }
+};
 
 const forgotPassword = () => {
-  window.location.href = '/portal/renters/forgot-password';
+  router.push('/reset-password');
 };
 
 const goToRegister = () => {
-  window.location.href = '/portal/renters/register';
+  router.push('/register');
 };
 
-const handleLogin = async () => {
-  isLoading.value = true;
-  
-  try {
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    localStorage.setItem('renters_auth', 'true');
-    window.location.href = '/portal/renters/dashboard';
-  } catch (error) {
-    console.error('Login error:', error);
-  } finally {
-    isLoading.value = false;
-  }
+const closeSessionExpiredModal = () => {
+  showSessionExpiredModal.value = false;
+  // Limpiar el parámetro de la URL
+  const url = new URL(window.location);
+  url.searchParams.delete('session_expired');
+  window.history.replaceState({}, '', url);
 };
 </script>
 
