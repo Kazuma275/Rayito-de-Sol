@@ -12,11 +12,13 @@ class CreateUsersTable extends Migration
             $table->id(); // user_id
             $table->string('username', 50);
             $table->string('email', 100)->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password', 60);
             $table->string('token_verificacion', 255)->nullable();
             $table->boolean('verificado')->default(0);
             $table->timestamp('fecha_registro')->useCurrent();
-            $table->enum('role', ['user', 'admin'])->default('user');
+            $table->enum('role', ['guest', 'owner', 'user', 'admin'])->default('guest');
+            $table->rememberToken();
             $table->timestamps();
         });
     }

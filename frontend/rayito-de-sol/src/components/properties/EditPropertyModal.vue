@@ -226,6 +226,7 @@ import {
   ThermometerIcon
 } from 'lucide-vue-next'
 import axios from 'axios'
+import { apiHeaders } from '@/../utils/api';
 
 // Usa variable de entorno si tienes VITE_API_URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
@@ -374,27 +375,35 @@ const handleImageUpload = (event) => {
 const handleSubmit = async () => {
   formError.value = ''
   validationErrors.value = {}
-  
-  // Clona el objeto y elimina statusText y campos vacíos innecesarios
+
   const payload = { ...localProperty.value }
   delete payload.statusText
   if (!payload.image) delete payload.image
   if (!payload.description) delete payload.description
-  
-  // Asegurar que amenities esté actualizado y limpio
+
   payload.amenities = allSelectedAmenities.value
-  
+
   try {
     if (props.isEditMode) {
-      await axios.put(`${API_BASE_URL}/properties/${localProperty.value.id}`, payload)
+      await axios.put(`${API_BASE_URL}/properties/${localProperty.value.id}`, payload, apiHeaders())
+      emit('submit', { ...localProperty.value })
+      // Recarga la página o refresca la lista aquí si quieres
+      window.location.reload()
     } else {
-      await axios.post(`${API_BASE_URL}/properties`, payload)
+      await axios.post(`${API_BASE_URL}/properties`, payload, apiHeaders())
+      emit('submit', { ...localProperty.value })
+      // Refresca la página para ver la nueva propiedad
+      window.location.reload()
     }
-    emit('submit', { ...localProperty.value })
   } catch (error) {
+    // Si la respuesta existe y es 201, lo consideramos OK (axios sólo hace catch para status >=400)
     if (error.response && error.response.status === 422) {
       validationErrors.value = error.response.data.errors || {}
       formError.value = 'Hay errores en el formulario'
+    } else if (error.response && error.response.status === 201) {
+      // Esto es por si acaso, pero axios normalmente NO hace catch con 201
+      emit('submit', { ...localProperty.value })
+      window.location.reload()
     } else if (error.response && error.response.data && error.response.data.message) {
       formError.value = error.response.data.message
     } else {

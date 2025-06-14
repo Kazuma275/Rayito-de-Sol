@@ -80,11 +80,11 @@
         v-if="activeTab === 'settings'"
         :settings-tabs="settingsTabs"
         :active-settings-tab="activeSettingsTab"
-        :profile="localSettings.profile"
+        :profile="userData"
         :preview-image="previewImage"
-        :notifications="localSettings.notifications"
+        :notifications="notificationSettings"
         :payment-methods="paymentMethods"
-        :bank-account="localSettings.payment"
+        :bank-account="bankAccount"
         @change-tab="setActiveSettingsTab"
         @change-avatar="handleAvatarChange"
         @save-profile="saveProfile"
@@ -183,82 +183,16 @@ const viewBookingDetails = (bookingId) => {
   console.log(`[PADRE] Ver detalles de la reserva ${bookingId}`);
 };
 
-const acceptBooking = (bookingId) => {
-  console.log(`[PADRE] Aceptar reserva ${bookingId}`);
-  const booking = allBookings.value.find(b => b.id === bookingId);
-  if (booking) {
-    booking.status = 'confirmed';
-    booking.history = booking.history || [];
-    booking.history.push({
-      type: 'confirmed',
-      text: 'Reserva confirmada por el propietario',
-      date: new Date().toISOString()
-    });
-    console.log('[PADRE] Reserva confirmada:', booking);
-  } else {
-    console.warn('[PADRE] Reserva no encontrada para confirmar:', bookingId);
-  }
-};
-
-const rejectBooking = (bookingId) => {
-  console.log(`[PADRE] Rechazar reserva ${bookingId}`);
-  const booking = allBookings.value.find(b => b.id === bookingId);
-  if (booking) {
-    booking.status = 'cancelled';
-    booking.history = booking.history || [];
-    booking.history.push({
-      type: 'cancelled',
-      text: 'Reserva rechazada por el propietario',
-      date: new Date().toISOString()
-    });
-    console.log('[PADRE] Reserva cancelada:', booking);
-  } else {
-    console.warn('[PADRE] Reserva no encontrada para cancelar:', bookingId);
-  }
-};
-
-const messageBooking = (bookingId) => {
-  console.log(`[PADRE] Enviar mensaje para la reserva ${bookingId}`);
-};
-
 onMounted(async () => {
   try {
     console.log('[PADRE] Iniciando carga de datos...');
 
     const [userRes, propsRes, bookingsRes, messagesRes] = await Promise.allSettled([
-      axios.get('/api/user', apiHeaders()),
+      /* axios.get('/api/user', apiHeaders()), */
       axios.get('/api/properties', apiHeaders()),
       axios.get('/api/bookings', apiHeaders()),
-      axios.get('/api/messages', apiHeaders()),
+      axios.get('/api/conversations', apiHeaders())
     ]);
-
-    if (userRes.status === 'fulfilled') {
-      userStore.setUser(userRes.value.data);
-      console.log('[PADRE] Usuario cargado:', userRes.value.data);
-    } else {
-      console.error('[PADRE] Error cargando usuario:', userRes.reason);
-    }
-
-    if (propsRes.status === 'fulfilled') {
-      properties.value = propsRes.value.data;
-      console.log('[PADRE] Propiedades cargadas:', properties.value);
-    } else {
-      console.error('[PADRE] Error cargando propiedades:', propsRes.reason);
-    }
-
-    if (bookingsRes.status === 'fulfilled') {
-      allBookings.value = bookingsRes.value.data;
-      console.log('[PADRE] Bookings cargadas:', allBookings.value);
-    } else {
-      console.error('[PADRE] Error cargando bookings:', bookingsRes.reason);
-    }
-
-    if (messagesRes.status === 'fulfilled') {
-      messages.value = messagesRes.value.data;
-      console.log('[PADRE] Mensajes cargados:', messages.value);
-    } else {
-      console.error('[PADRE] Error cargando mensajes:', messagesRes.reason);
-    }
 
   } catch (error) {
     console.error('[PADRE] Error al cargar datos:', error);
@@ -1092,6 +1026,7 @@ const changeTab = (tabId) => {
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  pointer-events: none; 
 }
 
 .modal-content {
@@ -1521,7 +1456,7 @@ const changeTab = (tabId) => {
   width: 16px;
   height: 16px;
   color: #64748b;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .calendar-navigation {
@@ -2055,284 +1990,6 @@ const changeTab = (tabId) => {
   text-align: center;
 }
 
-/* Settings styles */
-.settings-container {
-  display: flex;
-  background-color: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.settings-sidebar {
-  width: 250px;
-  border-right: 1px solid #eee;
-  padding: 1.5rem 0;
-}
-
-.settings-tab {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.settings-tab:hover, .settings-tab.active {
-  background-color: #f5f5f5;
-}
-
-.settings-tab.active {
-  border-left: 3px solid #0071c2;
-}
-
-.settings-icon {
-  width: 18px;
-  height: 18px;
-  color: #0071c2;
-  margin-right: 0.75rem;
-}
-
-.settings-content {
-  flex: 1;
-  padding: 1.5rem;
-}
-
-.settings-panel {
-  max-width: 600px;
-}
-
-.panel-title {
-  font-size: 1.2rem;
-  color: #003580;
-  margin: 0 0 1.5rem;
-}
-
-.profile-avatar {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.avatar-placeholder {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background-color: #e6f0ff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 1.5rem;
-}
-
-.change-avatar-button {
-  background-color: #f5f5f5;
-  color: #333;
-  border: 1px solid #ccc;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.change-avatar-button:hover {
-  background-color: #eee;
-}
-
-.notification-settings {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.notification-group {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.notification-group h4 {
-  font-size: 1.1rem;
-  color: #003580;
-  margin: 0 0 0.5rem;
-}
-
-.notification-option {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.notification-option h5 {
-  font-size: 1rem;
-  margin: 0 0 0.25rem;
-}
-
-.notification-option p {
-  font-size: 0.9rem;
-  color: #666;
-  margin: 0;
-}
-
-.toggle {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 24px;
-}
-
-.toggle input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggle-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-  border-radius: 24px;
-}
-
-.toggle-slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: .4s;
-  border-radius: 50%;
-}
-
-.toggle input:checked + .toggle-slider {
-  background-color: #0071c2;
-}
-
-.toggle input:checked + .toggle-slider:before {
-  transform: translateX(26px);
-}
-
-.payment-methods {
-  margin-bottom: 2rem;
-}
-
-.payment-methods h4, .bank-account h4 {
-  font-size: 1.1rem;
-  color: #003580;
-  margin: 0 0 1rem;
-}
-
-.payment-method {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  border: 1px solid #eee;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-}
-
-.payment-info {
-  display: flex;
-  align-items: center;
-}
-
-.payment-icon {
-  width: 24px;
-  height: 24px;
-  color: #0071c2;
-  margin-right: 1rem;
-}
-
-.payment-info h5 {
-  font-size: 1rem;
-  margin: 0 0 0.25rem;
-}
-
-.payment-info p {
-  font-size: 0.9rem;
-  color: #666;
-  margin: 0;
-}
-
-.payment-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.edit-button, .delete-button {
-  background: none;
-  border: none;
-  font-size: 0.9rem;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
-.edit-button {
-  color: #0071c2;
-}
-
-.edit-button:hover {
-  background-color: #e6f0ff;
-}
-
-.delete-button {
-  color: #e41c00;
-}
-
-.delete-button:hover {
-  background-color: #fff2f0;
-}
-
-.add-payment-button {
-  display: flex;
-  align-items: center;
-  background: none;
-  border: 1px dashed #ccc;
-  width: 100%;
-  padding: 0.75rem;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: border-color 0.3s;
-  justify-content: center;
-}
-
-.add-payment-button:hover {
-  border-color: #0071c2;
-}
-
-.add-payment-button .add-icon {
-  width: 16px;
-  height: 16px;
-  margin-right: 0.5rem;
-}
-
-.save-button {
-  background-color: #0071c2;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 1rem;
-}
-
-.save-button:hover {
-  background-color: #005999;
-}
 
 /* Footer styles */
 .footer {

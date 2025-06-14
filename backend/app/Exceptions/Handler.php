@@ -41,9 +41,12 @@ class Handler extends ExceptionHandler
     /**
      * Override unauthenticated to force JSON on API.
      */
-    protected function unauthenticated($request, AuthenticationException $exception)
-    {
-        // Always return JSON for API requests
+protected function unauthenticated($request, \Illuminate\Auth\AuthenticationException $exception)
+{
+    if ($request->expectsJson()) {
         return response()->json(['error' => 'Unauthenticated.'], 401);
     }
+
+    return redirect()->guest(route('login'));
+}
 }

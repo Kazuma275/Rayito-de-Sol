@@ -2,27 +2,29 @@
   <div class="help-support-section">
     <div class="section-header">
       <h2 class="section-title">Centro de Ayuda y Soporte</h2>
-      <p class="section-description">Encuentra respuestas a tus preguntas y soluciones a problemas comunes</p>
+      <p class="section-description">
+        Encuentra respuestas a tus preguntas y soluciones a problemas comunes
+      </p>
     </div>
-    
+
     <div class="help-container">
       <div class="help-sidebar">
         <div class="search-box">
           <SearchIcon class="search-icon" />
-          <input 
-            type="text" 
-            placeholder="Buscar ayuda..." 
+          <input
+            type="text"
+            placeholder="Buscar ayuda..."
             v-model="searchQuery"
             class="search-input"
             @input="filterCategories"
           />
         </div>
-        
+
         <div class="category-list">
           <h3 class="sidebar-title">Categorías</h3>
-          <div 
-            v-for="(category, index) in filteredCategories" 
-            :key="index" 
+          <div
+            v-for="(category, index) in filteredCategories"
+            :key="index"
             class="category-item"
             :class="{ active: activeCategory === index }"
             @click="activeCategory = index"
@@ -32,7 +34,7 @@
             <ChevronRightIcon class="arrow-icon" />
           </div>
         </div>
-        
+
         <div class="contact-support">
           <h3>¿Necesitas más ayuda?</h3>
           <p>Nuestro equipo de soporte está disponible 24/7 para ayudarte</p>
@@ -42,27 +44,33 @@
           </button>
         </div>
       </div>
-      
+
       <div class="help-content">
         <div class="category-header">
-          <component :is="categories[activeCategory].icon" class="header-icon" />
+          <component
+            :is="categories[activeCategory].icon"
+            class="header-icon"
+          />
           <h2>{{ categories[activeCategory].name }}</h2>
         </div>
-        
+
         <div class="faq-list">
-          <div 
-            v-for="(faq, index) in categories[activeCategory].faqs" 
-            :key="index" 
+          <div
+            v-for="(faq, index) in categories[activeCategory].faqs"
+            :key="index"
             class="faq-item"
             :class="{ expanded: expandedFaqs.includes(index) }"
           >
             <div class="faq-question" @click="toggleFaq(index)">
               <h3>{{ faq.question }}</h3>
-              <ChevronDownIcon class="question-icon" :class="{ rotated: expandedFaqs.includes(index) }" />
+              <ChevronDownIcon
+                class="question-icon"
+                :class="{ rotated: expandedFaqs.includes(index) }"
+              />
             </div>
             <div class="faq-answer" v-if="expandedFaqs.includes(index)">
               <div v-html="faq.answer"></div>
-              
+
               <div v-if="faq.links && faq.links.length > 0" class="faq-links">
                 <h4>Enlaces útiles:</h4>
                 <ul>
@@ -74,26 +82,47 @@
                   </li>
                 </ul>
               </div>
-              
-              <div v-if="faq.relatedQuestions && faq.relatedQuestions.length > 0" class="related-questions">
+
+              <div
+                v-if="faq.relatedQuestions && faq.relatedQuestions.length > 0"
+                class="related-questions"
+              >
                 <h4>Preguntas relacionadas:</h4>
                 <ul>
-                  <li v-for="(question, qIndex) in faq.relatedQuestions" :key="qIndex">
-                    <a href="#" @click.prevent="goToRelatedQuestion(question.categoryIndex, question.questionIndex)" class="related-link">
+                  <li
+                    v-for="(question, qIndex) in faq.relatedQuestions"
+                    :key="qIndex"
+                  >
+                    <a
+                      href="#"
+                      @click.prevent="
+                        goToRelatedQuestion(
+                          question.categoryIndex,
+                          question.questionIndex
+                        )
+                      "
+                      class="related-link"
+                    >
                       {{ question.text }}
                     </a>
                   </li>
                 </ul>
               </div>
-              
+
               <div class="feedback-section">
                 <p>¿Te ha resultado útil esta respuesta?</p>
                 <div class="feedback-buttons">
-                  <button class="feedback-button" @click="provideFeedback(index, true)">
+                  <button
+                    class="feedback-button"
+                    @click="provideFeedback(index, true)"
+                  >
                     <ThumbsUpIcon class="feedback-icon" />
                     Sí
                   </button>
-                  <button class="feedback-button" @click="provideFeedback(index, false)">
+                  <button
+                    class="feedback-button"
+                    @click="provideFeedback(index, false)"
+                  >
                     <ThumbsDownIcon class="feedback-icon" />
                     No
                   </button>
@@ -104,9 +133,13 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Modal de contacto -->
-    <div v-if="showContactModal" class="contact-modal-overlay" @click="showContactModal = false">
+    <div
+      v-if="showContactModal"
+      class="contact-modal-overlay"
+      @click="showContactModal = false"
+    >
       <div class="contact-modal" @click.stop>
         <div class="modal-header">
           <h3>Contactar con Soporte</h3>
@@ -114,12 +147,17 @@
             <XIcon class="close-icon" />
           </button>
         </div>
-        
+
         <div class="modal-body">
           <form @submit.prevent="submitContactForm" class="contact-form">
             <div class="form-group">
               <label for="contact-subject">Asunto</label>
-              <select id="contact-subject" v-model="contactForm.subject" class="form-input" required>
+              <select
+                id="contact-subject"
+                v-model="contactForm.subject"
+                class="form-input"
+                required
+              >
                 <option value="">Selecciona un asunto</option>
                 <option value="technical">Problema técnico</option>
                 <option value="account">Cuenta y acceso</option>
@@ -128,39 +166,53 @@
                 <option value="other">Otro</option>
               </select>
             </div>
-            
+
             <div class="form-group">
               <label for="contact-message">Mensaje</label>
-              <textarea 
-                id="contact-message" 
-                v-model="contactForm.message" 
-                class="form-textarea" 
-                rows="5" 
+              <textarea
+                id="contact-message"
+                v-model="contactForm.message"
+                class="form-textarea"
+                rows="5"
                 placeholder="Describe tu problema o pregunta con detalle..."
                 required
               ></textarea>
             </div>
-            
+
             <div class="form-group">
               <label for="contact-email">Email de contacto</label>
-              <input 
-                type="email" 
-                id="contact-email" 
-                v-model="contactForm.email" 
-                class="form-input" 
+              <input
+                type="email"
+                id="contact-email"
+                v-model="contactForm.email"
+                class="form-input"
                 placeholder="tu@email.com"
                 required
               />
             </div>
-            
+
             <div class="form-group checkbox-group">
-              <input type="checkbox" id="contact-urgent" v-model="contactForm.urgent" />
+              <input
+                type="checkbox"
+                id="contact-urgent"
+                v-model="contactForm.urgent"
+              />
               <label for="contact-urgent">Este es un problema urgente</label>
             </div>
-            
+
             <div class="form-actions">
-              <button type="button" class="cancel-button" @click="showContactModal = false">Cancelar</button>
-              <button type="submit" class="submit-button" :disabled="isSubmitting">
+              <button
+                type="button"
+                class="cancel-button"
+                @click="showContactModal = false"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                class="submit-button"
+                :disabled="isSubmitting"
+              >
                 <LoaderIcon v-if="isSubmitting" class="spinner" />
                 <span v-else>Enviar Mensaje</span>
               </button>
@@ -173,11 +225,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { 
-  SearchIcon, 
-  ChevronRightIcon, 
-  ChevronDownIcon, 
+import { ref, computed } from "vue";
+import {
+  SearchIcon,
+  ChevronRightIcon,
+  ChevronDownIcon,
   MessageSquareIcon,
   ExternalLinkIcon,
   ThumbsUpIcon,
@@ -191,30 +243,33 @@ import {
   SettingsIcon,
   HelpCircleIcon,
   ShieldIcon,
-  BookIcon
-} from 'lucide-vue-next';
+  BookIcon,
+} from "lucide-vue-next";
+import { useToast } from 'vue-toastification'
+
+const toast = useToast();
 
 // Estado
-const searchQuery = ref('');
+const searchQuery = ref("");
 const activeCategory = ref(0);
 const expandedFaqs = ref([]);
 const showContactModal = ref(false);
 const isSubmitting = ref(false);
 const contactForm = ref({
-  subject: '',
-  message: '',
-  email: '',
-  urgent: false
+  subject: "",
+  message: "",
+  email: "",
+  urgent: false,
 });
 
 // Categorías y preguntas frecuentes
 const categories = ref([
   {
-    name: 'Primeros pasos',
+    name: "Primeros pasos",
     icon: HomeIcon,
     faqs: [
       {
-        question: '¿Cómo añadir una nueva propiedad?',
+        question: "¿Cómo añadir una nueva propiedad?",
         answer: `
           <p>Para añadir una nueva propiedad a tu cuenta, sigue estos pasos:</p>
           <ol>
@@ -235,16 +290,24 @@ const categories = ref([
           <p>Una vez añadida, tu propiedad estará disponible para ser reservada por los huéspedes.</p>
         `,
         links: [
-          { text: 'Guía completa para añadir propiedades', url: '#' },
-          { text: 'Consejos para fotos atractivas', url: '#' }
+          { text: "Guía completa para añadir propiedades", url: "#" },
+          { text: "Consejos para fotos atractivas", url: "#" },
         ],
         relatedQuestions: [
-          { text: '¿Cómo editar los detalles de una propiedad?', categoryIndex: 1, questionIndex: 0 },
-          { text: '¿Cómo establecer precios estacionales?', categoryIndex: 2, questionIndex: 1 }
-        ]
+          {
+            text: "¿Cómo editar los detalles de una propiedad?",
+            categoryIndex: 1,
+            questionIndex: 0,
+          },
+          {
+            text: "¿Cómo establecer precios estacionales?",
+            categoryIndex: 2,
+            questionIndex: 1,
+          },
+        ],
       },
       {
-        question: '¿Cómo gestionar las reservas?',
+        question: "¿Cómo gestionar las reservas?",
         answer: `
           <p>La gestión de reservas se realiza desde la sección "Reservas" del panel de control. Desde allí podrás:</p>
           <ul>
@@ -256,16 +319,22 @@ const categories = ref([
           </ul>
           <p>Recuerda responder a las solicitudes de reserva lo antes posible para mantener una buena valoración como anfitrión.</p>
         `,
-        links: [
-          { text: 'Tutorial de gestión de reservas', url: '#' }
-        ],
+        links: [{ text: "Tutorial de gestión de reservas", url: "#" }],
         relatedQuestions: [
-          { text: '¿Cómo bloquear fechas en el calendario?', categoryIndex: 2, questionIndex: 0 },
-          { text: '¿Cómo cancelar una reserva?', categoryIndex: 3, questionIndex: 1 }
-        ]
+          {
+            text: "¿Cómo bloquear fechas en el calendario?",
+            categoryIndex: 2,
+            questionIndex: 0,
+          },
+          {
+            text: "¿Cómo cancelar una reserva?",
+            categoryIndex: 3,
+            questionIndex: 1,
+          },
+        ],
       },
       {
-        question: '¿Cómo configurar mi cuenta?',
+        question: "¿Cómo configurar mi cuenta?",
         answer: `
           <p>Para configurar tu cuenta y personalizar tus preferencias:</p>
           <ol>
@@ -283,22 +352,28 @@ const categories = ref([
           </ol>
           <p>Es recomendable mantener tu información actualizada para facilitar la comunicación y los pagos.</p>
         `,
-        links: [
-          { text: 'Guía de configuración de cuenta', url: '#' }
-        ],
+        links: [{ text: "Guía de configuración de cuenta", url: "#" }],
         relatedQuestions: [
-          { text: '¿Cómo cambiar mi contraseña?', categoryIndex: 4, questionIndex: 0 },
-          { text: '¿Cómo actualizar mis datos bancarios?', categoryIndex: 3, questionIndex: 0 }
-        ]
-      }
-    ]
+          {
+            text: "¿Cómo cambiar mi contraseña?",
+            categoryIndex: 4,
+            questionIndex: 0,
+          },
+          {
+            text: "¿Cómo actualizar mis datos bancarios?",
+            categoryIndex: 3,
+            questionIndex: 0,
+          },
+        ],
+      },
+    ],
   },
   {
-    name: 'Gestión de propiedades',
+    name: "Gestión de propiedades",
     icon: BookIcon,
     faqs: [
       {
-        question: '¿Cómo editar los detalles de una propiedad?',
+        question: "¿Cómo editar los detalles de una propiedad?",
         answer: `
           <p>Para editar una propiedad existente:</p>
           <ol>
@@ -319,12 +394,10 @@ const categories = ref([
           </ul>
           <p>Los cambios se reflejarán inmediatamente en tu listado.</p>
         `,
-        links: [
-          { text: 'Consejos para optimizar tu listado', url: '#' }
-        ]
+        links: [{ text: "Consejos para optimizar tu listado", url: "#" }],
       },
       {
-        question: '¿Puedo desactivar temporalmente una propiedad?',
+        question: "¿Puedo desactivar temporalmente una propiedad?",
         answer: `
           <p>Sí, puedes desactivar temporalmente una propiedad sin eliminarla completamente de tu cuenta. Para hacerlo:</p>
           <ol>
@@ -344,12 +417,10 @@ const categories = ref([
           </ul>
           <p>Esta función es útil si necesitas hacer renovaciones, si la propiedad no está disponible temporalmente, o si deseas tomarte un descanso como anfitrión.</p>
         `,
-        links: [
-          { text: 'Gestión del estado de propiedades', url: '#' }
-        ]
+        links: [{ text: "Gestión del estado de propiedades", url: "#" }],
       },
       {
-        question: '¿Cómo añadir fotos a mi propiedad?',
+        question: "¿Cómo añadir fotos a mi propiedad?",
         answer: `
           <p>Las fotos de calidad son esenciales para atraer huéspedes. Para añadir o gestionar las fotos de tu propiedad:</p>
           <ol>
@@ -376,12 +447,12 @@ const categories = ref([
           </ul>
         `,
         links: [
-          { text: 'Guía para fotografiar propiedades', url: '#' },
-          { text: 'Formatos y tamaños de imagen recomendados', url: '#' }
-        ]
+          { text: "Guía para fotografiar propiedades", url: "#" },
+          { text: "Formatos y tamaños de imagen recomendados", url: "#" },
+        ],
       },
       {
-        question: '¿Cómo gestionar los servicios y amenidades?',
+        question: "¿Cómo gestionar los servicios y amenidades?",
         answer: `
           <p>Los servicios y amenidades son características importantes que los huéspedes consideran al elegir una propiedad. Para gestionarlos:</p>
           <ol>
@@ -406,17 +477,17 @@ const categories = ref([
           <p>Recuerda que es importante ser honesto sobre los servicios que ofreces para evitar malentendidos con los huéspedes.</p>
         `,
         links: [
-          { text: 'Servicios más valorados por los huéspedes', url: '#' }
-        ]
-      }
-    ]
+          { text: "Servicios más valorados por los huéspedes", url: "#" },
+        ],
+      },
+    ],
   },
   {
-    name: 'Reservas y calendario',
+    name: "Reservas y calendario",
     icon: CalendarIcon,
     faqs: [
       {
-        question: '¿Cómo bloquear fechas en el calendario?',
+        question: "¿Cómo bloquear fechas en el calendario?",
         answer: `
           <p>Bloquear fechas en tu calendario es útil cuando la propiedad no está disponible para reservas. Para hacerlo:</p>
           <ol>
@@ -440,12 +511,10 @@ const categories = ref([
             <li>Reservas realizadas a través de otros canales</li>
           </ul>
         `,
-        links: [
-          { text: 'Gestión avanzada del calendario', url: '#' }
-        ]
+        links: [{ text: "Gestión avanzada del calendario", url: "#" }],
       },
       {
-        question: '¿Puedo establecer precios diferentes según la temporada?',
+        question: "¿Puedo establecer precios diferentes según la temporada?",
         answer: `
           <p>Sí, puedes configurar precios estacionales para maximizar tus ingresos. Para establecer precios variables:</p>
           <ol>
@@ -474,12 +543,12 @@ const categories = ref([
           <p>Un buen sistema de precios dinámicos puede aumentar significativamente tus ingresos anuales.</p>
         `,
         links: [
-          { text: 'Guía de precios estacionales', url: '#' },
-          { text: 'Análisis de mercado para optimizar precios', url: '#' }
-        ]
+          { text: "Guía de precios estacionales", url: "#" },
+          { text: "Análisis de mercado para optimizar precios", url: "#" },
+        ],
       },
       {
-        question: '¿Cómo gestionar múltiples reservas a la vez?',
+        question: "¿Cómo gestionar múltiples reservas a la vez?",
         answer: `
           <p>Gestionar múltiples reservas puede ser sencillo con las herramientas adecuadas:</p>
           <ol>
@@ -504,11 +573,11 @@ const categories = ref([
           <p>Una buena organización es clave para gestionar múltiples reservas sin estrés.</p>
         `,
         links: [
-          { text: 'Herramientas de productividad para anfitriones', url: '#' }
-        ]
+          { text: "Herramientas de productividad para anfitriones", url: "#" },
+        ],
       },
       {
-        question: '¿Qué hacer si un huésped solicita cambios en su reserva?',
+        question: "¿Qué hacer si un huésped solicita cambios en su reserva?",
         answer: `
           <p>Las solicitudes de modificación de reservas son comunes. Así puedes gestionarlas:</p>
           <ol>
@@ -534,18 +603,16 @@ const categories = ref([
           </ul>
           <p>Ser flexible con los cambios razonables puede generar buenas reseñas, pero no dudes en rechazar solicitudes que te causen inconvenientes significativos.</p>
         `,
-        links: [
-          { text: 'Políticas de modificación recomendadas', url: '#' }
-        ]
-      }
-    ]
+        links: [{ text: "Políticas de modificación recomendadas", url: "#" }],
+      },
+    ],
   },
   {
-    name: 'Pagos y facturación',
+    name: "Pagos y facturación",
     icon: CreditCardIcon,
     faqs: [
       {
-        question: '¿Cómo actualizar mis datos bancarios?',
+        question: "¿Cómo actualizar mis datos bancarios?",
         answer: `
           <p>Para actualizar tus datos bancarios y asegurar que recibes tus pagos correctamente:</p>
           <ol>
@@ -573,11 +640,14 @@ const categories = ref([
           <p>Mantén tus datos bancarios actualizados para evitar retrasos en los pagos.</p>
         `,
         links: [
-          { text: 'Requisitos para cuentas bancarias internacionales', url: '#' }
-        ]
+          {
+            text: "Requisitos para cuentas bancarias internacionales",
+            url: "#",
+          },
+        ],
       },
       {
-        question: '¿Cuándo recibiré los pagos de las reservas?',
+        question: "¿Cuándo recibiré los pagos de las reservas?",
         answer: `
           <p>El calendario de pagos depende de tu configuración y de las políticas de la plataforma:</p>
           <ol>
@@ -599,12 +669,10 @@ const categories = ref([
           </ol>
           <p><strong>Nota:</strong> Los cambios en el calendario de pagos se aplicarán solo a las nuevas reservas, no a las existentes.</p>
         `,
-        links: [
-          { text: 'Detalles sobre el procesamiento de pagos', url: '#' }
-        ]
+        links: [{ text: "Detalles sobre el procesamiento de pagos", url: "#" }],
       },
       {
-        question: '¿Cómo puedo ver mis facturas?',
+        question: "¿Cómo puedo ver mis facturas?",
         answer: `
           <p>Puedes acceder a todas tus facturas y al historial de transacciones siguiendo estos pasos:</p>
           <ol>
@@ -632,12 +700,12 @@ const categories = ref([
           <p>Mantén un buen registro de tus facturas para facilitar la gestión contable y fiscal de tu actividad como anfitrión.</p>
         `,
         links: [
-          { text: 'Guía fiscal para anfitriones', url: '#' },
-          { text: 'Cómo exportar datos para contabilidad', url: '#' }
-        ]
+          { text: "Guía fiscal para anfitriones", url: "#" },
+          { text: "Cómo exportar datos para contabilidad", url: "#" },
+        ],
       },
       {
-        question: '¿Qué comisiones se aplican a mis reservas?',
+        question: "¿Qué comisiones se aplican a mis reservas?",
         answer: `
           <p>Nuestra plataforma aplica las siguientes comisiones a las reservas:</p>
           <ul>
@@ -676,18 +744,18 @@ const categories = ref([
           <p>Todas las comisiones se detallan claramente en tus facturas y se deducen automáticamente antes de realizar los pagos a tu cuenta bancaria.</p>
         `,
         links: [
-          { text: 'Comparativa de comisiones con otras plataformas', url: '#' },
-          { text: 'Programa Propiedades Premium', url: '#' }
-        ]
-      }
-    ]
+          { text: "Comparativa de comisiones con otras plataformas", url: "#" },
+          { text: "Programa Propiedades Premium", url: "#" },
+        ],
+      },
+    ],
   },
   {
-    name: 'Cuenta y seguridad',
+    name: "Cuenta y seguridad",
     icon: ShieldIcon,
     faqs: [
       {
-        question: '¿Cómo cambiar mi contraseña?',
+        question: "¿Cómo cambiar mi contraseña?",
         answer: `
           <p>Para cambiar tu contraseña y mantener tu cuenta segura:</p>
           <ol>
@@ -710,12 +778,10 @@ const categories = ref([
           </ul>
           <p>Después de cambiar tu contraseña, recibirás un correo electrónico de confirmación y se cerrarán todas las sesiones activas excepto la actual.</p>
         `,
-        links: [
-          { text: 'Consejos para crear contraseñas seguras', url: '#' }
-        ]
+        links: [{ text: "Consejos para crear contraseñas seguras", url: "#" }],
       },
       {
-        question: '¿Cómo activar la verificación en dos pasos?',
+        question: "¿Cómo activar la verificación en dos pasos?",
         answer: `
           <p>La verificación en dos pasos (2FA) añade una capa extra de seguridad a tu cuenta. Para activarla:</p>
           <ol>
@@ -737,11 +803,11 @@ const categories = ref([
           <p><strong>Importante:</strong> Si pierdes el acceso a tu método de verificación (por ejemplo, cambias de teléfono), necesitarás los códigos de recuperación para acceder a tu cuenta. Guárdalos en un lugar seguro.</p>
         `,
         links: [
-          { text: 'Aplicaciones de autenticación recomendadas', url: '#' }
-        ]
+          { text: "Aplicaciones de autenticación recomendadas", url: "#" },
+        ],
       },
       {
-        question: '¿Qué hago si olvidé mi contraseña?',
+        question: "¿Qué hago si olvidé mi contraseña?",
         answer: `
           <p>Si has olvidado tu contraseña, puedes restablecerla siguiendo estos pasos:</p>
           <ol>
@@ -764,11 +830,11 @@ const categories = ref([
           <p>Contacta con nuestro equipo de soporte proporcionando detalles que puedan verificar tu identidad, como la dirección de correo alternativa, el número de teléfono asociado a la cuenta o detalles sobre tus propiedades.</p>
         `,
         links: [
-          { text: 'Contactar con soporte para problemas de acceso', url: '#' }
-        ]
+          { text: "Contactar con soporte para problemas de acceso", url: "#" },
+        ],
       },
       {
-        question: '¿Cómo proteger mi cuenta de accesos no autorizados?',
+        question: "¿Cómo proteger mi cuenta de accesos no autorizados?",
         answer: `
           <p>Proteger tu cuenta es fundamental para la seguridad de tus datos y propiedades. Sigue estas recomendaciones:</p>
           <ol>
@@ -790,18 +856,18 @@ const categories = ref([
           <p>Si detectas alguna actividad sospechosa, cambia inmediatamente tu contraseña y contacta con nuestro equipo de soporte.</p>
         `,
         links: [
-          { text: 'Centro de seguridad', url: '#' },
-          { text: 'Cómo reportar actividad sospechosa', url: '#' }
-        ]
-      }
-    ]
+          { text: "Centro de seguridad", url: "#" },
+          { text: "Cómo reportar actividad sospechosa", url: "#" },
+        ],
+      },
+    ],
   },
   {
-    name: 'Configuración',
+    name: "Configuración",
     icon: SettingsIcon,
     faqs: [
       {
-        question: '¿Cómo configurar notificaciones?',
+        question: "¿Cómo configurar notificaciones?",
         answer: `
           <p>Personaliza tus notificaciones para mantenerte informado sin sentirte abrumado:</p>
           <ol>
@@ -825,12 +891,10 @@ const categories = ref([
           </ul>
           <p>Puedes desactivar temporalmente todas las notificaciones con el modo "No molestar" si necesitas un descanso.</p>
         `,
-        links: [
-          { text: 'Configuración óptima de notificaciones', url: '#' }
-        ]
+        links: [{ text: "Configuración óptima de notificaciones", url: "#" }],
       },
       {
-        question: '¿Cómo añadir usuarios adicionales a mi cuenta?',
+        question: "¿Cómo añadir usuarios adicionales a mi cuenta?",
         answer: `
           <p>Si necesitas que otras personas te ayuden a gestionar tus propiedades, puedes añadir usuarios adicionales con diferentes niveles de acceso:</p>
           <ol>
@@ -858,11 +922,11 @@ const categories = ref([
           </ul>
         `,
         links: [
-          { text: 'Mejores prácticas para gestión de equipos', url: '#' }
-        ]
+          { text: "Mejores prácticas para gestión de equipos", url: "#" },
+        ],
       },
       {
-        question: '¿Cómo cambiar el idioma de la plataforma?',
+        question: "¿Cómo cambiar el idioma de la plataforma?",
         answer: `
           <p>Puedes cambiar el idioma de la interfaz en cualquier momento:</p>
           <ol>
@@ -887,12 +951,10 @@ const categories = ref([
           </ul>
           <p><strong>Nota:</strong> Cambiar el idioma de la plataforma no afecta al idioma en que se muestran tus propiedades a los huéspedes. Para gestionar los idiomas de tus listados, ve a la sección "Propiedades" > "Editar" > "Traducciones".</p>
         `,
-        links: [
-          { text: 'Cómo crear listados multilingües', url: '#' }
-        ]
+        links: [{ text: "Cómo crear listados multilingües", url: "#" }],
       },
       {
-        question: '¿Cómo vincular mi calendario con otras plataformas?',
+        question: "¿Cómo vincular mi calendario con otras plataformas?",
         answer: `
           <p>Puedes sincronizar tu calendario con otras plataformas de alquiler para evitar reservas duplicadas:</p>
           <ol>
@@ -918,18 +980,18 @@ const categories = ref([
           <p>Para una gestión más avanzada, considera utilizar un channel manager especializado que ofrezca sincronización en tiempo real.</p>
         `,
         links: [
-          { text: 'Channel managers compatibles', url: '#' },
-          { text: 'Solución de problemas de sincronización', url: '#' }
-        ]
-      }
-    ]
+          { text: "Channel managers compatibles", url: "#" },
+          { text: "Solución de problemas de sincronización", url: "#" },
+        ],
+      },
+    ],
   },
   {
-    name: 'Soporte técnico',
+    name: "Soporte técnico",
     icon: HelpCircleIcon,
     faqs: [
       {
-        question: '¿Qué hago si la plataforma no funciona correctamente?',
+        question: "¿Qué hago si la plataforma no funciona correctamente?",
         answer: `
           <p>Si experimentas problemas técnicos con la plataforma, sigue estos pasos para resolverlos:</p>
           <ol>
@@ -959,12 +1021,12 @@ const categories = ref([
           <p>Nuestro equipo de soporte técnico está disponible 24/7 y responderá a tu solicitud lo antes posible.</p>
         `,
         links: [
-          { text: 'Estado del sistema', url: '#' },
-          { text: 'Guía de solución de problemas comunes', url: '#' }
-        ]
+          { text: "Estado del sistema", url: "#" },
+          { text: "Guía de solución de problemas comunes", url: "#" },
+        ],
       },
       {
-        question: '¿Cómo puedo reportar un error en la plataforma?',
+        question: "¿Cómo puedo reportar un error en la plataforma?",
         answer: `
           <p>Si encuentras un error o fallo en la plataforma, tu reporte nos ayuda a mejorar. Para reportar un error:</p>
           <ol>
@@ -990,12 +1052,10 @@ const categories = ref([
           <p><strong>¿Qué ocurre después?</strong></p>
           <p>Recibirás un número de ticket para seguimiento. Nuestro equipo técnico analizará el problema y te informará cuando esté resuelto. Los errores críticos se priorizan y se solucionan lo antes posible.</p>
         `,
-        links: [
-          { text: 'Estado de tickets reportados', url: '#' }
-        ]
+        links: [{ text: "Estado de tickets reportados", url: "#" }],
       },
       {
-        question: '¿La plataforma funciona en todos los dispositivos?',
+        question: "¿La plataforma funciona en todos los dispositivos?",
         answer: `
           <p>Nuestra plataforma está diseñada para funcionar en una amplia variedad de dispositivos y navegadores:</p>
           <ul>
@@ -1027,12 +1087,12 @@ const categories = ref([
           <p>Trabajamos constantemente para mejorar la compatibilidad y rendimiento en todos los dispositivos.</p>
         `,
         links: [
-          { text: 'Descargar app para iOS', url: '#' },
-          { text: 'Descargar app para Android', url: '#' }
-        ]
+          { text: "Descargar app para iOS", url: "#" },
+          { text: "Descargar app para Android", url: "#" },
+        ],
       },
       {
-        question: '¿Cómo puedo sugerir nuevas funcionalidades?',
+        question: "¿Cómo puedo sugerir nuevas funcionalidades?",
         answer: `
           <p>Valoramos tus ideas para mejorar la plataforma. Para sugerir nuevas funcionalidades:</p>
           <ol>
@@ -1059,18 +1119,18 @@ const categories = ref([
           <p>También puedes unirte a nuestro programa de beta testers para probar nuevas funcionalidades antes de su lanzamiento oficial.</p>
         `,
         links: [
-          { text: 'Programa de beta testers', url: '#' },
-          { text: 'Hoja de ruta de producto', url: '#' }
-        ]
-      }
-    ]
+          { text: "Programa de beta testers", url: "#" },
+          { text: "Hoja de ruta de producto", url: "#" },
+        ],
+      },
+    ],
   },
   {
-    name: 'Políticas y términos',
+    name: "Políticas y términos",
     icon: UserIcon,
     faqs: [
       {
-        question: '¿Cuáles son las políticas de cancelación disponibles?',
+        question: "¿Cuáles son las políticas de cancelación disponibles?",
         answer: `
           <p>Ofrecemos varias políticas de cancelación que puedes elegir para tus propiedades:</p>
           <ol>
@@ -1112,11 +1172,14 @@ const categories = ref([
           <p><strong>Nota importante:</strong> Los cambios en la política de cancelación solo afectarán a las nuevas reservas, no a las existentes.</p>
         `,
         links: [
-          { text: 'Comparativa detallada de políticas de cancelación', url: '#' }
-        ]
+          {
+            text: "Comparativa detallada de políticas de cancelación",
+            url: "#",
+          },
+        ],
       },
       {
-        question: '¿Qué incluye la protección para anfitriones?',
+        question: "¿Qué incluye la protección para anfitriones?",
         answer: `
           <p>Nuestra protección para anfitriones te ofrece tranquilidad al alquilar tu propiedad:</p>
           <ul>
@@ -1149,12 +1212,15 @@ const categories = ref([
           </ol>
         `,
         links: [
-          { text: 'Términos completos de la protección', url: '#' },
-          { text: 'Cómo documentar tu propiedad para mayor protección', url: '#' }
-        ]
+          { text: "Términos completos de la protección", url: "#" },
+          {
+            text: "Cómo documentar tu propiedad para mayor protección",
+            url: "#",
+          },
+        ],
       },
       {
-        question: '¿Cuáles son mis responsabilidades como anfitrión?',
+        question: "¿Cuáles son mis responsabilidades como anfitrión?",
         answer: `
           <p>Como anfitrión en nuestra plataforma, tienes ciertas responsabilidades que debes cumplir:</p>
           <ol>
@@ -1201,12 +1267,12 @@ const categories = ref([
           <p>Cumplir con estas responsabilidades no solo es obligatorio, sino que también contribuye a mejores valoraciones y más reservas.</p>
         `,
         links: [
-          { text: 'Guía completa para anfitriones responsables', url: '#' },
-          { text: 'Normativa legal por comunidades autónomas', url: '#' }
-        ]
+          { text: "Guía completa para anfitriones responsables", url: "#" },
+          { text: "Normativa legal por comunidades autónomas", url: "#" },
+        ],
       },
       {
-        question: '¿Qué normativa debo cumplir para alquilar mi propiedad?',
+        question: "¿Qué normativa debo cumplir para alquilar mi propiedad?",
         answer: `
           <p>La normativa para alquileres turísticos varía según la ubicación, pero aquí tienes una guía general:</p>
           <ol>
@@ -1250,30 +1316,35 @@ const categories = ref([
           <p><strong>Nota importante:</strong> El incumplimiento de la normativa puede resultar en multas significativas (desde 1.000€ hasta 600.000€ en casos graves). Es tu responsabilidad como anfitrión asegurarte de cumplir con todas las regulaciones aplicables.</p>
         `,
         links: [
-          { text: 'Guía de normativa por comunidades autónomas', url: '#' },
-          { text: 'Consultoría legal para anfitriones', url: '#' }
-        ]
-      }
-    ]
-  }
+          { text: "Guía de normativa por comunidades autónomas", url: "#" },
+          { text: "Consultoría legal para anfitriones", url: "#" },
+        ],
+      },
+    ],
+  },
 ]);
 
 // Categorías filtradas por búsqueda
 const filteredCategories = computed(() => {
   if (!searchQuery.value) return categories.value;
-  
-  return categories.value.map(category => {
-    // Crear una copia de la categoría para no modificar la original
-    const filteredCategory = { ...category };
-    
-    // Filtrar las FAQs que coinciden con la búsqueda
-    filteredCategory.faqs = category.faqs.filter(faq => 
-      faq.question.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      faq.answer.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
-    
-    return filteredCategory;
-  }).filter(category => category.faqs.length > 0);
+
+  return categories.value
+    .map((category) => {
+      // Crear una copia de la categoría para no modificar la original
+      const filteredCategory = { ...category };
+
+      // Filtrar las FAQs que coinciden con la búsqueda
+      filteredCategory.faqs = category.faqs.filter(
+        (faq) =>
+          faq.question
+            .toLowerCase()
+            .includes(searchQuery.value.toLowerCase()) ||
+          faq.answer.toLowerCase().includes(searchQuery.value.toLowerCase())
+      );
+
+      return filteredCategory;
+    })
+    .filter((category) => category.faqs.length > 0);
 });
 
 // Métodos
@@ -1309,36 +1380,65 @@ const goToRelatedQuestion = (categoryIndex, questionIndex) => {
   setTimeout(() => {
     expandedFaqs.value = [questionIndex];
     // Desplazarse a la pregunta
-    const element = document.querySelectorAll('.faq-item')[questionIndex];
+    const element = document.querySelectorAll(".faq-item")[questionIndex];
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, 100);
 };
 
 const provideFeedback = (faqIndex, isHelpful) => {
-  console.log(`Feedback para FAQ #${faqIndex}: ${isHelpful ? 'Útil' : 'No útil'}`);
+  console.log(
+    `Feedback para FAQ #${faqIndex}: ${isHelpful ? "Útil" : "No útil"}`
+  );
   // Aquí se enviaría el feedback al servidor
-  alert(`Gracias por tu feedback. ${isHelpful ? '¡Nos alegra haber podido ayudarte!' : 'Trabajaremos para mejorar esta respuesta.'}`);
+  alert(
+    `Gracias por tu feedback. ${
+      isHelpful
+        ? "¡Nos alegra haber podido ayudarte!"
+        : "Trabajaremos para mejorar esta respuesta."
+    }`
+  );
 };
 
-const submitContactForm = () => {
+const submitContactForm = async () => {
   isSubmitting.value = true;
-  
-  // Simulación de envío del formulario
-  setTimeout(() => {
+
+  try {
+    const response = await fetch("http://localhost:8000/api/contact-support", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(contactForm.value),
+    });
+
+    let result;
+    try {
+      result = await response.json();
+    } catch (jsonError) {
+      throw new Error("Respuesta inválida del servidor (no es JSON)");
+    }
+
+    if (response.ok && result.success) {
+      toast.success("Tu mensaje ha sido enviado.");
+      contactForm.value = {
+        subject: "",
+        message: "",
+        email: "",
+        urgent: false,
+      };
+      showContactModal.value = false;
+    } else {
+      toast.error("Falló el envío: " + result.message);
+    }
+  } catch (error) {
+    toast.error("Error al enviar el formulario: " + error.message);
+    console.error("Error al enviar el formulario:", error);
+  } finally {
     isSubmitting.value = false;
-    showContactModal.value = false;
-    alert('Tu mensaje ha sido enviado. Nuestro equipo de soporte se pondrá en contacto contigo lo antes posible.');
-    
-    // Resetear el formulario
-    contactForm.value = {
-      subject: '',
-      message: '',
-      email: '',
-      urgent: false
-    };
-  }, 1500);
+  }
 };
 </script>
 
@@ -1360,15 +1460,22 @@ const submitContactForm = () => {
 }
 
 .help-support-section::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 150%, rgba(0, 113, 194, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% -50%, rgba(0, 53, 128, 0.03) 0%, transparent 60%);
+  background: radial-gradient(
+      circle at 20% 150%,
+      rgba(0, 113, 194, 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% -50%,
+      rgba(0, 53, 128, 0.03) 0%,
+      transparent 60%
+    );
   z-index: 0;
 }
 
@@ -1388,7 +1495,7 @@ const submitContactForm = () => {
 }
 
 .section-title::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -8px;
   left: 50%;
@@ -1661,7 +1768,8 @@ const submitContactForm = () => {
   margin: 0 0 1rem;
 }
 
-.faq-answer ul, .faq-answer ol {
+.faq-answer ul,
+.faq-answer ol {
   margin: 0 0 1rem;
   padding-left: 1.5rem;
 }
@@ -1681,23 +1789,27 @@ const submitContactForm = () => {
   border-top: 1px solid #e6f0ff;
 }
 
-.faq-links h4, .related-questions h4 {
+.faq-links h4,
+.related-questions h4 {
   font-size: 1rem;
   color: #003580;
   margin: 0 0 0.75rem;
 }
 
-.faq-links ul, .related-questions ul {
+.faq-links ul,
+.related-questions ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.faq-links li, .related-questions li {
+.faq-links li,
+.related-questions li {
   margin-bottom: 0.5rem;
 }
 
-.help-link, .related-link {
+.help-link,
+.related-link {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -1706,7 +1818,8 @@ const submitContactForm = () => {
   transition: all 0.3s;
 }
 
-.help-link:hover, .related-link:hover {
+.help-link:hover,
+.related-link:hover {
   color: #003580;
   text-decoration: underline;
 }
@@ -1770,7 +1883,8 @@ const submitContactForm = () => {
   margin-bottom: 1rem;
 }
 
-.fee-table th, .fee-table td {
+.fee-table th,
+.fee-table td {
   padding: 0.75rem;
   text-align: left;
   border: 1px solid #e6f0ff;
@@ -1884,7 +1998,8 @@ const submitContactForm = () => {
   color: #1e293b;
 }
 
-.form-input, .form-textarea {
+.form-input,
+.form-textarea {
   padding: 0.875rem 1rem;
   border: 1px solid #e6f0ff;
   border-radius: 8px;
@@ -1892,7 +2007,8 @@ const submitContactForm = () => {
   transition: all 0.3s;
 }
 
-.form-input:focus, .form-textarea:focus {
+.form-input:focus,
+.form-textarea:focus {
   outline: none;
   border-color: #0071c2;
   box-shadow: 0 0 0 3px rgba(0, 113, 194, 0.1);
@@ -1967,7 +2083,9 @@ const submitContactForm = () => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive */
@@ -1981,42 +2099,43 @@ const submitContactForm = () => {
   .help-support-section {
     padding: 1.5rem;
   }
-  
+
   .help-container {
     grid-template-columns: 1fr;
   }
-  
+
   .help-sidebar {
     position: static;
     margin-bottom: 1.5rem;
   }
-  
+
   .category-header {
     flex-direction: column;
     align-items: flex-start;
     text-align: center;
   }
-  
+
   .header-icon {
     margin-bottom: 0.5rem;
   }
-  
+
   .feedback-buttons {
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .feedback-button {
     width: 100%;
     justify-content: center;
   }
-  
+
   .form-actions {
     flex-direction: column;
     gap: 0.75rem;
   }
-  
-  .cancel-button, .submit-button {
+
+  .cancel-button,
+  .submit-button {
     width: 100%;
   }
 }
@@ -2025,11 +2144,11 @@ const submitContactForm = () => {
   .help-support-section {
     padding: 1rem;
   }
-  
+
   .section-title {
     font-size: 1.5rem;
   }
-  
+
   .modal-body {
     padding: 1.5rem;
   }

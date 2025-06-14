@@ -92,11 +92,18 @@
         </div>
       </div>
     </div>
+    
+    <!-- Modal de sesión expirada -->
+    <SessionExpiredModal 
+      :isOpen="showSessionExpiredModal" 
+      @close="closeSessionExpiredModal" 
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { 
   SunIcon, 
   MailIcon, 
@@ -107,9 +114,10 @@ import {
   ArrowLeftIcon
 } from 'lucide-vue-next';
 import axios from 'axios';
-// Si tienes un store de usuario, puedes importarlo aquí
-// import { useUserStore } from '../../../stores/user';
+import { authState } from '@/router/auth-guard';
+import SessionExpiredModal from '../views/SessionExpiredModal.vue';
 
+const router = useRouter();
 const formData = reactive({
   email: '',
   password: '',
@@ -124,6 +132,15 @@ const errors = reactive({
 const isSubmitting = ref(false);
 const showPassword = ref(false);
 const isValid = ref(true);
+const showSessionExpiredModal = ref(false);
+
+// Verificar si hay un parámetro de sesión expirada en la URL
+onMounted(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('session_expired') === 'true') {
+    showSessionExpiredModal.value = true;
+  }
+});
 
 const validateForm = () => {
   isValid.value = true;
@@ -143,24 +160,70 @@ const validateForm = () => {
   return isValid.value;
 };
 
+// Configurar temporizador para verificar expiración del token
+const setupExpirationTimer = () => {
+  // Limpiar cualquier temporizador existente
+  if (window.tokenExpirationTimer) {
+    clearInterval(window.tokenExpirationTimer);
+  }
+  
+  // Crear nuevo temporizador que verifica cada 10 segundos
+  window.tokenExpirationTimer = setInterval(() => {
+    const expirationTime = parseInt(localStorage.getItem('token_expiration') || '0');
+    
+    // Si el token ha expirado
+    if (expirationTime && Date.now() > expirationTime) {
+      // Limpiar el temporizador
+      clearInterval(window.tokenExpirationTimer);
+      
+      // Cerrar sesión
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+      
+      // Actualizar estado de autenticación
+      authState.isAuthenticated = false;
+      authState.user = null;
+      
+      // Redirigir al login con parámetro de sesión expirada
+      router.push('/renters/login?session_expired=true');
+    }
+  }, 10000); // Verificar cada 10 segundos
+};
+
 const handleSubmit = async () => {
   if (!validateForm()) return;
 
   isSubmitting.value = true;
 
   try {
-    // Cambia la URL al endpoint real de tu backend
+    // Cambia la URL si tu backend está en otra dirección
     const response = await axios.post('http://127.0.0.1:8000/api/login', {
       email: formData.email,
       password: formData.password,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
     });
 
-    localStorage.setItem('renters_auth_token', response.data.token);  
-    localStorage.setItem('renters_auth_user', JSON.stringify(response.data.user));
-    // Si usas Pinia/Vuex: userStore.setUser(response.data.user); userStore.setToken(response.data.token);
+    // Guarda el token y el usuario siempre con las mismas claves
+    localStorage.setItem('auth_token', response.data.token);  
+    localStorage.setItem('auth_user', JSON.stringify(response.data.user));
+    
+    // Establecer tiempo de expiración (5 minutos = 300000 ms)
+    const expirationTime = Date.now() + 300000;
+    localStorage.setItem('token_expiration', expirationTime.toString());
+    
+    // Actualizar el estado de autenticación
+    authState.isAuthenticated = true;
+    authState.user = response.data.user;
+    
+    // Configurar temporizador para verificar expiración
+    setupExpirationTimer();
 
-    // Redirige al dashboard de inquilinos usando window.location.href (como antes)
-    window.location.href = '/portal/renters/dashboard';
+    // Redirige al dashboard de inquilinos
+    router.push('/renters/dashboard');
   } catch (error) {
     if (error.response) {
       console.error('Error al iniciar sesión:', error.response.data.message);
@@ -175,11 +238,19 @@ const handleSubmit = async () => {
 };
 
 const forgotPassword = () => {
-  window.location.href = '/portal/renters/forgot-password';
+  router.push('/reset-password');
 };
 
 const goToRegister = () => {
-  window.location.href = '/portal/renters/register';
+  router.push('/register');
+};
+
+const closeSessionExpiredModal = () => {
+  showSessionExpiredModal.value = false;
+  // Limpiar el parámetro de la URL
+  const url = new URL(window.location);
+  url.searchParams.delete('session_expired');
+  window.history.replaceState({}, '', url);
 };
 </script>
 

@@ -90,6 +90,7 @@
         <div v-for="day in weekViewDaysDetailed" :key="day.dateString" class="day-column-header">
           <div class="day-name">{{ getDayName(day.dateString) }}</div>
           <div class="day-number" :class="{ 'today': day.isToday }">{{ getDayNumber(day.dateString) }}</div>
+          <div v-if="day.isReservable" class="day-price-header">€{{ day.price }}</div>
         </div>
       </div>
       <div class="week-grid">
@@ -102,15 +103,13 @@
             :class="{
               'unavailable': day.unavailable,
               'booked': isHourBooked(day.dateString, hour),
-              'today': day.isToday
+              'available': day.isReservable && !isHourBooked(day.dateString, hour),
+              'today': day.isToday,
+              'not-reservable': !day.isReservable
             }"
             @click="day.isReservable && handleHourClick(day.dateString, hour)"
-            :title="day.isReservable ? '' : 'No reservable'"
+            :title="day.isReservable ? `€${day.price} - Disponible` : 'No reservable'"
           >
-            <!-- Mostrar precio de la noche solo para la hora de entrada (12:00) -->
-            <div v-if="hour === entryHour && day.isReservable">
-              €{{ day.price }}
-            </div>
             <div v-if="getBookingAtHour(day.dateString, hour)" class="hour-booking-info">
               {{ getBookingAtHour(day.dateString, hour).guestName }}
             </div>
@@ -294,7 +293,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import axios from 'axios'
+import api from '@/axios'
 import {
   RefreshCwIcon,
   ChevronLeftIcon,
@@ -310,7 +309,8 @@ import {
   EuroIcon,
 } from 'lucide-vue-next'
 import { useUserStore } from '@/stores/userStore' 
-
+import { getItem } from '@/helpers/storage';
+import { useToast } from 'vue-toastification'
 // Estado dinámico
 const properties = ref([])
 const bookings = ref([])
@@ -328,6 +328,9 @@ const currentWeekStart = ref(getStartOfWeek(new Date()))
 // Estado para acciones en bloque
 const bulkStartDate = ref('')
 const bulkEndDate = ref('')
+
+// Importar y configurar el toast
+const toast = useToast();
 
 // Estado para el modal de edición de día
 const showDayModal = ref(false)
@@ -359,6 +362,16 @@ today.setHours(0, 0, 0, 0)
 const minReservableDate = today
 const maxReservableDate = new Date(today)
 maxReservableDate.setMonth(maxReservableDate.getMonth() + 6)
+
+// Función para obtener el inicio de la semana (Lunes)
+function getStartOfWeek(date) {
+  const d = new Date(date)
+  const day = d.getDay()
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1) // Lunes como primer día
+  d.setDate(diff)
+  d.setHours(0, 0, 0, 0)
+  return d
+}
 
 // Etiqueta del período actual
 const currentPeriodLabel = computed(() => {
@@ -443,15 +456,17 @@ const calendarDays = computed(() => {
   return days
 })
 
-// Vista semana con detalles de restricción y precio
+// Vista semana con detalles de restricción y precio (CORREGIDA)
 const weekViewDaysDetailed = computed(() => {
   const days = []
   const startDate = new Date(currentWeekStart.value)
+  
   for (let i = 0; i < 7; i++) {
     const date = new Date(startDate)
     date.setDate(date.getDate() + i)
-    date.setHours(0,0,0,0)
+    date.setHours(0, 0, 0, 0)
     const dateString = date.toISOString().split('T')[0]
+    
     // Restricción: solo reservable si >= hoy y <= 6 meses
     const isPast = date < minReservableDate
     const isTooFuture = date > maxReservableDate
@@ -460,9 +475,11 @@ const weekViewDaysDetailed = computed(() => {
     const relevantBookings = bookings.value.filter(
       b => (b.property_id || b.propertyId) == selectedPropertyId.value
     )
+    
     const booking = relevantBookings.find(
       b => (b.reservation_date || b.reservationDate) === dateString
     )
+    
     const isUnavailable = unavailableDates.value.includes(dateString)
     const price = dayPrices.value[dateString] ?? 100
 
@@ -473,58 +490,51 @@ const weekViewDaysDetailed = computed(() => {
       isReservable: !isPast && !isTooFuture && !isUnavailable && !booking,
       booking,
       price,
-      unavailable: isUnavailable || isPast || isTooFuture
+      unavailable: isUnavailable || isPast || isTooFuture,
+      booked: !!booking
     })
   }
   return days
 })
 
 // Funciones auxiliares
-function getStartOfWeek(date) {
-  const d = new Date(date)
-  const day = d.getDay()
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1)
-  d.setDate(diff)
-  return d.toISOString().split('T')[0]
-}
-
-// Marca la celda como reservada (puedes mejorar según tus bookings por hora)
 function isHourBooked(dateString, hour) {
-  // Puedes mejorar esto si tienes reservas por hora
-  // Por defecto, devuelve true si el día está reservado completamente
   const day = weekViewDaysDetailed.value.find(d => d.dateString === dateString)
   return day && day.booking
 }
 
-// Retorna la info de la reserva por hora (puedes mejorar según tus bookings por hora)
 function getBookingAtHour(dateString, hour) {
-  // Por defecto solo muestra booking si el día está reservado entero
   const day = weekViewDaysDetailed.value.find(d => d.dateString === dateString)
   return day && day.booking ? day.booking : null
 }
+
 function formatDate(dateString) {
   if (!dateString) return ''
   const options = { day: 'numeric', month: 'short', year: 'numeric' }
   return new Date(dateString).toLocaleDateString('es-ES', options)
 }
+
 function formatSelectedDate(date) {
   if (!date) return ''
   const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }
   return new Date(date).toLocaleDateString('es-ES', options).replace(/^\w/, c => c.toUpperCase())
 }
+
 function getDayName(dateString) {
   const date = new Date(dateString)
   return date.toLocaleDateString('es-ES', { weekday: 'short' })
 }
+
 function getDayNumber(dateString) {
   const date = new Date(dateString)
   return date.getDate()
 }
+
 function formatHour(hour) {
   return `${hour}:00`
 }
 
-// Navegación del calendario
+// Navegación del calendario (CORREGIDA)
 function previousPeriod() {
   if (activeView.value === 'month') {
     if (currentMonth.value === 0) {
@@ -536,10 +546,11 @@ function previousPeriod() {
   } else {
     const date = new Date(currentWeekStart.value)
     date.setDate(date.getDate() - 7)
-    currentWeekStart.value = date.toISOString().split('T')[0]
+    currentWeekStart.value = getStartOfWeek(date)
   }
   if (selectedPropertyId.value) fetchCalendarDataForProperty(selectedPropertyId.value)
 }
+
 function nextPeriod() {
   if (activeView.value === 'month') {
     if (currentMonth.value === 11) {
@@ -551,19 +562,20 @@ function nextPeriod() {
   } else {
     const date = new Date(currentWeekStart.value)
     date.setDate(date.getDate() + 7)
-    currentWeekStart.value = date.toISOString().split('T')[0]
+    currentWeekStart.value = getStartOfWeek(date)
   }
   if (selectedPropertyId.value) fetchCalendarDataForProperty(selectedPropertyId.value)
 }
 
 // Carga de datos centralizada
 async function fetchProperties() {
+  const token = userStore.token || getItem('auth_token', true) || getItem('auth_token');
   const authHeaders = {
     headers: {
-      Authorization: `Bearer ${userStore.token || localStorage.getItem('auth_token')}`
+      Authorization: `Bearer ${token}`
     }
   }
-  const res = await axios.get('/api/properties', authHeaders)
+  const res = await api.get('/properties', authHeaders)
   properties.value = res.data
   if (properties.value.length > 0 && !selectedPropertyId.value) {
     selectedPropertyId.value = properties.value[0].id
@@ -574,10 +586,11 @@ function syncCalendar() {
   if (selectedPropertyId.value) {
     fetchCalendarDataForProperty(selectedPropertyId.value)
   }
-  alert("Calendario sincronizado.");
+  // Simulación de éxito
+  toast.success("Calendario sincronizado correctamente.");
 }
 
-// Cargar reservas, unavailable dates y precios diarios para la propiedad seleccionada y mes/año actual
+// Cargar reservas, unavailable dates y precios diarios para la propiedad seleccionada (CORREGIDA)
 async function fetchCalendarDataForProperty(propertyId) {
   if (!propertyId) return
   const authHeaders = {
@@ -585,16 +598,63 @@ async function fetchCalendarDataForProperty(propertyId) {
       Authorization: `Bearer ${userStore.token || localStorage.getItem('auth_token')}`
     }
   }
-  const [bookingsRes, unavailableRes, pricesRes] = await Promise.all([
-    axios.get(`/api/properties/${propertyId}/bookings`, authHeaders),
-    axios.get(`/api/properties/${propertyId}/unavailable-dates`, authHeaders),
-    axios.get(`/api/properties/${propertyId}/day-prices?year=${currentYear.value}&month=${currentMonth.value + 1}`, authHeaders)
-  ])
-  bookings.value = bookingsRes.data
-  unavailableDates.value = unavailableRes.data
-  dayPrices.value = Object.fromEntries(
-    Object.entries(pricesRes.data).map(([date, obj]) => [date, Number(obj.price)])
-  )
+  
+  // Para vista semanal, necesitamos datos de toda la semana
+  let year, month
+  if (activeView.value === 'week') {
+    const weekStart = new Date(currentWeekStart.value)
+    const weekEnd = new Date(weekStart)
+    weekEnd.setDate(weekEnd.getDate() + 6)
+    
+    // Si la semana cruza meses, obtenemos datos de ambos meses
+    year = weekStart.getFullYear()
+    month = weekStart.getMonth() + 1
+    
+    // Si cruza al siguiente mes, también obtenemos esos datos
+    if (weekStart.getMonth() !== weekEnd.getMonth()) {
+      const [bookingsRes, unavailableRes, pricesRes1, pricesRes2] = await Promise.all([
+        api.get(`/properties/${propertyId}/bookings`, authHeaders),
+        api.get(`/properties/${propertyId}/unavailable-dates`, authHeaders),
+        api.get(`/properties/${propertyId}/day-prices?year=${year}&month=${month}`, authHeaders),
+        api.get(`/properties/${propertyId}/day-prices?year=${weekEnd.getFullYear()}&month=${weekEnd.getMonth() + 1}`, authHeaders)
+      ])
+      
+      bookings.value = bookingsRes.data
+      unavailableDates.value = unavailableRes.data
+      dayPrices.value = {
+        ...Object.fromEntries(Object.entries(pricesRes1.data).map(([date, obj]) => [date, Number(obj.price)])),
+        ...Object.fromEntries(Object.entries(pricesRes2.data).map(([date, obj]) => [date, Number(obj.price)]))
+      }
+    } else {
+      const [bookingsRes, unavailableRes, pricesRes] = await Promise.all([
+        api.get(`/properties/${propertyId}/bookings`, authHeaders),
+        api.get(`/properties/${propertyId}/unavailable-dates`, authHeaders),
+        api.get(`/properties/${propertyId}/day-prices?year=${year}&month=${month}`, authHeaders)
+      ])
+      
+      bookings.value = bookingsRes.data
+      unavailableDates.value = unavailableRes.data
+      dayPrices.value = Object.fromEntries(
+        Object.entries(pricesRes.data).map(([date, obj]) => [date, Number(obj.price)])
+      )
+    }
+  } else {
+    // Vista mensual
+    year = currentYear.value
+    month = currentMonth.value + 1
+    
+    const [bookingsRes, unavailableRes, pricesRes] = await Promise.all([
+      api.get(`/properties/${propertyId}/bookings`, authHeaders),
+      api.get(`/properties/${propertyId}/unavailable-dates`, authHeaders),
+      api.get(`/properties/${propertyId}/day-prices?year=${year}&month=${month}`, authHeaders)
+    ])
+    
+    bookings.value = bookingsRes.data
+    unavailableDates.value = unavailableRes.data
+    dayPrices.value = Object.fromEntries(
+      Object.entries(pricesRes.data).map(([date, obj]) => [date, Number(obj.price)])
+    )
+  }
 }
 
 // Primera carga
@@ -608,6 +668,13 @@ watch(selectedPropertyId, async (newId) => {
     await fetchCalendarDataForProperty(newId)
   }
 }, { immediate: true })
+
+// Recargar datos cuando cambia la vista
+watch(activeView, async () => {
+  if (selectedPropertyId.value) {
+    await fetchCalendarDataForProperty(selectedPropertyId.value)
+  }
+})
 
 // Acciones en bloque (marcar como disponible/no disponible)
 async function setBulkAvailability(available) {
@@ -624,12 +691,12 @@ async function setBulkAvailability(available) {
 
     const dateString = d.toISOString().split('T')[0];
     if (available) {
-      await axios.delete(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
+      await api.delete(`/properties/${selectedPropertyId.value}/unavailable-dates`, {
         data: { date: dateString }
       });
     } else {
-      await axios.post(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, { date: dateString });
-      await axios.delete(`/api/properties/${selectedPropertyId.value}/day-prices`, {
+      await api.post(`/properties/${selectedPropertyId.value}/unavailable-dates`, { date: dateString });
+      await api.delete(`/properties/${selectedPropertyId.value}/day-prices`, {
         data: { date: dateString }
       });
     }
@@ -651,15 +718,25 @@ function handleDayClick(day) {
   selectedDayBooking.value = day.bookingInfo
   showDayModal.value = true
 }
+
 function handleHourClick(dateString, hour) {
   // No permitir reservar fuera de rango
   const day = weekViewDaysDetailed.value.find(d => d.dateString === dateString)
   if (!day || !day.isReservable) return
-  // Puedes abrir un modal o manejar reserva por hora aquí
+  
+  // Abrir modal para editar el día completo
+  selectedDate.value = dateString
+  selectedDayStatus.value = day.unavailable ? 'unavailable' : 'available'
+  selectedDayPrice.value = dayPrices.value[dateString] ?? 100
+  selectedDayNotes.value = ''
+  selectedDayBooking.value = day.booking
+  showDayModal.value = true
 }
+
 function closeDayModal() {
   showDayModal.value = false
 }
+
 async function saveDayChanges() {
   if (!selectedPropertyId.value || !selectedDate.value) return;
 
@@ -678,24 +755,26 @@ async function saveDayChanges() {
   }
 
   if (selectedDayStatus.value === 'unavailable') {
-    await axios.post(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
+    await api.post(`/properties/${selectedPropertyId.value}/unavailable-dates`, {
       date: selectedDate.value
     });
-    await axios.delete(`/api/properties/${selectedPropertyId.value}/day-prices`, {
+    await api.delete(`/properties/${selectedPropertyId.value}/day-prices`, {
       data: { date: selectedDate.value }
     });
   } else if (selectedDayStatus.value === 'available') {
-    await axios.delete(`/api/properties/${selectedPropertyId.value}/unavailable-dates`, {
+    await api.delete(`/properties/${selectedPropertyId.value}/unavailable-dates`, {
       data: { date: selectedDate.value }
     });
-    await axios.post(`/api/properties/${selectedPropertyId.value}/day-prices`, {
+    await api.post(`/properties/${selectedPropertyId.value}/day-prices`, {
       date: selectedDate.value,
       price: selectedDayPrice.value
     });
   }
   await fetchCalendarDataForProperty(selectedPropertyId.value);
   closeDayModal();
+  toast.success("Cambios guardados correctamente.");
 }
+
 function viewBookingDetails(bookingId) {}
 function sendMessage(bookingId) {}
 </script>
@@ -980,6 +1059,13 @@ function sendMessage(bookingId) {}
   color: #1e293b;
 }
 
+.day-price {
+  font-size: 0.8rem;
+  color: #0071c2;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
 .day-status {
   margin-top: auto;
 }
@@ -1049,6 +1135,10 @@ function sendMessage(bookingId) {}
   z-index: 2;
 }
 
+.time-column {
+  border-right: 1px solid #e6f0ff;
+}
+
 .day-column-header {
   text-align: center;
   padding: 0.75rem;
@@ -1064,11 +1154,18 @@ function sendMessage(bookingId) {}
 .day-number {
   font-size: 1.2rem;
   color: #1e293b;
+  margin-bottom: 0.25rem;
 }
 
 .day-number.today {
   color: #0071c2;
   font-weight: 700;
+}
+
+.day-price-header {
+  font-size: 0.8rem;
+  color: #0071c2;
+  font-weight: 600;
 }
 
 .week-grid {
@@ -1077,16 +1174,13 @@ function sendMessage(bookingId) {}
   grid-auto-rows: 60px;
 }
 
-.time-column {
-  border-right: 1px solid #e6f0ff;
-}
-
 .time-cell {
   padding: 0.5rem;
   text-align: right;
   color: #64748b;
   font-size: 0.85rem;
   border-bottom: 1px solid #f1f5f9;
+  border-right: 1px solid #e6f0ff;
 }
 
 .day-cell {
@@ -1094,16 +1188,37 @@ function sendMessage(bookingId) {}
   border-right: 1px solid #f1f5f9;
   padding: 0.25rem;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.day-cell:hover {
+.day-cell:hover:not(.not-reservable) {
   background-color: #f8fafc;
+}
+
+.day-cell.available {
+  background-color: #e6f7ee;
+}
+
+.day-cell.unavailable {
+  background-color: #f1f5f9;
 }
 
 .day-cell.booked {
   background-color: #e6f0ff;
+}
+
+.day-cell.not-reservable {
+  background-color: #f8fafc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.day-cell.today {
+  border-left: 3px solid #0071c2;
 }
 
 .hour-booking-info {
@@ -1112,6 +1227,7 @@ function sendMessage(bookingId) {}
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 600;
 }
 
 /* Leyenda del calendario */
@@ -1120,6 +1236,8 @@ function sendMessage(bookingId) {}
   justify-content: center;
   gap: 2rem;
   margin-top: 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 .legend-item {
@@ -1662,6 +1780,14 @@ function sendMessage(bookingId) {}
   .booking-actions, .modal-actions {
     flex-direction: column;
   }
+  
+  .week-grid {
+    grid-template-columns: 60px repeat(7, 1fr);
+  }
+  
+  .week-header {
+    grid-template-columns: 60px repeat(7, 1fr);
+  }
 }
 
 @media (max-width: 576px) {
@@ -1676,6 +1802,24 @@ function sendMessage(bookingId) {}
   
   .status-options {
     flex-direction: column;
+  }
+  
+  .week-grid {
+    grid-template-columns: 50px repeat(7, 1fr);
+    grid-auto-rows: 40px;
+  }
+  
+  .week-header {
+    grid-template-columns: 50px repeat(7, 1fr);
+  }
+  
+  .day-column-header {
+    padding: 0.5rem 0.25rem;
+  }
+  
+  .time-cell {
+    padding: 0.25rem;
+    font-size: 0.75rem;
   }
 }
 </style>

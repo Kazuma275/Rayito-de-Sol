@@ -12,44 +12,48 @@
         </div>
 
         <h2 class="login-title">Iniciar sesión</h2>
-        <p class="login-subtitle">Accede a tu cuenta para gestionar tus propiedades</p>
+        <p class="login-subtitle">
+          Accede a tu cuenta para gestionar tus propiedades
+        </p>
 
         <form @submit.prevent="handleSubmit" class="login-form">
           <div class="form-group">
             <label for="email">Correo electrónico</label>
             <div class="input-wrapper">
-              <input 
-                type="email" 
-                id="email" 
-                v-model="formData.email" 
-                required 
+              <input
+                type="email"
+                id="email"
+                v-model="formData.email"
+                required
                 class="form-input"
                 :class="{ 'input-error': errors.email }"
                 placeholder="ejemplo@correo.com"
               />
               <div class="input-glow"></div>
             </div>
-            <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
+            <span v-if="errors.email" class="error-message">{{
+              errors.email
+            }}</span>
           </div>
 
           <div class="form-group">
             <label for="password">Contraseña</label>
             <div class="password-input-container">
               <div class="input-wrapper">
-                <input 
-                  :type="showPassword ? 'text' : 'password'" 
-                  id="password" 
-                  v-model="formData.password" 
-                  required 
+                <input
+                  :type="showPassword ? 'text' : 'password'"
+                  id="password"
+                  v-model="formData.password"
+                  required
                   class="form-input"
                   :class="{ 'input-error': errors.password }"
                   placeholder="Introduce tu contraseña"
                 />
                 <div class="input-glow"></div>
               </div>
-              <button 
-                type="button" 
-                class="password-toggle" 
+              <button
+                type="button"
+                class="password-toggle"
                 @click="showPassword = !showPassword"
                 aria-label="Mostrar contraseña"
               >
@@ -57,22 +61,28 @@
                 <EyeOffIcon v-else class="icon" />
               </button>
             </div>
-            <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
+            <span v-if="errors.password" class="error-message">{{
+              errors.password
+            }}</span>
           </div>
 
           <div class="form-options">
             <div class="form-group checkbox-group">
-              <input 
-                type="checkbox" 
-                id="remember" 
+              <input
+                type="checkbox"
+                id="remember"
                 v-model="formData.remember"
                 class="custom-checkbox"
               />
-              <label for="remember" class="checkbox-label">Recordar mi sesión</label>
+              <label for="remember" class="checkbox-label"
+                >Recordar mi sesión</label
+              >
             </div>
 
             <div class="forgot-password">
-              <a href="#" @click.prevent="forgotPassword">¿Olvidaste tu contraseña?</a>
+              <a href="#" @click.prevent="openForgotPasswordModal"
+                >¿Olvidaste tu contraseña?</a
+              >
             </div>
           </div>
 
@@ -84,7 +94,8 @@
         </form>
 
         <div class="register-link">
-          ¿No tienes una cuenta? <a href="#" @click.prevent="goToRegister" class="link">Regístrate</a>
+          ¿No tienes una cuenta?
+          <a href="#" @click.prevent="goToRegister" class="link">Regístrate</a>
         </div>
 
         <div class="back-button-container">
@@ -95,45 +106,106 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal de recuperación de contraseña -->
+    <ForgotPasswordModal 
+      :isOpen="showForgotPasswordModal" 
+      @close="closeForgotPasswordModal" 
+    />
+    
+    <!-- Modal de sesión expirada -->
+    <SessionExpiredModal 
+      :isOpen="showSessionExpiredModal" 
+      @close="closeSessionExpiredModal" 
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
-import { EyeIcon, EyeOffIcon, LoaderIcon, SunIcon, ArrowLeftIcon } from 'lucide-vue-next';
-import axios from 'axios';
-import { useUserStore } from '@/stores/userStore.js';
+import { ref, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import {
+  EyeIcon,
+  EyeOffIcon,
+  LoaderIcon,
+  SunIcon,
+  ArrowLeftIcon,
+} from "lucide-vue-next";
+import api from "@/axios";
+import { useUserStore } from "@/stores/userStore.js";
+import { setItem } from "@/helpers/storage.js";
+import ForgotPasswordModal from "./ForgotPasswordModal.vue";
+import SessionExpiredModal from "./SessionExpiredModal.vue";
+import { authState } from '@/router/auth-guard';
 
 const router = useRouter();
 const userStore = useUserStore();
 const formData = reactive({
-  email: '',
-  password: '',
-  remember: false
+  email: "",
+  password: "",
+  remember: false,
 });
 
 const errors = reactive({
-  email: '',
-  password: ''
+  email: "",
+  password: "",
 });
 
 const isSubmitting = ref(false);
 const showPassword = ref(false);
 const isValid = ref(true);
+const showForgotPasswordModal = ref(false);
+const showSessionExpiredModal = ref(false);
+
+// Configurar temporizador para verificar expiración del token
+const setupExpirationTimer = () => {
+  // Limpiar cualquier temporizador existente
+  if (window.tokenExpirationTimer) {
+    clearInterval(window.tokenExpirationTimer);
+  }
+  
+  // Crear nuevo temporizador que verifica cada 10 segundos
+  window.tokenExpirationTimer = setInterval(() => {
+    const expirationTime = parseInt(localStorage.getItem('token_expiration') || '0');
+    
+    // Si el token ha expirado
+    if (expirationTime && Date.now() > expirationTime) {
+      // Limpiar el temporizador
+      clearInterval(window.tokenExpirationTimer);
+      
+      // Cerrar sesión
+      userStore.logout();
+      
+      // Actualizar estado de autenticación
+      authState.isAuthenticated = false;
+      authState.user = null;
+      
+      // Redirigir al login con parámetro de sesión expirada
+      router.push('/login?session_expired=true');
+    }
+  }, 10000); // Verificar cada 10 segundos
+};
+
+// Verificar si hay un parámetro de sesión expirada en la URL
+onMounted(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('session_expired') === 'true') {
+    showSessionExpiredModal.value = true;
+  }
+});
 
 const validateForm = () => {
   isValid.value = true;
-  Object.keys(errors).forEach(key => errors[key] = '');
+  Object.keys(errors).forEach((key) => (errors[key] = ""));
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(formData.email)) {
-    errors.email = 'Por favor, introduce un correo electrónico válido';
+    errors.email = "Por favor, introduce un correo electrónico válido";
     isValid.value = false;
   }
 
   if (formData.password.length < 1) {
-    errors.password = 'Por favor, introduce tu contraseña';
+    errors.password = "Por favor, introduce tu contraseña";
     isValid.value = false;
   }
 
@@ -146,39 +218,75 @@ const handleSubmit = async () => {
   isSubmitting.value = true;
 
   try {
-    const response = await axios.post('http://127.0.0.1:8000/api/login', {
-      email: formData.email,
-      password: formData.password,
-    });
+    const response = await api.post(
+      "/login",
+      {
+        email: formData.email,
+        password: formData.password,
+      },
+      {
+        withCredentials: false,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
 
-    localStorage.setItem('auth_token', response.data.token);  
-    localStorage.setItem('auth_user', JSON.stringify(response.data.user));
-    userStore.setUser(response.data.user);
-    userStore.setToken(response.data.token);
+    // Guardar el token y el usuario
+    userStore.setUser(response.data.user, formData.remember);
+    userStore.setToken(response.data.token, formData.remember);
+    
+    // Establecer tiempo de expiración (5 minutos = 300000 ms)
+    const expirationTime = Date.now() + 300000;
+    localStorage.setItem('token_expiration', expirationTime.toString());
+    
+    // Actualizar el estado de autenticación
+    authState.isAuthenticated = true;
+    authState.user = response.data.user;
+    
+    // Configurar temporizador para verificar expiración
+    setupExpirationTimer();
+    
     console.log("TOKEN recibido:", response.data.token);
+    console.log("response data", response.data);
 
-    router.push('/main');
+    router.push("/main");
   } catch (error) {
     if (error.response) {
-      console.error('Error al iniciar sesión:', error.response.data.message);
-      alert(error.response.data.message || 'Correo electrónico o contraseña incorrectos.');
+      console.error("Error al iniciar sesión:", error.response.data.message);
+      alert(
+        error.response.data.message ||
+          "Correo electrónico o contraseña incorrectos."
+      );
     } else {
-      console.error('Error de red:', error);
-      alert('Hubo un problema con la conexión, por favor intenta más tarde.');
+      console.error("Error de red:", error);
+      alert("Hubo un problema con la conexión, por favor intenta más tarde.");
     }
   } finally {
     isSubmitting.value = false;
   }
 };
 
-const forgotPassword = () => {
-  alert('Funcionalidad de recuperación de contraseña pendiente');
+const openForgotPasswordModal = () => {
+  showForgotPasswordModal.value = true;
+};
+
+const closeForgotPasswordModal = () => {
+  showForgotPasswordModal.value = false;
+};
+
+const closeSessionExpiredModal = () => {
+  showSessionExpiredModal.value = false;
+  // Limpiar el parámetro de la URL
+  const url = new URL(window.location);
+  url.searchParams.delete('session_expired');
+  window.history.replaceState({}, '', url);
 };
 
 const goToRegister = () => {
-  router.push('/register');
+  router.push("/register");
 };
-
 </script>
 
 <style scoped>
@@ -194,21 +302,33 @@ const goToRegister = () => {
 }
 
 .login-container::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 200%;
   height: 200%;
   top: -50%;
   left: -50%;
-  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.1) 0%, transparent 70%),
-              radial-gradient(circle at 30% 70%, rgba(251, 191, 36, 0.1) 0%, transparent 60%);
+  background: radial-gradient(
+      circle at center,
+      rgba(59, 130, 246, 0.1) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      circle at 30% 70%,
+      rgba(251, 191, 36, 0.1) 0%,
+      transparent 60%
+    );
   animation: rotate 30s linear infinite;
   z-index: 0;
 }
 
 @keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .login-inner {
@@ -223,9 +343,7 @@ const goToRegister = () => {
   backdrop-filter: blur(8px);
   border-radius: 24px;
   padding: 3rem 2.5rem;
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.03),
-    0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.6);
   transform: translateY(20px);
   opacity: 0;
@@ -268,7 +386,11 @@ const goToRegister = () => {
   height: 48px;
   top: 0;
   left: 0;
-  background: radial-gradient(circle, rgba(250, 204, 21, 0.3) 0%, rgba(250, 204, 21, 0) 70%);
+  background: radial-gradient(
+    circle,
+    rgba(250, 204, 21, 0.3) 0%,
+    rgba(250, 204, 21, 0) 70%
+  );
   border-radius: 50%;
   animation: glow 3s infinite ease-in-out;
   z-index: 0;
@@ -411,7 +533,7 @@ const goToRegister = () => {
 }
 
 .custom-checkbox:checked::after {
-  content: '✓';
+  content: "✓";
   position: absolute;
   color: white;
   font-size: 12px;
@@ -454,13 +576,18 @@ const goToRegister = () => {
 }
 
 .submit-button::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transform: translateX(-100%);
   transition: transform 0s;
 }
@@ -486,7 +613,9 @@ const goToRegister = () => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .register-link {
@@ -546,12 +675,18 @@ const goToRegister = () => {
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 @keyframes glow {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 0.5;
   }

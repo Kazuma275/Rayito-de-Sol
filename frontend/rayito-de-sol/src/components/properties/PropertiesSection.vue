@@ -16,11 +16,11 @@
       @viewProperty="viewProperty"
     />
     
-    <PropertyStatistics 
+<!--     <PropertyStatistics 
       v-if="showStatistics"
       :properties="properties" 
       :bookings="bookings"
-    />
+    /> -->
     
     <EditPropertyModal 
       v-if="showEditModal"
@@ -205,7 +205,6 @@ const handlePropertySubmit = async (propertyData) => {
       const response = await axios.post('/api/properties', propertyData);
       properties.value.push(response.data);
     } catch (error) {
-      alert('Error al crear la propiedad');
       return;
     }
   }

@@ -1,12 +1,26 @@
 <template>
   <div class="app-wrapper">
-    <Header v-if="isMainPage" :user="user" :activeTab="activeTab" @changeTab="changeTab" />
+    <template v-if="$route.meta.requiresAuth">
+      <AuthGuard>
+        <Header v-if="isMainPage" :user="user" :activeTab="activeTab" @changeTab="changeTab" />
 
-    <main class="main-content" role="main" tabindex="-1">
-      <router-view />
-    </main>
+        <main class="main-content" role="main" tabindex="-1">
+          <router-view />
+        </main>
 
-    <Footer v-if="isMainPage" @changeTab="changeTab" />
+        <Footer v-if="isMainPage" @changeTab="changeTab" />
+      </AuthGuard>
+    </template>
+    <template v-else>
+      <!-- Rutas públicas sin verificación de autenticación -->
+      <Header v-if="isMainPage" :user="user" :activeTab="activeTab" @changeTab="changeTab" />
+
+      <main class="main-content" role="main" tabindex="-1">
+        <router-view />
+      </main>
+
+      <Footer v-if="isMainPage" @changeTab="changeTab" />
+    </template>
   </div>
 </template>
 
@@ -16,6 +30,9 @@ import { useRoute } from 'vue-router';
 import Header from './components/layout/Header.vue';
 import Footer from './components/layout/Footer.vue';
 import { useUserStore } from '@/stores/userStore.js';
+import AuthGuard from './AuthGuard.vue';
+
+const route = useRoute();
 
 // Sample user data
 const user = ref({
@@ -24,13 +41,16 @@ const user = ref({
   avatar: null
 });
 
+const activeTab = ref('dashboard');
+
+const changeTab = (tab) => {
+  activeTab.value = tab;
+}; 
 
 const userStore = useUserStore()
-const route = useRoute();
 const isMainPage = computed(() => route.path === '/main');
 
 userStore.hydrate()
-
 </script>
 
 <style>

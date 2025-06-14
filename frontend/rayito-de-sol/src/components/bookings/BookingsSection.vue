@@ -3,189 +3,289 @@
     <div class="section-header">
       <h2 class="section-title">Gestión de Reservas</h2>
       <div class="header-actions">
-        <button class="export-button">
-          <DownloadIcon class="button-icon" />
-          Exportar Reservas
+        <button class="export-button" @click="syncBookings" type="button">
+          <RefreshCwIcon class="button-icon" />
+          Refrescar Reservas
         </button>
       </div>
     </div>
-    
+
     <div class="bookings-filter">
       <div class="filter-tabs">
-        <button 
-          v-for="filter in bookingFilters" 
-          :key="filter.id" 
-          class="filter-tab" 
+        <button
+          v-for="filter in bookingFilters"
+          :key="filter.id"
+          class="filter-tab"
           :class="{ active: activeBookingFilter === filter.id }"
           @click="activeBookingFilter = filter.id"
+          type="button"
         >
           {{ filter.name }}
           <span class="filter-count">{{ getFilterCount(filter.id) }}</span>
         </button>
       </div>
-      
+
       <div class="filter-controls">
         <div class="filter-property">
           <label>Filtrar por propiedad:</label>
           <select v-model="bookingPropertyFilter" class="property-select">
             <option value="all">Todas las propiedades</option>
-            <option v-for="property in properties" :key="property.id" :value="property.id">
+            <option
+              v-for="property in properties"
+              :key="property.id"
+              :value="property.id"
+            >
               {{ property.name }}
             </option>
           </select>
         </div>
-        
+        <!--
         <div class="filter-date">
           <label>Filtrar por fecha:</label>
           <div class="date-inputs">
             <div class="date-input">
               <CalendarIcon class="input-icon" />
-              <input type="date" v-model="dateFilter.start" class="date-field" />
+              <input
+                type="date"
+                v-model="dateFilter.start"
+                class="date-field"
+              />
             </div>
             <span class="date-separator">-</span>
             <div class="date-input">
               <CalendarIcon class="input-icon" />
               <input type="date" v-model="dateFilter.end" class="date-field" />
             </div>
-            <button class="apply-date-filter" @click="applyDateFilter">Aplicar</button>
+            <button class="apply-date-filter" @click="applyDateFilter" type="button">
+              Aplicar
+            </button>
           </div>
         </div>
+        -->
       </div>
     </div>
+
+    <!-- Debug info (puedes quitarlo) -->
     
-    <div v-if="filteredBookings && filteredBookings.length > 0" class="bookings-list">
-      <BookingCard 
-        v-for="booking in filteredBookings" 
-        :key="booking.id" 
-        :booking="booking" 
-        :property="getPropertyById(booking.propertyId)" 
+<!--     <div>
+      <p>currentPage: {{ currentPage }}</p>
+      <p>totalPages: {{ totalPages }}</p>
+      <p>paginationPages: {{ paginationPages }}</p>
+    </div>
+    -->
+
+    <div
+      v-if="filteredBookings && filteredBookings.length > 0"
+      class="bookings-list"
+    >
+      <BookingCard
+        v-for="booking in filteredBookings"
+        :key="booking.id"
+        :booking="booking"
+        :property="getPropertyById(booking.propertyId)"
         @view-details="viewBookingDetails"
         @accept-booking="acceptBooking"
         @reject-booking="rejectBooking"
-        @send-message="sendMessage"
+        @send-message="messageBooking"
       />
     </div>
-    
+
     <div v-else class="empty-bookings">
       <CalendarOffIcon class="empty-icon" />
-      <h3>No hay reservas {{ activeBookingFilter === 'all' ? '' : 'en este estado' }}</h3>
-      <p v-if="activeBookingFilter !== 'all'">Prueba a seleccionar otro filtro</p>
+      <h3>
+        No hay reservas
+        {{ activeBookingFilter === "all" ? "" : "en este estado" }}
+      </h3>
+      <p v-if="activeBookingFilter !== 'all'">
+        Prueba a seleccionar otro filtro
+      </p>
       <p v-else>Cuando recibas reservas, aparecerán aquí</p>
     </div>
-    
+
+    <!-- PAGINACIÓN -->
     <div v-if="showPagination" class="bookings-pagination">
-      <button 
-        class="pagination-button" 
+      <button
+        class="pagination-button"
         :disabled="currentPage === 1"
         @click="changePage(currentPage - 1)"
+        type="button"
       >
         <ChevronLeftIcon class="pagination-icon" />
       </button>
-      
+
       <div class="pagination-pages">
-        <button 
-          v-for="page in paginationPages" 
-          :key="page" 
-          class="page-button" 
+        <button
+          v-for="page in paginationPages"
+          :key="page"
+          class="page-button"
           :class="{ active: currentPage === page }"
           @click="changePage(page)"
+          type="button"
         >
           {{ page }}
         </button>
       </div>
-      
-      <button 
-        class="pagination-button" 
+
+      <button
+        class="pagination-button"
         :disabled="currentPage === totalPages"
         @click="changePage(currentPage + 1)"
+        type="button"
       >
         <ChevronRightIcon class="pagination-icon" />
       </button>
     </div>
-    
+
     <!-- Modal de detalles de reserva -->
-    <div v-if="showBookingDetails" class="booking-details-modal" @click="closeBookingDetails">
+    <div
+      v-if="showBookingDetails"
+      class="booking-details-modal"
+      @click="closeBookingDetails"
+    >
       <div class="modal-content" @click.stop>
         <div class="modal-header">
           <h3>Detalles de la Reserva #{{ selectedBooking.id }}</h3>
-          <button class="close-button" @click="closeBookingDetails">
+          <button class="close-button" @click="closeBookingDetails" type="button">
             <XIcon class="close-icon" />
           </button>
         </div>
-        
+
         <div class="modal-body">
           <div class="booking-property-details">
-            <img :src="getPropertyById(selectedBooking.propertyId).image" alt="Property" class="property-image" />
+            <img
+              :src="selectedBooking.property?.image || '/placeholder.svg?height=120&width=120'"
+              alt="Property"
+              class="property-image"
+            />
             <div class="property-info">
-              <h4>{{ getPropertyById(selectedBooking.propertyId).name }}</h4>
+              <h4>{{ selectedBooking.property?.name || 'Propiedad no encontrada' }}</h4>
               <p class="property-location">
                 <MapPinIcon class="info-icon" />
-                {{ getPropertyById(selectedBooking.propertyId).location }}
+                {{ selectedBooking.property?.location || 'Ubicación desconocida' }}
               </p>
             </div>
           </div>
-          
+
           <div class="booking-info-grid">
             <div class="booking-info-item">
               <h5>Fechas</h5>
               <div class="info-content">
                 <CalendarIcon class="info-icon" />
                 <div>
-                  <p><strong>Llegada:</strong> {{ formatDate(selectedBooking.checkIn) }}</p>
-                  <p><strong>Salida:</strong> {{ formatDate(selectedBooking.checkOut) }}</p>
-                  <p><strong>Noches:</strong> {{ calculateNights(selectedBooking) }}</p>
+                  <p>
+                    <strong>Llegada:</strong>
+                    {{ formatDate(selectedBooking.checkIn) }}
+                  </p>
+                  <p>
+                    <strong>Salida:</strong>
+                    {{ formatDate(selectedBooking.checkOut) }}
+                  </p>
+                  <p>
+                    <strong>Noches:</strong>
+                    {{ calculateNights(selectedBooking) }}
+                  </p>
                 </div>
               </div>
             </div>
-            
+
             <div class="booking-info-item">
               <h5>Huésped</h5>
               <div class="info-content">
                 <UserIcon class="info-icon" />
                 <div>
-                  <p><strong>Nombre:</strong> {{ selectedBooking.user?.username || 'No disponible' }}</p>
-                  <p><strong>Email:</strong> {{ selectedBooking.user?.email || 'No disponible' }}</p>
-                  <p><strong>Teléfono:</strong> {{ selectedBooking.user?.phone || 'No disponible' }}</p>
+                  <p>
+                    <strong>ID Usuario:</strong>
+                    {{ selectedBooking.user_id }}
+                  </p>
+                  <p>
+                    <strong>Huéspedes:</strong>
+                    {{ selectedBooking.guests || 'No especificado' }}
+                  </p>
                 </div>
               </div>
             </div>
-            
+
             <div class="booking-info-item">
               <h5>Detalles</h5>
               <div class="info-content">
                 <InfoIcon class="info-icon" />
                 <div>
-                  <p><strong>Huéspedes:</strong> {{ selectedBooking.guests }}</p>
-                  <p><strong>Estado:</strong> <span :class="['status-badge', selectedBooking.status]">{{ getStatusText(selectedBooking.status) }}</span></p>
-                  <p><strong>Fecha de reserva:</strong> {{ formatDate(selectedBooking.createdAt) }}</p>
+                  <p>
+                    <strong>Huéspedes:</strong> {{ selectedBooking.guests || 'No especificado' }}
+                  </p>
+                  <p>
+                    <strong>Estado:</strong>
+                    <span :class="['status-badge', selectedBooking.status]">
+                      {{ getStatusText(selectedBooking.status) }}
+                    </span>
+                  </p>
+                  <p>
+                    <strong>Fecha de reserva:</strong>
+                    {{ formatDate(selectedBooking.created_at) }}
+                  </p>
+                  <p v-if="selectedBooking.notes">
+                    <strong>Mensaje:</strong>
+                    {{ selectedBooking.notes }}
+                  </p>
                 </div>
               </div>
             </div>
-            
+
             <div class="booking-info-item">
               <h5>Pago</h5>
               <div class="info-content">
                 <CreditCardIcon class="info-icon" />
                 <div>
-                  <p><strong>Total:</strong> €{{ selectedBooking.total || getPropertyById(selectedBooking.propertyId).price }}</p>
-                  <p><strong>Estado del pago:</strong> <span :class="['payment-status', selectedBooking.paymentStatus || 'paid']">{{ getPaymentStatusText(selectedBooking.paymentStatus || 'paid') }}</span></p>
-                  <p><strong>Método de pago:</strong> {{ selectedBooking.paymentMethod || 'No especificado' }}</p>
+                  <p>
+                    <strong>Total:</strong> €{{ selectedBooking.total || 0 }}
+                  </p>
+                  <p>
+                    <strong>Estado del pago:</strong>
+                    <span class="payment-status paid">
+                      Pagado
+                    </span>
+                  </p>
+                  <p>
+                    <strong>Método de pago:</strong>
+                    No especificado
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div v-if="selectedBooking.details?.extra_cleaning" class="booking-info-item">
+              <h5>Extras</h5>
+              <div class="info-content">
+                <InfoIcon class="info-icon" />
+                <div>
+                  <p v-if="selectedBooking.details.extra_cleaning">
+                    ✓ Limpieza extra
+                  </p>
                 </div>
               </div>
             </div>
           </div>
-          
+
           <div class="booking-notes" v-if="selectedBooking.notes">
             <h5>Notas</h5>
             <p>{{ selectedBooking.notes }}</p>
           </div>
-          
-          <div class="booking-timeline" v-if="selectedBooking.history && selectedBooking.history.length">
+
+          <div
+            class="booking-timeline"
+            v-if="selectedBooking.history && selectedBooking.history.length"
+          >
             <h5>Historial</h5>
             <div class="timeline">
-              <div class="timeline-item" v-for="(event, index) in selectedBooking.history" :key="index">
+              <div
+                class="timeline-item"
+                v-for="(event, index) in selectedBooking.history"
+                :key="index"
+              >
                 <div class="timeline-icon" :class="event.type">
-                  <component :is="getEventIcon(event.type)" class="event-icon" />
+                  <component
+                    :is="getEventIcon(event.type)"
+                    class="event-icon"
+                  />
                 </div>
                 <div class="timeline-content">
                   <p class="event-text">{{ event.text }}</p>
@@ -194,40 +294,56 @@
               </div>
             </div>
           </div>
-          
+
           <div class="modal-actions">
-            <button v-if="selectedBooking.status === 'pending'" class="action-button accept" @click="acceptBooking(selectedBooking.id)">
+            <button
+              v-if="selectedBooking.status === 'pending'"
+              class="action-button accept"
+              @click="acceptBooking(selectedBooking.id)"
+              type="button"
+            >
               <CheckIcon class="action-icon" />
               Aceptar Reserva
             </button>
-            <button v-if="selectedBooking.status === 'pending'" class="action-button reject" @click="rejectBooking(selectedBooking.id)">
+            <button
+              v-if="selectedBooking.status === 'pending'"
+              class="action-button reject"
+              @click="rejectBooking(selectedBooking.id)"
+              type="button"
+            >
               <XIcon class="action-icon" />
               Rechazar Reserva
             </button>
-            <button class="action-button message" @click="sendMessage(selectedBooking.id)">
+<!--             <button
+              class="action-button message"
+              @click="messageBooking(selectedBooking.id)"
+              type="button"
+            >
               <MessageSquareIcon class="action-icon" />
               Enviar Mensaje
-            </button>
-            <button v-if="selectedBooking.status === 'confirmed'" class="action-button calendar">
+            </button> -->
+            <!-- <button
+              v-if="selectedBooking.status === 'confirmed'"
+              class="action-button calendar"
+              type="button"
+            >
               <CalendarIcon class="action-icon" />
               Añadir al Calendario
-            </button>
+            </button> -->
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import axios from 'axios';
-import { 
-  CalendarIcon, 
-  CalendarOffIcon, 
-  ChevronLeftIcon, 
+import { ref, computed, onMounted, watch } from "vue";
+import axios from "axios";
+import {
+  CalendarIcon,
+  CalendarOffIcon,
+  ChevronLeftIcon,
   ChevronRightIcon,
-  DownloadIcon,
   XIcon,
   CheckIcon,
   UserIcon,
@@ -237,99 +353,116 @@ import {
   MessageSquareIcon,
   ClockIcon,
   AlertTriangleIcon,
-  CheckCircleIcon
-} from 'lucide-vue-next';
-import BookingCard from './BookingCard.vue';
+  RefreshCwIcon,
+  CheckCircleIcon,
+} from "lucide-vue-next";
+import BookingCard from "./BookingCard.vue";
+import { apiHeaders } from "@/../utils/api";
+import { useToast } from "vue-toastification";
 
 const bookings = ref([]);
 const properties = ref([]);
+const toast = useToast();
 
-const activeBookingFilter = ref('all');
-const bookingPropertyFilter = ref('all');
-const dateFilter = ref({ start: '', end: '' });
-const currentPage = ref(1);
 const itemsPerPage = ref(5);
-const showPagination = ref(true);
-
+const currentPage = ref(1);
 const showBookingDetails = ref(false);
 const selectedBooking = ref({});
 
+// Filtros
+const activeBookingFilter = ref("all");
+const bookingPropertyFilter = ref("all");
+const dateFilter = ref({ start: "", end: "" });
+
 const bookingFilters = [
-  { id: 'all', name: 'Todas' },
-  { id: 'pending', name: 'Pendientes' },
-  { id: 'confirmed', name: 'Confirmadas' },
-  { id: 'completed', name: 'Completadas' },
-  { id: 'cancelled', name: 'Canceladas' }
+  { id: "all", name: "Todas" },
+  { id: "pending", name: "Pendientes" },
+  { id: "confirmed", name: "Confirmadas" },
+  { id: "active", name: "Activas" },
+  { id: "completed", name: "Completadas" },
+  { id: "cancelled", name: "Canceladas" },
 ];
 
-onMounted(async () => {
-  await loadData();
-});
+// Carga de datos inicial
+onMounted(loadData);
 
 async function loadData() {
   try {
     const [bookingsRes, propsRes] = await Promise.all([
-      axios.get('/api/bookings', apiHeaders()),
-      axios.get('/api/properties', apiHeaders())
+      axios.get("/api/owner/bookings", apiHeaders()),
+      axios.get("/api/properties", apiHeaders()),
     ]);
     bookings.value = Array.isArray(bookingsRes.data)
       ? bookingsRes.data
-      : (bookingsRes.data.data || []);
+      : bookingsRes.data.data || [];
     properties.value = Array.isArray(propsRes.data)
       ? propsRes.data
-      : (propsRes.data.data || []);
+      : propsRes.data.data || [];
+    // Ajusta la página si es necesario tras recarga
+    if (currentPage.value > totalPages.value) {
+      currentPage.value = 1;
+    }
   } catch (err) {
     bookings.value = [];
     properties.value = [];
   }
 }
 
-function apiHeaders() {
-  const token = localStorage.getItem('auth_token');
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json'
-    }
-  }
-}
-
-const filteredBookings = computed(() => {
-  if (!Array.isArray(bookings.value)) return [];
+// Filtrado principal (sin paginar)
+const filteredBookingsRaw = computed(() => {
   let filtered = [...bookings.value];
-  if (activeBookingFilter.value !== 'all') {
-    filtered = filtered.filter(booking => booking.status === activeBookingFilter.value);
+  if (activeBookingFilter.value !== "all") {
+    filtered = filtered.filter(
+      (booking) => booking.status === activeBookingFilter.value
+    );
   }
-  if (bookingPropertyFilter.value !== 'all') {
-    filtered = filtered.filter(booking => booking.propertyId === parseInt(bookingPropertyFilter.value));
+  if (bookingPropertyFilter.value !== "all") {
+    filtered = filtered.filter(
+      (booking) => booking.property_id === parseInt(bookingPropertyFilter.value)
+    );
   }
   if (dateFilter.value.start && dateFilter.value.end) {
     const startDate = new Date(dateFilter.value.start);
     const endDate = new Date(dateFilter.value.end);
-    filtered = filtered.filter(booking => {
-      const checkIn = new Date(booking.checkIn);
+    filtered = filtered.filter((booking) => {
+      const checkIn = new Date(booking.details?.check_in);
       return checkIn >= startDate && checkIn <= endDate;
     });
   }
+  return filtered;
+});
+
+// Bookings paginados
+const filteredBookings = computed(() => {
   const startIndex = (currentPage.value - 1) * itemsPerPage.value;
   const endIndex = startIndex + itemsPerPage.value;
-  return filtered.slice(startIndex, endIndex);
+  return filteredBookingsRaw.value.slice(startIndex, endIndex).map((booking) => ({
+    ...booking,
+    propertyId: booking.property_id, // Mapear property_id a propertyId
+    checkIn: booking.details?.check_in, // Mapear check_in desde details
+    checkOut: booking.details?.check_out, // Mapear check_out desde details
+    guests: booking.details?.guests, // Mapear guests desde details
+    guestName:
+      booking.guestName ||
+      booking.user?.username ||
+      booking.user?.name ||
+      booking.details?.guest_name ||
+      "No disponible",
+    total:
+      booking.total ||
+      booking.total_price ||
+      booking.details?.total_price ||
+      0,
+    createdAt: booking.created_at, // Mapear created_at a createdAt
+    notes: booking.details?.message, // Usar message como notes
+  }));
 });
+
+// Total de páginas y páginas visibles
 const totalPages = computed(() => {
-  if (!Array.isArray(bookings.value)) return 0;
-  const filteredTotal = bookings.value.filter(booking => {
-    if (activeBookingFilter.value !== 'all' && booking.status !== activeBookingFilter.value) return false;
-    if (bookingPropertyFilter.value !== 'all' && booking.propertyId !== parseInt(bookingPropertyFilter.value)) return false;
-    if (dateFilter.value.start && dateFilter.value.end) {
-      const startDate = new Date(dateFilter.value.start);
-      const endDate = new Date(dateFilter.value.end);
-      const checkIn = new Date(booking.checkIn);
-      if (!(checkIn >= startDate && checkIn <= endDate)) return false;
-    }
-    return true;
-  }).length;
-  return Math.ceil(filteredTotal / itemsPerPage.value) || 1;
+  return Math.max(1, Math.ceil(filteredBookingsRaw.value.length / itemsPerPage.value));
 });
+
 const paginationPages = computed(() => {
   const pages = [];
   const maxVisiblePages = 5;
@@ -338,39 +471,60 @@ const paginationPages = computed(() => {
   } else {
     let startPage = Math.max(1, currentPage.value - Math.floor(maxVisiblePages / 2));
     let endPage = Math.min(totalPages.value, startPage + maxVisiblePages - 1);
-    if (endPage === totalPages.value) startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    if (endPage === totalPages.value) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
     for (let i = startPage; i <= endPage; i++) pages.push(i);
   }
   return pages;
 });
-const getFilterCount = (filterId) => {
-  if (!Array.isArray(bookings.value)) return 0;
-  if (filterId === 'all') return bookings.value.length;
-  return bookings.value.filter(booking => booking.status === filterId).length;
-};
+
+const showPagination = computed(() => totalPages.value > 1);
+
 const getPropertyById = (id) => {
-  return properties.value.find(property => property.id === id) || { 
-    name: 'Propiedad no encontrada', 
-    image: '/placeholder.svg?height=100&width=100',
-    location: 'Ubicación desconocida',
-    price: '0.00'
-  };
+  return (
+    properties.value.find((property) => property.id === id) || {
+      name: "Propiedad no encontrada",
+      image: "/placeholder.svg?height=100&width=100",
+      location: "Ubicación desconocida",
+      price: "0.00",
+    }
+  );
 };
+
+const getFilterCount = (filterId) => {
+  if (filterId === "all") return bookings.value.length;
+  return bookings.value.filter((booking) => booking.status === filterId).length;
+};
+
+// Métodos de paginación
+const changePage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+};
+
+// Resetear página al cambiar filtros
+watch([activeBookingFilter, bookingPropertyFilter, dateFilter], () => {
+  currentPage.value = 1;
+});
+
+// Utilidades de formato y acciones
 const formatDate = (dateString) => {
-  if (!dateString) return 'N/A';
-  const options = { day: 'numeric', month: 'short', year: 'numeric' };
-  return new Date(dateString).toLocaleDateString('es-ES', options);
+  if (!dateString) return "N/A";
+  const options = { day: "numeric", month: "short", year: "numeric" };
+  return new Date(dateString).toLocaleDateString("es-ES", options);
 };
 const formatDateTime = (dateTimeString) => {
-  if (!dateTimeString) return 'N/A';
-  const options = { 
-    day: 'numeric', 
-    month: 'short', 
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+  if (!dateTimeString) return "N/A";
+  const options = {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   };
-  return new Date(dateTimeString).toLocaleString('es-ES', options);
+  return new Date(dateTimeString).toLocaleString("es-ES", options);
 };
 const calculateNights = (booking) => {
   if (!booking || !booking.checkIn || !booking.checkOut) return 0;
@@ -382,47 +536,98 @@ const calculateNights = (booking) => {
 };
 const getStatusText = (status) => {
   const statusMap = {
-    'pending': 'Pendiente',
-    'confirmed': 'Confirmada',
-    'completed': 'Completada',
-    'cancelled': 'Cancelada'
+    pending: "Pendiente",
+    confirmed: "Confirmada",
+    active: "Activa",
+    completed: "Completada",
+    cancelled: "Cancelada",
   };
   return statusMap[status] || status;
 };
 const getPaymentStatusText = (status) => {
   const statusMap = {
-    'paid': 'Pagado',
-    'pending': 'Pendiente',
-    'refunded': 'Reembolsado',
-    'failed': 'Fallido'
+    paid: "Pagado",
+    pending: "Pendiente",
+    refunded: "Reembolsado",
+    failed: "Fallido",
   };
   return statusMap[status] || status;
 };
 const getEventIcon = (type) => {
   const iconMap = {
-    'created': ClockIcon,
-    'confirmed': CheckCircleIcon,
-    'cancelled': XIcon,
-    'completed': CheckIcon,
-    'message': MessageSquareIcon,
-    'payment': CreditCardIcon,
-    'warning': AlertTriangleIcon
+    created: ClockIcon,
+    confirmed: CheckCircleIcon,
+    cancelled: XIcon,
+    completed: CheckIcon,
+    message: MessageSquareIcon,
+    payment: CreditCardIcon,
+    warning: AlertTriangleIcon,
   };
   return iconMap[type] || InfoIcon;
 };
-const changePage = (page) => { currentPage.value = page; };
-const applyDateFilter = () => { currentPage.value = 1; };
+
 const viewBookingDetails = (bookingId) => {
-  const booking = bookings.value.find(b => b.id === bookingId);
+  const booking = bookings.value.find((b) => b.id === bookingId);
   if (booking) {
-    selectedBooking.value = booking;
+    // Mapear correctamente los datos para el modal
+    selectedBooking.value = {
+      ...booking,
+      propertyId: booking.property_id,
+      checkIn: booking.details?.check_in,
+      checkOut: booking.details?.check_out,
+      guests: booking.details?.guests,
+      guestName: `Usuario #${booking.user_id}`, // Mostrar ID del usuario ya que no tenemos nombre
+      total: booking.total_price,
+      createdAt: booking.created_at,
+      notes: booking.details?.message,
+      // Datos de la propiedad
+      property: booking.property
+    };
     showBookingDetails.value = true;
   }
 };
-const closeBookingDetails = () => { showBookingDetails.value = false; };
-const acceptBooking = (bookingId) => {};
-const rejectBooking = (bookingId) => {};
-const sendMessage = (bookingId) => {};
+const closeBookingDetails = () => {
+  showBookingDetails.value = false;
+};
+const acceptBooking = async (bookingId) => {
+  try {
+    await axios.post(`/api/bookings/${bookingId}/accept`, {}, apiHeaders());
+    await loadData();
+    toast.success("Reserva aceptada correctamente");
+    closeBookingDetails();
+  } catch (error) {
+    toast.error("Error al aceptar la reserva");
+  }
+};
+const rejectBooking = async (bookingId) => {
+  try {
+    await axios.post(`/api/bookings/${bookingId}/reject`, {}, apiHeaders());
+    bookings.value = bookings.value.map((b) =>
+      b.id === bookingId
+        ? { ...b, status: "cancelled", details: { ...b.details, status: "cancelled" } }
+        : b
+    );
+    toast.success("Reserva rechazada correctamente");
+    closeBookingDetails();
+  } catch (error) {
+    toast.error("Error al rechazar la reserva");
+  }
+};
+const messageBooking = (bookingId) => {
+  console.log(`[PADRE] Enviar mensaje para la reserva ${bookingId}`);
+};
+const applyDateFilter = () => {
+  currentPage.value = 1;
+};
+const syncBookings = () => {
+  // Implementa tu sincronización si aplica
+  toast.info("Sincronizando reservas...");
+  loadData().then(() => {
+    toast.success("Reservas sincronizadas correctamente");
+  }).catch(() => {
+    toast.error("Error al sincronizar reservas");
+  });
+};
 </script>
 
 <style scoped>
@@ -442,15 +647,22 @@ const sendMessage = (bookingId) => {};
   overflow: hidden;
 }
 .bookings-section::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 150%, rgba(0, 113, 194, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% -50%, rgba(0, 53, 128, 0.03) 0%, transparent 60%);
+  background: radial-gradient(
+      circle at 20% 150%,
+      rgba(0, 113, 194, 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% -50%,
+      rgba(0, 53, 128, 0.03) 0%,
+      transparent 60%
+    );
   z-index: 0;
 }
 
@@ -471,7 +683,7 @@ const sendMessage = (bookingId) => {};
 }
 
 .section-title::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -8px;
   left: 0;
@@ -575,12 +787,14 @@ const sendMessage = (bookingId) => {};
   align-items: flex-end;
 }
 
-.filter-property, .filter-date {
+.filter-property,
+.filter-date {
   flex: 1;
   min-width: 250px;
 }
 
-.filter-property label, .filter-date label {
+.filter-property label,
+.filter-date label {
   display: block;
   font-weight: 500;
   color: #003580;
@@ -722,6 +936,16 @@ const sendMessage = (bookingId) => {};
   color: #0071c2;
   cursor: pointer;
   transition: all 0.3s;
+}
+
+.pagination-button, .page-button {
+  pointer-events: auto ;
+  z-index: 10 ;
+}
+
+.bookings-pagination {
+  position: relative;
+  z-index: 10;
 }
 
 .pagination-button:hover:not(:disabled) {
@@ -1014,7 +1238,7 @@ const sendMessage = (bookingId) => {};
 }
 
 .timeline::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   bottom: 0;
@@ -1181,48 +1405,52 @@ const sendMessage = (bookingId) => {};
   .bookings-section {
     padding: 1.5rem;
   }
-  
+
   .booking-info-grid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
+  .bookings-section {
+    padding: 1.5rem;
+  }
+
   .section-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-  
+
   .filter-tabs {
     width: 100%;
     overflow-x: auto;
   }
-  
+
   .filter-tab {
     white-space: nowrap;
   }
-  
+
   .filter-controls {
     flex-direction: column;
     width: 100%;
   }
-  
+
   .date-inputs {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .date-separator {
     display: none;
   }
-  
+
   .booking-property-details {
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
-  
+
   .modal-actions {
     justify-content: center;
   }
@@ -1232,15 +1460,15 @@ const sendMessage = (bookingId) => {};
   .bookings-section {
     padding: 1rem;
   }
-  
+
   .modal-content {
     width: 95%;
   }
-  
+
   .modal-body {
     padding: 1.5rem;
   }
-  
+
   .action-button {
     width: 100%;
     justify-content: center;
