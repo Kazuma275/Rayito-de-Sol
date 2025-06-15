@@ -2,7 +2,7 @@ import axios from "axios";
 import { getItem, removeItem } from "@/helpers/storage.js";
 
 const api = axios.create({
-  baseURL: "/api", // Esto es CRUCIAL
+  baseURL: "http://localhost:8000/api", 
   headers: {
     "Accept": "application/json",
     "Content-Type": "application/json"

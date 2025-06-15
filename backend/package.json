@@ -14,5 +14,8 @@
         "postcss": "^8.5.5",
         "tailwindcss": "^4.1.10",
         "vite": "^6.2.4"
+    },
+    "dependencies": {
+        "js-cookie": "^3.0.5"
     }
 }

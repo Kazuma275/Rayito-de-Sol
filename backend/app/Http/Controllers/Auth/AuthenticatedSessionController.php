@@ -57,10 +57,14 @@ class AuthenticatedSessionController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json([
             'token' => $token,
-            'user' => $user
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ]
         ]);
     }
-
     /**
      * Registro de usuario para API.
      */
@@ -71,6 +75,7 @@ class AuthenticatedSessionController extends Controller
             'username' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|in:owner,guest',
         ]);
 
         if ($validator->fails()) {
@@ -87,6 +92,7 @@ class AuthenticatedSessionController extends Controller
                 'username' => $request->username,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'role' => $request->role,
             ]);
 
             // Crear token (Sanctum)

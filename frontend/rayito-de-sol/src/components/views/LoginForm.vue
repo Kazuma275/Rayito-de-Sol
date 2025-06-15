@@ -137,6 +137,10 @@ import { setItem } from "@/helpers/storage.js";
 import ForgotPasswordModal from "./ForgotPasswordModal.vue";
 import SessionExpiredModal from "./SessionExpiredModal.vue";
 import { authState } from '@/router/auth-guard';
+import { useToast } from "vue-toastification";
+import axios from 'axios';
+
+const toast = useToast();
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -151,6 +155,11 @@ const errors = reactive({
   password: "",
 });
 
+function playSound() {
+  const audio = new Audio("/assets/sounds/wrong.mp3");
+  audio.play();
+}
+
 const isSubmitting = ref(false);
 const showPassword = ref(false);
 const isValid = ref(true);
@@ -159,34 +168,21 @@ const showSessionExpiredModal = ref(false);
 
 // Configurar temporizador para verificar expiración del token
 const setupExpirationTimer = () => {
-  // Limpiar cualquier temporizador existente
   if (window.tokenExpirationTimer) {
     clearInterval(window.tokenExpirationTimer);
   }
-  
-  // Crear nuevo temporizador que verifica cada 10 segundos
   window.tokenExpirationTimer = setInterval(() => {
     const expirationTime = parseInt(localStorage.getItem('token_expiration') || '0');
-    
-    // Si el token ha expirado
     if (expirationTime && Date.now() > expirationTime) {
-      // Limpiar el temporizador
       clearInterval(window.tokenExpirationTimer);
-      
-      // Cerrar sesión
       userStore.logout();
-      
-      // Actualizar estado de autenticación
       authState.isAuthenticated = false;
       authState.user = null;
-      
-      // Redirigir al login con parámetro de sesión expirada
       router.push('/login?session_expired=true');
     }
-  }, 10000); // Verificar cada 10 segundos
+  }, 10000);
 };
 
-// Verificar si hay un parámetro de sesión expirada en la URL
 onMounted(() => {
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('session_expired') === 'true') {
@@ -197,27 +193,24 @@ onMounted(() => {
 const validateForm = () => {
   isValid.value = true;
   Object.keys(errors).forEach((key) => (errors[key] = ""));
-
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(formData.email)) {
     errors.email = "Por favor, introduce un correo electrónico válido";
     isValid.value = false;
   }
-
   if (formData.password.length < 1) {
     errors.password = "Por favor, introduce tu contraseña";
     isValid.value = false;
   }
-
   return isValid.value;
 };
 
 const handleSubmit = async () => {
   if (!validateForm()) return;
-
   isSubmitting.value = true;
-
   try {
+    await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
+
     const response = await api.post(
       "/login",
       {
@@ -225,7 +218,7 @@ const handleSubmit = async () => {
         password: formData.password,
       },
       {
-        withCredentials: false,
+        withCredentials: true,
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -233,24 +226,23 @@ const handleSubmit = async () => {
       }
     );
 
-    // Guardar el token y el usuario
+    // ----- VALIDACIÓN DE ROL -----
+    if (!response.data.user || response.data.user.role !== "owner") {
+      toast.error("Acceso denegado. Solo propietarios pueden iniciar sesión.");
+      playSound();
+      isSubmitting.value = false;
+      return;
+    }
+    
     userStore.setUser(response.data.user, formData.remember);
     userStore.setToken(response.data.token, formData.remember);
-    
-    // Establecer tiempo de expiración (5 minutos = 300000 ms)
     const expirationTime = Date.now() + 300000;
     localStorage.setItem('token_expiration', expirationTime.toString());
-    
-    // Actualizar el estado de autenticación
     authState.isAuthenticated = true;
     authState.user = response.data.user;
-    
-    // Configurar temporizador para verificar expiración
     setupExpirationTimer();
-    
     console.log("TOKEN recibido:", response.data.token);
     console.log("response data", response.data);
-
     router.push("/main");
   } catch (error) {
     if (error.response) {
@@ -278,14 +270,14 @@ const closeForgotPasswordModal = () => {
 
 const closeSessionExpiredModal = () => {
   showSessionExpiredModal.value = false;
-  // Limpiar el parámetro de la URL
   const url = new URL(window.location);
   url.searchParams.delete('session_expired');
   window.history.replaceState({}, '', url);
 };
 
 const goToRegister = () => {
-  router.push("/register");
+  router.push({ name: "Register", params: { role: "owner" } });
+
 };
 </script>
 

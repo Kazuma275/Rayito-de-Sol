@@ -119,7 +119,9 @@
             />
             <label for="terms" class="terms-label">
               Acepto los
-              <router-link to="/terms" class="terms-link">términos y condiciones</router-link>
+              <router-link to="/terms" class="terms-link"
+                >términos y condiciones</router-link
+              >
             </label>
           </div>
           <span v-if="errors.terms" class="error-message terms-error">
@@ -143,23 +145,32 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import axios from "axios";
-import { 
-  EyeIcon, 
-  EyeOffIcon, 
-  LoaderIcon, 
-  UserIcon, 
-  MailIcon, 
+import {
+  EyeIcon,
+  EyeOffIcon,
+  LoaderIcon,
+  UserIcon,
+  MailIcon,
   LockIcon,
   AlertCircleIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
 } from "lucide-vue-next";
 
-const router = useRouter();
+const route = useRoute();
+const role = computed(() => route.params.role);
 const toast = useToast();
+
+const props = defineProps({
+  role: {
+    type: String,
+    default: "guest",
+  },
+});
 
 const formData = reactive({
   username: "",
@@ -182,7 +193,7 @@ const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 
 // Verificar si los términos ya fueron aceptados
-const termsAccepted = ref(localStorage.getItem('termsAccepted') === 'true');
+const termsAccepted = ref(localStorage.getItem("termsAccepted") === "true");
 onMounted(() => {
   if (termsAccepted.value) {
     formData.terms = true;
@@ -246,30 +257,31 @@ const handleSubmit = async () => {
       email: formData.email,
       password: formData.password,
       password_confirmation: formData.confirmPassword,
+      role: role.value,
     });
 
     // Si la respuesta es exitosa, redirigir al login
     toast.success("¡Registro exitoso! Ahora puedes iniciar sesión.");
-    
+
     // Guardar en localStorage que el usuario está registrado
-    localStorage.setItem('userRegistered', 'true');
-    
+    localStorage.setItem("userRegistered", "true");
+
     router.push("/login");
   } catch (error) {
     console.error("Respuesta de error:", error.response?.data);
 
     if (error.response && error.response.data) {
-      if (error.response.data.errors) {
-        console.log("Errores de validación:", error.response.data.errors);
-        const firstError = Object.values(error.response.data.errors)[0][0];
-        toast.error(firstError);
-      } else if (error.response.data.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("Error desconocido en la respuesta del servidor.");
-      }
+      // El backend respondió con un error (422, 400, 500, etc)
+      console.log("Respuesta de error:", error.response.data);
+      // Puedes mostrar el mensaje que venga del backend:
+      toast.error(error.response.data.message || "Error del servidor");
+    } else if (error.request) {
+      // No hubo respuesta del servidor (problema de red, CORS, etc)
+      console.log("No se recibió respuesta del servidor", error.request);
+      toast.error("No se recibió respuesta del servidor");
     } else {
-      toast.error("Error de red o del servidor.");
+      // Error al configurar la solicitud
+      console.error("Error al configurar la solicitud:", error.message);
     }
   } finally {
     isSubmitting.value = false;
@@ -299,8 +311,14 @@ const handleSubmit = async () => {
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .register-header {
@@ -314,20 +332,33 @@ const handleSubmit = async () => {
 }
 
 .register-header::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 60%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0) 60%
+  );
   animation: pulse 15s infinite linear;
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); opacity: 0.3; }
-  50% { transform: scale(1.1); opacity: 0.5; }
-  100% { transform: scale(1); opacity: 0.3; }
+  0% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
 }
 
 .register-title {
@@ -404,7 +435,8 @@ const handleSubmit = async () => {
   outline: none;
   border-color: #3b82f6;
   background: white;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15),
+    inset 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 
 .form-input::placeholder {
@@ -453,8 +485,12 @@ const handleSubmit = async () => {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .error-icon {
@@ -497,7 +533,7 @@ const handleSubmit = async () => {
 }
 
 .terms-link::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 100%;
   height: 2px;
@@ -540,7 +576,7 @@ const handleSubmit = async () => {
 }
 
 .submit-button::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -608,7 +644,7 @@ const handleSubmit = async () => {
 }
 
 .login-link .link::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 100%;
   height: 2px;
