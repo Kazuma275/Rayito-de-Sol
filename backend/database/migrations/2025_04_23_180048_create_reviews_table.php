@@ -12,7 +12,7 @@ class CreateReviewsTable extends Migration
             $table->id(); // Usa 'id' estándar de Laravel para la PK
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('property_id')->constrained()->onDelete('cascade');
-            $table->tinyInteger('rating');
+            $table->decimal('rating', 2, 1); // permite valores con un decimal, ej: 4.5
             $table->text('review');
             $table->string('language', 10)->nullable();
             $table->string('author_name')->nullable();
