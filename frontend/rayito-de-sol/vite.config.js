@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import { fileURLToPath, URL } from 'node:url'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 const isDev = process.env.NODE_ENV !== 'production'
 
@@ -9,6 +10,14 @@ export default defineConfig({
   plugins: [
     vue(),
     isDev && vueDevTools(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: '_redirects',
+          dest: './'
+        }
+      ]
+    })
   ].filter(Boolean),
   resolve: {
     alias: {
