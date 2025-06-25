@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Events\MessageSent;
 use App\Http\Controllers\Admin\AdminSettingsController;
+use App\Http\Controllers\DebugController;
 
 /*
 |--------------------------------------------------------------------------
@@ -120,4 +121,10 @@ Broadcast::routes(['middleware' => ['auth:sanctum']]);
 */
 Route::get('/admin-test', function () {
     return 'Ruta de prueba funcionando';
+});
+
+Route::middleware(['auth', 'verified', 'local'])->group(function () {
+    Route::get('/log-test', [DebugController::class, 'logTest'])->name('debug.log-test');
+    Route::get('/debug-users', [DebugController::class, 'debugUsers'])->name('debug.debug-users');
+    Route::get('/debug-token-search/{token}', [DebugController::class, 'debugTokenSearch'])->name('debug.debug-token-search');
 });

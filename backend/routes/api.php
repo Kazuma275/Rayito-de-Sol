@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\Broadcast;
 | @route POST /login Iniciar sesión y obtener token de acceso
 */
 Route::post('/register', [AuthenticatedSessionController::class, 'register']);
-Route::post('/login', [AuthenticatedSessionController::class, 'login'])->name('login');
+Route::post('/login', [AuthenticatedSessionController::class, 'login']);
 
 /*
 |--------------------------------------------------------------------------

@@ -27,7 +27,9 @@
               <span>{{ property?.location }}</span>
             </div>
             <div class="property-price">
-              <span class="price-amount">€{{ property?.pricePerNight || property?.price }}</span>
+              <span class="price-amount"
+                >€{{ property?.pricePerNight || property?.price }}</span
+              >
               <span class="price-period">/ noche</span>
             </div>
           </div>
@@ -80,7 +82,7 @@
                   :key="num"
                   :value="num"
                 >
-                  {{ num }} {{ num === 1 ? 'huésped' : 'huéspedes' }}
+                  {{ num }} {{ num === 1 ? "huésped" : "huéspedes" }}
                 </option>
               </select>
             </div>
@@ -142,7 +144,11 @@
             <h4>Resumen de precios</h4>
             <div class="price-details">
               <div class="price-line">
-                <span>€{{ property?.pricePerNight || property?.price }} × {{ totalNights }} {{ totalNights === 1 ? 'noche' : 'noches' }}</span>
+                <span
+                  >€{{ property?.pricePerNight || property?.price }} ×
+                  {{ totalNights }}
+                  {{ totalNights === 1 ? "noche" : "noches" }}</span
+                >
                 <span>€{{ subtotal }}</span>
               </div>
               <div class="price-line">
@@ -169,16 +175,16 @@
                 <div class="loading-spinner"></div>
                 <span>Cargando sistema de pagos...</span>
               </div>
-              
+
               <!-- Stripe Elements will be mounted here -->
-              <div 
-                v-show="stripeReady" 
+              <div
+                v-show="stripeReady"
                 ref="cardElementContainer"
                 class="card-element-container"
               >
                 <!-- Stripe Elements will create form elements here -->
               </div>
-              
+
               <!-- Error display -->
               <div v-if="cardError" class="card-errors">
                 {{ cardError }}
@@ -197,8 +203,14 @@
                 class="checkbox-input"
               />
               <label for="terms">
-                Acepto los <a href="#" @click.prevent="showTerms = true">términos y condiciones</a>
-                y la <a href="#" @click.prevent="showPrivacy = true">política de privacidad</a>
+                Acepto los
+                <a href="#" @click.prevent="showTerms = true"
+                  >términos y condiciones</a
+                >
+                y la
+                <a href="#" @click.prevent="showPrivacy = true"
+                  >política de privacidad</a
+                >
               </label>
             </div>
           </div>
@@ -219,7 +231,11 @@
               :disabled="!canSubmit || isProcessing"
             >
               <div v-if="isProcessing" class="processing-spinner"></div>
-              {{ isProcessing ? 'Procesando...' : `Confirmar reserva (€${totalPrice})` }}
+              {{
+                isProcessing
+                  ? "Procesando..."
+                  : `Confirmar reserva (€${totalPrice})`
+              }}
             </button>
           </div>
         </form>
@@ -227,7 +243,11 @@
     </div>
 
     <!-- Terms Modal -->
-    <div v-if="showTerms" class="terms-modal-overlay" @click="showTerms = false">
+    <div
+      v-if="showTerms"
+      class="terms-modal-overlay"
+      @click="showTerms = false"
+    >
       <div class="terms-modal-content" @click.stop>
         <div class="terms-header">
           <h3>Términos y Condiciones</h3>
@@ -240,7 +260,9 @@
           <ul>
             <li>La reserva está sujeta a disponibilidad</li>
             <li>El pago se procesará inmediatamente</li>
-            <li>Las cancelaciones deben realizarse con 24 horas de antelación</li>
+            <li>
+              Las cancelaciones deben realizarse con 24 horas de antelación
+            </li>
             <li>Se requiere identificación válida en el check-in</li>
             <li>No se permiten fiestas o eventos sin autorización previa</li>
           </ul>
@@ -254,7 +276,11 @@
     </div>
 
     <!-- Privacy Modal -->
-    <div v-if="showPrivacy" class="terms-modal-overlay" @click="showPrivacy = false">
+    <div
+      v-if="showPrivacy"
+      class="terms-modal-overlay"
+      @click="showPrivacy = false"
+    >
       <div class="terms-modal-content" @click.stop>
         <div class="terms-header">
           <h3>Política de Privacidad</h3>
@@ -265,10 +291,17 @@
         <div class="terms-body">
           <p>Tu privacidad es importante para nosotros:</p>
           <ul>
-            <li>Tus datos personales se utilizan únicamente para procesar la reserva</li>
-            <li>No compartimos tu información con terceros sin tu consentimiento</li>
+            <li>
+              Tus datos personales se utilizan únicamente para procesar la
+              reserva
+            </li>
+            <li>
+              No compartimos tu información con terceros sin tu consentimiento
+            </li>
             <li>Los datos de pago son procesados de forma segura por Stripe</li>
-            <li>Puedes solicitar la eliminación de tus datos en cualquier momento</li>
+            <li>
+              Puedes solicitar la eliminación de tus datos en cualquier momento
+            </li>
           </ul>
         </div>
         <div class="terms-footer">
@@ -282,41 +315,41 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
-import { XIcon, MapPinIcon } from 'lucide-vue-next';
-import axios from 'axios';
-import { apiHeaders } from '@/../utils/api';
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
+import { XIcon, MapPinIcon } from "lucide-vue-next";
+import axios from "axios";
+import { apiHeaders } from "@/../utils/api";
 
 // Props
 const props = defineProps({
   property: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 });
 
 // Emits
-const emit = defineEmits(['close', 'booking-success']);
+const emit = defineEmits(["close", "booking-success"]);
 
 // Template refs
 const cardElementContainer = ref(null);
 
 // Reactive state
 const bookingData = ref({
-  checkinDate: '',
-  checkoutDate: '',
+  checkinDate: "",
+  checkoutDate: "",
   guests: 1,
   guestInfo: {
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: ''
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
   },
-  acceptTerms: false
+  acceptTerms: false,
 });
 
 const isProcessing = ref(false);
-const cardError = ref('');
+const cardError = ref("");
 const showTerms = ref(false);
 const showPrivacy = ref(false);
 const stripeReady = ref(false);
@@ -329,34 +362,38 @@ let elements = null;
 let cardElement = null;
 
 // API Base URL
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = "http://localhost:8000/api";
 
 // Computed properties
 const minDate = computed(() => {
   const today = new Date();
-  return today.toISOString().split('T')[0];
+  return today.toISOString().split("T")[0];
 });
 
 const minCheckoutDate = computed(() => {
   if (!bookingData.value.checkinDate) return minDate.value;
   const checkin = new Date(bookingData.value.checkinDate);
   checkin.setDate(checkin.getDate() + 1);
-  return checkin.toISOString().split('T')[0];
+  return checkin.toISOString().split("T")[0];
 });
 
 const totalNights = computed(() => {
-  if (!bookingData.value.checkinDate || !bookingData.value.checkoutDate) return 0;
-  
+  if (!bookingData.value.checkinDate || !bookingData.value.checkoutDate)
+    return 0;
+
   const checkin = new Date(bookingData.value.checkinDate);
   const checkout = new Date(bookingData.value.checkoutDate);
   const diffTime = checkout - checkin;
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
+
   return diffDays > 0 ? diffDays : 0;
 });
 
 const subtotal = computed(() => {
-  return totalNights.value * (props.property?.pricePerNight || props.property?.price || 0);
+  return (
+    totalNights.value *
+    (props.property?.pricePerNight || props.property?.price || 0)
+  );
 });
 
 const serviceFee = computed(() => {
@@ -389,7 +426,7 @@ const canSubmit = computed(() => {
 
 // Methods
 const handleImageError = (event) => {
-  event.target.src = '/img/placeholder.jpg';
+  event.target.src = "/img/placeholder.jpg";
 };
 
 const loadStripeScript = () => {
@@ -400,13 +437,13 @@ const loadStripeScript = () => {
       return;
     }
 
-    const script = document.createElement('script');
-    script.src = 'https://js.stripe.com/v3/';
+    const script = document.createElement("script");
+    script.src = "https://js.stripe.com/v3/";
     script.onload = () => {
       stripeLoaded.value = true;
       resolve(window.Stripe);
     };
-    script.onerror = () => reject(new Error('Failed to load Stripe script'));
+    script.onerror = () => reject(new Error("Failed to load Stripe script"));
     document.head.appendChild(script);
   });
 };
@@ -414,10 +451,10 @@ const loadStripeScript = () => {
 const destroyStripeElement = () => {
   if (cardElement) {
     try {
-      console.log('Destroying existing card element');
+      console.log("Destroying existing card element");
       cardElement.destroy();
     } catch (error) {
-      console.warn('Error destroying card element:', error);
+      console.warn("Error destroying card element:", error);
     }
     cardElement = null;
   }
@@ -426,102 +463,107 @@ const destroyStripeElement = () => {
 
 const initializeStripe = async () => {
   try {
-    console.log('Inicializando Stripe... Intento:', initializationAttempts.value + 1);
+    console.log(
+      "Inicializando Stripe... Intento:",
+      initializationAttempts.value + 1
+    );
     initializationAttempts.value++;
-    
+
     // Destroy existing element if any
     destroyStripeElement();
-    
+
     // Cargar el script de Stripe si no está disponible
     const StripeConstructor = await loadStripeScript();
-    
+
     if (!StripeConstructor) {
-      throw new Error('Stripe constructor not available');
+      throw new Error("Stripe constructor not available");
     }
 
     // Initialize Stripe with your publishable key
-/*     stripe = StripeConstructor('pk_live_51R2DAqGR90uW5lzlX2UNwjYFHQ7gC1nCzdNVTHo6hxlEK8VguEIzO5gcexDRLpCtbIDpaNYrf8OOsAvbnC5SUDYL00QEsl1f1v'); */
-    stripe = StripeConstructor('pk_test_51RYruY2fjdRS7dCHgYPmn683UJD1YfJWScjQlmu2bxXLY8qdWM9hzwX2ac5fRvSQP8v0GzazemAP2LoF0oy7qnHg00ZAskG1Xi'); // Test key for development
-    
+    /*     stripe = StripeConstructor('pk_live_51R2DAqGR90uW5lzlX2UNwjYFHQ7gC1nCzdNVTHo6hxlEK8VguEIzO5gcexDRLpCtbIDpaNYrf8OOsAvbnC5SUDYL00QEsl1f1v'); */
+    stripe = StripeConstructor(
+      "pk_test_51RYruY2fjdRS7dCHgYPmn683UJD1YfJWScjQlmu2bxXLY8qdWM9hzwX2ac5fRvSQP8v0GzazemAP2LoF0oy7qnHg00ZAskG1Xi"
+    ); // Test key for development
+
     if (!stripe) {
-      throw new Error('Failed to initialize Stripe');
+      throw new Error("Failed to initialize Stripe");
     }
 
-    console.log('Stripe inicializado correctamente');
+    console.log("Stripe inicializado correctamente");
 
     // Esperar a que el DOM esté listo
     await nextTick();
-    
+
     // Verificar que el contenedor existe
     if (!cardElementContainer.value) {
-      throw new Error('Card element container ref not available');
+      throw new Error("Card element container ref not available");
     }
 
-    console.log('Contenedor encontrado, creando elementos...');
+    console.log("Contenedor encontrado, creando elementos...");
 
     // Create elements
     elements = stripe.elements();
-    
+
     // Create card element
-    cardElement = elements.create('card', {
+    cardElement = elements.create("card", {
       style: {
         base: {
-          fontSize: '16px',
-          color: '#424770',
+          fontSize: "16px",
+          color: "#424770",
           fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-          fontSmoothing: 'antialiased',
-          '::placeholder': {
-            color: '#aab7c4',
+          fontSmoothing: "antialiased",
+          "::placeholder": {
+            color: "#aab7c4",
           },
         },
         invalid: {
-          color: '#9e2146',
+          color: "#9e2146",
         },
       },
     });
 
-    console.log('Montando card element en contenedor...');
-    
+    console.log("Montando card element en contenedor...");
+
     // Mount card element directly to the ref
     cardElement.mount(cardElementContainer.value);
-    
+
     // Listen for real-time validation errors
-    cardElement.on('change', (event) => {
-      console.log('Card element change:', event);
-      cardError.value = event.error ? event.error.message : '';
+    cardElement.on("change", (event) => {
+      console.log("Card element change:", event);
+      cardError.value = event.error ? event.error.message : "";
     });
 
     // Listen for ready event
-    cardElement.on('ready', () => {
-      console.log('Card element ready');
+    cardElement.on("ready", () => {
+      console.log("Card element ready");
       stripeReady.value = true;
-      cardError.value = '';
+      cardError.value = "";
     });
 
     // Listen for focus event
-    cardElement.on('focus', () => {
-      console.log('Card element focused');
+    cardElement.on("focus", () => {
+      console.log("Card element focused");
     });
 
     // Listen for blur event
-    cardElement.on('blur', () => {
-      console.log('Card element blurred');
+    cardElement.on("blur", () => {
+      console.log("Card element blurred");
     });
 
     // Listen for escape event (when element is destroyed)
-    cardElement.on('escape', () => {
-      console.log('Card element escaped');
+    cardElement.on("escape", () => {
+      console.log("Card element escaped");
       stripeReady.value = false;
     });
-
   } catch (error) {
-    console.error('Error initializing Stripe:', error);
-    cardError.value = 'Error al cargar el sistema de pagos. Por favor, recarga la página.';
+    console.error("Error initializing Stripe:", error);
+    cardError.value =
+      "Error al cargar el sistema de pagos. Por favor, recarga la página.";
     stripeReady.value = false;
-    
+
     // Retry logic (max 3 attempts)
     if (initializationAttempts.value < 3) {
-      console.log('Reintentando inicialización de Stripe en 2 segundos...');
+      console.log("Reintentando inicialización de Stripe en 2 segundos...");
       setTimeout(() => {
         initializeStripe();
       }, 2000);
@@ -531,45 +573,59 @@ const initializeStripe = async () => {
 
 const createPaymentIntent = async () => {
   try {
-    console.log('Creando payment intent con datos:', {
+    console.log("Creando payment intent con datos:", {
       amount: totalPrice.value * 100,
-      currency: 'eur',
+      currency: "eur",
       property_id: props.property.id,
       booking_data: bookingData.value,
     });
 
-    const response = await axios.post(`${API_BASE_URL}/create-payment-intent`, {
-      amount: totalPrice.value * 100, // Stripe expects cents
-      currency: 'eur',
-      property_id: props.property.id,
-      booking_data: bookingData.value,
-    });
+    const response = await axios.post(
+      `${API_BASE_URL}/create-payment-intent`,
+      {
+        amount: totalPrice.value * 100,
+        currency: "eur",
+        property_id: props.property.id,
+        booking_data: bookingData.value,
+      },
+      {
+        withCredentials: false,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
 
-    console.log('Payment intent creado:', response.data);
+    console.log("Payment intent creado:", response.data);
     return response.data.client_secret;
   } catch (error) {
-    console.error('Error creating payment intent:', error);
-    
+    console.error("Error creating payment intent:", error);
+
     if (error.response && error.response.data) {
-      console.error('Server error details:', error.response.data);
-      throw new Error(error.response.data.message || 'Error al crear la intención de pago');
+      console.error("Server error details:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Error al crear la intención de pago"
+      );
     } else {
-      throw new Error('Error de conexión. Por favor, verifica tu conexión a internet.');
+      throw new Error(
+        "Error de conexión. Por favor, verifica tu conexión a internet."
+      );
     }
   }
 };
 
 const validateStripeElement = () => {
   if (!stripe) {
-    throw new Error('Stripe no está inicializado');
+    throw new Error("Stripe no está inicializado");
   }
 
   if (!cardElement) {
-    throw new Error('Card element no está disponible');
+    throw new Error("Card element no está disponible");
   }
 
   if (!stripeReady.value) {
-    throw new Error('Stripe no está listo');
+    throw new Error("Stripe no está listo");
   }
 
   // Verificar que el elemento sigue montado
@@ -577,64 +633,67 @@ const validateStripeElement = () => {
     // Intentar acceder a una propiedad del elemento para verificar que sigue activo
     const elementContainer = cardElementContainer.value;
     if (!elementContainer || !elementContainer.isConnected) {
-      throw new Error('Card element container no está conectado al DOM');
+      throw new Error("Card element container no está conectado al DOM");
     }
   } catch (error) {
-    throw new Error('Card element no está montado correctamente');
+    throw new Error("Card element no está montado correctamente");
   }
 };
 
 const handleSubmit = async () => {
   if (!canSubmit.value) {
-    console.log('Cannot submit - validation failed');
+    console.log("Cannot submit - validation failed");
     return;
   }
 
-  console.log('Starting payment process...');
+  console.log("Starting payment process...");
   isProcessing.value = true;
-  cardError.value = '';
+  cardError.value = "";
 
   try {
     // Validar que Stripe esté correctamente inicializado
     validateStripeElement();
 
-    console.log('Stripe validation passed, creating payment intent...');
+    console.log("Stripe validation passed, creating payment intent...");
 
     // Create payment intent
     const clientSecret = await createPaymentIntent();
-    
+
     if (!clientSecret) {
-      throw new Error('No se pudo obtener el client secret');
+      throw new Error("No se pudo obtener el client secret");
     }
 
-    console.log('Payment intent created, confirming payment...');
+    console.log("Payment intent created, confirming payment...");
 
     // Validar nuevamente antes de confirmar el pago
     validateStripeElement();
 
     // Confirm payment with Stripe
-    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: cardElement,
-        billing_details: {
-          name: `${bookingData.value.guestInfo.firstName} ${bookingData.value.guestInfo.lastName}`,
-          email: bookingData.value.guestInfo.email,
-          phone: bookingData.value.guestInfo.phone,
+    const { error, paymentIntent } = await stripe.confirmCardPayment(
+      clientSecret,
+      {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            name: `${bookingData.value.guestInfo.firstName} ${bookingData.value.guestInfo.lastName}`,
+            email: bookingData.value.guestInfo.email,
+            phone: bookingData.value.guestInfo.phone,
+          },
         },
-      },
-    });
+      }
+    );
 
     if (error) {
-      console.error('Stripe payment error:', error);
+      console.error("Stripe payment error:", error);
       cardError.value = error.message;
       return;
     }
 
-    console.log('Payment confirmed:', paymentIntent);
+    console.log("Payment confirmed:", paymentIntent);
 
-    if (paymentIntent.status === 'succeeded') {
-      console.log('Payment succeeded, creating booking...');
-      
+    if (paymentIntent.status === "succeeded") {
+      console.log("Payment succeeded, creating booking...");
+
       // Create booking record
       const bookingResponse = await axios.post(
         `${API_BASE_URL}/bookings`,
@@ -657,22 +716,27 @@ const handleSubmit = async () => {
       );
 
       const booking = bookingResponse.data;
-      console.log('Booking created:', booking);
-      
+      console.log("Booking created:", booking);
+
       // Emit success event
-      emit('booking-success', {
+      emit("booking-success", {
         bookingId: booking.id,
         paymentIntentId: paymentIntent.id,
         totalPrice: totalPrice.value,
       });
     }
   } catch (error) {
-    console.error('Error processing payment:', error);
-    cardError.value = error.message || 'Error procesando el pago. Por favor, inténtalo de nuevo.';
-    
+    console.error("Error processing payment:", error);
+    cardError.value =
+      error.message ||
+      "Error procesando el pago. Por favor, inténtalo de nuevo.";
+
     // Si el error es relacionado con el elemento, intentar reinicializar
-    if (error.message.includes('Element') || error.message.includes('mounted')) {
-      console.log('Reintentando inicialización debido a error de elemento...');
+    if (
+      error.message.includes("Element") ||
+      error.message.includes("mounted")
+    ) {
+      console.log("Reintentando inicialización debido a error de elemento...");
       setTimeout(() => {
         initializeStripe();
       }, 1000);
@@ -683,54 +747,63 @@ const handleSubmit = async () => {
 };
 
 // Watch for checkout date changes to ensure it's after checkin
-watch(() => bookingData.value.checkinDate, (newCheckin) => {
-  if (newCheckin && bookingData.value.checkoutDate) {
-    const checkin = new Date(newCheckin);
-    const checkout = new Date(bookingData.value.checkoutDate);
-    
-    if (checkout <= checkin) {
-      const newCheckout = new Date(checkin);
-      newCheckout.setDate(newCheckout.getDate() + 1);
-      bookingData.value.checkoutDate = newCheckout.toISOString().split('T')[0];
+watch(
+  () => bookingData.value.checkinDate,
+  (newCheckin) => {
+    if (newCheckin && bookingData.value.checkoutDate) {
+      const checkin = new Date(newCheckin);
+      const checkout = new Date(bookingData.value.checkoutDate);
+
+      if (checkout <= checkin) {
+        const newCheckout = new Date(checkin);
+        newCheckout.setDate(newCheckout.getDate() + 1);
+        bookingData.value.checkoutDate = newCheckout
+          .toISOString()
+          .split("T")[0];
+      }
     }
   }
-});
+);
 
 // Watch for when we have total nights > 0 to initialize Stripe
-watch(() => totalNights.value, async (newValue) => {
-  if (newValue > 0 && stripeLoaded.value && !stripeReady.value) {
-    console.log('Total nights > 0, initializing Stripe...');
-    await initializeStripe();
+watch(
+  () => totalNights.value,
+  async (newValue) => {
+    if (newValue > 0 && stripeLoaded.value && !stripeReady.value) {
+      console.log("Total nights > 0, initializing Stripe...");
+      await initializeStripe();
+    }
   }
-});
+);
 
 // Lifecycle
 onMounted(async () => {
-  console.log('BookingModal mounted');
-  document.body.style.overflow = 'hidden';
-  
+  console.log("BookingModal mounted");
+  document.body.style.overflow = "hidden";
+
   // Load Stripe script first
   try {
     await loadStripeScript();
-    console.log('Stripe script loaded');
-    
+    console.log("Stripe script loaded");
+
     // If we already have total nights > 0, initialize immediately
     if (totalNights.value > 0) {
       await initializeStripe();
     }
   } catch (error) {
-    console.error('Error loading Stripe script:', error);
-    cardError.value = 'Error al cargar el sistema de pagos. Por favor, recarga la página.';
+    console.error("Error loading Stripe script:", error);
+    cardError.value =
+      "Error al cargar el sistema de pagos. Por favor, recarga la página.";
   }
 });
 
 onUnmounted(() => {
-  console.log('BookingModal unmounted');
-  document.body.style.overflow = 'auto';
-  
+  console.log("BookingModal unmounted");
+  document.body.style.overflow = "auto";
+
   // Cleanup Stripe elements
   destroyStripeElement();
-  
+
   stripe = null;
   elements = null;
 });
@@ -1168,8 +1241,12 @@ onUnmounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Terms Modal */
