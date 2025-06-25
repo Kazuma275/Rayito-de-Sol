@@ -92,7 +92,7 @@ onMounted(() => {
 
 const logout = () => {
   userStore.logout();
-  window.location.href = '/portal/';
+  window.location.href = '/';
 };
 </script>
 

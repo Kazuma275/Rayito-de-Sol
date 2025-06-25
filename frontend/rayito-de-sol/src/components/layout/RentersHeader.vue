@@ -148,7 +148,7 @@ const goToHome = () => {
 
 const logout = () => {
   userStore.logout();
-  router.replace('/portal/renters/login');
+  router.replace('/');
 };
 
 const closeMenus = () => {
