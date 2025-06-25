@@ -1,2 +1,1 @@
-/portal/assets/*    /portal/assets/:splat    200
 /portal/*           /portal/index.html       200
