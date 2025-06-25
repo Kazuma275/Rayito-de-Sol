@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: rayito-backend
+    env: docker
+    branch: main
+    rootDir: backend
+    plan: free
+    region: oregon
+    dockerfilePath: backend/Dockerfile
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        value: base64:SRaq+llJAm6pxrsEzv0hovgC9xMjYXpW1gwz7PYgSQQ=
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: 127.0.0.1
+      - key: DB_PORT
+        value: 3306
+      - key: DB_DATABASE
+        value: rayito_db
+      - key: DB_USERNAME
+        value: sergio
+      - key: DB_PASSWORD
+        value: sergioyalma
