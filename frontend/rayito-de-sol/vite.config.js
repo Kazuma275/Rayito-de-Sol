@@ -7,6 +7,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy'
 const isDev = process.env.NODE_ENV !== 'production'
 
 export default defineConfig({
+  base: '/portal/', // <- AÑADE ESTA LÍNEA para que los assets y rutas estén correctamente prefijados
   plugins: [
     vue(),
     isDev && vueDevTools(),
