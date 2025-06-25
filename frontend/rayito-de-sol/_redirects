@@ -1,2 +1,2 @@
-/portal/*    /index.html   200
-/           /index.html   200
+/portal/assets/*    /portal/assets/:splat    200
+/portal/*           /portal/index.html       200
