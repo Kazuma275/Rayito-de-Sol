@@ -14,7 +14,7 @@ export default defineConfig({
       targets: [
         {
           src: '_redirects',
-          dest: './'
+          dest: '.'
         }
       ]
     })
